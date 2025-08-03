@@ -1021,7 +1021,7 @@ This works because we are literally sending a binary string which represents 32+
 
 Perhaps you are starting to understand how it works by now. If not, don't worry because technically you don't need to know binary to be a computer programmer. but some advanced techniques in graphics programming are not possible without a working knowledge of how many bits a data type is and how to modify individual bits.
 
-# Why is Binary Used?
+## Why is Binary Used?
 
 But perhaps the larger question is why Binary is used in computers. Basically the idea is that states of on/off or low/hi voltage are how electricity is measured. Once you understand that everything in the world can be represented by a number and that Binary is one such system to represent numbers, you can see why it is so popular in computer hardware and software.
 
