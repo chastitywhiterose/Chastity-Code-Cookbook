@@ -851,3 +851,178 @@ However, rectangles are all you need to make an entire Tetris game! I wrote all 
 I will admit the code was a complete wreck and the game is not as advanced as the officially licensed Tetris games. However, as a proof of concept, and for the sake of making a video game so I can cross it off my bucket list, I did it.
 
 Before you leave this chapter, I want you to know more than one thing, the square is a special case of a rectangle where the width and height are the same. My obsession with the games Tetris and Chess most certainly is because I am obsessed with the shape of the square! Therefore, all of my graphics programming experience came about from my desire to draw perfect checkerboards on the computer. I have succeeded!
+
+# Chapter 3: Back to Binary Basics
+
+In chapter 1 I showed you my favorite integer sequences and how easy it is to generate them with a bit of math and printf statements in the C Programming Language. However, a lot of the code in my powers of two program and also the Portable Bit Map Checkerboard program do not make sense unless you understand that nature of the binary numeral system. To help illustrate it, I have created a small program which displays the numbers 0 to 15.
+
+## Binary to Decimal Counting 4 Bits
+
+```
+#include <stdio.h>
+#include "binlib.h"
+int main()
+{
+ int a=0;
+ while(a<16)
+ {
+  printf("%s %02d\n",int_to_binary_string(a,4),a);
+  a++;
+ }
+ return 0;
+}
+```
+
+The included file "binlib.h" contains this function:
+
+```
+#define ulength 100  /*the size of the array to be defined next*/
+char u[ulength]; /*universal array for my integer to binary string function*/
+
+char* int_to_binary_string(unsigned int i,int width)
+{
+ char *s=u+ulength;
+ *s=0;
+ do
+ {
+  s--;
+  *s=i&1;
+  i>>=1;
+  *s+='0';
+  width--;
+ }
+ while(i!=0 || width>0);
+ return s;
+}
+```
+
+When run, the program displays this:
+
+```
+0000 00
+0001 01
+0010 02
+0011 03
+0100 04
+0101 05
+0110 06
+0111 07
+1000 08
+1001 09
+1010 10
+1011 11
+1100 12
+1101 13
+1110 14
+1111 15
+```
+
+The numbers on the left are the binary version and the numbers on the right are the decimal numbers you have been taught all your life by human society. The truth is, there are as many different bases to use for a number system as there are numbers themselves.
+
+By looking at the chart above, you can probably figure out how binary works already, but in case you are stuck, here is another small sample program and its output to drive the point even clearer.
+
+## Left Shift Example
+
+```
+#include <stdio.h>
+#include "binlib.h"
+int main()
+{
+ int a=1;
+ while(a!=0)
+ {
+  printf("%s %10u\n",int_to_binary_string(a,32),a);
+  a<<=1;
+ }
+ return 0;
+}
+```
+
+The output of this program is:
+
+```
+00000000000000000000000000000001          1
+00000000000000000000000000000010          2
+00000000000000000000000000000100          4
+00000000000000000000000000001000          8
+00000000000000000000000000010000         16
+00000000000000000000000000100000         32
+00000000000000000000000001000000         64
+00000000000000000000000010000000        128
+00000000000000000000000100000000        256
+00000000000000000000001000000000        512
+00000000000000000000010000000000       1024
+00000000000000000000100000000000       2048
+00000000000000000001000000000000       4096
+00000000000000000010000000000000       8192
+00000000000000000100000000000000      16384
+00000000000000001000000000000000      32768
+00000000000000010000000000000000      65536
+00000000000000100000000000000000     131072
+00000000000001000000000000000000     262144
+00000000000010000000000000000000     524288
+00000000000100000000000000000000    1048576
+00000000001000000000000000000000    2097152
+00000000010000000000000000000000    4194304
+00000000100000000000000000000000    8388608
+00000001000000000000000000000000   16777216
+00000010000000000000000000000000   33554432
+00000100000000000000000000000000   67108864
+00001000000000000000000000000000  134217728
+00010000000000000000000000000000  268435456
+00100000000000000000000000000000  536870912
+01000000000000000000000000000000 1073741824
+10000000000000000000000000000000 2147483648
+```
+
+The binary system works exactly like you would expect given the chart above. Each bit is either 0 (off) or it is a 1 which represents that a specific power of two is turned "on".
+
+For example, add this function to "binlib.h"
+
+```
+int binary_string_to_int(char *s)
+{
+ int i=0;
+ char c;
+ while( *s == ' ' || *s == '\n' || *s == '\t' ){s++;} /*skip whitespace at beginning*/
+ while(*s!=0)
+ {
+  c=*s;
+  if( c == '0' || c == '1' ){c-='0';}
+  else if( c == ' ' || c == '\n' || c == '\t' ){return i;}
+  else{printf("Error: %c is not a valid character for base 2.\n",c);return i;}
+  i<<=1;
+  i+=c;
+  s++;
+ }
+ return i;
+}
+```
+
+And then the following program will display my age!
+
+## Binary Age Example
+
+```
+#include <stdio.h>
+#include "binlib.h"
+int main()
+{
+ printf("My name is Chastity and I am %d years old!\n",binary_string_to_int("100110"));
+ return 0;
+}
+```
+
+The result is:
+
+`My name is Chastity and I am 38 years old!`
+
+This works because we are literally sending a binary string which represents 32+0+0+4+2+0.
+
+Perhaps you are starting to understand how it works by now. If not, don't worry because technically you don't need to know binary to be a computer programmer. but some advanced techniques in graphics programming are not possible without a working knowledge of how many bits a data type is and how to modify individual bits.
+
+# Why is Binary Used?
+
+But perhaps the larger question is why Binary is used in computers. Basically the idea is that states of on/off or low/hi voltage are how electricity is measured. Once you understand that everything in the world can be represented by a number and that Binary is one such system to represent numbers, you can see why it is so popular in computer hardware and software.
+
+Anyhow, welcome to the art of computer programming, where black and white thinking really does help you! Or perhaps I should say, welcome to autism!
