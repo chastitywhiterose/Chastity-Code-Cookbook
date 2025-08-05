@@ -1026,3 +1026,76 @@ Perhaps you are starting to understand how it works by now. If not, don't worry 
 But perhaps the larger question is why Binary is used in computers. Basically the idea is that states of on/off or low/hi voltage are how electricity is measured. Once you understand that everything in the world can be represented by a number and that Binary is one such system to represent numbers, you can see why it is so popular in computer hardware and software.
 
 Anyhow, welcome to the art of computer programming, where black and white thinking really does help you! Or perhaps I should say, welcome to autism!
+
+## The Bitwise Operations
+
+There are 5 bitwise operations which operate on the bits of data in a computer. For the purpose of demonstration, it doesn't matter which number the bits represent at the moment. This is because the bits don't have to represent numbers at all but can represent anything described in two states. Bits are commonly used to represent statements that are ***true*** or ***false***. For the purposes of this section, the words AND, OR, XOR are in capital letters because their meaning is only loosely related to the Englist words they get their name from.
+
+### Bitwise AND Operation
+
+```
+0 AND 0 == 0
+0 AND 1 == 0	
+1 AND 0 == 0
+1 AND 1 == 1
+```
+
+Think of the bitwise AND operation as multiplication of single bits. 1 times 1 is always 1 but 0 times anything is always 0. That's how I personally think of it. I guess you could say that something is true only if two conditions are true. For example, if I go to Walmart AND do my job then it is true that I get paid.
+
+### Bitwise OR Operation
+
+```
+0 OR 0 == 0
+0 OR 1 == 1	
+1 OR 0 == 1
+1 OR 1 == 1
+```
+
+The bitwise OR operation can be thought of as something that is true if one or two conditions are true. For example, it is true that playing in the street will result in you dying because you got run over by a car. It is also true that if you live long enough, something else will kill you. Therefore, the bit of your impending death is always 1. 
+
+### Bitwise XOR Operation
+
+```
+0 XOR 0 == 0
+0 XOR 1 == 1	
+1 XOR 0 == 1
+1 XOR 1 == 0
+```
+
+The bitwise XOR operation is different because it isn't really used much for evaluating true or false. Instead, it is commonly used to invert a bit. For example, if you go back to the source of my graphics programs in Chapter 2, you will see that most of those programs contain the statement: 
+
+**`index^=1;`**
+
+If you look at my XOR chart above, you will see that using XOR of any bit with a 1 causes the result to be the opposite of the original bit. In the context of those programs, the index variable is meant to be 0 to represent black and 1 to represent white. The XOR operation is the quickest way to achieve this bit inversion. In fact, in all my years of programming, that's pretty much the only thing I have used it for!
+
+### Bitwise Left and Right Shift Operations
+
+Consider the case of the following 8 bit value:
+
+00001000
+
+This would of course represent the number 8 because a 1 is in the 8's place value. We can left shift or right shift.
+
+```
+00001000 ==  8 : is the original byte
+
+00010000 == 16 : after left shift
+00000100 ==  4 : after right shift
+```
+
+Left and right shift operations allow us to multiply or divide a number by 2 by taking advantage of the base 2 system. These shifts are essential in graphics programming because sometimes to need to extract the red, green, or blue values separately out of their 24 bit representation. For example, consider this code:
+
+```
+   pixel=p[x+y*width];
+   r=(pixel&0xFF0000)>>16;
+   g=(pixel&0x00FF00)>>8;
+   b=(pixel&0x0000FF);
+```
+
+The first statement gets the pixel out of an array of data which is indexed by x and y geometric coordinates. This will be a 24 bit value, or in some cases 32 bit with the highest 8 bits representing the alpha or transparency level.
+
+variables r,g,b represent red, green, and blue. With clever use of bitwise AND operations and right shifting by the correct number of bits, it is possible to extract just that color component to be modified. Without the ability to do this, my graphics animations and my Tetris game would never have been possible. The colors had to be exactly sent to the drawing functions. This is true not just for SDL but using any graphical system involving colors.
+
+## Learning More
+
+I know I covered a lot in this chapter but I encourage you to learn about the binary numeral system and its close cousin the hexadecimal system. If you do an online search, you will find courses, tutorials, and videos by millions of people who can probably explain these same concepts in a way that you understand better if you are still confused after reading this chapter!
