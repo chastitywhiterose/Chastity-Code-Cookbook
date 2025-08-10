@@ -8,36 +8,36 @@ Chastity White Rose
 
 You would not know it by looking at me, but I have been computer programming as a hobby since I was 14 years old. My first programming language was QBASIC. It was a language and a program for interpreting that language that ran on MS-DOS. However, the usage of this language has diminished in use over time because it does not run without an emulator or modern BASIC language dialects meant to mimic it.
 
-However, I moved to the C Programming Language as my main computer language. I have dabbled in Java, Javascript, Lua, Perl, Python, and the beast known as C++. However, of all these languages, C remains my native language because of how simple it is to remember. In spite of its quirks, C is what I recommend to a beginner not in spite of its limitations but because of them! Therefore, most of the recipes in this code cookbook will be in the form of C source code.
+However, I moved to the C Programming Language as my main computer language. I have dabbled in Java, JavaScript, Lua, Perl, Python, and the beast known as C++. However, of all these languages, C remains my native language because of how simple it is to remember. In spite of its quirks, C is what I recommend to a beginner, not in spite of its limitations but because of them! Therefore, most of the recipes in this code cookbook will be in the form of C source code.
 
-But this book will contain more than just the C language. There are times when other languages such as Bash, HTML, Markdown, and maybe even Lua or Python will just make a lot more sense in the context of what is being done.
+But this book will contain more than just the C language. There are times when other languages, such as Bash, HTML, Markdown, and maybe even Lua or Python, will just make a lot more sense in the context of what is being done.
 
 For example, computer programming is used to create art, web pages, books, and video games. However, programming is also hard work and a lonely pursuit because almost nobody understands it except those of us who are called to this sacrificial art of communicating with a computer.
 
-That being said, my computer understands what I mean better than most humans do. The purpose of this book is to archive some of the best programs I have written, and yet at the same time, are simple enough to share in only one or two pages.
+That being said, my computer understands what I mean better than most humans do. The purpose of this book is to archive some of the best programs I have written, and yet at the same time, they are simple enough to share in only one or two pages.
 
-This project began as an effort to save all my work so that it is not lost. I also hope that new generations of computer programmers can learn something from my 20+ years of experience as a C programmer.
+This project began as an effort to save all my work so that it would not be lost. I also hope that new generations of computer programmers can learn something from my 20+ years of experience as a C programmer.
 
 # Introduction
 
 I got my start in the world of computer programming because I first loved numbers. I am the stereotype of an autistic savant who sees everything as a number. If you like numbers, my hope is that my recipes for generating number patterns will be of some use to you.
 
-And if you don't like numbers, then you probably won't do well as a computer programmer because everything is a number in the context of a computer. The size, shape, and color of every text or picture element in the video games you play were at one point written into the code by one or more programmers who probably were not paid enough for the work that went into their craft!
+And if you don't like numbers, then you probably won't do well as a computer programmer because everything is a number in the context of a computer. The size, shape, and color of every text or picture element in the video games you play were, at one point, written into the code by one or more programmers who probably were not paid enough for the work that went into their craft!
 
 But before I begin sharing my code recipes with you, there is something I need to do before you can fully enjoy the experience. You will want to install a C compiler on your computer!
 
 If you are using Debian or Ubuntu Linux, installing the GCC compiler is as simple as `sudo apt install gcc`. However, I expect that most of my readers have a computer with the Windows operating system installed since the computer was purchased.
 
-Don't worry, you can still follow along! When I bought my Windows 11 laptop, I set up [scoop](https://scoop.sh/) to be my command line installer. Then I installed gcc so that I can always have it available from the command line on Windows just like I could in Linux.
+Don't worry, you can still follow along! When I bought my Windows 11 laptop, I set up [scoop](https://scoop.sh/) to be my command-line installer. Then I installed GCC so that I can always have it available from the command line on Windows, just like I could in Linux.
 
 `scoop install gcc`
 
-There are other ways to install GCC on Windows. However, all of them will be giving the the result of having the ability to type gcc into the terminal or console to compile and run your C code.
+There are other ways to install GCC on Windows. However, all of them will give the result of having the ability to type gcc into the terminal or console to compile and run your C code.
 
 Once it is installed correctly, you can enter `gcc` and get the message:
 
-	gcc: fatal error: no input files
-	compilation terminated.
+gcc: fatal error: no input files
+compilation terminated.
 
 But that is okay! We are going to give it an input file to compile! Type the following into a text file named main.c.
 
@@ -133,7 +133,7 @@ If done correctly, you will see the following in your terminal.
 
 How this works is very simple. with `int a=0;` We define an integer named a that starts at 0. Then we set up a while conditional block defined by `while(a<=100)` which means that the following block will happen as long as a is less than or equal to 100.
 
-Just like the main function, each block begins with a { and ends with a }. This is common for languages like C, C++, Java, and Javascript.
+Just like the main function, each block begins with a { and ends with a }. This is common for languages like C, C++, Java, and JavaScript.
 
 There are two statements in this block. The first is:
 
@@ -1029,7 +1029,7 @@ Anyhow, welcome to the art of computer programming, where black and white thinki
 
 ## The Bitwise Operations
 
-There are 5 bitwise operations which operate on the bits of data in a computer. For the purpose of demonstration, it doesn't matter which number the bits represent at the moment. This is because the bits don't have to represent numbers at all but can represent anything described in two states. Bits are commonly used to represent statements that are ***true*** or ***false***. For the purposes of this section, the words AND, OR, XOR are in capital letters because their meaning is only loosely related to the Englist words they get their name from.
+There are 5 bitwise operations which operate on the bits of data in a computer. For the purpose of demonstration, it doesn't matter which number the bits represent at the moment. This is because the bits don't have to represent numbers at all but can represent anything described in two states. Bits are commonly used to represent statements that are ***true*** or ***false***. For the purposes of this section, the words AND, OR, XOR are in capital letters because their meaning is only loosely related to the English words they get their name from.
 
 ### Bitwise AND Operation
 
@@ -1099,3 +1099,681 @@ variables r,g,b represent red, green, and blue. With clever use of bitwise AND o
 ## Learning More
 
 I know I covered a lot in this chapter but I encourage you to learn about the binary numeral system and its close cousin the hexadecimal system. If you do an online search, you will find courses, tutorials, and videos by millions of people who can probably explain these same concepts in a way that you understand better if you are still confused after reading this chapter!
+
+# Chapter 4: Animation with SDL
+
+At the end of Chapter 2, I shared a small program which creates a target of black and white squares. It was nice but it is also possible to animate it by adding some new variables that change over time. The code below will show you what I mean if you can compile and run it.
+
+## Animation SDL Square Target
+
+```
+#include <stdio.h>
+#include <SDL.h>
+int width=720,height=720;
+int loop=1;
+SDL_Window *window;
+SDL_Surface *surface;
+SDL_Event e;
+
+/*time related variables*/
+int sdl_time,sdl_time1,delay,fps=60,frame=0;
+
+int main(int argc, char **argv)
+{
+ int x,y;
+ int colors[]={0x000000,0xFFFFFF},index=0,index1=0;
+ int rect_width=30,rect_height=30;
+ SDL_Rect rect;
+ int bitcount;
+
+ if(SDL_Init(SDL_INIT_VIDEO))
+ {
+  printf( "SDL could not initialize! SDL_Error: %s\n",SDL_GetError());return -1;
+ }
+ window=SDL_CreateWindow("SDL Program",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,width,height,SDL_WINDOW_SHOWN );
+ if(window==NULL){printf( "Window could not be created! SDL_Error: %s\n", SDL_GetError() );return -1;}
+ surface = SDL_GetWindowSurface( window ); /*get surface for this window*/
+
+ printf("SDL Program Compiled Correctly\n");
+
+ delay=1000/fps;
+ bitcount=0;
+ index1=0;
+
+ /*start of animation loop*/
+ while(loop)
+ {
+
+  /*drawing section begin*/
+
+  rect.w=width;
+  rect.h=height;
+
+  x=0;
+  y=0;
+
+  index=index1;
+  SDL_FillRect(surface,NULL,colors[index^1]);
+
+  while(rect.w>0)
+  {
+   rect.x=x+bitcount;
+   rect.y=y+bitcount;
+   rect.w=width-x*2-bitcount*2;
+   rect.h=height-y*2-bitcount*2;
+   SDL_FillRect(surface,&rect,colors[index]);
+   x+=rect_width;
+   y+=rect_height;
+   index^=1;
+  }
+
+  if(bitcount==rect_width)
+  {
+   bitcount=0;
+   index1^=1;
+  }
+  bitcount++;
+
+  /*drawing section end*/
+
+  SDL_UpdateWindowSurface(window);
+
+  sdl_time = SDL_GetTicks();
+  sdl_time1 = sdl_time+delay;
+
+  /*time loop used to slow the game down so users can see it*/
+  while(loop==1 && sdl_time<sdl_time1)
+  {
+   sdl_time=SDL_GetTicks();
+  }
+
+  while(SDL_PollEvent(&e))
+  {
+   if(e.type == SDL_QUIT){loop=0;}
+   if(e.type == SDL_KEYUP)
+   {
+    if(e.key.keysym.sym==SDLK_ESCAPE){loop=0;}
+   }
+  }
+
+ }
+ /*end of loop after user presses escape*/
+ 
+ SDL_DestroyWindow(window);
+ SDL_Quit();
+ return 0;
+}
+```
+You will notice that I added some time variables. A time loop is used to pause the program long enough for the user to see the frame before the next frame is drawn.
+
+`sdl_time = SDL_GetTicks();`
+
+Will get the current time in milliseconds since the program began.
+
+`sdl_time1 = sdl_time+delay;
+
+Will set a future time by adding the millisecond delay. If the delay were 1000 then it would wait an entire second. However, delay is set to:
+
+`delay=1000/fps;`
+
+Since fps (frames per second) is set to 60, then each frame will last approximately a 60th of a second. Since many modern video formats are 60 fps, this is great for recording with [OBS Studio](https://obsproject.com/).
+
+If you don't feel like copying and pasting the code to create this animation program, I also have a video on YouTube that shows the result of what it looks like!
+
+<https://www.youtube.com/watch?v=e5jo3x57ewI>
+
+## Game: Checkerboard Explorer
+
+The last example was an animation because the picture changed every frame. However the example I will show you now is a very basic game. That is because it accepts user input to change the animation!
+
+As you might have guessed, this game will involve a checkerboard because I am so good at making them. This is a very large program so don't expect to understand it all at first. Making this is a two step process.
+
+First, create a file named "sdl_chaste_checkerboard_surface.h" to be included in the main program. It contains a structure definition and 2 important functions for drawing a checkerboard using the structure.
+
+```
+/*
+sdl_chaste_checkerboard_surface.h
+
+This file contains my functions for drawing a checkerboard in SDL2 using software surfaces.
+*/
+
+struct checkerboard
+{
+ int x_begin,y_begin,x_end,y_end;
+ int rectsize;
+ int rectcolor;
+};
+
+struct checkerboard main_check;
+
+/*set up initial state to allow drawing checkerboard to whole screen*/
+void init_checkerboard()
+{
+ main_check.x_begin=0;
+ main_check.y_begin=0;
+ main_check.x_end=width;
+ main_check.y_end=height;
+ main_check.rectsize=32;
+ main_check.rectcolor=0xFFFFFF;
+}
+
+/*
+ this function draws a checkerboard. it is highly optimized because it does not switch colors during the function. it only draws half of the checkerboard squares and leaves the remaining areas the same as the background
+*/
+void chaste_checker()
+{
+ int x,y,index,index1;
+ index=0;
+
+ rect.w=main_check.rectsize;
+ rect.h=main_check.rectsize;
+
+ y=main_check.y_begin;
+ while(y<main_check.y_end)
+ {
+  index1=index;
+  x=main_check.x_begin;
+  while(x<main_check.x_end)
+  {
+   if(index==1)
+   {
+    rect.x=x;
+    rect.y=y;
+    /*SDL_RenderFillRect(renderer,&rect);*/
+    SDL_FillRect(surface,&rect,main_check.rectcolor);
+   }
+   index^=1;
+   x+=main_check.rectsize;
+  }
+  index=index1^1;
+  y+=main_check.rectsize;
+ }
+
+}
+```
+
+The checkerboard structure contains the data on where the checkerboard begins and ends. The idea for this was to allow the checkerboard to be drawn to just a part of the window. For this example, though, we are going to fill the entire window with a checkerboard that moves! The following source goes in "main.c" to be compiled along with the included file above.
+
+```
+#include <stdio.h>
+#include <SDL.h>
+int width=720,height=720;
+int loop=1;
+SDL_Window *window;
+SDL_Surface *surface;
+SDL_Event e;
+SDL_Rect rect;
+
+#include "sdl_chaste_checkerboard_surface.h"
+
+/*time related variables*/
+int sdl_time,sdl_time1,delay,fps=60,frame=0;
+
+int main(int argc, char **argv)
+{
+ int x=1,y=1,speed=1;
+ int colors[]={0x000000,0xFFFFFF};
+
+ if(SDL_Init(SDL_INIT_VIDEO))
+ {
+  printf( "SDL could not initialize! SDL_Error: %s\n",SDL_GetError());return -1;
+ }
+ window=SDL_CreateWindow("SDL Program",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,width,height,SDL_WINDOW_SHOWN );
+ if(window==NULL){printf( "Window could not be created! SDL_Error: %s\n", SDL_GetError() );return -1;}
+ surface = SDL_GetWindowSurface( window ); /*get surface for this window*/
+
+ printf("SDL Program Compiled Correctly\n");
+
+ /*checkerboard intialization section*/
+
+  init_checkerboard();
+  main_check.rectcolor=colors[1];
+  main_check.rectsize=90;
+
+  main_check.x_begin=0;
+  main_check.y_begin=0;
+
+ /*end of checkerboard intialization section*/
+
+ delay=1000/fps;
+
+ /*start of animation loop*/
+ while(loop)
+ {
+
+  /*drawing section begin*/
+
+  SDL_FillRect(surface,NULL,colors[0]);
+  chaste_checker();
+
+  /*modification of coordinates begins*/
+
+  main_check.x_begin+=x*speed;
+  main_check.y_begin+=y*speed;
+
+  /*modification of coordinates ends*/
+
+
+ /* bounds checking for animation*/
+
+ if(main_check.x_begin>0)
+ {
+  main_check.x_begin-=main_check.rectsize*2;
+ }
+
+ if(main_check.x_begin<-main_check.rectsize*2)
+ {
+  main_check.x_begin+=main_check.rectsize*2;
+ }
+
+ if(main_check.y_begin>0)
+ {
+  main_check.y_begin-=main_check.rectsize*2;
+ }
+
+ if(main_check.y_begin<-main_check.rectsize*2)
+ {
+  main_check.y_begin+=main_check.rectsize*2;
+ }
+
+ /*end of bounds checking*/
+  
+  /*drawing section end*/
+
+  SDL_UpdateWindowSurface(window);
+
+  sdl_time = SDL_GetTicks();
+  sdl_time1 = sdl_time+delay;
+
+  /*time loop used to slow the game down so users can see it*/
+  while(loop==1 && sdl_time<sdl_time1)
+  {
+   sdl_time=SDL_GetTicks();
+  }
+
+  while(SDL_PollEvent(&e))
+  {
+   int k;
+   if(e.type == SDL_QUIT){loop=0;}
+   if(e.type == SDL_KEYUP)
+   {
+    if(e.key.keysym.sym==SDLK_ESCAPE){loop=0;}
+
+    /*https://github.com/libsdl-org/SDL/blob/SDL2/include/SDL_keycode.h*/
+
+    /*user input section start*/
+
+    k=e.key.keysym.sym;
+
+    /*rook directions: orthagonal*/
+    if(k==SDLK_KP_8||k==SDLK_UP||k==SDLK_w){x=0;y=-1;}
+    if(k==SDLK_KP_2||k==SDLK_DOWN||k==SDLK_x){x=0;y=1;}
+    if(k==SDLK_KP_4||k==SDLK_LEFT||k==SDLK_a){x=-1;y=0;}
+    if(k==SDLK_KP_6||k==SDLK_RIGHT||k==SDLK_d){x=1;y=0;}
+
+    /*bishop directions: diagonal*/
+    if(k==SDLK_KP_1||k==SDLK_z){x=-1;y=1;}
+    if(k==SDLK_KP_3||k==SDLK_c){x=1;y=1;}
+    if(k==SDLK_KP_7||k==SDLK_q){x=-1;y=-1;}
+    if(k==SDLK_KP_9||k==SDLK_e){x=1;y=-1;}
+
+    /*stop moving entirely*/
+    if(k==SDLK_KP_5||k==SDLK_s){x=0;y=0;}
+
+    /*press t to reset to 0,0 for starting position of the checkerboard and stop all movement*/
+    if(k==SDLK_t){x=0;y=0;  main_check.x_begin=0;main_check.y_begin=0;}
+
+    /*press f to move faster*/
+    if(k==SDLK_f){speed++;}
+    /*press r to reset speed*/
+    if(k==SDLK_r){speed=1;}
+
+    /*user input section end*/
+
+   }
+  }
+
+ }
+ /*end of loop after user presses escape*/
+ 
+ SDL_DestroyWindow(window);
+ SDL_Quit();
+ return 0;
+}
+```
+
+In this game, Checkerboard Explorer, you are flying above a massive checkerboard with apparently no end in sight. You can move in different directions by pressing the arrow keys, number pad keys (if your keyboard has them), or using the letters q,w,e,a,s,d,z,x,c to change or stop moving. You can also fly faster by pressing f or reset your speed with r.
+
+At any time you can press t to turn off the animation and reset it to look like a still picture of the checkerboard that looks exactly like it would on a real board used for playing Chess or Checkers. And finally, you can escape by pressing the `Esc` key.
+
+The game doesn't have characters, story, music. or a winning and losing condition. However, all video games follow these steps from a computer programming perspective.
+
+- Draw the current graphics to the screen each frame
+- Modify variables that change each frame (time, enemies, animations, etc)
+- Check for user input from keyboard (or possibly mouse/controller)
+- repeat forever until the user terminates the program
+
+This game may be small and simple, but it is still the largest code sample so far up to this point of the book. It took me a long time to learn how to use the C Programming language and SDL to know how to do all this.
+
+## Animation Polygon Target
+
+As cool as squares are, most people will want to draw shapes other than squares. I have written my own functions for doing this. First, below is the main source file for an animation that I have developed which uses a regular polygon drawing function.
+
+
+```
+#include <stdio.h>
+#include <SDL.h>
+
+int width=720,height=720;
+int loop=1;
+SDL_Window *window;
+SDL_Surface *surface;
+SDL_Event e;
+
+SDL_Renderer *renderer = NULL;
+#include "sdl_chaste_polygon.h"
+
+/*time related variables*/
+int sdl_time,sdl_time1,delay,fps=60,frame=0;
+
+int main(int argc, char **argv)
+{
+ int x,y;
+ int colors[]={0x000000,0xFFFFFF},index=0,color;
+ int radius_change=30;
+
+ if(SDL_Init(SDL_INIT_VIDEO))
+ {
+  printf( "SDL could not initialize! SDL_Error: %s\n",SDL_GetError());return -1;
+ }
+ window=SDL_CreateWindow("SDL Program",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,width,height,SDL_WINDOW_SHOWN );
+ if(window==NULL){printf( "Window could not be created! SDL_Error: %s\n", SDL_GetError() );return -1;}
+ surface = SDL_GetWindowSurface( window ); /*get surface for this window*/
+
+ /*create a renderer that can draw to the surface*/
+ renderer=SDL_CreateSoftwareRenderer(surface);
+ if(renderer==NULL){printf("Renderer could not be created! SDL_Error: %s\n", SDL_GetError() );return -1;}
+
+ printf("SDL Program Compiled Correctly\n");
+
+ delay=1000/fps;
+
+/*
+  an optional step before the game loop but a very awesome one
+  initialize the spinning polygon that will be drawn each frame
+ */
+
+ init_polygon();
+ main_polygon.radius=height/2;
+ main_polygon.sides=3;
+ main_polygon.step=1;
+
+ main_polygon.cx=width/2;
+ main_polygon.cy=height/2;
+
+ x=0;
+
+ /*start of animation loop*/
+ while(loop)
+ {
+
+  /*drawing section begin*/
+
+  SDL_FillRect(surface,NULL,colors[0]);
+
+ index=0;
+
+ y=height/2; /*save initial radius to y variable*/
+
+ main_polygon.radius=y;
+
+ while(main_polygon.radius>0)
+ {
+  color=colors[index];
+  main_polygon.color.r=(color&0xFF0000)>>16;
+  main_polygon.color.g=(color&0x00FF00)>>8;
+  main_polygon.color.b=(color&0x0000FF);
+
+  /*show the polygon just for fun*/
+  chaste_polygon_draw_star();
+  y-=radius_change;
+  main_polygon.radius=y-x;
+ 
+  index^=1;  
+ }
+  main_polygon.radians+=PI/180;
+
+  x++;
+
+  if(x==radius_change*2)
+  {
+   x=0;
+  }
+
+  /*drawing section end*/
+
+  SDL_UpdateWindowSurface(window);
+
+  sdl_time = SDL_GetTicks();
+  sdl_time1 = sdl_time+delay;
+
+  /*time loop used to slow the game down so users can see it*/
+  while(loop==1 && sdl_time<sdl_time1)
+  {
+   sdl_time=SDL_GetTicks();
+  }
+
+  while(SDL_PollEvent(&e))
+  {
+   if(e.type == SDL_QUIT){loop=0;}
+   if(e.type == SDL_KEYUP)
+   {
+    if(e.key.keysym.sym==SDLK_ESCAPE){loop=0;}
+   }
+  }
+
+ }
+ /*end of loop after user presses escape*/
+ 
+ SDL_DestroyWindow(window);
+ SDL_Quit();
+ return 0;
+}
+```
+
+In order to make it work, you will need the contents of the "sdl_chaste_polygon.h" file that was included in the source above. Beware, it is quite large!
+
+```
+/*sdl_chaste_polygon.h*/
+
+struct polygon
+{
+ double cx,cy;
+ int sides;
+ double radius;
+ double radians;
+ SDL_Color color;
+ int step; /*used only in star polygons of 5 or more sides*/
+};
+
+struct polygon main_polygon;
+
+
+
+void init_polygon()
+{
+ main_polygon.cx=width/2;
+ main_polygon.cy=height/2;
+ main_polygon.sides=3;
+ main_polygon.step=2;
+ main_polygon.radius=height/2;
+ main_polygon.radians=0;
+
+ main_polygon.color.r=255;
+ main_polygon.color.g=255;
+ main_polygon.color.b=255;
+ main_polygon.color.a=255;
+
+}
+
+
+/*
+ this function created because the standard round function did not exist in C until 1999 standard.
+ I only use 1989 standard. It is sometimes helpful to round to neared integer when the data type requires it.
+ Original source here: https://en.cppreference.com/w/c/numeric/math/round
+*/
+double chaste_round(double x)
+{
+ return x<0 ? ceil(x - 0.5) : floor(x + 0.5);
+}
+
+
+
+
+/*Define PI the same as M_PI in math.h*/
+ #define PI 3.14159265358979323846f
+
+/*these point arrays are temporary and not included in the polygon structure*/
+int polygon_xpoints[0x1000],polygon_ypoints[0x1000];
+
+
+/*
+function to get the points of a regular polygon and load them into the above arrays of x and y points
+*/
+void chaste_polygon_points()
+{
+ double angle,x,y;
+ int i=0;
+ while(i<main_polygon.sides)
+ {
+  angle=2*PI*i/main_polygon.sides+main_polygon.radians;
+  x=main_polygon.cx+sin(angle)*main_polygon.radius;
+  y=main_polygon.cy-cos(angle)*main_polygon.radius;
+  polygon_xpoints[i]=chaste_round(x);
+  polygon_ypoints[i]=chaste_round(y);
+  i++;
+ }
+}
+
+
+/* large array for any possible combination of vertices to make many triangles*/
+SDL_Vertex vertices[0x1000];
+
+/*this first function draws a series of triangles to make a convex regular polygon*/
+void chaste_polygon_draw()
+{
+ int i,i1;
+ chaste_polygon_points();
+ 
+ vertices[0].color=main_polygon.color;
+ vertices[1].color=main_polygon.color;
+ vertices[2].color=main_polygon.color;
+ 
+ i=0;
+ while(i<main_polygon.sides)
+ {
+  i1=(i+1)%main_polygon.sides;
+  
+  /*for each part of this loop,construct a triangle*/
+  vertices[0].position.x=polygon_xpoints[i];
+  vertices[0].position.y=polygon_ypoints[i];
+  vertices[1].position.x=polygon_xpoints[i1];
+  vertices[1].position.y=polygon_ypoints[i1];
+  vertices[2].position.x=main_polygon.cx;
+  vertices[2].position.y=main_polygon.cy;
+  
+  SDL_RenderGeometry(renderer,NULL,vertices,3,NULL,0);
+  
+  i++;
+ }
+ 
+}
+
+
+
+
+
+
+
+/*
+ this first function draws a series of triangles to make any kind of regular polygon
+ this includes star polygons by taking into account the step value between points.
+*/
+void chaste_polygon_draw_star()
+{
+ int i,i1;
+ chaste_polygon_points();
+ 
+ vertices[0].color=main_polygon.color;
+ vertices[1].color=main_polygon.color;
+ vertices[2].color=main_polygon.color;
+ 
+ i=0;
+ while(i<main_polygon.sides)
+ {
+  i1=(i+main_polygon.step)%main_polygon.sides;
+  
+  /*for each part of this loop,construct a triangle*/
+  vertices[0].position.x=polygon_xpoints[i];
+  vertices[0].position.y=polygon_ypoints[i];
+  vertices[1].position.x=polygon_xpoints[i1];
+  vertices[1].position.y=polygon_ypoints[i1];
+  vertices[2].position.x=main_polygon.cx;
+  vertices[2].position.y=main_polygon.cy;
+  
+  SDL_RenderGeometry(renderer,NULL,vertices,3,NULL,0);
+
+  i++;
+ }
+ 
+}
+
+
+
+
+/*
+ this first function draws a series of lines to make an outline of any regular polygon
+ this includes star polygons by taking into account the step value between points.
+*/
+void chaste_polygon_draw_lines()
+{
+ int i,i1;
+ chaste_polygon_points();
+ SDL_SetRenderDrawColor(renderer,main_polygon.color.r,main_polygon.color.g,main_polygon.color.b,255);
+ i=0;
+ while(i<main_polygon.sides)
+ {
+  i1=(i+1)%main_polygon.sides;
+  SDL_RenderDrawLine(renderer,polygon_xpoints[i], polygon_ypoints[i], polygon_xpoints[i1], polygon_ypoints[i1]);
+  i++;
+ }
+}
+
+
+
+/*
+ this first function draws a series of lines to make an outline of any regular polygon
+ this includes star polygons by taking into account the step value between points.
+*/
+void chaste_polygon_draw_star_lines()
+{
+ int i,i1;
+ chaste_polygon_points();
+ SDL_SetRenderDrawColor(renderer,main_polygon.color.r,main_polygon.color.g,main_polygon.color.b,255);
+ i=0;
+ while(i<main_polygon.sides)
+ {
+  i1=(i+main_polygon.step)%main_polygon.sides;
+  SDL_RenderDrawLine(renderer,polygon_xpoints[i], polygon_ypoints[i], polygon_xpoints[i1], polygon_ypoints[i1]);
+  i++;
+ }
+}
+```
+
+The exact math of how the regular polygons are constructed is beyond my ability to explain in a book format. However, I can tell you that the secret is in the function [SDL_RenderGeometry](https://wiki.libsdl.org/SDL2/SDL_RenderGeometry). It allows the programmer to arbitrarily draw any number of triangles by setting up a list of vertices (the plural of vertex). Each vertex contains both a point (x and y geometric coordinates in 2 dimensional space), and a color.
+
+To draw a triangle, the simplest possible polygon, you need at lease 3 vertices. My main source and header above make use of this function to draw many triangles that make up one big triangle!
+
+![sdl-triangle-target.png](https://chastitywhiterose.com/wp-content/uploads/2025/08/sdl-triangle-target.png)
+
+If you can compile and run the source above, you can actually see these triangles spin as the rotation angle changes each frame. You can even change the number of sides, color, or something else, depending on how well you can understand the code!
