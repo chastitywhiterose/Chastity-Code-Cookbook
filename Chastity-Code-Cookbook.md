@@ -1913,3 +1913,7 @@ Then I get the result:
 ```
 
 The "/usr/include/SDL2" folder is where the included files for SDL are found on my system. Each Linux system may have them in a different place. If you are on Windows then they certainly won't be at that spot. The developers of SDL have made the sdl2-config script to handle this so that code can be made more portably.
+
+# Installing the Tools on Windows
+
+To be written later.

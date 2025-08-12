@@ -1777,3 +1777,143 @@ To draw a triangle, the simplest possible polygon, you need at lease 3 vertices.
 ![sdl-triangle-target.png](https://chastitywhiterose.com/wp-content/uploads/2025/08/sdl-triangle-target.png)
 
 If you can compile and run the source above, you can actually see these triangles spin as the rotation angle changes each frame. You can even change the number of sides, color, or something else, depending on how well you can understand the code!
+
+# Chapter 5: Development Environment
+
+One of the hardest barriers to programming in C or C++ is that setting up a development environment for programming is not easy for beginners. Over the years I have managed to write and compile my programs on various flavors of Linux (Debian, Ubuntu, Puppy, Gentoo) as well as on Windows (98, XP, 8, 10, 11).
+
+However doing so comes only if you know the right information on these things.
+
+- What tools you need to download
+- How to install them (and what installing actually means)
+- What commands to type for compiling and running
+- Where to go for help when you get stuck.
+
+## Tool 1: C Compiler
+
+For the purposes of this book, I am promoting the C Programming Language. This means that you will need a C compiler. The one I recommend is [GCC](https://gcc.gnu.org/) which stands for "GNU Compiler Collection". Of all the existing C compilers there are, I recommend this one because it is [Free and Open Source Software](https://www.gnu.org/philosophy/free-software-even-more-important.html).
+
+Free Software in this context means that the user has control over the program, even to the point of modifying the source code. This level of control only applies to computer programmers smart enough to do so, but it is an important freedom.
+
+## Tool 2: Simple DirectMedia Layer
+
+Another important tool that you will need for some of my examples in this book is the [SDL](http://www.libsdl.org/) library. This library is essential for making video games. It is not the only library for this purpose but I have the most experience using it. I once even made a game called [Chaste Tris](https://store.steampowered.com/app/1986120/Chaste_Tris/) which is basically Tetris without any gravity.
+
+SDL is what I recommend in this book but I will briefly mention that other libraries such as [Allegro](https://liballeg.org/), [Raylib](https://www.raylib.com/), and [SFML](https://www.sfml-dev.org/) can do the same tasks of creating a window, drawing graphics, and handling user input.
+
+## Tool 3: A Text Editor
+
+There are more text editors than you can imagine. For the most part, you can use Notepad on Windows or gedit, mousepad, kate, or any other tool you choose. I honestly never gave it much thought which text editor I use before because I usually use the one provided by the operating system. 
+
+If you are a Windows user, I recommend [Notepad++](https://notepad-plus-plus.org/) because it has syntax highlighting for multiple programming languages. Sometimes having programming elements such as types, numbers, variables, and functions can be extremely helpful.
+
+If you are using Linux, I recommend [SciTE](https://www.scintilla.org/SciTE.html) because it is highly customizable. All of its configuration files are plain text that can be edited if you take the time to experiment.
+
+## Installing the Tools on Linux
+
+Installing the required compiler and SDL libraries on a Debian or Ubuntu system is trivial and can be done with the following commands if you have your root password from when you installed the operating system.
+
+`sudo apt install gcc`
+
+`sudo apt install libsdl2-dev`
+
+If I use other Linux distributions in the future, I will probably add more information on how to install these tools on them. However, Debian based distributions are extremely popular and those commands or something similar will work 90% of the time unless you are using something like Arch, Gentoo, or a PC without an internet connection.
+
+Most of the time the user of Linux is the one who installed the operating system. Contrary to what most Linux users say, I will admit that Linux is not for everyone because it requires being comfortable with running commands in a terminal and diagnosing error messages.
+
+Anyone who wants to be a computer programmer must be willing to make the required sacrifice during the Linux learning curve. Linux is not like Windows where you can point and click your way with a mouse (well, actually it is but then it depends on which desktop environment you have installed). Most of the time, you can google which commands are relevant to your platform or programming language you are trying to find a compiler or interpreter for.
+
+If you are installing SciTE, you can also do that with:
+
+`sudo apt install scite`
+
+### Testing the tools on Linux
+
+If GCC is installed correctly, you can run this command to check which version you have.
+
+`gcc --version`
+
+On my system, the result I get is:
+
+```
+gcc (Debian 12.2.0-14+deb12u1) 12.2.0
+Copyright (C) 2022 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+```
+
+Similarly, you can test whether SDL2 is install with this command.
+
+`sdl2-config --version`
+
+On my system, I get "2.26.5" as the result. The exact version number doesn't matter that much since all examples will will work with any version 2 or higher.
+
+Next, compile a small program that does nothing except make a window, fill it with magenta, and close when the user presses escape.
+
+```
+#include <stdio.h>
+#include <SDL.h>
+int width=1280,height=720;
+int loop=1;
+SDL_Window *window;
+SDL_Surface *surface;
+SDL_Event e;
+int main(int argc, char **argv)
+{
+ if(SDL_Init(SDL_INIT_VIDEO))
+ {
+  printf( "SDL could not initialize! SDL_Error: %s\n",SDL_GetError());return -1;
+ }
+ window=SDL_CreateWindow("SDL Program",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,width,height,SDL_WINDOW_SHOWN );
+ if(window==NULL){printf( "Window could not be created! SDL_Error: %s\n", SDL_GetError() );return -1;}
+ surface = SDL_GetWindowSurface( window ); /*get surface for this window*/
+ SDL_FillRect(surface,NULL,0xFF00FF);
+ SDL_UpdateWindowSurface(window);
+ printf("SDL Program Compiled Correctly\n");
+ while(loop)
+ {
+  while(SDL_PollEvent(&e))
+  {
+   if(e.type == SDL_QUIT){loop=0;}
+   if(e.type == SDL_KEYUP)
+   {
+    if(e.key.keysym.sym==SDLK_ESCAPE){loop=0;}
+   }
+  }
+ }
+ SDL_DestroyWindow(window);
+ SDL_Quit();
+ return 0;
+}
+```
+
+The command I use to compile my program is the following
+
+```
+gcc -Wall -ansi -pedantic main.c -o main `sdl2-config --cflags --libs` -lm && ./main
+```
+
+Technically you can drop the "`-Wall -ansi -pedantic`" flags. They just enforce very strict compliance to the C standard defined in 1989. The following will work just as well.
+
+```
+gcc main.c -o main `sdl2-config --cflags --libs` -lm && ./main
+```
+
+If it works, you will see the window and can close it by pressing escape or clicking the X in the corner.
+
+The part with the sdl2-config script is very important. It is used to help add the required flags used to tell the compiler where the include files are and where the linkable compiled libraries are which contain the functions the include files are pointing to. If I run this command on my Linux system:
+
+`sdl2-config --cflags --libs`
+
+Then I get the result:
+
+```
+-I/usr/include/SDL2 -D_REENTRANT
+-lSDL2
+```
+
+The "/usr/include/SDL2" folder is where the included files for SDL are found on my system. Each Linux system may have them in a different place. If you are on Windows then they certainly won't be at that spot. The developers of SDL have made the sdl2-config script to handle this so that code can be made more portably.
+
+# Installing the Tools on Windows
+
+To be written later.
