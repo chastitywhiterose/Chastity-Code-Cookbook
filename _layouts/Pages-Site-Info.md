@@ -1,6 +1,6 @@
 Chastity's Code Cookbook Site Info
 
-https://chastitywhiterose.github.io/Chastity-Code-Cookbook/
+<https://chastitywhiterose.github.io/Chastity-Code-Cookbook/>
 
 ---
 
