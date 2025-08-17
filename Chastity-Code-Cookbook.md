@@ -1827,7 +1827,7 @@ If you are installing SciTE, you can also do that with:
 
 `sudo apt install scite`
 
-### Testing the tools on Linux
+### Testing the Tools on Linux
 
 If GCC is installed correctly, you can run this command to check which version you have.
 
@@ -1914,6 +1914,62 @@ Then I get the result:
 
 The "/usr/include/SDL2" folder is where the included files for SDL are found on my system. Each Linux system may have them in a different place. If you are on Windows then they certainly won't be at that spot. The developers of SDL have made the sdl2-config script to handle this so that code can be made more portably.
 
-# Installing the Tools on Windows
+## Installing the Tools on Windows
 
-To be written later.
+Programming on Microsoft Windows is much harder than on Linux because most of the books out there have instructions for installing and using Microsoft Visual Studio. For the purpose of this book, I recommend not using an IDE (Integrated Development Environment) because it hides details of the compilation process that I am trying to teach. Compiling from the command line allows greater control of the process than using an IDE.
+
+Also, each IDE will have many menu options that differ and then you have to memorize how to navigate them each time you switch to a new program or the same program is updated and you can't figure it out. In fact, Microsoft is known for changing their software to be harder to use with new versions.
+
+
+Instead, I will recommend a software kit developed by [skeeto](https://github.com/skeeto) on github which is a convenient way to get a working copy of GCC and other useful tools that may assist you in programming on Windows.
+
+By downloading [w64devkit](https://github.com/skeeto/w64devkit), you get [Mingw-w64 GCC](https://www.mingw-w64.org/), [GNU Make](https://www.gnu.org/software/make/), and [busybox](https://frippery.org/busybox/). These tools will allow you to compile and run C programs, run advanced tasks with makefiles for GNU Make, and run most Linux commands (ls, cat, etc).
+
+The reason I recommend it is because it allows you to develop any program exactly the way you would on Linux without having to install Linux. Most people don't use Linux unless they are already into programming. If you are getting your start with C programming and your computer has Windows, then you will benefit from this.
+
+Step 1: Download w64devkit
+
+Go to the repository here and go to the releases page. You will find several releases. You will be fine going with the latest version, whichever it is.
+
+<https://github.com/skeeto/w64devkit/releases>
+
+The files with "x64" in their name refer to the modern Windows version that run on 64 bit processors. Most of the time, this is what you want.
+
+At the time of this writing, the latest version is [2.4.0](https://github.com/skeeto/w64devkit/releases/tag/v2.4.0). This means that the file to download is:
+
+`w64devkit-x64-2.4.0.7z.exe`
+
+Run the executable and it will allow you to extract the files into their full folder. Inside will be a file named:
+
+`w64devkit.exe`
+
+If you run it, you will be inside a little environment which operates a lot like Linux. You can run gcc and compile the same way you would in Linux.
+
+## Testing the Tools on Windows
+
+Once inside the mini environment of w64devkit, create a folder to start working in.
+
+`mkdir test`
+
+Change to that folder.
+
+`cd test`
+
+Open your preferred text editor and create the following file named "hello.c".
+
+```
+#include <stdio.h>
+int main()
+{
+ printf("Hello, World!\n");
+ return 0;
+}
+
+```
+
+Then run this command to compile and run it!
+
+`gcc -Wall -ansi -pedantic hello.c -o hello && ./hello`
+
+By default while using w64devkit, you can only compile and run programs that use the standard C library. However, now that you have a working environment, you can install the SDL library into it as well for all the SDL programs I have included in this book.
+
