@@ -1809,7 +1809,7 @@ If you are a Windows user, I recommend [Notepad++](https://notepad-plus-plus.org
 
 If you are using Linux, I recommend [SciTE](https://www.scintilla.org/SciTE.html) because it is highly customizable. All of its configuration files are plain text that can be edited if you take the time to experiment.
 
-## Installing the Tools on Linux
+## Installing Development Tools on Linux
 
 Installing the required compiler and SDL libraries on a Debian or Ubuntu system is trivial and can be done with the following commands if you have your root password from when you installed the operating system.
 
@@ -1914,7 +1914,7 @@ Then I get the result:
 
 The "/usr/include/SDL2" folder is where the included files for SDL are found on my system. Each Linux system may have them in a different place. If you are on Windows then they certainly won't be at that spot. The developers of SDL have made the sdl2-config script to handle this so that code can be made more portably.
 
-## Installing the Tools on Windows
+## Installing Development Tools on Windows
 
 Programming on Microsoft Windows is much harder than on Linux because most of the books out there have instructions for installing and using Microsoft Visual Studio. For the purpose of this book, I recommend not using an IDE (Integrated Development Environment) because it hides details of the compilation process that I am trying to teach. Compiling from the command line allows greater control of the process than using an IDE.
 
@@ -1945,7 +1945,7 @@ Run the executable and it will allow you to extract the files into their full fo
 
 If you run it, you will be inside a little environment which operates a lot like Linux. You can run gcc and compile the same way you would in Linux.
 
-## Testing the Tools on Windows
+### Testing the Tools on Windows
 
 Once inside the mini environment of w64devkit, create a folder to start working in.
 
@@ -1971,5 +1971,85 @@ Then run this command to compile and run it!
 
 `gcc -Wall -ansi -pedantic hello.c -o hello && ./hello`
 
+### Using SDL with w64devkit
+
 By default while using w64devkit, you can only compile and run programs that use the standard C library. However, now that you have a working environment, you can install the SDL library into it as well for all the SDL programs I have included in this book.
 
+Download the latest SDL release here:
+
+<https://github.com/libsdl-org/SDL/releases/latest>
+
+As of this writing, the version is [3.2.20](https://github.com/libsdl-org/SDL/releases/tag/release-3.2.20).
+You will need the file that includes both "devel" and mingw in its name. For example:
+
+`SDL3-devel-3.2.20-mingw.zip`
+
+After extracting the zip, find the "x86_64-w64-mingw32" folder. Inside this are 4 folders.
+
+Copy the folders (bin, include, lib, share) into the same folder where you installed w64devkit. If done correctly, then the "SDL3.dll" will be in the bin folder just like gcc is.
+
+Version 3 of SDL is slightly different than what I am used to. There is a migration guide for those like me who are using version 2.
+
+<https://wiki.libsdl.org/SDL3/README-migration>
+
+I have followed this guide made a small example program that compiles with SDL version 3. Copy the following source and save it as "sdl3-test.c".
+
+
+```
+#include <stdio.h>
+#include <SDL.h>
+int width=1280,height=720;
+int loop=1;
+SDL_Window *window;
+SDL_Surface *surface;
+SDL_Event e;
+int main(int argc, char **argv)
+{
+ if(!SDL_Init(SDL_INIT_VIDEO))
+ {
+  printf( "SDL could not initialize! SDL_Error: %s\n",SDL_GetError());return -1;
+ }
+ window=SDL_CreateWindow("SDL Program",width,height,0);
+ if(window==NULL){printf( "Window could not be created! SDL_Error: %s\n", SDL_GetError() );return -1;}
+ surface = SDL_GetWindowSurface( window ); /*get surface for this window*/
+ SDL_FillSurfaceRect(surface,NULL,0xFF00FF);
+ SDL_UpdateWindowSurface(window);
+ printf("SDL Program Compiled Correctly\n");
+ while(loop)
+ {
+  while(SDL_PollEvent(&e))
+  {
+   if(e.type == SDL_EVENT_QUIT){loop=0;}
+   if(e.type == SDL_EVENT_KEY_UP)
+   {
+    if(e.key.key==SDLK_ESCAPE){loop=0;}
+   }
+  }
+ }
+ SDL_DestroyWindow(window);
+ SDL_Quit();
+ return 0;
+}
+```
+
+Run the command:
+
+```
+gcc -Wall -ansi -pedantic sdl3-test.c -o sdl3-test -IC:/w64devkit/include/SDL3 -lSDL3 && sdl3-test
+```
+
+
+
+### Running from regular Windows Command line:
+
+It is possible to use w64devkit without running the w64devkit executable. All you need to do is change your path so that when you run commands like gcc, your computer will know where to look for the compiler and libraries.
+
+For example, navigate to the folder containing your source code of what you want to compile. Open a terminal there and enter these commands. Change the path to wherever you have extracted w64devkit to.
+
+
+```
+PATH=C:/w64devkit/bin
+echo %PATH%
+```
+
+These commands change the path and confirm the path is changed within Windows. By doing this, any other versions of gcc that are installed on Windows will not accidentally be activated.
