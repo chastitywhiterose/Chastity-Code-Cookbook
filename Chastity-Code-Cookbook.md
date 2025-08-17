@@ -2035,7 +2035,7 @@ int main(int argc, char **argv)
 Run the command:
 
 ```
-gcc -Wall -ansi -pedantic sdl3-test.c -o sdl3-test -IC:/w64devkit/include/SDL3 -lSDL3 && sdl3-test
+gcc -Wall -ansi -pedantic sdl3-test.c -o sdl3-test -IC:/w64devkit/include/SDL3 -lSDL3 && ./sdl3-test
 ```
 
 
