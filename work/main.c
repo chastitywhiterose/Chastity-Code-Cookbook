@@ -9,6 +9,47 @@ SDL_Rect rect;
 
 #include "sdl_chaste_checkerboard_surface.h"
 
+/*default clip is size of whole window*/
+int clip_start_x=0,clip_start_y=0,clip_end_x=720,clip_end_y=720;
+
+void chaste_checker_clip()
+{
+ int x,y,index,index1;
+ index=0;
+
+ y=main_check.y_begin;
+ while(y<main_check.y_end)
+ {
+  index1=index;
+  x=main_check.x_begin;
+  while(x<main_check.x_end)
+  {
+   if(index==1)
+   {
+    int diff;
+    rect.x=x;
+    rect.y=y;
+    rect.w=main_check.rectsize;
+    rect.h=main_check.rectsize;
+
+    if(rect.x<clip_start_x){diff=clip_start_x-rect.x;rect.x+=diff;rect.w-=diff;}
+    if(rect.y<clip_start_y){diff=clip_start_y-rect.y;rect.y+=diff;rect.h-=diff;}
+
+    if(rect.x+rect.w>clip_end_x){rect.w=clip_end_x-rect.x;}
+    if(rect.y+rect.h>clip_end_y){rect.h=clip_end_y-rect.y;}
+
+    /*SDL_RenderFillRect(renderer,&rect);*/
+    SDL_FillRect(surface,&rect,main_check.rectcolor);
+   }
+   index^=1;
+   x+=main_check.rectsize;
+  }
+  index=index1^1;
+  y+=main_check.rectsize;
+ }
+
+}
+
 /*time related variables*/
 int sdl_time,sdl_time1,delay,fps=60,frame=0;
 
@@ -16,6 +57,7 @@ int main(int argc, char **argv)
 {
  int x=1,y=1,speed=1;
  int colors[]={0x000000,0xFFFFFF};
+ int tx,ty; /*temporary variables*/
 
  if(SDL_Init(SDL_INIT_VIDEO))
  {
@@ -31,17 +73,16 @@ int main(int argc, char **argv)
 
   init_checkerboard();
   main_check.rectcolor=colors[1];
-
-  main_check.rectsize=90;
+  main_check.rectsize=30;
 
   main_check.x_begin=0;
   main_check.y_begin=0;
-  /*main_check.x_end=width/2;*/
-  /*main_check.y_end=height/2;*/
 
  /*end of checkerboard intialization section*/
 
  delay=1000/fps;
+
+ frame=0;
 
  /*start of animation loop*/
  while(loop)
@@ -50,7 +91,6 @@ int main(int argc, char **argv)
   /*drawing section begin*/
 
   SDL_FillRect(surface,NULL,colors[0]);
-  chaste_checker();
 
   /*modification of coordinates begins*/
 
@@ -59,6 +99,133 @@ int main(int argc, char **argv)
 
   /*modification of coordinates ends*/
 
+  /*save the values to be restored*/
+  tx=main_check.x_begin;
+  ty=main_check.y_begin;
+
+  /*top left area*/
+  clip_start_x=0;
+  clip_start_y=0;
+  clip_end_x=width/3;
+  clip_end_y=height/3;
+
+  main_check.x_begin=tx+clip_start_x;
+  main_check.y_begin=ty+clip_start_y;
+  main_check.x_end=clip_end_x;
+  main_check.y_end=clip_end_y;
+
+  chaste_checker_clip();
+
+  /*top center area*/
+  clip_start_x=width*1/3;
+  clip_start_y=0;
+  clip_end_x=width*2/3;
+  clip_end_y=height/3;
+
+  main_check.x_begin=clip_start_x;
+  main_check.y_begin=ty+clip_start_y;
+  main_check.x_end=clip_end_x;
+  main_check.y_end=clip_end_y;
+
+  chaste_checker_clip();
+
+  /*top right area*/
+
+  clip_start_x=width*2/3;
+  clip_start_y=0;
+  clip_end_x=width;
+  clip_end_y=height*1/3;
+
+  main_check.x_begin=width-(tx+clip_start_x);
+  main_check.y_begin=ty+clip_start_y;
+  main_check.x_end=clip_end_x;
+  main_check.y_end=clip_end_y;
+
+  chaste_checker_clip();
+
+  /*bottom left area*/
+  clip_start_x=0;
+  clip_start_y=height*2/3;
+  clip_end_x=width/3;
+  clip_end_y=height;
+
+  main_check.x_begin=tx+clip_start_x;
+  main_check.y_begin=height-(ty+clip_start_y);
+  main_check.x_end=clip_end_x;
+  main_check.y_end=clip_end_y;
+
+  chaste_checker_clip();
+
+  /*bottom center area*/
+  clip_start_x=width*1/3;
+  clip_start_y=height*2/3;
+  clip_end_x=width*2/3;
+  clip_end_y=height;
+
+  main_check.x_begin=clip_start_x;
+  main_check.y_begin=height-(ty+clip_start_y);
+  main_check.x_end=clip_end_x;
+  main_check.y_end=clip_end_y;
+
+  chaste_checker_clip();
+
+
+  /*bottom right area*/
+  clip_start_x=width*2/3;
+  clip_start_y=height*2/3;
+  clip_end_x=width;
+  clip_end_y=height;
+
+  main_check.x_begin=width-(tx+clip_start_x);
+  main_check.y_begin=height-(ty+clip_start_y);
+  main_check.x_end=clip_end_x;
+  main_check.y_end=clip_end_y;
+
+  chaste_checker_clip();
+
+  /*center center area*/
+  clip_start_x=width*1/3;
+  clip_start_y=height*1/3;
+  clip_end_x=width*2/3;
+  clip_end_y=height*2/3;
+
+  main_check.x_begin=/*tx+*/clip_start_x;
+  main_check.y_begin=/*ty+*/clip_start_y;
+  main_check.x_end=clip_end_x;
+  main_check.y_end=clip_end_y;
+
+  chaste_checker_clip();
+
+  /*left center area*/
+  clip_start_x=width*0/3;
+  clip_start_y=height*1/3;
+  clip_end_x=width*1/3;
+  clip_end_y=height*2/3;
+
+  main_check.x_begin=tx+clip_start_x;
+  main_check.y_begin=/*ty+*/clip_start_y;
+  main_check.x_end=clip_end_x;
+  main_check.y_end=clip_end_y;
+
+  chaste_checker_clip();
+
+  /*right center area*/
+  clip_start_x=width*2/3;
+  clip_start_y=height*1/3;
+  clip_end_x=width*3/3;
+  clip_end_y=height*2/3;
+
+  main_check.x_begin=width-(tx+clip_start_x);
+  main_check.y_begin=/*ty+*/clip_start_y;
+  main_check.x_end=clip_end_x;
+  main_check.y_end=clip_end_y;
+
+  chaste_checker_clip();
+
+
+  /*restore the values saved earlier*/
+  main_check.x_begin=tx;
+  main_check.y_begin=ty;
 
  /* bounds checking for animation*/
 
@@ -83,7 +250,10 @@ int main(int argc, char **argv)
  }
 
  /*end of bounds checking*/
-  
+
+
+
+  frame++;
   /*drawing section end*/
 
   SDL_UpdateWindowSurface(window);
