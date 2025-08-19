@@ -11,7 +11,7 @@ int main(int argc, char **argv)
  {
   printf( "SDL could not initialize! SDL_Error: %s\n",SDL_GetError());return -1;
  }
- window=SDL_CreateWindow("SDL Program",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,width,height,SDL_WINDOW_SHOWN );
+ window=SDL_CreateWindow("SDL2 Program",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,width,height,SDL_WINDOW_SHOWN );
  if(window==NULL){printf( "Window could not be created! SDL_Error: %s\n", SDL_GetError() );return -1;}
  surface = SDL_GetWindowSurface( window ); /*get surface for this window*/
  SDL_FillRect(surface,NULL,0xFF00FF);

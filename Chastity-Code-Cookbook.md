@@ -2088,6 +2088,14 @@ Even the developers say that you should not use this version for new projects. H
 
 Right now, it is perfectly reasonable to expect that new games be written in SDL 3. If you have already published a game that uses SDL 1 or 2, it will still continue to run for users. All this fuss over versions and changes in the name of functions is only something programmers have to worry about.
 
+## Recommended Versions
+
+These are the versons of SDL that I recommend using to compile the programs in this book. Most of them will use version SDL2 but I may introduce more SDL3 samples either in the book or as a bonus on the official Github repository which will accompany this book.
+
+<https://github.com/libsdl-org/SDL/releases/tag/release-2.32.8>
+
+<https://github.com/libsdl-org/SDL/releases/tag/release-3.2.20>
+
 Keeping up to date with the changes in technology is a full time job itself. However, it is easier when you are using the C Programming Language because it doesn't change as often as Java, Python, Lua, or JavaScript change.
 
 In the next chapter, I will be taking a break from C and instead introduce the concept of shell scripting and how it can be a fun way to explore programming without having to install something that isn't already on your computer!

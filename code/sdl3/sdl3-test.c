@@ -11,7 +11,7 @@ int main(int argc, char **argv)
  {
   printf( "SDL could not initialize! SDL_Error: %s\n",SDL_GetError());return -1;
  }
- window=SDL_CreateWindow("SDL Program",width,height,0);
+ window=SDL_CreateWindow("SDL3 Program",width,height,0);
  if(window==NULL){printf( "Window could not be created! SDL_Error: %s\n", SDL_GetError() );return -1;}
  surface = SDL_GetWindowSurface( window ); /*get surface for this window*/
  SDL_FillSurfaceRect(surface,NULL,0xFF00FF);
@@ -42,12 +42,8 @@ int main(int argc, char **argv)
 
  gcc -Wall -ansi -pedantic sdl3-test.c -o sdl3-test -IC:/w64devkit/include/SDL3 -lSDL3 && sdl3-test
 
- Linux Compile Command: (this is not fully tested yet)
+ Linux Compile Command:
 
- With the sdl2-config script:
- gcc -Wall -ansi -pedantic sdl3-test.c -o sdl3-test `sdl3-config --cflags --libs` && ./sdl3-test
-
- Without the sdl2-config script:
  gcc -Wall -ansi -pedantic sdl3-test.c -o sdl3-test -I/usr/include/SDL3 -lSDL3 && ./sdl3-test
 
 */
