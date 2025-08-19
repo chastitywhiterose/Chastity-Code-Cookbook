@@ -1809,7 +1809,7 @@ If you are a Windows user, I recommend [Notepad++](https://notepad-plus-plus.org
 
 If you are using Linux, I recommend [SciTE](https://www.scintilla.org/SciTE.html) because it is highly customizable. All of its configuration files are plain text that can be edited if you take the time to experiment.
 
-## Installing the Tools on Linux
+## Installing Development Tools on Linux
 
 Installing the required compiler and SDL libraries on a Debian or Ubuntu system is trivial and can be done with the following commands if you have your root password from when you installed the operating system.
 
@@ -1827,7 +1827,7 @@ If you are installing SciTE, you can also do that with:
 
 `sudo apt install scite`
 
-### Testing the tools on Linux
+### Testing the Tools on Linux
 
 If GCC is installed correctly, you can run this command to check which version you have.
 
@@ -1842,7 +1842,7 @@ This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 ```
 
-Similarly, you can test whether SDL2 is install with this command.
+Similarly, you can test whether SDL2 is installed with this command.
 
 `sdl2-config --version`
 
@@ -1914,6 +1914,180 @@ Then I get the result:
 
 The "/usr/include/SDL2" folder is where the included files for SDL are found on my system. Each Linux system may have them in a different place. If you are on Windows then they certainly won't be at that spot. The developers of SDL have made the sdl2-config script to handle this so that code can be made more portably.
 
-# Installing the Tools on Windows
+## Installing Development Tools on Windows
 
-To be written later.
+Programming on Microsoft Windows is much harder than on Linux because most of the books out there have instructions for installing and using Microsoft Visual Studio. For the purpose of this book, I recommend not using an IDE (Integrated Development Environment) because it hides details of the compilation process that I am trying to teach. Compiling from the command line allows greater control of the process than using an IDE.
+
+Also, each IDE will have many menu options that differ and then you have to memorize how to navigate them each time you switch to a new program or the same program is updated and you can't figure it out. In fact, Microsoft is known for changing their software to be harder to use with new versions.
+
+
+Instead, I will recommend a software kit developed by [skeeto](https://github.com/skeeto) on github which is a convenient way to get a working copy of GCC and other useful tools that may assist you in programming on Windows.
+
+By downloading [w64devkit](https://github.com/skeeto/w64devkit), you get [Mingw-w64 GCC](https://www.mingw-w64.org/), [GNU Make](https://www.gnu.org/software/make/), and [busybox](https://frippery.org/busybox/). These tools will allow you to compile and run C programs, run advanced tasks with makefiles for GNU Make, and run most Linux commands (ls, cat, etc).
+
+The reason I recommend it is because it allows you to develop any program exactly the way you would on Linux without having to install Linux. Most people don't use Linux unless they are already into programming. If you are getting your start with C programming and your computer has Windows, then you will benefit from this section.
+
+Step 1: Download w64devkit
+
+Go to the repository here and go to the releases page. You will find several releases. You will be fine going with the latest version, whichever it is.
+
+<https://github.com/skeeto/w64devkit/releases>
+
+The files with "x64" in their name refer to the modern Windows version that run on 64 bit processors (usually this means Windows 7, 8 , 10,or 11). Most of the time, this is what you want.
+
+At the time of this writing, the latest version of w64devkit is [2.4.0](https://github.com/skeeto/w64devkit/releases/tag/v2.4.0). This means that the file to download is:
+
+`w64devkit-x64-2.4.0.7z.exe`
+
+Run the executable and it will allow you to extract the files into their full folder. Inside will be a file named:
+
+`w64devkit.exe`
+
+If you run it, you will be inside a little environment which operates a lot like Linux. You can run gcc and compile the same way you would in Linux.
+
+### Testing the Tools on Windows
+
+Once inside the mini environment of w64devkit, create a folder to start working in.
+
+`mkdir test`
+
+Change to that folder.
+
+`cd test`
+
+Open your preferred text editor and create the following file named "hello.c".
+
+```
+#include <stdio.h>
+int main()
+{
+ printf("Hello, World!\n");
+ return 0;
+}
+
+```
+
+Then run this command to compile and run it!
+
+`gcc -Wall -ansi -pedantic hello.c -o hello && ./hello`
+
+### Using SDL with w64devkit
+
+By default while using w64devkit, you can only compile and run programs that use the standard C library. However, now that you have a working environment, you can install the SDL library into it as well for all the SDL programs I have included in this book.
+
+Download the latest SDL release here:
+
+<https://github.com/libsdl-org/SDL/releases/latest>
+
+As of this writing, the version is [3.2.20](https://github.com/libsdl-org/SDL/releases/tag/release-3.2.20).
+You will need the file that includes both "devel" and mingw in its name. For example:
+
+`SDL3-devel-3.2.20-mingw.zip`
+
+After extracting the zip, find the "x86_64-w64-mingw32" folder. Inside this are 4 folders.
+
+Copy the folders (bin, include, lib, share) into the same folder where you installed w64devkit. If done correctly, then the "SDL3.dll" will be in the bin folder just like gcc is.
+
+Version 3 of SDL is slightly different than what I am used to. There is a migration guide for those like me who are using version 2.
+
+<https://wiki.libsdl.org/SDL3/README-migration>
+
+I have followed this guide made a small example program that compiles with SDL version 3. Copy the following source and save it as "sdl3-test.c".
+
+
+```
+#include <stdio.h>
+#include <SDL.h>
+int width=1280,height=720;
+int loop=1;
+SDL_Window *window;
+SDL_Surface *surface;
+SDL_Event e;
+int main(int argc, char **argv)
+{
+ if(!SDL_Init(SDL_INIT_VIDEO))
+ {
+  printf( "SDL could not initialize! SDL_Error: %s\n",SDL_GetError());return -1;
+ }
+ window=SDL_CreateWindow("SDL Program",width,height,0);
+ if(window==NULL){printf( "Window could not be created! SDL_Error: %s\n", SDL_GetError() );return -1;}
+ surface = SDL_GetWindowSurface( window ); /*get surface for this window*/
+ SDL_FillSurfaceRect(surface,NULL,0xFF00FF);
+ SDL_UpdateWindowSurface(window);
+ printf("SDL Program Compiled Correctly\n");
+ while(loop)
+ {
+  while(SDL_PollEvent(&e))
+  {
+   if(e.type == SDL_EVENT_QUIT){loop=0;}
+   if(e.type == SDL_EVENT_KEY_UP)
+   {
+    if(e.key.key==SDLK_ESCAPE){loop=0;}
+   }
+  }
+ }
+ SDL_DestroyWindow(window);
+ SDL_Quit();
+ return 0;
+}
+```
+
+Run the command:
+
+```
+gcc -Wall -ansi -pedantic sdl3-test.c -o sdl3-test -IC:/w64devkit/include/SDL3 -lSDL3 && ./sdl3-test
+```
+
+
+
+### Running from regular Windows Command line:
+
+It is possible to use w64devkit without running the w64devkit executable. All you need to do is change your path so that when you run commands like gcc, your computer will know where to look for the compiler and libraries.
+
+For example, navigate to the folder containing your source code of what you want to compile. Open a terminal there and enter these commands. Change the path to wherever you have extracted w64devkit to.
+
+
+```
+PATH=C:/w64devkit/bin
+echo %PATH%
+```
+
+These commands change the path and confirm the path is changed within Windows. By doing this, any other versions of gcc that are installed on Windows will not accidentally be activated.
+
+## Notes About SDL Versions
+
+During my lifetime, I have witnessed the evolution of the SDL library. It has been used for many games. When I first started it, the SDL version 1 API (Application Programming Interface) was in common use. Then SDL2 came out and it was faster and had a lot more features.
+
+I used SDL2 for many years during the time it was in common use. When I started writing this book, the examples I wrote used the version 2 API. This leads to a compatibility problem for me as an author.
+
+Do I learn and update all my programs to use version 3? No, because if I do, then versions 4, 5, 6, and beyond will eventually be released and then they will probably once again change the names of functions or the number of arguments.
+
+For example, in the "SDL_CreateWindow" function of SDL3, it is no longer necessary to specify arguments for the Window position. Personally, I think this is a good change because it makes the code look better. However, it does make my SDL2 code invalid when trying to compile with SDL3.
+
+Also, the "SDL_Init" function and several others was changed. Instead of returning true on error and false on success, they now return true on success and false on error. That is why a ! was inserted the the SDL3 test program before "SDL_Init". The ! operator inverts the value of any true/false conditional statement.
+
+By tradition of the C Programming Language, 0 is considered false and any other number is considered true. It is important to remember that this does not apply to all programming languages though.
+
+Also, because SDL functions are written by real humans who have their own tastes, the behavior of functions might change from time to time. I personally find this very frustrating because it causes old code to break and not compile any more.
+
+I would also like to take this moment to explain why the "-Wall -ansi -pedantic" flags are included in some of my compile commands. These flags cause my code to fail if it does not comply with the 1989 standard of the C Programming Language. Yes, there are different versions of the C Programming Language. The ANSI or 1989 standard is my preferred version because I like old things. However, don't let my preference dictate the standard your programs use.
+
+Sometimes change is good. After all, when I first started using Linux, I wasn't very good at it, but now I have come to love it better than I did MS-DOS or Windows 98 (yes, Windows 98 was my favorite version of Windows that I had the pleasure of using).
+
+Besides that, I am transgender, so I know what it's like to go through some changes! That is why I wanted to clarify this chapter and explain that some of my code may no longer work by the time that you are reading this book.
+
+I also have some advice for new devlopers who want to start making video games with SDL. I think that you should learn the latest version because it is usually faster, has more tutorials, and generally will be expected to work on computers longer.
+
+At this time, there is little information on the last version of SDL1. Specifically, 1.2 was the last release in 2012.
+
+<https://github.com/libsdl-org/SDL-1.2>
+
+Even the developers say that you should not use this version for new projects. However, versions 2 and 3 are both receiving updates. If you go to the releases page, you will find that they explain what was changed in each update. Most of it is fixing bugs that were discovered.
+
+<https://github.com/libsdl-org/SDL/releases>
+
+Right now, it is perfectly reasonable to expect that new games be written in SDL 3. If you have already published a game that uses SDL 1 or 2, it will still continue to run for users. All this fuss over versions and changes in the name of functions is only something programmers have to worry about.
+
+Keeping up to date with the changes in technology is a full time job itself. However, it is easier when you are using the C Programming Language because it doesn't change as often as Java, Python, Lua, or JavaScript change.
+
+In the next chapter, I will be taking a break from C and instead introduce the concept of shell scripting and how it can be a fun way to explore programming without having to install something that isn't already on your computer!
