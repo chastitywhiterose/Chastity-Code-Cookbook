@@ -1,0 +1,1 @@
+While writing the book, Chastity's Code Cookbook, I discovered it was necessary to organize my C programs which use only the C Standard Library and keep them separate from those that use SDL. Beyond that, it was also necessary to separate the SDL2 programs from the SDL3 programs.

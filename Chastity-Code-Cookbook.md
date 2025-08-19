@@ -1842,7 +1842,7 @@ This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 ```
 
-Similarly, you can test whether SDL2 is install with this command.
+Similarly, you can test whether SDL2 is installed with this command.
 
 `sdl2-config --version`
 
@@ -1925,7 +1925,7 @@ Instead, I will recommend a software kit developed by [skeeto](https://github.co
 
 By downloading [w64devkit](https://github.com/skeeto/w64devkit), you get [Mingw-w64 GCC](https://www.mingw-w64.org/), [GNU Make](https://www.gnu.org/software/make/), and [busybox](https://frippery.org/busybox/). These tools will allow you to compile and run C programs, run advanced tasks with makefiles for GNU Make, and run most Linux commands (ls, cat, etc).
 
-The reason I recommend it is because it allows you to develop any program exactly the way you would on Linux without having to install Linux. Most people don't use Linux unless they are already into programming. If you are getting your start with C programming and your computer has Windows, then you will benefit from this.
+The reason I recommend it is because it allows you to develop any program exactly the way you would on Linux without having to install Linux. Most people don't use Linux unless they are already into programming. If you are getting your start with C programming and your computer has Windows, then you will benefit from this section.
 
 Step 1: Download w64devkit
 
@@ -1933,9 +1933,9 @@ Go to the repository here and go to the releases page. You will find several rel
 
 <https://github.com/skeeto/w64devkit/releases>
 
-The files with "x64" in their name refer to the modern Windows version that run on 64 bit processors. Most of the time, this is what you want.
+The files with "x64" in their name refer to the modern Windows version that run on 64 bit processors (usually this means Windows 7, 8 , 10,or 11). Most of the time, this is what you want.
 
-At the time of this writing, the latest version is [2.4.0](https://github.com/skeeto/w64devkit/releases/tag/v2.4.0). This means that the file to download is:
+At the time of this writing, the latest version of w64devkit is [2.4.0](https://github.com/skeeto/w64devkit/releases/tag/v2.4.0). This means that the file to download is:
 
 `w64devkit-x64-2.4.0.7z.exe`
 
@@ -2053,3 +2053,41 @@ echo %PATH%
 ```
 
 These commands change the path and confirm the path is changed within Windows. By doing this, any other versions of gcc that are installed on Windows will not accidentally be activated.
+
+## Notes About SDL Versions
+
+During my lifetime, I have witnessed the evolution of the SDL library. It has been used for many games. When I first started it, the SDL version 1 API (Application Programming Interface) was in common use. Then SDL2 came out and it was faster and had a lot more features.
+
+I used SDL2 for many years during the time it was in common use. When I started writing this book, the examples I wrote used the version 2 API. This leads to a compatibility problem for me as an author.
+
+Do I learn and update all my programs to use version 3? No, because if I do, then versions 4, 5, 6, and beyond will eventually be released and then they will probably once again change the names of functions or the number of arguments.
+
+For example, in the "SDL_CreateWindow" function of SDL3, it is no longer necessary to specify arguments for the Window position. Personally, I think this is a good change because it makes the code look better. However, it does make my SDL2 code invalid when trying to compile with SDL3.
+
+Also, the "SDL_Init" function and several others was changed. Instead of returning true on error and false on success, they now return true on success and false on error. That is why a ! was inserted the the SDL3 test program before "SDL_Init". The ! operator inverts the value of any true/false conditional statement.
+
+By tradition of the C Programming Language, 0 is considered false and any other number is considered true. It is important to remember that this does not apply to all programming languages though.
+
+Also, because SDL functions are written by real humans who have their own tastes, the behavior of functions might change from time to time. I personally find this very frustrating because it causes old code to break and not compile any more.
+
+I would also like to take this moment to explain why the "-Wall -ansi -pedantic" flags are included in some of my compile commands. These flags cause my code to fail if it does not comply with the 1989 standard of the C Programming Language. Yes, there are different versions of the C Programming Language. The ANSI or 1989 standard is my preferred version because I like old things. However, don't let my preference dictate the standard your programs use.
+
+Sometimes change is good. After all, when I first started using Linux, I wasn't very good at it, but now I have come to love it better than I did MS-DOS or Windows 98 (yes, Windows 98 was my favorite version of Windows that I had the pleasure of using).
+
+Besides that, I am transgender, so I know what it's like to go through some changes! That is why I wanted to clarify this chapter and explain that some of my code may no longer work by the time that you are reading this book.
+
+I also have some advice for new devlopers who want to start making video games with SDL. I think that you should learn the latest version because it is usually faster, has more tutorials, and generally will be expected to work on computers longer.
+
+At this time, there is little information on the last version of SDL1. Specifically, 1.2 was the last release in 2012.
+
+<https://github.com/libsdl-org/SDL-1.2>
+
+Even the developers say that you should not use this version for new projects. However, versions 2 and 3 are both receiving updates. If you go to the releases page, you will find that they explain what was changed in each update. Most of it is fixing bugs that were discovered.
+
+<https://github.com/libsdl-org/SDL/releases>
+
+Right now, it is perfectly reasonable to expect that new games be written in SDL 3. If you have already published a game that uses SDL 1 or 2, it will still continue to run for users. All this fuss over versions and changes in the name of functions is only something programmers have to worry about.
+
+Keeping up to date with the changes in technology is a full time job itself. However, it is easier when you are using the C Programming Language because it doesn't change as often as Java, Python, Lua, or JavaScript change.
+
+In the next chapter, I will be taking a break from C and instead introduce the concept of shell scripting and how it can be a fun way to explore programming without having to install something that isn't already on your computer!

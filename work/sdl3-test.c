@@ -38,5 +38,16 @@ int main(int argc, char **argv)
 
  https://wiki.libsdl.org/SDL3/README-migration
 
+ Windows Compile Command:
+
  gcc -Wall -ansi -pedantic sdl3-test.c -o sdl3-test -IC:/w64devkit/include/SDL3 -lSDL3 && sdl3-test
+
+ Linux Compile Command: (this is not fully tested yet)
+
+ With the sdl2-config script:
+ gcc -Wall -ansi -pedantic sdl3-test.c -o sdl3-test `sdl3-config --cflags --libs` && ./sdl3-test
+
+ Without the sdl2-config script:
+ gcc -Wall -ansi -pedantic sdl3-test.c -o sdl3-test -I/usr/include/SDL3 -lSDL3 && ./sdl3-test
+
 */

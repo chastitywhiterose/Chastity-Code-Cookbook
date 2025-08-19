@@ -32,3 +32,15 @@ int main(int argc, char **argv)
  SDL_Quit();
  return 0;
 }
+
+/*
+ This source file is an example to be included in Chastity's Code Cookbook. This example follows the SDL version 2 which works differently than the most up to date version (version 3 at this time). There is also an updated version in the same repository that works with version 3.
+
+ Linux Compile Command:
+
+ With the sdl2-config script:
+ gcc -Wall -ansi -pedantic sdl2-test.c -o sdl2-test `sdl2-config --cflags --libs` && ./sdl2-test
+
+ Without the sdl2-config script:
+ gcc -Wall -ansi -pedantic sdl2-test.c -o sdl2-test -I/usr/include/SDL2 -lSDL2 && ./sdl2-test
+*/
