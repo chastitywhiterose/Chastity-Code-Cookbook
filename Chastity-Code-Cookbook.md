@@ -2121,4 +2121,12 @@ Now you are ready to run the big command which compiles and links everything nee
 
 `gcc -Wall -ansi -pedantic sdl2-test.c -o sdl2-test -IC:/w64devkit/include/SDL2 -Dmain=SDL_main -LC:/w64devkit/lib -lmingw32 -lSDL2main -lSDL2 && sdl2-test`
 
-Note that unlike in Linux, where we have access to the "sdl2-config", these instructions were for compiling from within the default shell on Windows,
+Note that unlike in Linux, where we have access to the "sdl2-config", these instructions were for compiling from within the default shell on Windows. This is also sometimes called "cmd.exe".
+
+One final note: Although C is promoted as a portable programming language, and it is, I have had a lot of frustration when compiling things using Windows. Although this development environment as described here works on my laptop with Windows 11, I can never trust Windows as a development environment in general, especially for beginners. You can expect different Linux distributions to mostly work the same even if sometimes the package managers or desktop environments differ. Windows breaks compatibility a lot. Who is to say whether Windows 12 and beyond will still work with this method.
+
+When I graduated from Full Sail, I stopped using my Windows 11 laptop because everything I do (writing books, playing Chess and Tetris, and checking email) can be done just the same from Linux on my desktop PC which is older and yet boots up Debian Linux faster than Windows loads on the laptop.
+
+Anyone taking programming seriously should consider the convenience of using Linux and being able to install anything you desire with a package manager so that you don't have to solve a little problem programmers call "dependency hell".
+
+The next chapter will be entirely about shell scripting on Linux. If you are not interested in using Linux, skip it entirely because scripting and automating tasks is where Linux really shines and is one of the main reasons I fell in love with the Linux operating system and how it works.
