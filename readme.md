@@ -2032,14 +2032,6 @@ int main(int argc, char **argv)
 }
 ```
 
-Run the command:
-
-```
-gcc -Wall -ansi -pedantic sdl3-test.c -o sdl3-test -IC:/w64devkit/include/SDL3 -lSDL3 && ./sdl3-test
-```
-
-
-
 ### Running from regular Windows Command line:
 
 It is possible to use w64devkit without running the w64devkit executable. All you need to do is change your path so that when you run commands like gcc, your computer will know where to look for the compiler and libraries.
@@ -2053,6 +2045,14 @@ echo %PATH%
 ```
 
 These commands change the path and confirm the path is changed within Windows. By doing this, any other versions of gcc that are installed on Windows will not accidentally be activated.
+
+Finally, to compile and run the sdl3-test program, run the command:
+
+```
+gcc -Wall -ansi -pedantic sdl3-test.c -o sdl3-test -IC:/w64devkit/include/SDL3 -lSDL3 && sdl3-test
+```
+
+If all the steps are required, you will get a pink window that closes when you press escape or click the X in the upper right corner.
 
 ## Notes About SDL Versions
 
@@ -2088,6 +2088,45 @@ Even the developers say that you should not use this version for new projects. H
 
 Right now, it is perfectly reasonable to expect that new games be written in SDL 3. If you have already published a game that uses SDL 1 or 2, it will still continue to run for users. All this fuss over versions and changes in the name of functions is only something programmers have to worry about.
 
+## Recommended Versions
+
+These are the versons of SDL that I recommend using to compile the programs in this book. Most of them will use version SDL2 but I may introduce more SDL3 samples either in the book or as a bonus on the official Github repository which will accompany this book.
+
+<https://github.com/libsdl-org/SDL/releases/tag/release-2.32.8>
+
+<https://github.com/libsdl-org/SDL/releases/tag/release-3.2.20>
+
 Keeping up to date with the changes in technology is a full time job itself. However, it is easier when you are using the C Programming Language because it doesn't change as often as Java, Python, Lua, or JavaScript change.
 
-In the next chapter, I will be taking a break from C and instead introduce the concept of shell scripting and how it can be a fun way to explore programming without having to install something that isn't already on your computer!
+In the next chapter, I will be taking a break from C and instead introduce the concept of shell scripting and how it can be a fun way to explore programming without having to install something that isn't already on your computer! But before that, I will explain how to get SDL version 2 installed alongside version 3.
+
+## SDL Version 2 on Windows
+
+Using the first link above in this section, download the file
+
+`SDL2-devel-2.32.8-mingw.zip`
+
+After extracting the zip, find the "x86_64-w64-mingw32" folder. Inside this are 4 folders.
+
+Copy the folders (bin, include, lib, share) into the same folder where you installed w64devkit. If done correctly, then the "SDL2.dll" will be in the bin folder just like gcc is.
+
+Set the path to the place where w64devkit is installed.
+
+```
+PATH=C:/w64devkit/bin
+echo %PATH%
+```
+
+Now you are ready to run the big command which compiles and links everything needed to get an SDL2 program running. For example:
+
+`gcc -Wall -ansi -pedantic sdl2-test.c -o sdl2-test -IC:/w64devkit/include/SDL2 -Dmain=SDL_main -LC:/w64devkit/lib -lmingw32 -lSDL2main -lSDL2 && sdl2-test`
+
+Note that unlike in Linux, where we have access to the "sdl2-config", these instructions were for compiling from within the default shell on Windows. This is also sometimes called "cmd.exe".
+
+One final note: Although C is promoted as a portable programming language, and it is, I have had a lot of frustration when compiling things using Windows. Although this development environment as described here works on my laptop with Windows 11, I can never trust Windows as a development environment in general, especially for beginners. You can expect different Linux distributions to mostly work the same even if sometimes the package managers or desktop environments differ. Windows breaks compatibility a lot. Who is to say whether Windows 12 and beyond will still work with this method.
+
+When I graduated from Full Sail, I stopped using my Windows 11 laptop because everything I do (writing books, playing Chess and Tetris, and checking email) can be done just the same from Linux on my desktop PC which is older and yet boots up Debian Linux faster than Windows loads on the laptop.
+
+Anyone taking programming seriously should consider the convenience of using Linux and being able to install anything you desire with a package manager so that you don't have to solve a little problem programmers call "dependency hell".
+
+The next chapter will be entirely about shell scripting on Linux. If you are not interested in using Linux, skip it entirely because scripting and automating tasks is where Linux really shines and is one of the main reasons I fell in love with the Linux operating system and how it works.
