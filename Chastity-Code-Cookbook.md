@@ -2032,14 +2032,6 @@ int main(int argc, char **argv)
 }
 ```
 
-Run the command:
-
-```
-gcc -Wall -ansi -pedantic sdl3-test.c -o sdl3-test -IC:/w64devkit/include/SDL3 -lSDL3 && ./sdl3-test
-```
-
-
-
 ### Running from regular Windows Command line:
 
 It is possible to use w64devkit without running the w64devkit executable. All you need to do is change your path so that when you run commands like gcc, your computer will know where to look for the compiler and libraries.
@@ -2053,6 +2045,14 @@ echo %PATH%
 ```
 
 These commands change the path and confirm the path is changed within Windows. By doing this, any other versions of gcc that are installed on Windows will not accidentally be activated.
+
+Finally, to compile and run the sdl3-test program, run the command:
+
+```
+gcc -Wall -ansi -pedantic sdl3-test.c -o sdl3-test -IC:/w64devkit/include/SDL3 -lSDL3 && sdl3-test
+```
+
+If all the steps are required, you will get a pink window that closes when you press escape or click the X in the upper right corner.
 
 ## Notes About SDL Versions
 
@@ -2098,4 +2098,27 @@ These are the versons of SDL that I recommend using to compile the programs in t
 
 Keeping up to date with the changes in technology is a full time job itself. However, it is easier when you are using the C Programming Language because it doesn't change as often as Java, Python, Lua, or JavaScript change.
 
-In the next chapter, I will be taking a break from C and instead introduce the concept of shell scripting and how it can be a fun way to explore programming without having to install something that isn't already on your computer!
+In the next chapter, I will be taking a break from C and instead introduce the concept of shell scripting and how it can be a fun way to explore programming without having to install something that isn't already on your computer! But before that, I will explain how to get SDL version 2 installed alongside version 3.
+
+## SDL Version 2 on Windows
+
+Using the first link above in this section, download the file
+
+`SDL2-devel-2.32.8-mingw.zip`
+
+After extracting the zip, find the "x86_64-w64-mingw32" folder. Inside this are 4 folders.
+
+Copy the folders (bin, include, lib, share) into the same folder where you installed w64devkit. If done correctly, then the "SDL2.dll" will be in the bin folder just like gcc is.
+
+Set the path to the place where w64devkit is installed.
+
+```
+PATH=C:/w64devkit/bin
+echo %PATH%
+```
+
+Now you are ready to run the big command which compiles and links everything needed to get an SDL2 program running. For example:
+
+`gcc -Wall -ansi -pedantic sdl2-test.c -o sdl2-test -IC:/w64devkit/include/SDL2 -Dmain=SDL_main -LC:/w64devkit/lib -lmingw32 -lSDL2main -lSDL2 && sdl2-test`
+
+Note that unlike in Linux, where we have access to the "sdl2-config", these instructions were for compiling from within the default shell on Windows,
