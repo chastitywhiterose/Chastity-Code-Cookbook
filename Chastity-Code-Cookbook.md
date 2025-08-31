@@ -2139,15 +2139,93 @@ As much as I love the C Programming Language, I have to admit that it is not the
 
 Rather that going on about what a shell is and the subtle differences between compiled and interpreted languages, I am going to just give an example code.
 
+## Bash Count Script
+
 First, copy this text into a file named "main.sh".
 
+```
+#!/bin/bash
+declare -i  x y
+x=0;y=16
+while [ $x -lt $y ]
+do
+ echo $x
+ x=x+1
+done
+```
 
 Next, run the following command from the terminal:
 
 `chmod +x main.sh`
 
-This will add execute permissions to the script.
+This will add execute permissions to the script. Next, run the script the same way you would run an executable file.
 
+`./main.sh`
+
+You will see the numbers 0 to 15 printed because the above bash script is a program which counts starting from 0 and prints while the $x variable is less than 16. It is roughly the same as the counting example written in C included in chapter 1.
+
+## Bash Powers of 2
+
+```
+#!/bin/bash
+declare -i a b c
+a=0;
+b=32;
+c=1;
+while [ $a -le $b ]
+do
+ echo "2 ^ $a = $c";
+ a=a+1;
+ c=c+c;
+done
+```
+
+This prints the powers of two using the same basic methods as the chapter 1 C example.
+
+## Bash Prime Finder
+
+```
+ #!/bin/bash
+ declare -i x y length;
+ length=1000
+ declare -ai c #declare array of integers
+
+ x=0;
+ while [ $x -lt $length ]
+ do
+  c[x]=0;
+  x=x+1;
+ done
+ c[0]=1;
+
+ echo 2;
+
+ x=3;
+ while [ $x -lt $length ]
+ do
+  echo $x;
+  y=x;
+  while [ $y -lt $length ]
+  do
+   c[y]=1;
+   y=y+x;
+  done
+  while [ $x -lt $length ] &&  [ ${c[$x]} -gt 0 ]
+  do
+   x=x+2
+  done
+ done
+ ```
+ 
+The prime finder will be a lot slower than the same program written in C. However, for the primes less than 1000, you probably won't see the speed difference. Another aspect of the prime finder that is important is that it shows Bash supports arrays. Older shells, including the original Bourne Shell did not include the ability to define arrays or use them in any way. 
+
+Now you might be wondering: "what is the big deal with integer sequences? Can I do something actually useful with Bash?" The answer is of course yes! These are only examples to introduce the language.
+
+Keep in mind, when using Bash, there is no limited standard library because every command/program installed on your machine is a valid command as far as a shell like Bash is concerned!
+
+## Using Bash to build a Website
+
+To be written...
 
 ## Bash References
 
