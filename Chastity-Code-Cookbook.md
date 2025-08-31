@@ -2130,3 +2130,27 @@ When I graduated from Full Sail, I stopped using my Windows 11 laptop because ev
 Anyone taking programming seriously should consider the convenience of using Linux and being able to install anything you desire with a package manager so that you don't have to solve a little problem programmers call "dependency hell".
 
 The next chapter will be entirely about shell scripting on Linux. If you are not interested in using Linux, skip it entirely because scripting and automating tasks is where Linux really shines and is one of the main reasons I fell in love with the Linux operating system and how it works.
+
+# Chapter 6: Bash Scripting
+
+As much as I love the C Programming Language, I have to admit that it is not the most beginner friendly. This is because there are so many concepts that must be introduced all at the same time. In this chapter, I am going to introduce small example programs which are all scripts for the Bash (Bourne Again SHell).
+
+[Bash](https://www.gnu.org/software/bash/manual/bash.html) is a command interpreter or the default shell on most Linux systems. It is worth mentioning that you can also use it on Windows if you installed w64devkit according to my instructions in chapter 5. However, Bash is native to Linux and is where most people need to know it.
+
+Rather that going on about what a shell is and the subtle differences between compiled and interpreted languages, I am going to just give an example code.
+
+First, copy this text into a file named "main.sh".
+
+
+Next, run the following command from the terminal:
+
+`chmod +x main.sh`
+
+This will add execute permissions to the script.
+
+
+## Bash References
+
+The following links are very helpful when trying to figure out how to do a specific task using Bash.
+
+<https://www.gnu.org/software/bash/manual/bash.html>
