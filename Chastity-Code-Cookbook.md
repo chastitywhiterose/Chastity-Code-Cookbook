@@ -2271,11 +2271,32 @@ done
 
 By using those two scripts, or even theoretically combining them into one, you can write all the pages of a website in Markdown and convert them to HTML. In this case pandoc was used because it is the best conversion program I know about.
 
-But wait, if it is possible to create
+But wait, if it is possible to create any text file and also run any program within a Bash shell, wouldn't it be possible to create, compile, and run a C program all inside a bash script? The answer is: yes! In fact I will show to how it is done!
 
+```
+#!/bin/bash
+
+cat > main.c << EOF
+#include <stdio.h>
+int main()
+{
+ printf("Hello, Linux Shell!\n");
+ return 0;
+}
+EOF
+
+gcc -Wall -ansi -pedantic main.c -o main && ./main
+```
+
+Since Bash is the Linux shell, any command that you could run, including the compiler or interpreter of ANY programming language can be executed. Therefore, becoming a master of the Bash shell enables you to write websites or applications that use multple tools and/or programming languages.
+
+In fact, the power of Bash comes from the fact that it places no limitations on what you can do. I am not a master at Bash but I know enough to achieve some basic tasks like I have represented in this chapter. I have purchased e-books and read online documentation to find out exactly what I need to know.
 
 ## Bash References
 
 The following links are very helpful when trying to figure out how to do a specific task using Bash.
 
 <https://www.gnu.org/software/bash/manual/bash.html>
+
+<https://tldp.org/LDP/abs/html/abs-guide.html>
+

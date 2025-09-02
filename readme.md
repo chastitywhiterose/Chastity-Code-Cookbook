@@ -2130,3 +2130,173 @@ When I graduated from Full Sail, I stopped using my Windows 11 laptop because ev
 Anyone taking programming seriously should consider the convenience of using Linux and being able to install anything you desire with a package manager so that you don't have to solve a little problem programmers call "dependency hell".
 
 The next chapter will be entirely about shell scripting on Linux. If you are not interested in using Linux, skip it entirely because scripting and automating tasks is where Linux really shines and is one of the main reasons I fell in love with the Linux operating system and how it works.
+
+# Chapter 6: Bash Scripting
+
+As much as I love the C Programming Language, I have to admit that it is not the most beginner friendly. This is because there are so many concepts that must be introduced all at the same time. In this chapter, I am going to introduce small example programs which are all scripts for the Bash (Bourne Again SHell).
+
+[Bash](https://www.gnu.org/software/bash/manual/bash.html) is a command interpreter or the default shell on most Linux systems. It is worth mentioning that you can also use it on Windows if you installed w64devkit according to my instructions in chapter 5. However, Bash is native to Linux and is where most people need to know it.
+
+Rather that going on about what a shell is and the subtle differences between compiled and interpreted languages, I am going to just give an example code.
+
+## Bash Count Script
+
+First, copy this text into a file named "main.sh".
+
+```
+#!/bin/bash
+declare -i  x y
+x=0;y=16
+while [ $x -lt $y ]
+do
+ echo $x
+ x=x+1
+done
+```
+
+Next, run the following command from the terminal:
+
+`chmod +x main.sh`
+
+This will add execute permissions to the script. Next, run the script the same way you would run an executable file.
+
+`./main.sh`
+
+You will see the numbers 0 to 15 printed because the above bash script is a program which counts starting from 0 and prints while the $x variable is less than 16. It is roughly the same as the counting example written in C included in chapter 1.
+
+## Bash Powers of 2
+
+```
+#!/bin/bash
+declare -i a b c
+a=0;
+b=32;
+c=1;
+while [ $a -le $b ]
+do
+ echo "2 ^ $a = $c";
+ a=a+1;
+ c=c+c;
+done
+```
+
+This prints the powers of two using the same basic methods as the chapter 1 C example.
+
+## Bash Prime Finder
+
+```
+ #!/bin/bash
+ declare -i x y length;
+ length=1000
+ declare -ai c #declare array of integers
+
+ x=0;
+ while [ $x -lt $length ]
+ do
+  c[x]=0;
+  x=x+1;
+ done
+ c[0]=1;
+
+ echo 2;
+
+ x=3;
+ while [ $x -lt $length ]
+ do
+  echo $x;
+  y=x;
+  while [ $y -lt $length ]
+  do
+   c[y]=1;
+   y=y+x;
+  done
+  while [ $x -lt $length ] &&  [ ${c[$x]} -gt 0 ]
+  do
+   x=x+2
+  done
+ done
+ ```
+ 
+The prime finder will be a lot slower than the same program written in C. However, for the primes less than 1000, you probably won't see the speed difference. Another aspect of the prime finder that is important is that it shows Bash supports arrays. Older shells, including the original Bourne Shell did not include the ability to define arrays or use them in any way. 
+
+Now you might be wondering: "what is the big deal with integer sequences? Can I do something actually useful with Bash?" The answer is of course yes! These are only examples to introduce the language.
+
+Keep in mind, when using Bash, there is no limited standard library because every command/program installed on your machine is a valid command as far as a shell like Bash is concerned!
+
+## Using Bash to build a Website
+
+This book is written in Markdown and I commonly use the program "pandoc" to convert documents to HTML for websites. This is because Markdown takes less time to write than HTML does.
+
+You can use bash to create any type of text document inside a script, for example, consider the following script which will create a directory named "public" and create two markdown files inside it.
+
+```
+#!/bin/bash
+
+mkdir -p public
+
+cat > public/index.md << EOF
+# Home Page
+Welcome to the home page of my website! There is not much here but you can learn more [about me](about.html).
+EOF
+
+cat > public/about.md << EOF
+# About Me
+One thing you should know about me is that I prefer computers over people because they operate correctly most of the time, and even when they don't, I can buy a replacement. This is why I have two computers and no friends.
+
+Go back to [home page](index.html).
+EOF
+
+```
+
+That script works with the [heredoc syntax](https://sysxplore.com/heredocs-in-bash/) which is native to bash. This means that one script can create multiple files by redirecting multiline strings to standard input and then redirecting output to the name of a file.
+
+The previous script created two markdown files but it did not convert them to HTML. The next script completes the process.
+
+For this next example, I will show you the bash script which converts all the Markdown files in the "public" directory to HTML with pandoc. You will need to install pandoc for it to actually work on your machine, but this is not very hard to do compared to the development tools described in chapter 5.
+
+```
+#!/bin/bash
+
+echo "Converting all Markdown files in public directory to html with pandoc"
+
+for file in public/*.md;
+do
+
+command="pandoc ${file} -o ${file%.*}.html -s --quiet"
+echo $command
+$command
+
+done
+```
+
+By using those two scripts, or even theoretically combining them into one, you can write all the pages of a website in Markdown and convert them to HTML. In this case pandoc was used because it is the best conversion program I know about.
+
+But wait, if it is possible to create any text file and also run any program within a Bash shell, wouldn't it be possible to create, compile, and run a C program all inside a bash script? The answer is: yes! In fact I will show to how it is done!
+
+```
+#!/bin/bash
+
+cat > main.c << EOF
+#include <stdio.h>
+int main()
+{
+ printf("Hello, Linux Shell!\n");
+ return 0;
+}
+EOF
+
+gcc -Wall -ansi -pedantic main.c -o main && ./main
+```
+
+Since Bash is the Linux shell, any command that you could run, including the compiler or interpreter of ANY programming language can be executed. Therefore, becoming a master of the Bash shell enables you to write websites or applications that use multple tools and/or programming languages.
+
+In fact, the power of Bash comes from the fact that it places no limitations on what you can do. I am not a master at Bash but I know enough to achieve some basic tasks like I have represented in this chapter. I have purchased e-books and read online documentation to find out exactly what I need to know.
+
+## Bash References
+
+The following links are very helpful when trying to figure out how to do a specific task using Bash.
+
+<https://www.gnu.org/software/bash/manual/bash.html>
+
+<https://tldp.org/LDP/abs/html/abs-guide.html>
+
