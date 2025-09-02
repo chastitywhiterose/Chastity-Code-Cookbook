@@ -2225,7 +2225,54 @@ Keep in mind, when using Bash, there is no limited standard library because ever
 
 ## Using Bash to build a Website
 
-To be written...
+This book is written in Markdown and I commonly use the program "pandoc" to convert documents to HTML for websites. This is because Markdown takes less time to write than HTML does.
+
+You can use bash to create any type of text document inside a script, for example, consider the following script which will create a directory named "public" and create two markdown files inside it.
+
+```
+#!/bin/bash
+
+mkdir -p public
+
+cat > public/index.md << EOF
+# Home Page
+Welcome to the home page of my website! There is not much here but you can learn more [about me](about.html).
+EOF
+
+cat > public/about.md << EOF
+# About Me
+One thing you should know about me is that I prefer computers over people because they operate correctly most of the time, and even when they don't, I can buy a replacement. This is why I have two computers and no friends.
+
+Go back to [home page](index.html).
+EOF
+
+```
+
+That script works with the [heredoc syntax](https://sysxplore.com/heredocs-in-bash/) which is native to bash. This means that one script can create multiple files by redirecting multiline strings to standard input and then redirecting output to the name of a file.
+
+The previous script created two markdown files but it did not convert them to HTML. The next script completes the process.
+
+For this next example, I will show you the bash script which converts all the Markdown files in the "public" directory to HTML with pandoc. You will need to install pandoc for it to actually work on your machine, but this is not very hard to do compared to the development tools described in chapter 5.
+
+```
+#!/bin/bash
+
+echo "Converting all Markdown files in public directory to html with pandoc"
+
+for file in public/*.md;
+do
+
+command="pandoc ${file} -o ${file%.*}.html -s --quiet"
+echo $command
+$command
+
+done
+```
+
+By using those two scripts, or even theoretically combining them into one, you can write all the pages of a website in Markdown and convert them to HTML. In this case pandoc was used because it is the best conversion program I know about.
+
+But wait, if it is possible to create
+
 
 ## Bash References
 
