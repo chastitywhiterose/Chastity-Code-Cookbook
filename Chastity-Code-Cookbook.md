@@ -2304,6 +2304,33 @@ The following links are very helpful when trying to figure out how to do a speci
 
 ## Chapter 7: Web Development
 
-So far in this book, I have shown examples of creating compiled programs with the C Programming Language. I even showed a few examples of using SDL in combination with C to make graphical animations or games. These kinds of programs compile to machine code and run faster than anything else because they are run by the CPU (Central Processing Unit) directly.
+So far in this book, I have shown examples of creating compiled programs with the C Programming Language. I even showed a few examples of using SDL in combination with C to make graphical animations or games. These kinds of programs compile to machine code and run faster than anything else because they are run by the CPU (Central Processing Unit) directly. Most video games are written in C or C++ because of the speed of execution, even though writing the programs can take a long time.
 
-In chapter 6, I showed a few examples of Bash scripting. Bash is an interpreted language. What this means is that the Bash program itself was written in C.
+In chapter 6, I showed a few examples of Bash scripting. Bash is an interpreted language. What this means is that the Bash program itself was written in C but that it inteprets the scripts from within it rather than needing to compile them. This is slower but it is best for small scripts that don't require the same speed as C. For example, a script which backs up files or converts them to another format doesn't need to be fast because it is not done 60 times per second like a video game written in C would.
+
+But in this chapter, I am going to introduce the concept of web development using HTML, CSS, and JavaScript. This introduction will be very basic because I am not an expert in this. However, creating small websites using these languages is not very hard compared to writing programs with C or Bash. In fact, that's because you are not writing programs so much as you are writing description languages for how some kind of text, link, or image should look like. This will all make sense once you see some examples.
+
+```
+<!DOCTYPE html>
+<html>
+<head>
+<title>Web Page Example by Chastity White Rose</title>
+</head>
+<body>
+<h1 id="this-is-a-web-page">This is a Web Page</h1>
+<p>This is a small example of what a one page website can look like. Text can also be <em>italic</em>, <strong>bold</strong>, or
+<strong><em>even a combination of both</em></strong>. A
+website can contain links to other pages or websites. For example, below
+is a link to one of my YouTube videos.</p>
+<p><a href="https://www.youtube.com/watch?v=1CLDbnesnEg">Chaste Chess:
+Undo Feature Added</a></p>
+<p>Even pictures can be included in a web page.</p>
+<img
+src="https://chastitychesschallenge.com/wp-content/uploads/2025/03/chess_start.png"
+alt="chess_start.png" />
+</body>
+</html>
+```
+
+That example uses just enough HTML tags to show some of the capability that is most important for the web. Text, images, and links are mostly what websites are built with.
+
