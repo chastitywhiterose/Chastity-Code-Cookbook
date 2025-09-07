@@ -2302,13 +2302,15 @@ The following links are very helpful when trying to figure out how to do a speci
 
 <https://tldp.org/LDP/abs/html/abs-guide.html>
 
-## Chapter 7: Web Development
+# Chapter 7: Web Development
 
 So far in this book, I have shown examples of creating compiled programs with the C Programming Language. I even showed a few examples of using SDL in combination with C to make graphical animations or games. These kinds of programs compile to machine code and run faster than anything else because they are run by the CPU (Central Processing Unit) directly. Most video games are written in C or C++ because of the speed of execution, even though writing the programs can take a long time.
 
 In chapter 6, I showed a few examples of Bash scripting. Bash is an interpreted language. What this means is that the Bash program itself was written in C but that it inteprets the scripts from within it rather than needing to compile them. This is slower but it is best for small scripts that don't require the same speed as C. For example, a script which backs up files or converts them to another format doesn't need to be fast because it is not done 60 times per second like a video game written in C would.
 
-But in this chapter, I am going to introduce the concept of web development using HTML, CSS, and JavaScript. This introduction will be very basic because I am not an expert in this. However, creating small websites using these languages is not very hard compared to writing programs with C or Bash. In fact, that's because you are not writing programs so much as you are writing description languages for how some kind of text, link, or image should look like. This will all make sense once you see some examples.
+But in this chapter, I am going to introduce the concept of web development using HTML, CSS, and JavaScript. This introduction will be very basic because I am not an expert in this. However, creating small websites using these languages is not very hard compared to writing programs with C or Bash. In fact, that's because you are not writing programs so much as you are writing description languages for how some kind of text, link, or image should look like. This will all make sense once you see some examples. Copy the following text and save it as an HTML file (.html extension).
+
+## Web Page Example
 
 ```
 <!DOCTYPE html>
@@ -2332,5 +2334,48 @@ alt="chess_start.png" />
 </html>
 ```
 
-That example uses just enough HTML tags to show some of the capability that is most important for the web. Text, images, and links are mostly what websites are built with.
+That example uses just enough HTML tags to show some of the capability that is most important for the web. Text, images, and links are mostly what websites are built with. You can open it with Firefox, Google Chrome, and many other browsers. It is not that fancy and should work with everything.
 
+Most web browsers will display the page as black text on a white background. This is similar to a paperback book with white paper and black ink. But what if we wanted to reverse the colors and then also make the text bigger and easier to read? For that we can use just a little bit of CSS. See the edited example below where I added the style into the head section.
+
+## Reverse Colors Web Page Example
+
+```
+<!DOCTYPE html>
+<html>
+<head>
+<title>Reverse Colors Web Page Example by Chastity White Rose</title>
+<style>
+	html
+	{
+	font-size: 40px;
+	color: #ffffff;
+	background-color: #000000;
+	}
+</style>
+</head>
+<body>
+<h1 id="this-is-a-web-page">This is a Web Page</h1>
+<p>This is a small example of what a one page website can look like. Text can also be <em>italic</em>, <strong>bold</strong>, or
+<strong><em>even a combination of both</em></strong>. A
+website can contain links to other pages or websites. For example, below
+is a link to one of my YouTube videos.</p>
+<p><a href="https://www.youtube.com/watch?v=1CLDbnesnEg">Chaste Chess:
+Undo Feature Added</a></p>
+<p>Even pictures can be included in a web page.</p>
+<img
+src="https://chastitychesschallenge.com/wp-content/uploads/2025/03/chess_start.png"
+alt="chess_start.png" />
+</body>
+</html>
+```
+
+CSS is the modern way of changing the style of text and images on the page, but let me tell you, back in the 90s it was not that way and there were much harder and time consuming methods used to modify the color of text per element. Because of this, HTML got a bad reputation for being hard to write, but really it's not so bad, if you are a complete nerd with no social life like I am!
+
+JavaScript is another language which fits into the mix of HTML and CSS for making web pages easier to navigate. However, I must warn you, JavaScript is powerful and is sometimes used for evil. Some people disable JavaScript in their browser settings because it is used to load all kinds of advertisements that ruin the experience.
+
+But JavaScript is as powerful as C or Bash is as a programming language. However, there are some restrictions placed on it when run as part of a web page.
+
+- JavaScript can't create or delete files on your computer nor run programs on your computer the same way a Bash script can. It is meant to be used only within the context of the web browser. When you close Google Chrome or whatever you use, the HTML, CSS, and JavaScript should all cease. Consider it a small jail where it can't harm the rest of your computer. Personally I am glad for this because I am not a very good JavaScript programmer and I would not want to accidentally do something stupid!
+
+In fact, this makes JavaScript a great first programming language if you are new to the idea of computer programming.
