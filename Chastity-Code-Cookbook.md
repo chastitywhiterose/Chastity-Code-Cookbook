@@ -2236,11 +2236,13 @@ mkdir -p public
 
 cat > public/index.md << EOF
 # Home Page
+
 Welcome to the home page of my website! There is not much here but you can learn more [about me](about.html).
 EOF
 
 cat > public/about.md << EOF
 # About Me
+
 One thing you should know about me is that I prefer computers over people because they operate correctly most of the time, and even when they don't, I can buy a replacement. This is why I have two computers and no friends.
 
 Go back to [home page](index.html).
@@ -2300,3 +2302,8 @@ The following links are very helpful when trying to figure out how to do a speci
 
 <https://tldp.org/LDP/abs/html/abs-guide.html>
 
+## Chapter 7: Web Development
+
+So far in this book, I have shown examples of creating compiled programs with the C Programming Language. I even showed a few examples of using SDL in combination with C to make graphical animations or games. These kinds of programs compile to machine code and run faster than anything else because they are run by the CPU (Central Processing Unit) directly.
+
+In chapter 6, I showed a few examples of Bash scripting. Bash is an interpreted language. What this means is that the Bash program itself was written in C.
