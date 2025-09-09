@@ -2379,3 +2379,58 @@ But JavaScript is as powerful as C or Bash is as a programming language. However
 - JavaScript can't create or delete files on your computer nor run programs on your computer the same way a Bash script can. It is meant to be used only within the context of the web browser. When you close Google Chrome or whatever you use, the HTML, CSS, and JavaScript should all cease. Consider it a small jail where it can't harm the rest of your computer. Personally I am glad for this because I am not a very good JavaScript programmer and I would not want to accidentally do something stupid!
 
 In fact, this makes JavaScript a great first programming language if you are new to the idea of computer programming.
+
+To introduce JavaScript and white it might be helpful, I will use an example script which displays the square numbers. I will explain the meaning of the square numbers later after you see the sequence.
+
+## Square Numbers Demo 1
+
+```
+<!DOCTYPE html>
+<html>
+<head>
+<title>Square Numbers Demo 1</title>
+</head>
+<body>
+<h1>The Square Numbers Sequence</h1>
+
+<p id="main">This is the main paragraph!</p>
+
+<script>
+
+var s=""
+var a=0,b=1,c=0;
+
+while(a<=16)
+{
+ s+=c+" ";
+ a++;
+ c+=b;
+ b+=2;
+}
+
+document.getElementById("main").innerHTML = s;
+
+</script>
+
+</body>
+</html>
+```
+
+If you open that web page, you will see the number sequence
+
+	0 1 4 9 16 25 36 49 64 81 100 121 144 169 196 225 256
+
+The [square numbers](https://en.wikipedia.org/wiki/Square_number) are the integers that are the perfect square of each integer. For example, 5 rows of 5 objects can be used to form a square of those objects. There would be 25 total objects. Notice that my code does not use multiplication to multiply the numbers by themselves. Instead, I used the pattern of addition because if you just start at 0 and keep adding the next odd integer (1,3,5,7, etc) then you will get the next square number without the need for multiplication.
+
+But as far as the JavaScript code in the above example, there is actually a lot happening. I defined a paragraph with an id of "main". The text in the paragraph said "This is the main paragraph!". Chances are, if you actually loaded this script, you never saw this message because it was overwritten by the script.
+
+### How does the script work?
+
+First, we define a variable named "s" which is short for string. We set it to "" which is an empty string.
+
+Then we define variables a,b,and c which are integers. Notices that all the variables are defined with the "var" keyword. This is because JavaScript knows the type of variables by what you set them equal to. It knows that s is a string because of the quotes in the assignment. Since a, b, and c are set to integers, they are understood as integers and can be used in arithmetic assignments exactly as you would see in a C program.
+
+Finally, each time the loop goes, the integer c variable is appended to the s string as well as a space. The result is that the string builds all the numbers and then later is assigned to the main paragraph.
+
+Pay close attention to the **document.getElementById** function. It is used to access an element by using the id of an HTML element. That means that as the programmer, you are responsible for setting the correct id in the HTML as well as the JavaScript code.
+
