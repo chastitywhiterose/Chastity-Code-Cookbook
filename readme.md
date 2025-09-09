@@ -2236,11 +2236,13 @@ mkdir -p public
 
 cat > public/index.md << EOF
 # Home Page
+
 Welcome to the home page of my website! There is not much here but you can learn more [about me](about.html).
 EOF
 
 cat > public/about.md << EOF
 # About Me
+
 One thing you should know about me is that I prefer computers over people because they operate correctly most of the time, and even when they don't, I can buy a replacement. This is why I have two computers and no friends.
 
 Go back to [home page](index.html).
@@ -2300,3 +2302,252 @@ The following links are very helpful when trying to figure out how to do a speci
 
 <https://tldp.org/LDP/abs/html/abs-guide.html>
 
+# Chapter 7: Web Development
+
+So far in this book, I have shown examples of creating compiled programs with the C Programming Language. I even showed a few examples of using SDL in combination with C to make graphical animations or games. These kinds of programs compile to machine code and run faster than anything else because they are run by the CPU (Central Processing Unit) directly. Most video games are written in C or C++ because of the speed of execution, even though writing the programs can take a long time.
+
+In chapter 6, I showed a few examples of Bash scripting. Bash is an interpreted language. What this means is that the Bash program itself was written in C but that it inteprets the scripts from within it rather than needing to compile them. This is slower but it is best for small scripts that don't require the same speed as C. For example, a script which backs up files or converts them to another format doesn't need to be fast because it is not done 60 times per second like a video game written in C would.
+
+But in this chapter, I am going to introduce the concept of web development using HTML, CSS, and JavaScript. This introduction will be very basic because I am not an expert in this. However, creating small websites using these languages is not very hard compared to writing programs with C or Bash. In fact, that's because you are not writing programs so much as you are writing description languages for how some kind of text, link, or image should look like. This will all make sense once you see some examples. Copy the following text and save it as an HTML file (.html extension).
+
+## Web Page Example
+
+```
+<!DOCTYPE html>
+<html>
+<head>
+<title>Web Page Example by Chastity White Rose</title>
+</head>
+<body>
+<h1 id="this-is-a-web-page">This is a Web Page</h1>
+<p>This is a small example of what a one page website can look like. Text can also be <em>italic</em>, <strong>bold</strong>, or
+<strong><em>even a combination of both</em></strong>. A
+website can contain links to other pages or websites. For example, below
+is a link to one of my YouTube videos.</p>
+<p><a href="https://www.youtube.com/watch?v=1CLDbnesnEg">Chaste Chess:
+Undo Feature Added</a></p>
+<p>Even pictures can be included in a web page.</p>
+<img
+src="https://chastitychesschallenge.com/wp-content/uploads/2025/03/chess_start.png"
+alt="chess_start.png" />
+</body>
+</html>
+```
+
+That example uses just enough HTML tags to show some of the capability that is most important for the web. Text, images, and links are mostly what websites are built with. You can open it with Firefox, Google Chrome, and many other browsers. It is not that fancy and should work with everything.
+
+Most web browsers will display the page as black text on a white background. This is similar to a paperback book with white paper and black ink. But what if we wanted to reverse the colors and then also make the text bigger and easier to read? For that we can use just a little bit of CSS. See the edited example below where I added the style into the head section.
+
+## Reverse Colors Web Page Example
+
+```
+<!DOCTYPE html>
+<html>
+<head>
+<title>Reverse Colors Web Page Example by Chastity White Rose</title>
+<style>
+	html
+	{
+	font-size: 40px;
+	color: #ffffff;
+	background-color: #000000;
+	}
+</style>
+</head>
+<body>
+<h1 id="this-is-a-web-page">This is a Web Page</h1>
+<p>This is a small example of what a one page website can look like. Text can also be <em>italic</em>, <strong>bold</strong>, or
+<strong><em>even a combination of both</em></strong>. A
+website can contain links to other pages or websites. For example, below
+is a link to one of my YouTube videos.</p>
+<p><a href="https://www.youtube.com/watch?v=1CLDbnesnEg">Chaste Chess:
+Undo Feature Added</a></p>
+<p>Even pictures can be included in a web page.</p>
+<img
+src="https://chastitychesschallenge.com/wp-content/uploads/2025/03/chess_start.png"
+alt="chess_start.png" />
+</body>
+</html>
+```
+
+CSS is the modern way of changing the style of text and images on the page, but let me tell you, back in the 90s it was not that way and there were much harder and time consuming methods used to modify the color of text per element. Because of this, HTML got a bad reputation for being hard to write, but really it's not so bad, if you are a complete nerd with no social life like I am!
+
+JavaScript is another language which fits into the mix of HTML and CSS for making web pages easier to navigate. However, I must warn you, JavaScript is powerful and is sometimes used for evil. Some people disable JavaScript in their browser settings because it is used to load all kinds of advertisements that ruin the experience.
+
+But JavaScript is as powerful as C or Bash is as a programming language. However, there are some restrictions placed on it when run as part of a web page.
+
+- JavaScript can't create or delete files on your computer nor run programs on your computer the same way a Bash script can. It is meant to be used only within the context of the web browser. When you close Google Chrome or whatever you use, the HTML, CSS, and JavaScript should all cease. Consider it a small jail where it can't harm the rest of your computer. Personally I am glad for this because I am not a very good JavaScript programmer and I would not want to accidentally do something stupid!
+
+In fact, this makes JavaScript a great first programming language if you are new to the idea of computer programming.
+
+To introduce JavaScript and white it might be helpful, I will use an example script which displays the square numbers. I will explain the meaning of the square numbers later after you see the sequence.
+
+## Square Numbers Demo 1
+
+```
+<!DOCTYPE html>
+<html>
+<head>
+<title>Square Numbers Demo 1</title>
+</head>
+<body>
+<h1>The Square Numbers Sequence</h1>
+
+<p id="main">This is the main paragraph!</p>
+
+<script>
+
+var s=""
+var a=0,b=1,c=0;
+
+while(a<=16)
+{
+ s+=c+" ";
+ a++;
+ c+=b;
+ b+=2;
+}
+
+document.getElementById("main").innerHTML = s;
+
+</script>
+
+</body>
+</html>
+```
+
+If you open that web page, you will see the number sequence
+
+	0 1 4 9 16 25 36 49 64 81 100 121 144 169 196 225 256
+
+The [square numbers](https://en.wikipedia.org/wiki/Square_number) are the integers that are the perfect square of each integer. For example, 5 rows of 5 objects can be used to form a square of those objects. There would be 25 total objects. Notice that my code does not use multiplication to multiply the numbers by themselves. Instead, I used the pattern of addition because if you just start at 0 and keep adding the next odd integer (1,3,5,7, etc) then you will get the next square number without the need for multiplication.
+
+But as far as the JavaScript code in the above example, there is actually a lot happening. I defined a paragraph with an id of "main". The text in the paragraph said "This is the main paragraph!". Chances are, if you actually loaded this script, you never saw this message because it was overwritten by the script.
+
+### How does the script work?
+
+First, we define a variable named "s" which is short for string. We set it to "" which is an empty string.
+
+Then we define variables a,b,and c which are integers. Notices that all the variables are defined with the "var" keyword. This is because JavaScript knows the type of variables by what you set them equal to. It knows that s is a string because of the quotes in the assignment. Since a, b, and c are set to integers, they are understood as integers and can be used in arithmetic assignments exactly as you would see in a C program.
+
+Finally, each time the loop goes, the integer c variable is appended to the s string as well as a space. The result is that the string builds all the numbers and then later is assigned to the main paragraph.
+
+Pay close attention to the **document.getElementById** function. It is used to access an element by using the id of an HTML element. That means that as the programmer, you are responsible for setting the correct id in the HTML as well as the JavaScript code.
+
+There is one problem with the script above. Because the user can't see the initial value of the paragraph, wouldn't it be neat if there was a way to see it and then execute the script when the user clicks a button? Actually there is! See the next example!
+
+## Square Numbers Demo 2
+
+```
+<!DOCTYPE html>
+<html>
+<head>
+<title>Square Numbers Demo 2</title>
+
+<script>
+
+function square_numbers()
+{
+ var s=""
+ var a=0,b=1,c=0;
+
+ while(a<=16)
+ {
+  s+=c+" ";
+  a++;
+  c+=b;
+  b+=2;
+ }
+
+ document.getElementById("main").innerHTML = s;
+}
+
+</script>
+
+</head>
+<body>
+<h1>The Square Numbers Sequence</h1>
+
+<p id="main">This is the main paragraph!</p>
+
+<button type="button" onclick="square_numbers()">Click this button, I dare you!</button>
+
+</body>
+</html>
+```
+
+## Code in the "head" vs the "body"
+
+In demo 1, the script was part of the body and was placed after the main paragraph. It overwrote the paragraph before anyone could see it. In demo 2, the script was in the head of the document and defined as a function.
+
+The second method of defining functions in the head of the HTML document is the same way as is usually done in C. We define functions that will be called later, and not necessarily in a linear order. The second method is better for pages that expect the user to click something. The first method is fine when we are just trying to confirm that JavaScript is working by seeing some output.
+
+By now you might be wondering, what is the point of outputting a bunch of numbers and text? Can't we already do that faster with the C or Bash languages? The answer is yes, there are already better methods for such simple examples, but this is only the beginning! JavaScript is also capable of creating graphics using the canvas element! The next example is not just a demo but is a full web application contained in a single page which lets the user create any size of checkerboard they want depending on how they fill out the numbers in the text fields before clicking a button.
+
+## Chastity's JavaScript Checkerboard
+
+```
+<!DOCTYPE html>
+<html>
+<head>
+<title>Chastity's JavaScript Checkerboard</title>
+<script>
+
+function chastity_checker()
+{
+
+//this gets the data from the text
+var rows    = parseInt( document.getElementById("text_rows").value );
+var columns = parseInt( document.getElementById("text_columns").value );
+var scale   = parseInt( document.getElementById("text_scale").value );
+
+document.getElementById("p").innerHTML='<canvas id="canvas" width="0" height="0" ">Your browser does not support the HTML5 canvas tag.</canvas>';
+var c=document.getElementById("canvas");
+
+c.width=rows*scale;
+c.height=columns*scale;
+
+var ctx=c.getContext("2d");
+
+var colors=new Array("#000000","#FFFFFF");
+//var colors=new Array("#FF0000","#00FF00","#0000FF");
+//var colors=new Array("#FF0000","#FFFF00","#00FF00","#00FFFF","#0000FF","#FF00FF");
+
+var i=0;
+var x=0;
+while(x<c.width)
+{
+ var i1=i;i=(i+1)%colors.length;
+ var y=0;
+ while(y<c.height)
+ {
+  ctx.fillStyle=colors[i1];i1=(i1+1)%colors.length;
+  ctx.fillRect(x,y,scale,scale);
+  y+=scale;
+ }
+ 
+ x+=scale;
+}
+
+ return;
+}
+
+</script>
+</head>
+<body>
+
+<h1>Chastity's JavaScript Checkerboard</h1>
+<p id="p">Enter the integers of your choice and then click the button below to run! You can define how many rows and columns are in this checkerboard and also how large in pixels each one is by changing the scale!</p>
+
+<input type="text" id="text_rows" value="8" > rows<br>
+<input type="text" id="text_columns" value="8" > columns<br>
+<input type="text" id="text_scale" value="90" > scale<br>
+<button type="button" onclick="chastity_checker()">make checkerboard</button><br>
+
+</body>
+</html>
+```
+
+Fun fact, that checkerboard making web page was actually created in the year 2013. I used to write a lot of JavaScript but forgot most of it. Luckily I have books I bought to remind me how to do the things I have forgotten.
+
+The fact that the modern web browsers support the canvas element allows images to be arbitrarily created inside web pages based on user input. This means that theoretically, JavaScript can be used to make games that play in a web browser. I am not that skilled yet but the potential is there.

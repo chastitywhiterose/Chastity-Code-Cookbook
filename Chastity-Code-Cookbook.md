@@ -2482,5 +2482,72 @@ In demo 1, the script was part of the body and was placed after the main paragra
 
 The second method of defining functions in the head of the HTML document is the same way as is usually done in C. We define functions that will be called later, and not necessarily in a linear order. The second method is better for pages that expect the user to click something. The first method is fine when we are just trying to confirm that JavaScript is working by seeing some output.
 
-By now you might be wondering, what is the point of outputting a bunch of numbers and text? Can't we already do that faster with the C or Bash languages? The answer is yes, there are already better methods for such simple examples, but this is only the beginning! JavaScript is also capable of creating graphics using the canvas element!
+By now you might be wondering, what is the point of outputting a bunch of numbers and text? Can't we already do that faster with the C or Bash languages? The answer is yes, there are already better methods for such simple examples, but this is only the beginning! JavaScript is also capable of creating graphics using the canvas element! The next example is not just a demo but is a full web application contained in a single page which lets the user create any size of checkerboard they want depending on how they fill out the numbers in the text fields before clicking a button.
 
+## Chastity's JavaScript Checkerboard
+
+```
+<!DOCTYPE html>
+<html>
+<head>
+<title>Chastity's JavaScript Checkerboard</title>
+<script>
+
+function chastity_checker()
+{
+
+//this gets the data from the text
+var rows    = parseInt( document.getElementById("text_rows").value );
+var columns = parseInt( document.getElementById("text_columns").value );
+var scale   = parseInt( document.getElementById("text_scale").value );
+
+document.getElementById("p").innerHTML='<canvas id="canvas" width="0" height="0" ">Your browser does not support the HTML5 canvas tag.</canvas>';
+var c=document.getElementById("canvas");
+
+c.width=rows*scale;
+c.height=columns*scale;
+
+var ctx=c.getContext("2d");
+
+var colors=new Array("#000000","#FFFFFF");
+//var colors=new Array("#FF0000","#00FF00","#0000FF");
+//var colors=new Array("#FF0000","#FFFF00","#00FF00","#00FFFF","#0000FF","#FF00FF");
+
+var i=0;
+var x=0;
+while(x<c.width)
+{
+ var i1=i;i=(i+1)%colors.length;
+ var y=0;
+ while(y<c.height)
+ {
+  ctx.fillStyle=colors[i1];i1=(i1+1)%colors.length;
+  ctx.fillRect(x,y,scale,scale);
+  y+=scale;
+ }
+ 
+ x+=scale;
+}
+
+ return;
+}
+
+</script>
+</head>
+<body>
+
+<h1>Chastity's JavaScript Checkerboard</h1>
+<p id="p">Enter the integers of your choice and then click the button below to run! You can define how many rows and columns are in this checkerboard and also how large in pixels each one is by changing the scale!</p>
+
+<input type="text" id="text_rows" value="8" > rows<br>
+<input type="text" id="text_columns" value="8" > columns<br>
+<input type="text" id="text_scale" value="90" > scale<br>
+<button type="button" onclick="chastity_checker()">make checkerboard</button><br>
+
+</body>
+</html>
+```
+
+Fun fact, that checkerboard making web page was actually created in the year 2013. I used to write a lot of JavaScript but forgot most of it. Luckily I have books I bought to remind me how to do the things I have forgotten.
+
+The fact that the modern web browsers support the canvas element allows images to be arbitrarily created inside web pages based on user input. This means that theoretically, JavaScript can be used to make games that play in a web browser. I am not that skilled yet but the potential is there.

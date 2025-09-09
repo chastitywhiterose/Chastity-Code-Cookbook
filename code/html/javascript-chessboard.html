@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Chastity's JavaScript Checkerboard</title>
+<script>
+
+function chastity_checker()
+{
+
+//this gets the data from the text
+var rows    = parseInt( document.getElementById("text_rows").value );
+var columns = parseInt( document.getElementById("text_columns").value );
+var scale   = parseInt( document.getElementById("text_scale").value );
+
+document.getElementById("p").innerHTML='<canvas id="canvas" width="0" height="0" ">Your browser does not support the HTML5 canvas tag.</canvas>';
+var c=document.getElementById("canvas");
+
+c.width=rows*scale;
+c.height=columns*scale;
+
+var ctx=c.getContext("2d");
+
+var colors=new Array("#000000","#FFFFFF");
+//var colors=new Array("#FF0000","#00FF00","#0000FF");
+//var colors=new Array("#FF0000","#FFFF00","#00FF00","#00FFFF","#0000FF","#FF00FF");
+
+var i=0;
+var x=0;
+while(x<c.width)
+{
+ var i1=i;i=(i+1)%colors.length;
+ var y=0;
+ while(y<c.height)
+ {
+  ctx.fillStyle=colors[i1];i1=(i1+1)%colors.length;
+  ctx.fillRect(x,y,scale,scale);
+  y+=scale;
+ }
+ 
+ x+=scale;
+}
+
+ return;
+}
+
+</script>
+</head>
+<body>
+
+<h1>Chastity's JavaScript Checkerboard</h1>
+<p id="p">Enter the integers of your choice and then click the button below to run! You can define how many rows and columns are in this checkerboard and also how large in pixels each one is by changing the scale!</p>
+
+<input type="text" id="text_rows" value="8" > rows<br>
+<input type="text" id="text_columns" value="8" > columns<br>
+<input type="text" id="text_scale" value="90" > scale<br>
+<button type="button" onclick="chastity_checker()">make checkerboard</button><br>
+
+</body>
+</html>
+
