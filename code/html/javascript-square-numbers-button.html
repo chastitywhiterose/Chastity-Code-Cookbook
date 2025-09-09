@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Square Numbers Demo 2</title>
+
+<script>
+
+function square_numbers()
+{
+ var s=""
+ var a=0,b=1,c=0;
+
+ while(a<=16)
+ {
+  s+=c+" ";
+  a++;
+  c+=b;
+  b+=2;
+ }
+
+ document.getElementById("main").innerHTML = s;
+}
+
+</script>
+
+</head>
+<body>
+<h1>The Square Numbers Sequence</h1>
+
+<p id="main">This is the main paragraph!</p>
+
+<button type="button" onclick="square_numbers()">Click this button, I dare you!</button>
+
+</body>
+</html>
+

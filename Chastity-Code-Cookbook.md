@@ -2434,3 +2434,53 @@ Finally, each time the loop goes, the integer c variable is appended to the s st
 
 Pay close attention to the **document.getElementById** function. It is used to access an element by using the id of an HTML element. That means that as the programmer, you are responsible for setting the correct id in the HTML as well as the JavaScript code.
 
+There is one problem with the script above. Because the user can't see the initial value of the paragraph, wouldn't it be neat if there was a way to see it and then execute the script when the user clicks a button? Actually there is! See the next example!
+
+## Square Numbers Demo 2
+
+```
+<!DOCTYPE html>
+<html>
+<head>
+<title>Square Numbers Demo 2</title>
+
+<script>
+
+function square_numbers()
+{
+ var s=""
+ var a=0,b=1,c=0;
+
+ while(a<=16)
+ {
+  s+=c+" ";
+  a++;
+  c+=b;
+  b+=2;
+ }
+
+ document.getElementById("main").innerHTML = s;
+}
+
+</script>
+
+</head>
+<body>
+<h1>The Square Numbers Sequence</h1>
+
+<p id="main">This is the main paragraph!</p>
+
+<button type="button" onclick="square_numbers()">Click this button, I dare you!</button>
+
+</body>
+</html>
+```
+
+## Code in the "head" vs the "body"
+
+In demo 1, the script was part of the body and was placed after the main paragraph. It overwrote the paragraph before anyone could see it. In demo 2, the script was in the head of the document and defined as a function.
+
+The second method of defining functions in the head of the HTML document is the same way as is usually done in C. We define functions that will be called later, and not necessarily in a linear order. The second method is better for pages that expect the user to click something. The first method is fine when we are just trying to confirm that JavaScript is working by seeing some output.
+
+By now you might be wondering, what is the point of outputting a bunch of numbers and text? Can't we already do that faster with the C or Bash languages? The answer is yes, there are already better methods for such simple examples, but this is only the beginning! JavaScript is also capable of creating graphics using the canvas element!
+
