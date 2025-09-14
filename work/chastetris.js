@@ -765,8 +765,9 @@ function show_grid_fill_rect()
 
  // SDL_SetRenderDrawColor(renderer,r,g,b,255);
  
+ console.log("pixel=="+pixel);
  
-  ctx.fillStyle="rgb("+r+","+102+","+102+")";
+  ctx.fillStyle="rgb("+r+","+g+","+b+")";
 
 
 /*set up the rectangle structure with the needed data to square the squares*/
@@ -777,7 +778,7 @@ rect.h=block_size;
 
 // SDL_RenderFillRect(renderer,&rect);
 
- ctx.fillRect(rect.x,rect.x,rect.w,rect.h);
+ ctx.fillRect(rect.x,rect.y,rect.w,rect.h);
 
 
 
@@ -886,6 +887,8 @@ show_grid();
 */
 
  ///SDL_SetRenderDrawColor(renderer,128,128,128,255);
+ 
+ ctx.fillStyle="rgb("+128+","+128+","+128+")";
 
  rect.x=grid_offset_x-border_size;
  rect.y=0*block_size;
@@ -893,10 +896,12 @@ show_grid();
  rect.h=height;
 
  ///SDL_RenderFillRect(renderer,&rect);
+ ctx.fillRect(rect.x,rect.y,rect.w,rect.h);
 
  rect.x=grid_offset_x+grid_width*block_size;
  ///SDL_RenderFillRect(renderer,&rect);
 
+ ctx.fillRect(rect.x,rect.y,rect.w,rect.h);
 
  /*end of drawing code for grid*/
 
