@@ -37,7 +37,7 @@ temp_grid={}; //empty object
 temp_grid.array=[]; //empty array
 
 var max_block_width=4; /* the max width of any tetris block*/
-var blocks_used=7;
+var blocks_used=7; //set to one for only long boi mode
 var hold_used=0;
 var moves=0; /*number of valid moves*/
 var moves_tried=0; /*number of attempted moves*/
@@ -214,7 +214,7 @@ function spawn_block()
   y+=1;
  }
 
- main_block.x=(grid_width-main_block.width_used)/2;
+ main_block.x=Math.floor((grid_width-main_block.width_used)/2);
  main_block.y=0;
 
  main_block.spawn_x=main_block.x;
@@ -524,6 +524,7 @@ function tetris_set_block()
 
 
  tetris_next_block();
+ 
  spawn_block();
 
 
