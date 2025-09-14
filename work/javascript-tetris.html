@@ -8,17 +8,26 @@
 
 <!-- <h1>Chastity's JavaScript Tetris</h1> -->
 
-<canvas id="canvas" width="1280" height="720" ">Your browser does not support the HTML5 canvas tag.</canvas>;
+<canvas id="canvas" width="1280" height="360" ">Your browser does not support the HTML5 canvas tag.</canvas><br>
 
-<p>This is the JavaScript Port of Chaste Tris written by Chastity White Rose</p>
+
 
 <script>
 
 init_canvas();
 
+ spawn_block(); // spawn the first blog
 javascript_chastetris();
 
 </script>
+
+<button type="button" onclick="move_id='W';tetris_move_up();javascript_chastetris();">up</button>
+<button type="button" onclick="move_id='A';tetris_move_left();javascript_chastetris();">left</button>
+<button type="button" onclick="move_id='S';tetris_move_down();javascript_chastetris();">down</button>
+<button type="button" onclick="move_id='D';tetris_move_right();javascript_chastetris();">right</button>
+<br>
+
+<p>This is the JavaScript Port of Chaste Tris written by Chastity White Rose</p>
 
 </body>
 </html>

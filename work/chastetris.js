@@ -37,6 +37,7 @@ temp_grid={}; //empty object
 temp_grid.array=[]; //empty array
 
 var max_block_width=4; /* the max width of any tetris block*/
+var blocks_used=7;
 var hold_used=0;
 var moves=0; /*number of valid moves*/
 var moves_tried=0; /*number of attempted moves*/
@@ -45,6 +46,11 @@ var last_move_fail; /*did the last move fail?*/
 var back_to_back=0;
 var score=0;
 var combo=0;
+
+var move_log=[];
+var move_id='?';
+
+var lines_cleared=0,lines_cleared_last=0,lines_cleared_total=0;
 
 var empty_color=0x000000;
 
@@ -136,6 +142,8 @@ function spawn_block()
 {
  var x,y;
  var p; /*originally *p in C. However, arrays are objects and automatically pointers in JavaScript*/
+ 
+ console.log("spawn_block()");
 
  if(block_type==0)
  {
@@ -211,6 +219,8 @@ function spawn_block()
 
  main_block.spawn_x=main_block.x;
  main_block.spawn_y=main_block.y;
+ 
+ console.log("main_block.id=="+main_block.id);
 }
 
 /*Part 2: Functions that modify the block data or Tetris grid itself. */
@@ -235,6 +245,8 @@ function tetris_check_move()
 {
  var x,y;
  moves_tried++; /*move attempted*/
+ 
+  console.log("tetris_check_move();");
 
  y=0;
  while(y<max_block_width)
@@ -247,6 +259,7 @@ function tetris_check_move()
     if( pixel_on_grid(main_block.x+x,main_block.y+y)!=0 )
     {
      /*printf("Error: Block in Way on Move Check.\n");*/
+          console.log("Error: Block in Way on Move Check.\n");
      return 1; /*return failure*/
     }
    }
@@ -256,6 +269,7 @@ function tetris_check_move()
  }
  
  move_log[moves]=move_id;
+ console.log(move_id);
  moves++; /*move successful*/
  return 0;
 
@@ -469,6 +483,9 @@ function tetris_next_block()
  if(blocks_used==1){return;} /*do nothing if only one block type used*/
  /*optionally increment block type for different block next time.*/
  block_type++;  block_type%=blocks_used;
+ 
+ console.log("tetris_next_block();");
+ console.log("block_type=="+block_type);
 }
 
 
@@ -480,6 +497,7 @@ function tetris_set_block()
 {
  var x,y;
 
+ console.log("tetris_set_block()");
 
   /*draw block onto grid at it's current location*/
   y=0;
@@ -520,17 +538,25 @@ function tetris_set_block()
 /*all things about moving down*/
 function tetris_move_down()
 {
+ console.log("tetris_move_down();");
  /*make backup of block location*/
 
- temp_block=main_block;
+ //temp_block=main_block;
 
+  ///temp_block.array=Array.from(main_block.array); // fastest way to clone an array in JavaScript
+  
+  temp_block.y=main_block.y;
+
+  console.log(main_block);
 
  main_block.y+=1;
 
  last_move_fail=tetris_check_move();
+ console.log("last_move_fail=="+last_move_fail);
  if(last_move_fail)
  {
-  main_block=temp_block;
+  ///main_block=temp_block;
+  main_block.y=temp_block.y;
   /*printf("Block is finished\n");*/
   tetris_set_block();
   move_log[moves]=move_id;
@@ -593,7 +619,7 @@ function tetris_hard_drop()
 /*all things about moving up*/
 function tetris_move_up()
 {
- temp_block=main_block;
+ temp_block.y=main_block.y;
  main_block.y-=1;
  last_move_fail=tetris_check_move();
  if(!last_move_fail)
@@ -602,7 +628,7 @@ function tetris_move_up()
  }
  else
  {
-  main_block=temp_block;
+  main_block.y=temp_block.y;
  }
 }
 
@@ -616,7 +642,7 @@ function tetris_move_up()
 /*all things about moving right*/
 function tetris_move_right()
 {
- temp_block=main_block;
+ temp_block.x=main_block.x;
  main_block.x+=1;
  last_move_fail=tetris_check_move();
  if(!last_move_fail)
@@ -625,7 +651,7 @@ function tetris_move_right()
  }
  else
  {
-  main_block=temp_block;
+  main_block.x=temp_block.x;
  }
 }
 
@@ -638,7 +664,7 @@ function tetris_move_right()
 /*all things about moving left*/
 function tetris_move_left()
 {
- temp_block=main_block;
+ temp_block.x=main_block.x;
  main_block.x-=1;
  last_move_fail=tetris_check_move();
  if(!last_move_fail)
@@ -647,7 +673,7 @@ function tetris_move_left()
  }
  else
  {
-  main_block=temp_block;
+  main_block.x=temp_block.x;
  }
 }
 
@@ -743,7 +769,7 @@ function show_grid_fill_rect()
  var pixel,r,g,b;
  var x=0,y=0;
  
- console.log("show_grid_fill_rect()");
+ console.log("show_grid_fill_rect();");
 
  y=0;
  while(y<grid_height)
@@ -765,7 +791,7 @@ function show_grid_fill_rect()
 
  // SDL_SetRenderDrawColor(renderer,r,g,b,255);
  
- console.log("pixel=="+pixel);
+ //console.log("pixel=="+pixel);
  
   ctx.fillStyle="rgb("+r+","+g+","+b+")";
 
@@ -832,6 +858,8 @@ function javascript_chastetris()
  /*int pixel,r,g,b;*/
  var x=0,y=0;
 
+console.log("javascript_chastetris();");
+
  /*setup the grid display*/
  block_size=height/grid_height;
  grid_offset_x=(width-(20/2*block_size))/2; /*formula for grid to center of screen*/
@@ -839,8 +867,6 @@ function javascript_chastetris()
 
  //printf("block_size==%d\n",block_size);
   
- spawn_block();
-
  /*make backup of entire grid*/
   //temp_grid=main_grid;
   
@@ -857,7 +883,9 @@ function javascript_chastetris()
     {
      if(temp_grid.array[main_block.x+x+(main_block.y+y)*grid_width]!=0)
      {
-      printf("Error: Block in Way\n");
+      //printf("Error: Block in Way\n");
+      
+      console.log("Error: Block in Way\n");
 
       /*because a collision has occurred. We will restore everything back to the way it was before block was moved.*/
 
