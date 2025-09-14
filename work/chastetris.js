@@ -682,6 +682,92 @@ function tetris_move_left()
 
 
 
+/*
+fancy right rotation system for T blocks only
+does not actually rotate. Rather tries to move a T block into another valid spot and simulate SRS rules
+*/
+function block_rotate_right_fancy_t()
+{
+ var x=0,y=0;
+
+ if(main_block.id!='T')
+ {
+  console.log("Block is not T. No action will be taken.");return;
+ }
+
+ x=main_block.x;
+ y=main_block.y;
+
+
+ main_block.x=x-1;
+ main_block.y=y+1;
+ last_move_fail=tetris_check_move();
+ if(last_move_fail)
+ {
+  /*printf("First fancy T Block spin attempt failed.");*/
+  
+  main_block.x=x-1;
+  main_block.y=y+2;
+  last_move_fail=tetris_check_move();
+  if(last_move_fail)
+  {
+   /*printf("Second fancy T Block spin attempt failed.");*/
+  }
+
+ }
+
+}
+
+
+
+
+
+/*basic (non SRS) rotation system*/
+function block_rotate_right_basic()
+{
+ var x=0,y=0,x1=0,y1=0;
+
+ // temp_block=main_block;
+ 
+ temp_block.array=Array.from(main_block.array); // fastest way to clone an array in JavaScript
+
+ /*copy it from top to bottom to right to left(my own genius rotation trick)*/
+ /*same as in the left rotation function but x,y and x1,y1 are swapped in the assignment*/
+
+ x1=main_block.width_used;
+ y=0;
+ while(y<main_block.width_used)
+ {
+  x1--;
+  y1=0;
+  x=0;
+  while(x<main_block.width_used)
+  {
+   main_block.array[x1+y1*max_block_width]=temp_block.array[x+y*max_block_width];
+   x+=1;
+   y1++;
+  }
+  y+=1;
+ }
+
+ /*if rotation caused collision, restore to the backup before rotate.*/
+ last_move_fail=tetris_check_move();
+ if(last_move_fail)
+ {
+  /*if basic rotation failed, try fancier*/
+  block_rotate_right_fancy_t();
+ }
+ if(last_move_fail)
+ {
+  /*if it still failed, revert block to before rotation*/
+  main_block.array=Array.from(temp_block.array); // fastest way to clone an array in JavaScript
+ }
+ else
+ {
+  last_move_spin=1;
+ }
+
+}
 
 
 
@@ -704,6 +790,88 @@ function tetris_move_left()
 
 
 
+/*
+fancy left rotation system for T blocks only
+does not actually rotate. Rather tries to move a T block into another valid spot and simulate SRS rules
+*/
+function block_rotate_left_fancy_t()
+{
+ var x=0,y=0;
+
+ if(main_block.id!='T')
+ {
+  console.log("Block is not T. No action will be taken.");return;
+ }
+ 
+ x=main_block.x;
+ y=main_block.y;
+
+
+ main_block.x=x+1;
+ main_block.y=y+1;
+ last_move_fail=tetris_check_move();
+ if(last_move_fail)
+ {
+  /*printf("First fancy T Block spin attempt failed.");*/
+  
+  main_block.x=x+1;
+  main_block.y=y+2;
+  last_move_fail=tetris_check_move();
+  if(last_move_fail)
+  {
+   /*printf("Second fancy T Block spin attempt failed.");*/
+  }
+
+ }
+
+}
+
+
+/*basic (non SRS) rotation system*/
+function block_rotate_left_basic()
+{
+ var x=0,y=0,x1=0,y1=0;
+//temp_block=main_block;
+
+temp_block.array=Array.from(main_block.array); // fastest way to clone an array in JavaScript
+
+ /*copy it from top to bottom to right to left(my own genius rotation trick)*/
+/*same as in the right rotation function but x,y and x1,y1 are swapped in the assignment*/
+
+ x1=main_block.width_used;
+ y=0;
+ while(y<main_block.width_used)
+ {
+  x1--;
+  y1=0;
+  x=0;
+  while(x<main_block.width_used)
+  {
+   main_block.array[x+y*max_block_width]=temp_block.array[x1+y1*max_block_width];
+   x+=1;
+   y1++;
+  }
+  y+=1;
+ }
+
+ /*if rotation caused collision, restore to the backup before rotate.*/
+ last_move_fail=tetris_check_move();
+ if(last_move_fail)
+ {
+  /*if basic rotation failed, try fancier*/
+  block_rotate_left_fancy_t();
+ }
+ if(last_move_fail)
+ {
+  /*if it still failed, revert block to before rotation*/
+  main_block.array=Array.from(temp_block.array); // fastest way to clone an array in JavaScript
+ }
+ else
+ {
+  last_move_spin=1;
+ }
+
+}
 
 
 
@@ -712,6 +880,31 @@ function tetris_move_left()
 
 
 
+
+
+function block_hold()
+{
+ if(hold_used==0) /*just store block if nothing there*/
+ {
+  /*printf("hold block used first time.\n");*/
+  hold_block={...main_block}; //shallow copy of object
+  hold_block.array=Array.from(main_block.array); // clone the array to complete copy
+  tetris_next_block();
+  spawn_block();
+  hold_used=1;
+ }
+ else
+ {
+  /*printf("Swap with previous hold block.\n");*/
+  temp_block={...hold_block};
+  hold_block={...main_block};
+  main_block={...temp_block};
+  main_block.x=main_block.spawn_x;
+  main_block.y=main_block.spawn_y;
+ }
+ move_log[moves]=move_id; /*hold block is always valid move*/
+ moves=moves+1;
+}
 
 
 
