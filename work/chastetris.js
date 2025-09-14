@@ -591,12 +591,12 @@ function tetris_hard_drop()
  last_move_fail=tetris_check_move();
  while(!last_move_fail)
  {
-  temp_block=main_block;  /*make backup of block location*/
+  temp_block.y=main_block.y;
   main_block.y+=1;
   last_move_fail=tetris_check_move();
  }
 
-  main_block=temp_block;
+  main_block.y=temp_block.y;
   /*printf("Block is finished\n");*/
   tetris_set_block();
   moves=temp_moves;
