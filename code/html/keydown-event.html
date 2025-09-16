@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>keydown event example</title>
+</head>
+<body>
+<h1>keydown event example</h1>
+
+<input placeholder="Click here, then press down a key." size="40" />
+<p id="log"></p>
+
+<script>
+
+const input = document.querySelector("input");
+const log = document.getElementById("log");
+
+input.addEventListener("keydown", logKey);
+
+function logKey(e) {
+  log.textContent = `${e.code}`;
+}
+
+</script>
+
+</body>
+</html>
+
+<!-- https://developer.mozilla.org/en-US/docs/Web/API/Element/keydown_event -->
