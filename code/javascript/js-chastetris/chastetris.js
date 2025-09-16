@@ -911,9 +911,49 @@ function block_hold()
 
 
 
+// Attach the keydown event listener to the document
+document.addEventListener('keydown', tetris_keydown );
 
+/* this function handles key events */
+function tetris_keydown(event)
+{
+ // You can access information about the pressed key from the event object
+ console.log(`Key pressed: ${event.key}, Key code: ${event.code}`);
 
+ // Example: Move the player based on arrow keys
+ const moveAmount = 10;
+ switch (event.key)
+ {
+  case 'ArrowUp':
+   tetris_move_up();
+  break;
+  case 'ArrowDown':
+   tetris_move_down();
+  break;
+  case 'ArrowLeft':
+   tetris_move_left();
+  break;
+  case 'ArrowRight':
+   tetris_move_right();
+  break;
+  
+  case 'x':
+   block_rotate_right_basic();
+  break;
+  case 'z':
+   block_rotate_left_basic();
+  break;
+  case 'c':
+   block_hold();
+  break;
+  case ' ':
+   tetris_hard_drop();
+  break;
+ }
 
+ // Redraw the game scene after movement
+ javascript_chastetris();
+}
 
 
 

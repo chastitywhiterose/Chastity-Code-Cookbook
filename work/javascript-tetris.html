@@ -19,9 +19,6 @@ init_canvas();
  spawn_block(); // spawn the first blog
 javascript_chastetris();
 
-// Attach the keydown event listener to the document
-document.addEventListener('keydown', tetris_keydown );
-
 </script>
 
 <button type="button" onclick="move_id='W';tetris_move_up();javascript_chastetris();">up</button>
@@ -30,16 +27,19 @@ document.addEventListener('keydown', tetris_keydown );
 <button type="button" onclick="move_id='D';tetris_move_right();javascript_chastetris();">right</button>
 <button type="button" onclick="move_id='D';tetris_hard_drop();javascript_chastetris();">hard_drop</button>
 
-<button type="button" onclick="move_id='D';block_rotate_left_basic();javascript_chastetris();">rotate left</button>
-<button type="button" onclick="move_id='D';block_rotate_right_basic();javascript_chastetris();">rotate right</button>
+<button type="button" onclick="move_id='Z';block_rotate_left_basic();javascript_chastetris();">rotate left</button>
+<button type="button" onclick="move_id='X';block_rotate_right_basic();javascript_chastetris();">rotate right</button>
 
-<button type="button" onclick="move_id='D';block_hold();javascript_chastetris();">hold block</button>
+<button type="button" onclick="move_id='C';block_hold();javascript_chastetris();">hold block</button>
 
 <br>
 
 <p>This is the JavaScript Port of Chaste Tris written by Chastity White Rose. It still needs work but it allows you to move the block by clicking the buttons. Try each to see what they do!</p>
 
+<p>You can also try using the keyboard to play. Use the arrow keys to move the block, X and Z to rotate, space bar to hard drop, and hold a block for later with C</p>
+
 </body>
 </html>
 
-<!-- This page was written by Chastity White Rose in pure HTML and JavaScript -->
+<!-- This Tetris Game was written by Chastity White Rose in pure HTML and JavaScript -->
+
