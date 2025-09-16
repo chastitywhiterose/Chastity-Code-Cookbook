@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Canvas Keydown Event</title>
+<style>
+canvas { border: 1px solid black; }
+</style>
+</head>
+<body>
+<canvas id="myCanvas" width="600" height="400"></canvas>
+	
+<script>
+const canvas = document.getElementById('myCanvas');
+const ctx = canvas.getContext('2d');
+
+// Example: Draw a simple rectangle on the canvas
+let playerX = 50;
+let playerY = 50;
+const playerSize = 20;
+
+function drawPlayer()
+{
+ ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas
+ ctx.fillStyle = 'blue';
+ ctx.fillRect(playerX, playerY, playerSize, playerSize);
+}
+
+drawPlayer(); // Initial draw
+
+function movePlayer(event)
+{
+ // You can access information about the pressed key from the event object
+ console.log(`Key pressed: ${event.key}, Key code: ${event.code}`);
+
+ // Example: Move the player based on arrow keys
+ const moveAmount = 10;
+ switch (event.key)
+ {
+  case 'ArrowUp':
+  playerY -= moveAmount;
+  break;
+  case 'ArrowDown':
+  playerY += moveAmount;
+  break;
+  case 'ArrowLeft':
+  playerX -= moveAmount;
+  break;
+  case 'ArrowRight':
+  playerX += moveAmount;
+  break;
+ }
+
+ // Redraw the player after movement
+ drawPlayer();
+}
+
+// Attach the keydown event listener to the document
+document.addEventListener('keydown', movePlayer );
+
+</script>
+
+</body>
+</html>
