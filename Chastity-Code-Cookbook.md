@@ -2551,3 +2551,220 @@ while(x<c.width)
 Fun fact, that checkerboard making web page was actually created in the year 2013. I used to write a lot of JavaScript but forgot most of it. Luckily I have books I bought to remind me how to do the things I have forgotten.
 
 The fact that the modern web browsers support the canvas element allows images to be arbitrarily created inside web pages based on user input. This means that theoretically, JavaScript can be used to make games that play in a web browser. I am not that skilled yet but the potential is there.
+
+# Chapter 8: Big Numbers
+
+Most of the time, the default 32-bit or 64-bit integer size of your cpu is enough to represent most numbers you would use in actual programs. However, some people are math nerds obsessed with extremely large numbers. Some people want thousands or even millions of digits. The complexity involved in generating these numbers might scare you if you don't know how they work.
+
+However, these methods are based on the same way I do addition or multiplication with paper and pencil as I was taught by school books as a child. I have no idea what they are teaching kids in school these days, and even my mother was not the one who taught me math. I had a natural gift at arithmetic that works well in my computer programming today. Every number is in fact an array of digits.
+
+In chapter 1, the "Advanced Powers of Two" program showed my method for displaying powers of two by using arrays of bytes as if they were decimal digits. In this chapter, I will be presenting a modified version of this same program which allocates memory on the heap using the C malloc function. This may not be that essential for a simple program like this, but keep in mind that this is the "proper" way to create arrays in C when you intent to have arrays of millions of bytes. Your computer needs to have a way of stopping if there is not enough memory in the system.
+
+After that, I will also be presenting two more programs which generate large numbers quickly. 
+
+## Big Number Powers of Two
+
+```
+#include <stdio.h>
+#include <stdlib.h>
+int main()
+{
+ /*most important variable: number of digits*/
+ int length=64;
+
+
+ char *a;
+ int alength=1,x,y;
+
+ a=(char*)malloc(length*sizeof(*a));if(a==NULL){printf("Failed to create array a\n");return(1);}
+
+ x=0;
+ while(x<length)
+ {
+  a[x]=0;
+  x++;
+ }
+ a[0]=1;
+
+ while(alength<length)
+ {
+
+  x=alength;
+  while(x>0)
+  {
+   x--;
+   printf("%d",a[x]);
+  }
+  printf("\n");
+
+  y=0;
+  x=0;
+  while(x<=alength)
+  {
+   a[x]+=a[x];
+   a[x]+=y;
+   if(a[x]>9){y=1;a[x]-=10;}else{y=0;}
+   x++;
+  }
+  if(a[alength]>0){alength++;}
+
+ }
+
+ if(a!=NULL){free(a); a=NULL;}
+
+ return 0;
+}
+```
+
+## Fibonacci Sequence
+
+```
+/*program to generate the fibonacci sequence*/
+#include <stdio.h>
+#include <stdlib.h>
+int main()
+{
+ /*most important variable: number of digits*/
+ int length=64;
+ 
+ char *a,*b,*c;
+ int alength,x,i;
+ 
+ /*allocate memory for 3 arrays of equal size AKA length*/
+ a=(char*)malloc(length*sizeof(*a));if(a==NULL){printf("Failed to create array a\n");return(1);}
+ b=(char*)malloc(length*sizeof(*b));if(b==NULL){printf("Failed to create array b\n");return(1);}
+ c=(char*)malloc(length*sizeof(*c));if(c==NULL){printf("Failed to create array c\n");return(1);}
+ 
+ /*set all digits of these arrays to zero*/
+ x=0;while(x<length){a[x]=0;b[x]=0;c[x]=0;x++;}
+ a[0]=1; /*set lowest digit of a array to 1*/
+ 
+ alength=1;
+ while(alength<length)
+ {
+  i=0;
+  x=0; while(x<alength)
+  {
+   c[x]=a[x]+b[x];
+   c[x]+=i;
+   i=c[x]/10;
+   c[x]%=10;
+   x++;
+  }
+  if(i>0){c[x]=i;alength++;}
+  
+  x=0;while(x<length){b[x]=a[x]; a[x]=c[x];   x++;}
+  x=alength; while(x>0){x--;printf("%i",a[x]);} printf("\n");
+ }
+ 
+ if(a!=NULL){free(a); a=NULL;}
+ if(b!=NULL){free(b); b=NULL;}
+ if(c!=NULL){free(c); c=NULL;}
+ 
+ return 0;
+}
+```
+
+## Factorials
+
+The factorials are what happens when you start at 1 and keep multiplying by the next number, for example, these are the first 6 factorials.
+
+1
+2
+6
+24
+120
+720
+
+The number 720 is the factorial of 6 because 1x2x3x4x5x6==720. In fact, this number is what I based most of my Inkscape art on because I could divide many different numbers into 720. Factorials are highly composite which means they have many factors due to how they are generated.
+
+```
+/*program to generate the factorial sequence*/
+#include <stdio.h>
+#include <stdlib.h>
+int main()
+{
+ /*most important variable: number of digits*/
+ int length=64;
+ 
+ char *a,*b,*c; /*pointers to arrays*/
+ int alength,blength,clength; /*variable to keep track of the current length of the c array*/
+ int x,ax,bx,cx,i; /* extra variables that are required for my personal multiplication system */
+ 
+ /*allocate memory for 3 arrays of equal size AKA length*/
+ a=(char*)malloc(length*sizeof(*a));if(a==NULL){printf("Failed to create array a\n");return(1);}
+ b=(char*)malloc(length*sizeof(*b));if(b==NULL){printf("Failed to create array b\n");return(1);}
+ c=(char*)malloc(length*sizeof(*c));if(c==NULL){printf("Failed to create array c\n");return(1);}
+
+ /*set all digits of these arrays to zero*/
+ x=0;while(x<length){a[x]=0;b[x]=0;c[x]=0;x++;}
+ a[0]=1; /*set lowest digit of a array to 1*/
+ b[0]=2; /*set lowest digit of b array to 2*/
+
+ /*
+  Keep track of the currently used length of each array.
+  At the start, use only one digit
+ */
+ alength=1;
+ blength=1;
+ clength=1;
+ 
+ while(clength!=length) /* main loop that repeats the process! */
+ {
+  /*stage 1: display the a array*/
+  x=alength; while(x>0){x--;printf("%i",a[x]);} printf("\n");
+
+  /*
+   stage 2: multiply the a and b arrays together and store the result
+   in the c array
+  */
+  bx=0;
+  while(bx<blength)/*multiplication code begin*/
+  {
+   ax=0;
+   while(ax<alength)
+   {
+    i=a[ax]*b[bx];
+    cx=ax+bx; 
+    while(cx<length && i>0)
+    {
+     c[cx]+=i;
+     i=c[cx]/10;
+     c[cx]%=10;
+     cx++;
+     if(cx>clength){clength=cx;}
+    }
+    ax++;
+   }
+   bx++;
+
+  } /*multiplication code end*/
+
+
+
+  /*stage 3: add 1 to the b array */
+  i=1;
+  bx=0;
+  while(bx<length && i>0)
+  {
+   b[bx]+=i;
+   i=b[bx]/10;
+   b[bx]%=10;
+   bx++;
+  }
+  if(bx>blength){blength=bx;}
+
+  /* copy bytes of c[] to a[] then turn c to all zeroes again */
+  /* then set alength to clength */
+  x=0;while(x<length){a[x]=c[x];c[x]=0;x++;}alength=clength;
+  
+ }
+ 
+ /*free all of the memory allocated for the three arrays*/
+ if(a!=NULL){free(a); a=NULL;}
+ if(b!=NULL){free(b); b=NULL;}
+ if(c!=NULL){free(c); c=NULL;}
+ 
+ return 0;
+}
+```
