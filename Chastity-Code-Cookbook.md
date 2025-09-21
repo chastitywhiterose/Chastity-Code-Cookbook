@@ -2560,7 +2560,7 @@ However, these methods are based on the same way I do addition or multiplication
 
 In chapter 1, the "Advanced Powers of Two" program showed my method for displaying powers of two by using arrays of bytes as if they were decimal digits. In this chapter, I will be presenting a modified version of this same program which allocates memory on the heap using the C malloc function. This may not be that essential for a simple program like this, but keep in mind that this is the "proper" way to create arrays in C when you intent to have arrays of millions of bytes. Your computer needs to have a way of stopping if there is not enough memory in the system.
 
-After that, I will also be presenting two more programs which generate large numbers quickly. 
+After that, I will also be presenting more programs which generate large numbers quickly. All of these use only the standard C library and my own math routines. Therefore, they work on any C compiler and can also easily be translated to any programming language.
 
 ## Big Number Powers of Two
 
@@ -2615,6 +2615,67 @@ int main()
  return 0;
 }
 ```
+
+## The Negative Powers of Two
+
+The negative powers of two are what happens when you start at 1 and keep dividing by 2. Although normally fractional numbers of this sort can't exist for the integer type, I can simulate it using an array of decimal digits and my pattern recognition to write the small program below which gives the correct digits.
+
+```
+/*negative powers of two*/
+#include <stdio.h>
+#include <stdlib.h>
+int main()
+{
+ /*most important variable: number of digits*/
+ int length=64;
+
+ char *a;
+ int alength=2,x,y,temp;
+
+ a=(char*)malloc(length*sizeof(*a));if(a==NULL){printf("Failed to create array a\n");return(1);}
+
+ x=0;
+ while(x<length)
+ {
+  a[x]=0;
+  x++;
+ }
+ a[0]=1;
+
+ while(alength<length)
+ {
+  printf("%i.",a[0]);
+
+  x=1;
+  while(x<alength)
+  {
+   printf("%d",a[x]);
+   x++;
+  }
+  printf("\n");
+
+  y=0;
+  x=0;
+  while(x<length)
+  {
+   if( (a[x]&1)==1 ){temp=5;}else{temp=0;} 
+   a[x]>>=1;
+   a[x]+=y;
+   y=temp;
+   x++;
+  }
+  if(a[alength]>0){alength++;}
+
+ }
+
+ if(a!=NULL){free(a); a=NULL;}
+
+ return 0;
+}
+```
+
+
+
 
 ## Fibonacci Sequence
 

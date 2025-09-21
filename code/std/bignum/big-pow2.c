@@ -1,4 +1,3 @@
-/*negative powers of two*/
 #include <stdio.h>
 #include <stdlib.h>
 int main()
@@ -6,8 +5,9 @@ int main()
  /*most important variable: number of digits*/
  int length=64;
 
+
  char *a;
- int alength=2,x,y,temp;
+ int alength=1,x,y;
 
  a=(char*)malloc(length*sizeof(*a));if(a==NULL){printf("Failed to create array a\n");return(1);}
 
@@ -21,24 +21,22 @@ int main()
 
  while(alength<length)
  {
-  printf("%i.",a[0]);
 
-  x=1;
-  while(x<alength)
+  x=alength;
+  while(x>0)
   {
+   x--;
    printf("%d",a[x]);
-   x++;
   }
   printf("\n");
 
   y=0;
   x=0;
-  while(x<length)
+  while(x<=alength)
   {
-   if( (a[x]&1)==1 ){temp=5;}else{temp=0;} 
-   a[x]>>=1;
+   a[x]+=a[x];
    a[x]+=y;
-   y=temp;
+   if(a[x]>9){y=1;a[x]-=10;}else{y=0;}
    x++;
   }
   if(a[alength]>0){alength++;}
