@@ -70,7 +70,6 @@ int main(int argc, char **argv)
   x++;
  }
 
-  /*sscanf(argv[2],"%i",&x);*/
 
 
 
