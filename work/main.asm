@@ -9,7 +9,12 @@ mov eax,msg
 call putstring
 mov eax,main_string ; move the address of main_string into eax register
 call putstring
-mov eax,msg
+
+
+mov eax,1987
+call putint
+
+mov eax,int_string
 call putstring
 
 mov eax, 1  ; invoke SYS_EXIT (kernel opcode 1)
@@ -20,6 +25,7 @@ int 80h
 
 msg:     db      'Hello World!', 0Ah,0     ; assign msg variable with your message string
 main_string db 'This is the main string that can be anything!',0Ah,0
+int_string db 32 dup '?',0Ah,0
 
 ; this is where I keep my function definitions
 
@@ -43,6 +49,29 @@ mov ebx, 1  ; write to the STDOUT file
 int 80h     ; system call to write the message
 
 ret ; this is the end of the putstring function return to calling location
+
+putint: ; function to output decimal form of whatever integer is in eax
+
+push eax ;save eax on the stack to restore later
+
+mov ebx,int_string+30 ;address of start digits
+
+digits_start:
+
+mov edx,0;
+mov esi,10
+idiv esi
+add edx,'0'
+mov [ebx],dl
+cmp eax,0
+jz digits_end
+dec ebx
+jmp digits_start
+
+digits_end:
+
+pop eax  ;load eax from the stack so it will be as it was before this function was called
+ret
 
 ; This Assembly source file has been formatted for the FASM assembler.
 ; The following 3 commands assemble, give executable permissions, and run the program
