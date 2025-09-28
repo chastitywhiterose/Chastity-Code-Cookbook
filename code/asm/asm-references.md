@@ -12,3 +12,7 @@
 
 Assembly language is a lot harder to find information on than C or C++. However, it is possible to write useful programs under Linux using assembly and calling the Linux kernel through interrupts.
 
+Local Documentation on Debian
+
+/usr/share/doc/fasm/
+/usr/share/doc/nasm/
