@@ -90,13 +90,31 @@ stack=(int*)malloc(stack_length*sizeof(*stack));if(stack==NULL){printf("Failed t
  {
   printf("token[%d]: %s\n",x,tokens[x]);
 
+  /* convert string to lowercase so that things operate regardless of caps lock */
+
+  i=0;
+  while(tokens[x][i]!=0)
+  {
+   tokens[x][i]=tolower(tokens[x][i]);
+   i++;
+  }
+
   if(isdigit(tokens[x][0]))
   {
    printf("token[%d]: %s might be a number\n",x,tokens[x]);
 
-   sscanf(tokens[x],"%i",&i);
+   if(tokens[x][1]=='b')
+   {
+    printf("This number might be a binary number.\n");
+    printf("Processing with strtol, base two.\n");
+    i=strtol(&tokens[x][2],NULL,2);
+   }
+   else
+   {
+    sscanf(tokens[x],"%i",&i);
+   }
 
-   printf("number found: %i\n",i);
+   printf("number found: %i (decimal form of this integer)\n",i);
    printf("it has been added to the stack\n");
 
    stack[stack_index]=i;
