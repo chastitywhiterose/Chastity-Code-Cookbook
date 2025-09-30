@@ -126,8 +126,8 @@ stack=(int*)malloc(stack_length*sizeof(*stack));if(stack==NULL){printf("Failed t
    printf("The add command adds the top two numbers on the stack.\n");
    if(stack_index>=2)
    {
-    stack[stack_index-2]+=stack[stack_index-1];
     stack_index--;
+    stack[stack_index-1]+=stack[stack_index];
    }
    else
    {
@@ -141,8 +141,8 @@ stack=(int*)malloc(stack_length*sizeof(*stack));if(stack==NULL){printf("Failed t
    printf("The mul command multiplies the top two numbers on the stack.\n");
    if(stack_index>=2)
    {
-    stack[stack_index-2]*=stack[stack_index-1];
     stack_index--;
+    stack[stack_index-1]*=stack[stack_index];
    }
    else
    {
@@ -156,8 +156,8 @@ stack=(int*)malloc(stack_length*sizeof(*stack));if(stack==NULL){printf("Failed t
    printf("The sub command subtracts the top two numbers on the stack.\n");
    if(stack_index>=2)
    {
-    stack[stack_index-2]-=stack[stack_index-1];
     stack_index--;
+    stack[stack_index-1]-=stack[stack_index];
    }
    else
    {
@@ -166,23 +166,61 @@ stack=(int*)malloc(stack_length*sizeof(*stack));if(stack==NULL){printf("Failed t
   }
 
 
+  if(!strcmp(tokens[x],"div"))
+  {
+   printf("The div command divides the top two numbers on the stack.\n");
+   if(stack_index>=2)
+   {
+    stack_index--;
+    stack[stack_index-1]/=stack[stack_index];
+   }
+   else
+   {
+    printf("Error: Less than 2 numbers are on the stack. div command failed!\n");
+   }
+  }
+
+
+  if(!strcmp(tokens[x],"mod"))
+  {
+   printf("The mod command divides the top two numbers on the stack but leaves the remainder of the division instead of the quotient\n");
+   if(stack_index>=2)
+   {
+    stack_index--;
+    stack[stack_index-1]%=stack[stack_index];
+   }
+   else
+   {
+    printf("Error: Less than 2 numbers are on the stack. mod command failed!\n");
+   }
+  }
+
+  if(!strcmp(tokens[x],"debug"))
+  {
+   printf("This information is used to debug the program during development\n");
+
+   printf("stack_index==%d\n",stack_index);
+
+   i=0;
+   while (i<stack_index)
+   {
+    printf("stack[%d]==%i\n",i,stack[i]);
+    i++;
+   }
+
+  }
+
 
   x++;
  }
 
- printf("stack_index==%d\n",stack_index);
 
-
-
-
- x=0;
- while (x<stack_index)
- {
-  printf("stack[%d]==%i\n",x,stack[x]);
-  x++;
- }
-
-
+   i=0;
+   while (i<stack_index)
+   {
+    printf("%i\n",stack[i]);
+    i++;
+   }
 
 
 
