@@ -2829,3 +2829,67 @@ int main()
  return 0;
 }
 ```
+
+# Chapter 9: Assembly Language
+
+No book on programming would be complete without at least a mention of assembly language. I will describe assembly language in the most basic of terms and at least give you a "Hello World" example that runs under Linux.
+
+You see, assembly language is platform specific. This means that the language itself only runs on one brand of CPUs (Central Processing Units). On top of that, code is not portable between Windows and Linux because these operating systems each work in a different way and you are expected to call the kernel through the API of that system.
+
+If you want to write programs for their general usage, you probably don't want to learn Assembly Language. However, if you are a nerd who likes more control over your computer, you may find that assembly can actually be quite fun.
+
+I am certainly no expert on assembly, but I have an example that will give you a small taste of what it looks like on an Intel CPU (this is the most commonly used brand of CPU.) This example will work on any modern 32 or 64 bit Intel CPU.
+
+```
+format ELF executable
+entry main
+
+main:
+
+mov edx, 13  ; number of bytes to write including  0Ah (line feed)
+mov ecx, msg ; move the memory address of our message string into ecx
+mov ebx, 1   ; write to the STDOUT file
+mov eax, 4   ; invoke SYS_WRITE (kernel opcode 4)
+int 80h
+
+mov ebx, 0   ; return 0 status on exit - 'No Errors'
+mov eax, 1   ; invoke SYS_EXIT (kernel opcode 1)
+int 80h
+
+msg db 'Hello World!', 0Ah     ; assign msg variable with your message string
+```
+
+In order to assemble and run this example, you will need the FASM assembler, which can be found here:
+
+<https://flatassembler.net/>
+
+I recommend the FASM assembler mostly because I am used to it, however you can also try NASM and see if you like it better. The method for assembling and running it might look different though.
+
+Save the example source code above into a file named "main.asm" and then run these three commands.
+
+```
+fasm main.asm
+chmod +x main
+./main
+```
+
+If you have the Gnu Make program installed on your PC, then the following makefile is a convenient way to run those three commands automatically without having to type them every time.
+
+```
+main-fasm:
+	fasm main.asm
+	chmod +x main
+	./main
+```
+
+If you did everything right, you will see a "Hello World!" message in the terminal. Obviously this example isn't fancy and it would have been easier just to write a C program for this, but this is only a test for making sure it works.
+
+You might be wondering what eax,ebx,ecx, and edx are in the source. They are general purpose hardware registers on 32 bit Intel CPUs. Think of them as being variables like a,b,c,d. In any case, these registers are used as arguments passed to the Linux Kernel. Interrupt 80h which is 0x80 hexadecimal or 128 decimal is how you call the kernel in 32 bit code.
+
+The previous program simply loaded these registers for the call to "write" a series of bytes and the call to "exit" which of course ends the program. There is a convenient table of Linux system calls and which registers must be filled with what type of data to work.
+
+<https://www.chromium.org/chromium-os/developer-library/reference/linux-constants/syscalls/>
+
+I am not as experienced with Assembly and am not qualified to teach the details about how it works, but one thing I do know is that it has the same features as you would expect in C. Memory locations can be accessed through pointers if a register is loaded with that location. Much like C, text strings are just a series of bytes. The system call for write must be specifically told how many bytes it needs to write from pointer register ecx. Register edx is loaded with 13 so that it will write 13 bytes. The ebx register is set to 1 because this is standard output. It can also write to open files if they are set up with other system calls.
+
+One thing that is common no matter the system call is that eax decides which function will be run. Therefore, eax will probably be your most used register if you decide to program Assembly under Linux.
