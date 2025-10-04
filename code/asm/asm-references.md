@@ -30,3 +30,7 @@ register mapping for system call invocation using int 0x80
 | system call number | 1st | 2nd | 3rd |	4th | 5th | 6th | result |
 |---|---|---|---|---|---|---|---|
 |eax|ebx|ecx|edx|esi|edi|ebp|	eax|
+
+# DOS Information
+
+<https://cable.ayra.ch/md/hello-world-in-dos>
