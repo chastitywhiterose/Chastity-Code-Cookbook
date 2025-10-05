@@ -1,25 +1,26 @@
-format ELF executable
-entry main
+org 100h
 
 main:
 
-mov     edx, 13     ; number of bytes to write - one for each letter plus 0Ah (line feed character)
-mov     ecx, msg    ; move the memory address of our message string into ecx
-mov     ebx, 1      ; write to the STDOUT file
-mov     eax, 4      ; invoke SYS_WRITE (kernel opcode 4)
-int     80h
+mov ah,9h  ; call function 9 (write string terminated by $)
+mov dx,msg ; give dx register address of the string
+int 21h    ; call the DOS kernel
 
-mov     ebx, 0      ; return 0 status on exit - 'No Errors'
-mov     eax, 1      ; invoke SYS_EXIT (kernel opcode 1)
-int     80h
+ret        ; return from main function / end programls
 
-msg     db      'Hello World!', 0Ah     ; assign msg variable with your message string
+msg     db      'Hello $World!', 0Ah     ; assign msg variable with your message string
 
-; This Assembly source file has been formatted for the FASM assembler.
-; The following 3 commands assemble, give executable permissions, and run the program
+; This 16 bit DOS Assembly source has been formatted for the FASM assembler.
+; In order to run it, you will need the DOSBOX emulator or something similar.
+; First, assemble it into a binary file. FASM will automatically add
+; the .com extension because of the "org 100h" command.
 ;
 ;	fasm main.asm
+
+
+
 ;	chmod +x main
 ;	./main
 ;
-; original nasm source from: https://asmtutor.com/#lesson2
+; original source from: https://cable.ayra.ch/md/hello-world-in-dos
+

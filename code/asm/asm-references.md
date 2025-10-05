@@ -33,4 +33,8 @@ register mapping for system call invocation using int 0x80
 
 # DOS Information
 
-<https://cable.ayra.ch/md/hello-world-in-dos>
+<https://cable.ayra.ch/md/hello-world-in-dos>  
+<https://www.cs.cmu.edu/~ralf/files.html>
+
+
+
