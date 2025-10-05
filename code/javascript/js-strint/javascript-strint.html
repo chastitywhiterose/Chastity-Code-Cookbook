@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Chastity's JavaScript String to Integer Conversion</title>
+<script>
+
+function strint()
+{
+ //get the elements from the text fields
+ var t0 = document.getElementById("string");
+ var t1 = document.getElementById("integer");
+ var t2 = document.getElementById("radix");
+ var t3 = document.getElementById("p0");
+ var a=t0.value;
+ var radix=parseInt(t2.value);
+ t1.value=parseInt(a,radix);
+
+ var b=parseInt(t1.value);
+ var s=""; //string to store data in various bases
+
+ s+="binary: " + b.toString(2) + "<br>";
+ s+="octal: " + b.toString(8) + "<br>";
+ s+="decimal: " + b.toString(10) + "<br>";
+ s+="hexadecimal: " + b.toString(16) + "<br>";
+ 
+ t3.innerHTML=s;
+
+ return;
+}
+
+</script>
+</head>
+<body>
+
+<h1>Chastity's JavaScript String to Integer Conversion</h1>
+
+<input type="text" id="string" value="11111000011" > string<br>
+<input type="text" id="integer" value="click the button" > integer (the decimal form that humans read)<br>
+<input type="text" id="radix" value="2" > radix<br>
+<button type="button" onclick="strint();">string to integer</button><br>
+
+<p id="p0">Use the form above to convert a number in a base you choose to common bases.</p>
+
+</body>
+</html>
+
