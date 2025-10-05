@@ -17,5 +17,12 @@ The purpose of this program is to be able to edit one or more bytes of a file wi
 
 
 ---
+# Compilation
 
-gcc -Wall -ansi -pedantic main.c -o chastehex
+Only the C standard library is used, as well as the "chasteint.h" header that I wrote. That library contains generally useful routines for converting between bases. Just compile with:
+
+`gcc -Wall -ansi -pedantic main.c -o chastehex`
+
+## History
+
+This program is an improvement on "ckhexdump" which was a hexadecimal dumping program I wrote for fun. This one is better because it can function like this but can also edit individual bytes without any extra dependencies.
