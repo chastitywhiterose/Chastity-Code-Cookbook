@@ -1,23 +1,25 @@
+# Chastity's Hexadecimal Tool
+
 This program reads or writes bytes of a file.
 
-To read a byte of a file:
-enter the name and the hex address to read.
+Read Usage Type 1:
+ ./chastehex file (hexdump entire file)
 
-./fbyte 0.txt 0
+Read Usage Type 2:
+ ./chastehex file address (read one byte from this address)
 
-To write instead of reading:
-follow the address with hex byte values
+Write Usage:
+ ./chastehex file address byte (write byte(s) to this address)
 
-./fbyte 0.txt 0 12 34 56
+---
 
-This works for any file as long as the file already exists to begin with.
-The name 0.txt is only an example. I used a text file with this name during testing.
+This works for any file as long as the file already exists to begin with. As usual, back up your files first to avoid losing any data!
 
 The purpose of this program is to be able to edit one or more bytes of a file without having to install or load up a graphical hex editor. This also allows for scripting the commands to arbitrarily modify files whenever needed.
 
 
 ---
-# Compilation
+## Compilation
 
 Only the C standard library is used, as well as the "chasteint.h" header that I wrote. That library contains generally useful routines for converting between bases. Just compile with:
 
