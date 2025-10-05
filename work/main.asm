@@ -8,7 +8,7 @@ int 21h    ; call the DOS kernel
 
 ret        ; return from main function / end program
 
-msg     db      'Hello World!',0Dh,0Ah,'$'     ; assign msg variable with your message string
+msg     db      'Hello, World!',0Dh,0Ah,'$'     ; assign msg variable with your message string
 
 ; This 16 bit DOS Assembly source has been formatted for the FASM assembler.
 ; In order to run it, you will need the DOSBOX emulator or something similar.
