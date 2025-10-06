@@ -2,14 +2,14 @@
 
 This program reads or writes bytes of a file.
 
-Read Usage Type 1: (hexdump entire file)
- ./main file
+Read Usage Type 1:
+ ./chastehex file (hexdump entire file)
 
-Read Usage Type 2: (read one byte from this address)
- ./main file address 
+Read Usage Type 2:
+ ./chastehex file address (read one byte from this address)
 
-Write Usage: (write one or more bytes to this address)
- ./main file address byte
+Write Usage:
+ ./chastehex file address byte (write byte(s) to this address)
 
 ---
 
@@ -28,11 +28,3 @@ Only the C standard library is used, as well as the "chasteint.h" header that I 
 ## History
 
 This program is an improvement on "ckhexdump" which was a hexadecimal dumping program I wrote for fun. This one is better because it can function like this but can also edit individual bytes without any extra dependencies.
-
-There are many hex dumping programs out there but I believe mine goes a step ahead because it allows editing bytes of files using shell scripts, for example, empty space in executable files, or perhaps to modify the behavior of video games.
-
-## Why would I use this?
-
-Because although there are many hex editors available for Linux, the dependency chain of Graphical User Interfaces requires more time installing packages that are not needed if you only want to edit a few bytes of a binary file.
-
-Of course, for manual editing, you can probably find a better tool, but this one only requires the C library to be linked, which is the default for all C programs anyway.

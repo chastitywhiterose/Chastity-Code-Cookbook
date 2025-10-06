@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "chasteint.h"
+
 
 void hexdump(FILE* fp)
 {
@@ -35,9 +35,9 @@ int main(int argc, char *argv[])
  {
   printf("Chastity's Hexadecimal Tool\n\n");
   printf("This program reads or writes bytes of a file.\n\n");
-  printf("Read Usage Type 1: (hexdump entire file)\n %s file\n\n",argv[0]);
-  printf("Read Usage Type 2: (read one byte from this address)\n %s file address \n\n",argv[0]);
-  printf("Write Usage: (write one or more bytes to this address)\n %s file address byte\n",argv[0]);
+  printf("Read Usage Type 1:\n %s file (hexdump entire file)\n\n",argv[0]);
+  printf("Read Usage Type 2:\n %s file address (read one byte from this address)\n\n",argv[0]);
+  printf("Write Usage:\n %s file address byte (write byte(s) to this address)\n",argv[0]);
   return 0;
  }
 
@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
   }
   else
   {
-   printf("fp=fopen(%s,\"rb+\")\n",argv[1]);
+   printf("File \"%s\" opened.\n",argv[1]);
   }
  }
 
@@ -66,24 +66,22 @@ int main(int argc, char *argv[])
   fseek(fp,x,SEEK_SET);
  }
 
- /*read a byte at address of second arg*/
  if(argc==3)
  {
   c=fgetc(fp);
-  printf("%s: ",intstr(x,16,8));
+  printf("%08X\n",x);
   if(c==EOF){printf("EOF\n");}
-  else{printf("%s\n",intstr(c,16,2));}
+  else{printf("%02X\n",c);}}
  }
 
- /*any arguments past the address are hex bytes to be written*/
  if(argc>3)
  {
   argx=3;
   while(argx<argc)
   {
    c=strtol(argv[argx],NULL,16);
-   printf("%s: ",intstr(x,16,8));
-   printf("%s\n",intstr(c,16,2));
+   printf("%08X\n",x);
+   printf("%02X\n",c);
    fputc(c,fp);
    x++;
    argx++;
