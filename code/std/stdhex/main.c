@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
 void hexdump(FILE* fp)
 {
  int x,c,address=0,width=16;
@@ -33,11 +32,11 @@ int main(int argc, char *argv[])
 
  if(argc==1)
  {
-  printf("Chastity's Hexadecimal Tool\n\n");
+  printf("Chastity's Hexadecimal Tool: STDlib version\n\n");
   printf("This program reads or writes bytes of a file.\n\n");
-  printf("Read Usage Type 1:\n %s file (hexdump entire file)\n\n",argv[0]);
-  printf("Read Usage Type 2:\n %s file address (read one byte from this address)\n\n",argv[0]);
-  printf("Write Usage:\n %s file address byte (write byte(s) to this address)\n",argv[0]);
+  printf("Read Usage Type 1: (hexdump entire file)\n %s file\n\n",argv[0]);
+  printf("Read Usage Type 2: (read one byte from this address)\n %s file address \n\n",argv[0]);
+  printf("Write Usage: (write one or more bytes to this address)\n %s file address byte\n",argv[0]);
   return 0;
  }
 
@@ -51,7 +50,7 @@ int main(int argc, char *argv[])
   }
   else
   {
-   printf("File \"%s\" opened.\n",argv[1]);
+   printf("fp=fopen(%s,\"rb+\")\n",argv[1]);
   }
  }
 
@@ -62,16 +61,19 @@ int main(int argc, char *argv[])
 
  if(argc>2)
  {
-  x=strint(argv[2],16);
+  x=strtol(argv[2],NULL,16);
   fseek(fp,x,SEEK_SET);
  }
 
+
+
+ /*read a byte at address of second arg*/
  if(argc==3)
  {
   c=fgetc(fp);
   printf("%08X\n",x);
   if(c==EOF){printf("EOF\n");}
-  else{printf("%02X\n",c);}}
+  else{printf("%02X\n",c);}
  }
 
  if(argc>3)

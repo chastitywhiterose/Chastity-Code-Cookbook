@@ -66,6 +66,8 @@ int main(int argc, char *argv[])
   fseek(fp,x,SEEK_SET);
  }
 
+
+
  /*read a byte at address of second arg*/
  if(argc==3)
  {
