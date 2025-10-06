@@ -32,7 +32,7 @@ int 80h
 ; this is where I keep my string variables
 
 msg db 'Hello World!', 0Ah,0     ; assign msg variable with your message string
-main_string db "This is Chastity's Assembly Language counting program!",0Ah,0
+main_string db "This is Chastity's 32-bit Assembly Language counting program!",0Ah,0
 
 ; This Assembly source file has been formatted for the FASM assembler.
 ; The following 3 commands assemble, give executable permissions, and run the program
