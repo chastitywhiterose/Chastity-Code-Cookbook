@@ -21,4 +21,3 @@ msg db 'Hello World!', 0Ah ; assign msg variable with your message string
 ;	fasm main.asm
 ;	chmod +x main
 ;	./main
-
