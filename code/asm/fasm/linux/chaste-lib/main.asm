@@ -11,13 +11,11 @@ mov ebx, 1 ;ebx must be 1 to write to standard output
 
 mov eax,msg
 call putstring
-mov eax,int_string
-call putstring
 mov eax,main_string ; move the address of main_string into eax register
 call putstring
 
 mov [radix],2 ; can choose radix for integer output!
-mov [int_width],1
+mov [int_width],8
 
 mov eax,0
 loop1:

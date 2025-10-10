@@ -42,7 +42,7 @@ jz zero_args
 
 pop eax
 mov [filename],eax ; save the name of the file we will open to read
-call putstring
+;call putstring
 dec [argc]
 
     mov     ecx, 2              ; open file in read and write mode 
@@ -51,6 +51,33 @@ dec [argc]
     int     80h                 ; call the kernel
 
 mov [filedesc],eax ; save the file descriptor number for later use
+mov [file_offset],0 ;assume the offset is 0,beginning of file
+
+mov ebx,1
+;call putint show the return of the open call
+cmp eax,0
+jb zero_args ;if eax less than zero error occurred
+
+;check next arg
+mov eax,[argc]
+;call putint
+cmp eax,0 ;if there are no more args after filename, just hexdump it
+jz hexdump
+
+pop eax ;pop the argument into eax and process it as a hex number
+dec [argc]
+call strint
+;call putint
+
+    mov     edx, 0              ; whence argument (SEEK_SET)
+    mov     ecx, eax            ; move the file cursor to this address
+    mov     ebx, [filedesc]     ; move the opened file descriptor into EBX
+    mov     eax, 19             ; invoke SYS_LSEEK (kernel opcode 19)
+    int     80h                 ; call the kernel
+
+mov [file_offset],ecx ; move the new offset
+
+hexdump:
 
 first_read_bytes_row:
     mov     edx, 0x10             ; number of bytes to read - one for each letter of the file contents
@@ -62,17 +89,21 @@ first_read_bytes_row:
 mov [bytes_read],eax
 
  mov ebx,1 ;switch back ebx to 1 for stdout
- call putint
+; call putint
 
 cmp [bytes_read],1 
 jl file_error ;if less than one bytes read, there is an error
 jmp file_success
 
 file_error:
-;mov eax,[filename]
+mov eax,[filename]
 ;call putstring
-;mov eax,file_failed_string
-;call putstring
+mov eax,[file_offset]
+mov [int_string_end],' '
+mov [int_width],8
+call putint
+mov eax,end_of_file_string
+call putstring
 jmp zero_args
 
 ; this point is reached if file was read from successfully
@@ -86,7 +117,7 @@ file_success:
 mov eax,byte_array
 ;call putstring
 
-mov [file_offset],0
+
 
 next_row_of_bytes:
 mov ebx,1
@@ -143,6 +174,7 @@ argc_string db 'argc=',0
 argx_string db 'argx=',0
 file_opened_string db ' was successfully opened!',0Ah,0
 file_failed_string db ' could not be opened!',0Ah,0
+end_of_file_string db 'EOF'
 newline db 0Ah,0
 
 ; this is where I keep my string variables
