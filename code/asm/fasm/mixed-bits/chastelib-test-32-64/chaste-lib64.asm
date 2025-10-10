@@ -19,19 +19,24 @@ sub rdx,rax ; rdx will now have correct number of bytes when we use it for the s
 
 mov rsi,rax ; pointer/address of string to write
 mov rax,1   ; invoke SYS_WRITE (kernel opcode 1 on 64 bit systems)
-;mov rdi,1   ; write to the STDOUT file
-syscall
+;mov rdi,1  ; write to the STDOUT file
+syscall     ; system call to write the message
 
 ret ; this is the end of the putstring function return to calling location
 
 ;this is the location in memory where digits are written to by the putint function
-int_string     db 64 dup '?'
+int_string     db 64 dup '?' ;enough bytes to hold maximum size 64-bit binary integer
 ; this is the end of the integer string optional line feed and terminating zero
 ; clever use of this label can change the ending to be a different character when needed 
 int_string_end db 0Ah,0
 
 radix dq 2 ;radix or base for integer output. 2=binary, 8=octal, 10=decimal, 16=hexadecimal
 int_width dq 8
+
+;this function creates a string of the integer in rax
+;it uses the above radix variable to determine base from 2 to 36
+;it then loads rax with the address of the string
+;this means that it can be used with the putstring function
 
 intstr:
 
@@ -80,12 +85,14 @@ mov rax,rbp ; now that the digits have been written to the string, display it!
 ret
 
 
+; function to print string form of whatever integer is in rax
+; The radix determines which number base the string form takes.
+; Anything from 2 to 36 is a valid radix
+; in practice though, only bases 2,8,10,and 16 will make sense to other programmers
+; this function does not process anything by itself but calls the combination of my other
+; functions in the order I intended them to be used.
 
-
-
-
-
-putint: ; function to output decimal form of whatever integer is in rax
+putint: 
 
 push rax ;save rax on the stack to restore later
 
@@ -95,19 +102,6 @@ call putstring
 
 pop rax  ;load rax from the stack so it will be as it was before this function was called
 ret
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 ;this function converts a string pointed to by eax into an integer returned in eax instead
 ;it is a little complicated because it has to account for whether the character in

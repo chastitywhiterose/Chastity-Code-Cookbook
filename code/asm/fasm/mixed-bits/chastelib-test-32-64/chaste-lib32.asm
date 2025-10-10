@@ -17,15 +17,15 @@ jmp putstring_strlen_start
 strlen_end:
 sub edx,eax ; edx will now have correct number of bytes when we use it for the system write call
 
-mov ecx,eax ; copy eax to ecx which must contain address of string to write
-mov eax, 4  ; invoke SYS_WRITE (kernel opcode 4)
-;mov ebx, 1  ; ebx=1 means write to the STDOUT file
+mov ecx,eax ; pointer/address of string to write
+mov eax, 4  ; invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
+;mov ebx, 1 ; write to the STDOUT file
 int 80h     ; system call to write the message
 
 ret ; this is the end of the putstring function return to calling location
 
 ;this is the location in memory where digits are written to by the putint function
-int_string     db 32 dup '?'
+int_string     db 32 dup '?' ;enough bytes to hold maximum size 32-bit binary integer
 ; this is the end of the integer string optional line feed and terminating zero
 ; clever use of this label can change the ending to be a different character when needed 
 int_string_end db 0Ah,0
