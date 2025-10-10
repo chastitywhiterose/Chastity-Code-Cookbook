@@ -19,7 +19,10 @@ mov [int_width],8
 
 mov rax,0
 
-mov rax,num
+;mov rax,num
+;call strint
+
+;mov rax,5
 
 loop1:
 call putint
