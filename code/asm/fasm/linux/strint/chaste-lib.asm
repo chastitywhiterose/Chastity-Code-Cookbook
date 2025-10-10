@@ -23,16 +23,22 @@ int 80h     ; system call to write the message
 ret ; this is the end of the putstring function return to calling location
 
 ;this is the location in memory where digits are written to by the putint function
-int_string db 32 dup '?',0Ah,0
-int_string_end:
+int_string     db 32 dup '?'
+; this is the end of the integer string optional line feed and terminating zero
+; clever use of this label can change the ending to be a different character when needed 
+int_string_end db 0Ah,0
 
 radix dd 2 ;radix or base for integer output. 2=binary, 16=hexadecimal, 10=decimal
 
-putint: ; function to output decimal form of whatever integer is in eax
+; function to print string form of whatever integer is in eax
+; The radix determines which number base the string form takes.
+; Anything from 2 to 36 is a valid radix
+
+putint: 
 
 push eax ;save eax on the stack to restore later
 
-mov ebp,int_string_end-3 ;find address of lowest digit(just before the newline 0Ah)
+mov ebp,int_string_end-1 ;find address of lowest digit(just before the newline 0Ah)
 
 digits_start:
 
@@ -68,11 +74,8 @@ call putstring
 pop eax  ;load eax from the stack so it will be as it was before this function was called
 ret
 
-
-
 ;this function converts a string pointed to by eax into an integer returned in eax instead
 ;it is a little complicated!
-
 
 strint:
 
