@@ -4,53 +4,154 @@ format ELF executable
 entry main
 
 include 'chaste-lib.asm'
+include 'chastehex.inc'
 
 ;the main function of our assembly function, just as if I were writing C.
 main:
 
 mov ebx,1 ;ebx must be 1 to write to standard output
 
-mov eax,argc_string
-call putstring
+
 
 ;radix will be 16 because this whole program is about hexadecimal
 mov [radix],16 ; can choose radix for integer input/output!
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+
+
+;print all the command line arguments for debugging purposes
+
+
+
+mov eax,argc_string
+call putstring
 pop eax
-call putint
-
 call putint
 mov [argc],eax ;save the argument count for later
 
-;mov eax,test_input_string
-;call strint
+pop eax
+mov [progname],eax ; save the name of the program
+;call putstring
+dec [argc]
+
+;before we try to get the first argument as a file, we must check if it exists
+cmp [argc],0
+jz zero_args
+
+pop eax
+mov [filename],eax ; save the name of the file we will open to read
+call putstring
+dec [argc]
+
+    mov     ecx, 2              ; open file in read and write mode 
+    mov     ebx, [filename]       ; filename we created above
+    mov     eax, 5              ; invoke SYS_OPEN (kernel opcode 5)
+    int     80h                 ; call the kernel
+
+mov [filedesc],eax ; save the file descriptor number for later use
+
+first_read_bytes_row:
+    mov     edx, 0x10             ; number of bytes to read - one for each letter of the file contents
+    mov     ecx, byte_array   ; move the memory address of our file contents variable into ecx
+    mov     ebx, [filedesc]            ; move the opened file descriptor into EBX
+    mov     eax, 3              ; invoke SYS_READ (kernel opcode 3)
+    int     80h                 ; call the kernel
+
+mov [bytes_read],eax
+
+ mov ebx,1 ;switch back ebx to 1 for stdout
+ call putint
+
+cmp [bytes_read],1 
+jl file_error ;if less than one bytes read, there is an error
+jmp file_success
+
+file_error:
+;mov eax,[filename]
+;call putstring
+;mov eax,file_failed_string
+;call putstring
+jmp zero_args
+
+; this point is reached if file was read from successfully
+
+file_success:
+;mov eax,[filename]
+;call putstring
+;mov eax,file_opened_string
+;call putstring
+
+mov eax,byte_array
+;call putstring
+
+mov [file_offset],0
+
+next_row_of_bytes:
+mov ebx,1
+call print_bytes_row
+
+call read_bytes_row
+add [file_offset],0x10
+
+cmp [bytes_read],1 
+jl zero_args ;if less than one bytes read, there is an error
+jmp next_row_of_bytes
 
 
-;mov ecx,0
+
+jmp zero_args ;end program here
+
+
+mov [argx],0
 next_arg:
+cmp [argc],0
+jz zero_args
+mov eax,argx_string
+call putstring
+mov eax,[argx]
+call putint
+inc [argx]
 pop eax
 call putstring
 mov eax,int_string_end
 call putstring
 dec [argc]
-cmp [argc],0
-jnz next_arg
 
-;call putint
+jmp next_arg
+
+zero_args:
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 mov eax, 1  ; invoke SYS_EXIT (kernel opcode 1)
 mov ebx, 0  ; return 0 status on exit - 'No Errors'
 int 80h
 
+;variables for managing arguments
+argc dd 0
+argx dd 0
+progname dd 0 ; name of the program
+filename dd 0 ; name of the file to be opened
+filedesc dd 0 ; file descriptor
+bytes_read dd 0
+file_offset dd 0
+
+argc_string db 'argc=',0
+argx_string db 'argx=',0
+file_opened_string db ' was successfully opened!',0Ah,0
+file_failed_string db ' could not be opened!',0Ah,0
+newline db 0Ah,0
+
 ; this is where I keep my string variables
 
 main_string db "This is Chastity's 32-bit Assembly Hex Dumper/Editor.",0Ah,0
 test_input_string db '11000',0
-argc dd 0
 
-argc_string db 'argc=',0
+;where we will store data from the file
+byte_array db 32 dup '?',0
 
 ; This Assembly source file has been formatted for the FASM assembler.
 ; The following 3 commands assemble, give executable permissions, and run the program
