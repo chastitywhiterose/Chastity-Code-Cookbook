@@ -17,6 +17,7 @@ mov eax,main_string ; move the address of main_string into eax register
 call putstring
 
 mov [radix],2 ; can choose radix for integer output!
+mov [int_width],1
 
 mov eax,0
 loop1:

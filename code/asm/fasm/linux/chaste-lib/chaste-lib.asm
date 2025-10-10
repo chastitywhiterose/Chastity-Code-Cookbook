@@ -41,8 +41,7 @@ int_width dd 8
 intstr:
 
 mov ebp,int_string_end-1 ;find address of lowest digit(just before the newline 0Ah)
-mov ecx,[int_width]
-dec ecx
+mov ecx,1
 
 digits_start:
 
@@ -67,17 +66,17 @@ mov [ebp],dl
 cmp eax,0
 jz intstr_end
 dec ebp
-dec ecx
+inc ecx
 jmp digits_start
 
 intstr_end:
 
 prefix_zeros:
-cmp ecx,0
-jz end_zeros
+cmp ecx,[int_width]
+jnb end_zeros
 dec ebp
 mov [ebp],byte '0'
-dec ecx
+inc ecx
 jmp prefix_zeros
 end_zeros:
 
