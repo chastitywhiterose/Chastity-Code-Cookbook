@@ -40,3 +40,8 @@ register mapping for system call invocation using int 0x80
 
 
 
+Most Relevant Lessons of asmtutor
+
+https://asmtutor.com/#lesson2
+https://asmtutor.com/#lesson8
+https://asmtutor.com/#lesson24
