@@ -61,6 +61,7 @@ add edx,'A'
 save_digit:
 
 mov [ebp],dl
+;cmp ecx,[width] ;
 cmp eax,0
 jz intstr_end
 dec ebp
