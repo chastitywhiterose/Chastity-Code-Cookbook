@@ -11,14 +11,16 @@ mov rdi,1 ;rdi must be 1 to write to standard output
 
 mov rax,msg
 call putstring
-mov rax,int_string
-call putstring
 mov rax,main_string ; move the address of main_string into rax register
 call putstring
 
 mov [radix],2 ; can choose radix for integer output!
+mov [int_width],8
 
 mov rax,0
+
+mov rax,num
+
 loop1:
 call putint
 inc rax
@@ -33,6 +35,7 @@ syscall
 
 msg db 'Hello World!', 0Ah,0     ; assign msg variable with your message string
 main_string db "This is Chastity's 64-bit Assembly Language counting program!",0Ah,0
+num db '101',0
 
 ; This Assembly source file has been formatted for the FASM assembler.
 ; The following 3 commands assemble, give executable permissions, and run the program
