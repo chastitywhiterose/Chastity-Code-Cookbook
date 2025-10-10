@@ -31,6 +31,7 @@ int_string     db 32 dup '?'
 int_string_end db 0Ah,0
 
 radix dd 2 ;radix or base for integer output. 2=binary, 8=octal, 10=decimal, 16=hexadecimal
+int_width dd 8
 
 ;this function creates a string of the integer in eax
 ;it uses the above radix variable to determine base from 2 to 36
@@ -40,6 +41,8 @@ radix dd 2 ;radix or base for integer output. 2=binary, 8=octal, 10=decimal, 16=
 intstr:
 
 mov ebp,int_string_end-1 ;find address of lowest digit(just before the newline 0Ah)
+mov ecx,[int_width]
+dec ecx
 
 digits_start:
 
@@ -64,13 +67,25 @@ mov [ebp],dl
 cmp eax,0
 jz intstr_end
 dec ebp
+dec ecx
 jmp digits_start
 
 intstr_end:
 
+prefix_zeros:
+cmp ecx,0
+jz end_zeros
+dec ebp
+mov [ebp],byte '0'
+dec ecx
+jmp prefix_zeros
+end_zeros:
+
+
 mov eax,ebp ; now that the digits have been written to the string, display it!
 
 ret
+
 
 ; function to print string form of whatever integer is in eax
 ; The radix determines which number base the string form takes.
@@ -169,3 +184,5 @@ jmp read_strint ;jump back and continue the loop if nothing has exited it
 strint_end:
 
 ret
+
+
