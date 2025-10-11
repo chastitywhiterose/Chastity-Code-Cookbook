@@ -1,7 +1,7 @@
 format ELF64 executable
 entry main
 
-include 'chaste-lib64.asm'
+include 'chastelib64.asm'
 
 main: ; the main function of our assembly function, just as if I were writing C.
 
