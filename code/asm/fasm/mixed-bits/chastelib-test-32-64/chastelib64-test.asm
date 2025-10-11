@@ -1,7 +1,7 @@
 format ELF64 executable
 entry main
 
-include 'chaste-lib64.asm'
+include 'chastelib64.asm'
 
 main: ; the main function of our assembly function, just as if I were writing C.
 
@@ -26,6 +26,6 @@ test_int db '10011101001110011110011',0
 ; This Assembly source file has been formatted for the FASM assembler.
 ; The following 3 commands assemble, give executable permissions, and run the program
 ;
-;	fasm chastelib-test-64.asm
-;	chmod +x chastelib-test-64
-;	./chastelib-test-64
+;	fasm chastelib64-test.asm
+;	chmod +x chastelib64-test
+;	./chastelib64-test
