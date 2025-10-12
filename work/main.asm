@@ -9,8 +9,22 @@ call put$tring
 mov ax,main_string ;
 call putstring
 
-mov ax,15
+mov [radix],2 ; can choose radix for integer output!
+mov [int_width],8
+
+
+mov [radix],10 ; can choose radix for integer output!
+
+
+;mov ax,15
+;call putint
+
+mov ax,0
+loop1:
 call putint
+inc ax
+cmp ax,10h;
+jnz loop1
 
 mov ah,0   ; call function 0 (terminate program)
 int 21h    ; call the DOS kernel

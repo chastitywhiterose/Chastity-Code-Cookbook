@@ -50,7 +50,8 @@ ret
 int_string     db 16 dup '?' ;enough bytes to hold maximum size 32-bit binary integer
 ; this is the end of the integer string optional line feed and terminating zero
 ; clever use of this label can change the ending to be a different character when needed 
-int_string_end db 0D,0Ah,0
+int_string_end db 0Ah,0 ;for some reason, the 0Dh,0Ah does not diplay correctly in DOSBOX
+;therefore, the 0Dh has been excluded from this string ending
 
 radix dw 2 ;radix or base for integer output. 2=binary, 8=octal, 10=decimal, 16=hexadecimal
 int_width dw 8
