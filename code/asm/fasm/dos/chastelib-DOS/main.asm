@@ -2,13 +2,31 @@ org 100h
 
 main:
 
-;do the Hello World with function 9 (the easy way)
-mov ah,9h  ; call function 9 (write string terminated by $)
-mov dx,msg ; give dx register address of the string
-int 21h    ; call the DOS kernel
+
+mov ax,msg
+call put$tring
 
 mov ax,main_string ;
 call putstring
+
+mov [radix],2 ; can choose radix for integer output!
+mov [int_width],8
+
+mov ax,test_int
+call strint
+
+mov [radix],10 ; can choose radix for integer output!
+
+;mov ax,15
+call putint
+
+mov ax,0
+loop1:
+call putint
+inc ax
+
+cmp ax,10h;
+jnz loop1
 
 mov ah,0   ; call function 0 (terminate program)
 int 21h    ; call the DOS kernel
@@ -16,6 +34,9 @@ int 21h    ; call the DOS kernel
 
 msg     db      'Hello, World!',0Dh,0Ah,'$'     ; assign msg variable with your message string
 main_string db "This is Chastity's 16-bit Assembly Language counting program!",0Dh,0Ah,0
+
+; test string of integer for input
+test_int db '11111000011',0
 
 include 'chastelib16.asm'
 
