@@ -129,3 +129,89 @@ ret
 
 
 
+
+
+
+
+;this function converts a string pointed to by eax into an integer returned in eax instead
+;it is a little complicated because it has to account for whether the character in
+;a string is a decimal digit 0 to 9, or an alphabet character for bases higher than ten
+;it also checks for both uppercase and lowercase letters for bases 11 to 36
+;finally, it checks if that letter makes sense for the base.
+;For example, G to Z cannot be used in hexadecimal, only A to F can
+;The purpose of writing this function was to be able to accept user input as integers
+
+strint:
+
+mov esi,eax ;copy string address from eax to esi because eax will be replaced soon!
+mov eax,0
+
+read_strint:
+mov ecx,0 ; zero ecx so only lower 8 bits are used
+mov cl,[esi]
+inc esi
+cmp cl,0 ; compare byte at address edx with 0
+jz strint_end ; if comparison was zero, this is the end of string
+
+;if char is below '0' or above '9', it is outside the range of these and is not a digit
+cmp cl,'0'
+jb not_digit
+cmp cl,'9'
+ja not_digit
+
+;but if it is a digit, then correct and process the character
+is_digit:
+sub cl,'0'
+jmp process_char
+
+not_digit:
+;it isn't a digit, but it could be perhaps and alphabet character
+;which is a digit in a higher base
+
+;if char is below 'A' or above 'Z', it is outside the range of these and is not capital letter
+cmp cl,'A'
+jb not_upper
+cmp cl,'Z'
+ja not_upper
+
+is_upper:
+sub cl,'A'
+add cl,10
+jmp process_char
+
+not_upper:
+
+;if char is below 'a' or above 'z', it is outside the range of these and is not lowercase letter
+cmp cl,'a'
+jb not_lower
+cmp cl,'z'
+ja not_lower
+
+is_lower:
+sub cl,'a'
+add cl,10
+jmp process_char
+
+not_lower:
+
+;if we have reached this point, result invalid and end function
+jmp strint_end
+
+process_char:
+
+cmp ecx,[radix] ;compare char with radix
+jae strint_end ;if this value is above or equal to radix, it is too high despite being a valid digit/alpha
+
+mov edx,0 ;zero edx because it is used in mul sometimes
+mul [radix]    ;mul eax with radix
+add eax,ecx
+
+jmp read_strint ;jump back and continue the loop if nothing has exited it
+
+strint_end:
+
+ret
+
+
+
+
