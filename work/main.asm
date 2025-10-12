@@ -2,13 +2,15 @@ org 100h
 
 main:
 
-;do the Hello World with function 9 (the easy way)
-mov ah,9h  ; call function 9 (write string terminated by $)
-mov dx,msg ; give dx register address of the string
-int 21h    ; call the DOS kernel
+
+mov ax,msg
+call put$tring
 
 mov ax,main_string ;
 call putstring
+
+mov ax,15
+call putint
 
 mov ah,0   ; call function 0 (terminate program)
 int 21h    ; call the DOS kernel
