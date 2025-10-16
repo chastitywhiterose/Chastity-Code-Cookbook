@@ -1,46 +1,34 @@
 ; This file is where I keep my function definitions.
 ; These are usually my string and integer output routines.
 
-; function to print zero terminated string pointed to by register eax
+stdout dw 1 ; variable for standard output so that it can theoretically be redirected
 
-putstring: 
+; this is my best putstring function for DOS because it uses call 40h of interrupt 21h
+; this means that it works in a similar way to my Linux Assembly code
+
+putstring:
 
 mov bx,ax ; copy ax to cx as well. Now both registers have the address of the main_string
 
 putstring_strlen_start: ; this loop finds the lenge of the string as part of the putstring function
 
-mov dl,[bx]
-cmp dl,0 ; compare this byte byte at address with 0
-jz strlen_end ; if comparison was zero, jump to loop end because we have found the length
-
-; call interrupt for printing a single character in dl register
-mov ah,2
-int 21h
-
+cmp [bx], byte 0 ; compare this byte byte at address with 0
+jz putstring_strlen_end ; if comparison was zero, jump to loop end because we have found the length
 inc bx
 jmp putstring_strlen_start
 
-strlen_end:
-;sub edx,eax ; edx will now have correct number of bytes when we use it for the system write call
+putstring_strlen_end:
 
-ret ; this is the end of the putstring function return to calling location
+sub bx,ax ; sub ax from bx to get the difference for number of bytes
+mov cx,bx ; mov bx to cs
+mov dx,ax  ; dx will have address of string to write
 
-
-
-
-
-
-
-;print $ terminated string at address ax
-put$tring:
-
-mov dx,ax ; give dx register address of the string
-
-;do the Hello World with function 9 (the easy way)
-mov ah,9h  ; call function 9 (write string terminated by $)
+mov ah,40h ; select DOS function 40h write 
+mov bx,[stdout]   ; file handle 1=stdout
 int 21h    ; call the DOS kernel
 
 ret
+
 
 
 
@@ -50,15 +38,14 @@ ret
 int_string     db 16 dup '?' ;enough bytes to hold maximum size 32-bit binary integer
 ; this is the end of the integer string optional line feed and terminating zero
 ; clever use of this label can change the ending to be a different character when needed 
-int_string_end db 0Ah,0 ;for some reason, the 0Dh,0Ah does not diplay correctly in DOSBOX
-;therefore, the 0Dh has been excluded from this string ending
+int_newline db 0Dh,0Ah,0 ;the proper way to end a line in DOS/Windows
 
 radix dw 2 ;radix or base for integer output. 2=binary, 8=octal, 10=decimal, 16=hexadecimal
 int_width dw 8
 
 intstr:
 
-mov bp,int_string_end-1 ;find address of lowest digit(just before the newline 0Ah)
+mov bp,int_newline-1 ;find address of lowest digit(just before the newline 0Ah)
 mov cx,1
 
 digits_start:
