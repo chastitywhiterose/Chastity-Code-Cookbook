@@ -10,5 +10,3 @@ jne start_of_loop ; Jump if Not Equal at the comparison above to restart the loo
 
 mov ah,0          ; move zero into the ah register for the program exit call
 int 21h           ; DOS system call again but with a different ah value than before.
-
-mov [bp],byte 55
