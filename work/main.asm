@@ -33,6 +33,7 @@ main_string db "This is Chastity's 16-bit Assembly Language counting program!",0
 test_int db '11111000011',0
 
 include 'chastelib16.asm'
+include 'chastelib16debug.asm'
 
 ; This 16 bit DOS Assembly source has been formatted for the FASM assembler.
 ; In order to run it, you will need the DOSBOX emulator or something similar.
