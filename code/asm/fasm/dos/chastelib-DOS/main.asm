@@ -11,7 +11,7 @@ mov [int_width],8
 mov ax,test_int
 call strint
 
-;mov [radix],10 ; can choose radix for integer output!
+mov [radix],16 ; can choose radix for integer output!
 
 call putint
 
@@ -24,6 +24,8 @@ inc ax
 cmp ax,10h;
 jnz loop1
 
+call chaste_debug
+
 mov ah,0   ; call function 0 (terminate program)
 int 21h    ; call the DOS kernel
 
@@ -33,6 +35,7 @@ main_string db "This is Chastity's 16-bit Assembly Language counting program!",0
 test_int db '11111000011',0
 
 include 'chastelib16.asm'
+include 'chastelib16debug.asm'
 
 ; This 16 bit DOS Assembly source has been formatted for the FASM assembler.
 ; In order to run it, you will need the DOSBOX emulator or something similar.
