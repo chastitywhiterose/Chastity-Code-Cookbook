@@ -5,19 +5,19 @@ main:
 mov ax,main_string
 call putstring
 
-mov [radix],2 ; can choose radix for integer output!
-mov [int_width],8
+mov word [radix],2 ; can choose radix for integer output!
+mov word [int_width],8
 
 mov ax,test_int
 call strint
 
-mov [radix],16 ; can choose radix for integer output!
+mov word [radix],16 ; can choose radix for integer output!
 
 call putint
 
 mov ax,0
 loop1:
-mov [stdout],1
+mov word [stdout],1
 call putint
 inc ax
 

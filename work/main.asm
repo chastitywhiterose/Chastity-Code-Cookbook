@@ -2,38 +2,57 @@ org 100h
 
 main:
 
-mov ax,text
+mov ax,main_string
 call putstring
 
-mov ax,4C00h
-int 21h
+mov word [radix],2 ; can choose radix for integer output!
+mov word [int_width],8
 
-text db 'Hello World!',0Dh,0Ah,0
+mov ax,test_int
+call strint
 
-; This section is for the putstring function I wrote.
-; It will print any zero terminated string that register ax points to
+mov word [radix],16 ; can choose radix for integer output!
 
-stdout dw 1 ; value of standard output
+call putint
 
-putstring:
+mov ax,0
+loop1:
+mov word [stdout],1
+call putint
+inc ax
 
-mov bx,ax ; copy ax to bx as well. Now both registers have the address of the main_string
+cmp ax,10h;
+jnz loop1
 
-putstring_strlen_start: ; this loop finds the length of the string as part of the putstring function
+call chaste_debug
 
-cmp [bx], byte 0 ; compare this byte byte at address with 0
-jz putstring_strlen_end ; if comparison was zero, jump to loop end because we have found the length
-inc bx
-jmp putstring_strlen_start
-
-putstring_strlen_end:
-
-sub bx,ax ; sub ax from bx to get the difference for number of bytes
-mov cx,bx ; mov bx to cx
-mov dx,ax  ; dx will have address of string to write
-
-mov ah,40h ; select DOS function 40h write 
-mov bx,[stdout]   ; file handle 1=stdout
+mov ah,0   ; call function 0 (terminate program)
 int 21h    ; call the DOS kernel
 
-ret ; return to calling location
+main_string db "This is Chastity's 16-bit Assembly Language counting program!",0Dh,0Ah,0
+
+; test string of integer for input
+test_int db '11111000011',0
+
+include 'chastelib16.asm'
+include 'chastelib16debug.asm'
+
+; This 16 bit DOS Assembly source has been formatted for the FASM assembler.
+; In order to run it, you will need the DOSBOX emulator or something similar.
+; First, assemble it into a binary file. FASM will automatically add
+; the .com extension because of the "org 100h" command.
+;
+;	fasm main.asm
+;
+; Then you will need to open DOSBOX and mount the folder that it is in.
+; For example:
+;
+;	mount c ~/.dos
+;	c:
+;
+;	Then, you will be able to just run the main.com.
+;
+;	main
+;
+; original source from: https://cable.ayra.ch/md/hello-world-in-dos
+
