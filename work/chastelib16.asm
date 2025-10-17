@@ -223,9 +223,11 @@ int 21h
 
 ret
 
+;the next utility functions simply print a space or a newline
+;these help me save code when printing lots of things for debugging
+
 space db ' ',0
 line db 0Dh,0Ah,0
-
 
 putspace:
 push ax
