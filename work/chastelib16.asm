@@ -238,7 +238,7 @@ ret
 
 putline:
 push ax
-mov ax,space
+mov ax,line
 call putstring
 pop ax
 ret
