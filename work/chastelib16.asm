@@ -8,6 +8,11 @@ stdout dw 1 ; variable for standard output so that it can theoretically be redir
 
 putstring:
 
+push ax
+push bx
+push cx
+push dx
+
 mov bx,ax ; copy ax to cx as well. Now both registers have the address of the main_string
 
 putstring_strlen_start: ; this loop finds the length of the string as part of the putstring function
@@ -26,6 +31,11 @@ mov dx,ax  ; dx will have address of string to write
 mov ah,40h ; select DOS function 40h write 
 mov bx,[stdout]   ; file handle 1=stdout
 int 21h    ; call the DOS kernel
+
+pop dx
+pop cx
+pop bx
+pop ax
 
 ret
 
@@ -103,7 +113,7 @@ ret
 
 putint: 
 
-push ax ;save eax on the stack to restore later
+push ax
 push bx
 push cx
 push dx
@@ -115,7 +125,7 @@ call putstring
 pop dx
 pop cx
 pop bx
-pop ax  ;load eax from the stack so it will be as it was before this function was called
+pop ax
 
 ret
 
@@ -213,3 +223,20 @@ int 21h
 
 ret
 
+space db ' ',0
+line db 0Dh,0Ah,0
+
+
+putspace:
+push ax
+mov ax,space
+call putstring
+pop ax
+ret
+
+putline:
+push ax
+mov ax,space
+call putstring
+pop ax
+ret
