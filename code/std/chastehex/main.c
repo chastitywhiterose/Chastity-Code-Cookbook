@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "chasteint.h"
+#include "chastelib.h"
 
 void hexdump(FILE* fp)
 {
@@ -10,7 +10,7 @@ void hexdump(FILE* fp)
  {
   if(x%width==0)
   {
-   printf("%08X: ",address);
+   printf("%08X ",address);
   }
   
   printf("%02X",c);
@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
   }
   else
   {
-   printf("fp=fopen(%s,\"rb+\")\n",argv[1]);
+   printf("fp=fopen(\"%s\",\"rb+\")\n",argv[1]);
   }
  }
 
@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
  if(argc==3)
  {
   c=fgetc(fp);
-  printf("%s: ",intstr(x,16,8));
+  printf("%s ",intstr(x,16,8));
   if(c==EOF){printf("EOF\n");}
   else{printf("%s\n",intstr(c,16,2));}
  }
