@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
    }
   /*printf("File \"%s\": opened.\n",argv[argx]);*/
 
-  printf("fp[%X] = fopen(%s, \"rb\");\n",argx,argv[argx]);
+  printf("fp[%X] = fopen(\"%s\", \"rb\");\n",argx,argv[argx]);
   argx++;
  }
 
