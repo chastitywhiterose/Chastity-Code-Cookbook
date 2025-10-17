@@ -25,10 +25,10 @@ mov [radix],16 ; can choose radix for integer input/output!
 
 
 
-mov eax,argc_string
-call putstring
+;mov eax,argc_string
+;call putstring
 pop eax
-call putint
+;call putint
 mov [argc],eax ;save the argument count for later
 
 pop eax
@@ -59,10 +59,10 @@ cmp eax,0
 jb zero_args ;if eax less than zero error occurred
 
 ;check next arg
-mov eax,argc_string
-call putstring
+;mov eax,argc_string
+;call putstring
 mov eax,[argc]
-call putint
+;call putint
 cmp eax,0 ;if there are no more args after filename, just hexdump it
 jz hexdump
 
@@ -153,7 +153,7 @@ jmp next_row_of_bytes
 next_arg:
 cmp [argc],0
 jz zero_args
-inc [argx]
+;inc [argx]
 pop eax
 dec [argc]
 call strint ;try to convert string to a hex number
@@ -173,6 +173,7 @@ inc [file_offset]
 mov [int_newline],' '
 mov [int_width],8
 call putint
+mov eax,0
 mov al,[temp_byte]
 mov [int_width],2
 mov [int_newline],0Ah

@@ -3,6 +3,8 @@
 
 ; function to print zero terminated string pointed to by register rax
 
+stdout dq 1 ; variable for standard output so that it can theoretically be redirected
+
 putstring: 
 
 mov rdx,rax ; copy rax to rdx as well. Now both registers have the address of the main_string
@@ -19,7 +21,7 @@ sub rdx,rax ; rdx will now have correct number of bytes when we use it for the s
 
 mov rsi,rax ; pointer/address of string to write
 mov rax,1   ; invoke SYS_WRITE (kernel opcode 1 on 64 bit systems)
-;mov rdi,1  ; write to the STDOUT file
+mov rdi,[stdout]  ; write to the STDOUT file
 syscall     ; system call to write the message
 
 ret ; this is the end of the putstring function return to calling location

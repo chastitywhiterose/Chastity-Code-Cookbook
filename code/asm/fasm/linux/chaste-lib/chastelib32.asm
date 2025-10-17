@@ -3,6 +3,8 @@
 
 ; function to print zero terminated string pointed to by register eax
 
+stdout dd 1 ; variable for standard output so that it can theoretically be redirected
+
 putstring: 
 
 mov edx,eax ; copy eax to edx as well. Now both registers have the address of the main_string
@@ -19,7 +21,7 @@ sub edx,eax ; edx will now have correct number of bytes when we use it for the s
 
 mov ecx,eax ; pointer/address of string to write
 mov eax, 4  ; invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
-;mov ebx, 1 ; write to the STDOUT file
+mov ebx,[stdout] ; write to the STDOUT file
 int 80h     ; system call to write the message
 
 ret ; this is the end of the putstring function return to calling location
@@ -28,7 +30,7 @@ ret ; this is the end of the putstring function return to calling location
 int_string     db 32 dup '?' ;enough bytes to hold maximum size 32-bit binary integer
 ; this is the end of the integer string optional line feed and terminating zero
 ; clever use of this label can change the ending to be a different character when needed 
-int_string_end db 0Ah,0
+int_newline db 0Ah,0
 
 radix dd 2 ;radix or base for integer output. 2=binary, 8=octal, 10=decimal, 16=hexadecimal
 int_width dd 8
@@ -40,7 +42,7 @@ int_width dd 8
 
 intstr:
 
-mov ebp,int_string_end-1 ;find address of lowest digit(just before the newline 0Ah)
+mov ebp,int_newline-1 ;find address of lowest digit(just before the newline 0Ah)
 mov ecx,1
 
 digits_start:

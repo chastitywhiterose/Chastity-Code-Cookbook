@@ -7,5 +7,9 @@ chastelib-test-both:
 	./chastelib64-test
 meld:
 	meld chastelib32-test.asm chastelib64-test.asm
+meld-lib:
+	meld chastelib32.asm chastelib64.asm
 diffuse:
 	diffuse chastelib32-test.asm chastelib64-test.asm
+diffuse-lib:
+	diffuse chastelib32.asm chastelib64.asm
