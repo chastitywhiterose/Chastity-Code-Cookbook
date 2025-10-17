@@ -10,7 +10,7 @@ putstring:
 
 mov bx,ax ; copy ax to cx as well. Now both registers have the address of the main_string
 
-putstring_strlen_start: ; this loop finds the lenge of the string as part of the putstring function
+putstring_strlen_start: ; this loop finds the length of the string as part of the putstring function
 
 cmp [bx], byte 0 ; compare this byte byte at address with 0
 jz putstring_strlen_end ; if comparison was zero, jump to loop end because we have found the length
