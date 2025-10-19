@@ -45,3 +45,10 @@ Most Relevant Lessons of asmtutor
 https://asmtutor.com/#lesson2
 https://asmtutor.com/#lesson8
 https://asmtutor.com/#lesson24
+
+
+# Useful commands from fasm users
+
+sed '/NR/!d;s/#define[^a-z]*//;s/^/sys_/;s/ / = /' /usr/include/asm/unistd_32.h | wc -l
+
+sed '/NR/!d;s/#define[^a-z]*//;s/^/sys_/;s/ / = /' /usr/include/x86_64-linux-gnu/asm/unistd_32.h | wc -l
