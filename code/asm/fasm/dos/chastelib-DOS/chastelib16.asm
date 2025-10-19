@@ -1,10 +1,11 @@
 ; This file is where I keep my function definitions.
 ; These are usually my string and integer output routines.
 
-stdout dw 1 ; variable for standard output so that it can theoretically be redirected
+;this is my best putstring function for DOS because it uses call 40h of interrupt 21h
+;this means that it works in a similar way to my Linux Assembly code
+;the plan is to make both my DOS and Linux functions identical except for the size of registers involved
 
-; this is my best putstring function for DOS because it uses call 40h of interrupt 21h
-; this means that it works in a similar way to my Linux Assembly code
+stdout dw 1 ; variable for standard output so that it can theoretically be redirected
 
 putstring:
 
@@ -13,24 +14,24 @@ push bx
 push cx
 push dx
 
-mov bx,ax ; copy ax to cx as well. Now both registers have the address of the main_string
+mov bx,ax                  ;copy ax to bx for use as index register
 
-putstring_strlen_start: ; this loop finds the length of the string as part of the putstring function
+putstring_strlen_start:    ;this loop finds the length of the string as part of the putstring function
 
-cmp [bx], byte 0 ; compare this byte byte at address with 0
-jz putstring_strlen_end ; if comparison was zero, jump to loop end because we have found the length
-inc bx
-jmp putstring_strlen_start
+cmp [bx], byte 0           ;compare this byte with 0
+jz putstring_strlen_end    ;if comparison was zero, jump to loop end because we have found the length
+inc bx                     ;increment bx (add 1)
+jmp putstring_strlen_start ;jump to the start of the loop and keep trying until we find a zero
 
 putstring_strlen_end:
 
-sub bx,ax ; sub ax from bx to get the difference for number of bytes
-mov cx,bx ; mov bx to cx
-mov dx,ax  ; dx will have address of string to write
+sub bx,ax                  ; sub ax from bx to get the difference for number of bytes
+mov cx,bx                  ; mov bx to cx
+mov dx,ax                  ; dx will have address of string to write
 
-mov ah,40h ; select DOS function 40h write 
-mov bx,[stdout]   ; file handle 1=stdout
-int 21h    ; call the DOS kernel
+mov ah,40h                 ; select DOS function 40h write 
+mov bx,[stdout]            ; file handle 1=stdout
+int 21h                    ; call the DOS kernel
 
 pop dx
 pop cx

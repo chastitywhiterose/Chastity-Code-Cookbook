@@ -38,6 +38,15 @@ register mapping for system call invocation using int 0x80
 <https://cable.ayra.ch/md/hello-world-in-dos>  
 <https://www.cs.cmu.edu/~ralf/files.html>
 
+DOS DPMI extender
+
+https://sandmann.dotster.com/cwsdpmi/
+
+Directions for use (server can be used in either of two different ways):
+
+1) "cwsdpmi" alone with no parameters will terminate and stay resident FOR A SINGLE DPMI PROCESS. This means it unloads itself when your DPMI application exits. This mode is useful in software which needs DPMI services, since CWSDPMI can be exec'ed and then will unload on exit.
+
+2) "cwsdpmi -p" will terminate and stay resident until you remove it. It can be loaded into UMBs with LH. "cwsdpmi -u" will unload the TSR.
 
 
 Most Relevant Lessons of asmtutor
