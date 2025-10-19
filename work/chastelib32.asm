@@ -1,107 +1,100 @@
 ; This file is where I keep my function definitions.
 ; These are usually my string and integer output routines.
 
-stdout dw 1 ; variable for standard output so that it can theoretically be redirected
+; function to print zero terminated string pointed to by register eax
 
-; this is my best putstring function for DOS because it uses call 40h of interrupt 21h
-; this means that it works in a similar way to my Linux Assembly code
+stdout dd 1 ; variable for standard output so that it can theoretically be redirected
 
 putstring:
 
-push ax
-push bx
-push cx
-push dx
+push eax
+push ebx
+push ecx
+push edx
 
-mov bx,ax ; copy ax to cx as well. Now both registers have the address of the main_string
+mov edx,eax ; copy eax to edx as well. Now both registers have the address of the main_string
 
-putstring_strlen_start: ; this loop finds the length of the string as part of the putstring function
+putstring_strlen_start: ; this loop finds the lenge of the string as part of the putstring function
 
-cmp [bx], byte 0 ; compare this byte byte at address with 0
-jz putstring_strlen_end ; if comparison was zero, jump to loop end because we have found the length
-inc bx
+cmp [edx],byte 0 ; compare byte at address edx with 0
+jz strlen_end ; if comparison was zero, jump to loop end because we have found the length
+inc edx
 jmp putstring_strlen_start
 
-putstring_strlen_end:
+strlen_end:
+sub edx,eax ; edx will now have correct number of bytes when we use it for the system write call
 
-sub bx,ax ; sub ax from bx to get the difference for number of bytes
-mov cx,bx ; mov bx to cx
-mov dx,ax  ; dx will have address of string to write
+mov ecx,eax ; pointer/address of string to write
+mov eax, 4  ; invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
+mov ebx,[stdout] ; write to the STDOUT file
+int 80h     ; system call to write the message
 
-mov ah,40h ; select DOS function 40h write 
-mov bx,[stdout]   ; file handle 1=stdout
-int 21h    ; call the DOS kernel
+pop edx
+pop ecx
+pop ebx
+pop eax
 
-pop dx
-pop cx
-pop bx
-pop ax
-
-ret
-
-
-
-
-
+ret ; this is the end of the putstring function return to calling location
 
 ;this is the location in memory where digits are written to by the putint function
-int_string     db 16 dup '?' ;enough bytes to hold maximum size 32-bit binary integer
+int_string     db 32 dup '?' ;enough bytes to hold maximum size 32-bit binary integer
 ; this is the end of the integer string optional line feed and terminating zero
 ; clever use of this label can change the ending to be a different character when needed 
-int_newline db 0Dh,0Ah,0 ;the proper way to end a line in DOS/Windows
+int_newline db 0Ah,0
 
-radix dw 2 ;radix or base for integer output. 2=binary, 8=octal, 10=decimal, 16=hexadecimal
-int_width dw 8
+radix dd 2 ;radix or base for integer output. 2=binary, 8=octal, 10=decimal, 16=hexadecimal
+int_width dd 8
+
+;this function creates a string of the integer in eax
+;it uses the above radix variable to determine base from 2 to 36
+;it then loads eax with the address of the string
+;this means that it can be used with the putstring function
 
 intstr:
 
-mov bp,int_newline-1 ;find address of lowest digit(just before the newline 0Ah)
-mov cx,1
+mov ebp,int_newline-1 ;find address of lowest digit(just before the newline 0Ah)
+mov ecx,1
 
 digits_start:
 
-mov dx,0;
-mov si,[radix] ;radix is from memory location just before this function
-div si
-cmp dx,10
+mov edx,0;
+mov esi,[radix] ;radix is from memory location just before this function
+div esi
+cmp edx,10
 jb decimal_digit
 jge hexadecimal_digit
 
 decimal_digit: ;we go here if it is only a digit 0 to 9
-add dx,'0'
+add edx,'0'
 jmp save_digit
 
 hexadecimal_digit:
-sub dx,10
-add dx,'A'
+sub edx,10
+add edx,'A'
 
 save_digit:
 
-mov [bp],dl
-cmp ax,0
+mov [ebp],dl
+cmp eax,0
 jz intstr_end
-dec bp
-inc cx
+dec ebp
+inc ecx
 jmp digits_start
 
 intstr_end:
 
 prefix_zeros:
-cmp cx,[int_width]
+cmp ecx,[int_width]
 jnb end_zeros
-dec bp
-mov [bp],byte '0'
-inc cx
+dec ebp
+mov [ebp],byte '0'
+inc ecx
 jmp prefix_zeros
 end_zeros:
 
-mov ax,bp ; now that the digits have been written to the string, display it!
+mov eax,ebp ; now that the digits have been written to the string, display it!
 
 ret
-
-
-
-
 
 
 ; function to print string form of whatever integer is in eax
@@ -113,28 +106,21 @@ ret
 
 putint: 
 
-push ax
-push bx
-push cx
-push dx
+push eax
+push ebx
+push ecx
+push edx
 
 call intstr
 
 call putstring
 
-pop dx
-pop cx
-pop bx
-pop ax
+pop edx
+pop ecx
+pop ebx
+pop eax
 
 ret
-
-
-
-
-
-
-
 
 ;this function converts a string pointed to by eax into an integer returned in eax instead
 ;it is a little complicated because it has to account for whether the character in
@@ -146,13 +132,13 @@ ret
 
 strint:
 
-mov si,ax ;copy string address from eax to esi because eax will be replaced soon!
-mov ax,0
+mov esi,eax ;copy string address from eax to esi because eax will be replaced soon!
+mov eax,0
 
 read_strint:
-mov cx,0 ; zero ecx so only lower 8 bits are used
-mov cl,[si]
-inc si
+mov ecx,0 ; zero ecx so only lower 8 bits are used
+mov cl,[esi]
+inc esi
 cmp cl,0 ; compare byte at address edx with 0
 jz strint_end ; if comparison was zero, this is the end of string
 
@@ -202,12 +188,12 @@ jmp strint_end
 
 process_char:
 
-cmp cx,[radix] ;compare char with radix
+cmp ecx,[radix] ;compare char with radix
 jae strint_end ;if this value is above or equal to radix, it is too high despite being a valid digit/alpha
 
-mov dx,0 ;zero edx because it is used in mul sometimes
-mul word [radix]    ;mul eax with radix
-add ax,cx
+mov edx,0 ;zero edx because it is used in mul sometimes
+mul [radix]    ;mul eax with radix
+add eax,ecx
 
 jmp read_strint ;jump back and continue the loop if nothing has exited it
 
@@ -215,13 +201,7 @@ strint_end:
 
 ret
 
-;returns in al register a character from the keyboard
-getchr:
 
-mov ah,1
-int 21h
-
-ret
 
 ;the next utility functions simply print a space or a newline
 ;these help me save code when printing lots of things for debugging
@@ -230,15 +210,16 @@ space db ' ',0
 line db 0Dh,0Ah,0
 
 putspace:
-push ax
-mov ax,space
+push eax
+mov eax,space
 call putstring
-pop ax
+pop eax
 ret
 
 putline:
-push ax
-mov ax,line
+push eax
+mov eax,line
 call putstring
-pop ax
+pop eax
 ret
+
