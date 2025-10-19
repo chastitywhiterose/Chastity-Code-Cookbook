@@ -19,14 +19,6 @@ mov [int_newline],0 ;disable automatic printing of newlines after putint
 ;we will be manually printing spaces or newlines depending on context
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
-
-;print all the command line arguments for debugging purposes
-
-
-
 ;mov eax,argc_string
 ;call putstring
 pop eax
@@ -39,8 +31,20 @@ mov [progname],eax ; save the name of the program
 dec [argc]
 
 ;before we try to get the first argument as a file, we must check if it exists
+mov eax,[argc]
+;call putint
+;call putline
 cmp [argc],0
-jz zero_args
+jnz arg_open_file
+
+help_start:
+mov eax,help
+call putstring
+help_end:
+
+jmp zero_args
+
+arg_open_file:
 
 pop eax
 mov [filename],eax ; save the name of the file we will open to read
@@ -212,16 +216,14 @@ int 80h            ;system call to write the message
 
 mov eax,[file_offset]
 inc [file_offset]
-mov [int_newline],' '
 mov [int_width],8
 call putint
+call putspace
 mov eax,0
 mov al,[temp_byte]
 mov [int_width],2
-mov [int_newline],0Ah
 call putint
-
-
+call putline
 
 ;don't use these except for debugging
 ;call putstring
@@ -232,8 +234,12 @@ jmp next_arg_write
 
 zero_args:
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;this is the end of the program
+;we close the open file and then use the exit call
 
+mov eax, 6         ; invoke SYS_CLOSE (kernel opcode 6)
+mov ebx,[filedesc] ;file number to close
+int 80h            ; call the kernel
 
 mov eax, 1  ; invoke SYS_EXIT (kernel opcode 1)
 mov ebx, 0  ; return 0 status on exit - 'No Errors'
@@ -254,6 +260,13 @@ argx_string db 'argx=',0
 file_opened_string db ' was successfully opened!',0Ah,0
 file_failed_string db ' could not be opened!',0Ah,0
 end_of_file_string db 'EOF',0
+
+help db 'Welcome to chastehex! The tool for reading and writing bytes of a file!',0Ah
+db 'To hexdump an entire file:',0Ah,9,'chastehex file',0Ah
+db 'To read a single byte at an address:',0Ah,9,'chastehex file address',0Ah
+db 'To write a single byte at an address:',0Ah,9,'chastehex file address value',0Ah
+db 'The file must exist before you launch the program.',0Ah
+db 'This design was to prevent accidentally opening a mistyped filename.',0Ah,0
 
 ; this is where I keep my string variables
 
