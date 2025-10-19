@@ -5,7 +5,12 @@
 
 stdout dd 1 ; variable for standard output so that it can theoretically be redirected
 
-putstring: 
+putstring:
+
+push eax
+push ebx
+push ecx
+push edx
 
 mov edx,eax ; copy eax to edx as well. Now both registers have the address of the main_string
 
@@ -23,6 +28,11 @@ mov ecx,eax ; pointer/address of string to write
 mov eax, 4  ; invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
 mov ebx,[stdout] ; write to the STDOUT file
 int 80h     ; system call to write the message
+
+pop edx
+pop ecx
+pop ebx
+pop eax
 
 ret ; this is the end of the putstring function return to calling location
 
@@ -96,13 +106,19 @@ ret
 
 putint: 
 
-push eax ;save eax on the stack to restore later
+push eax
+push ebx
+push ecx
+push edx
 
 call intstr
 
 call putstring
 
-pop eax  ;load eax from the stack so it will be as it was before this function was called
+pop edx
+pop ecx
+pop ebx
+pop eax
 
 ret
 
@@ -185,4 +201,25 @@ strint_end:
 
 ret
 
+
+
+;the next utility functions simply print a space or a newline
+;these help me save code when printing lots of things for debugging
+
+space db ' ',0
+line db 0Dh,0Ah,0
+
+putspace:
+push eax
+mov eax,space
+call putstring
+pop eax
+ret
+
+putline:
+push eax
+mov eax,line
+call putstring
+pop eax
+ret
 

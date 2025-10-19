@@ -5,7 +5,12 @@
 
 stdout dq 1 ; variable for standard output so that it can theoretically be redirected
 
-putstring: 
+putstring:
+
+push rax
+push rbx
+push rcx
+push rdx
 
 mov rdx,rax ; copy rax to rdx as well. Now both registers have the address of the main_string
 
@@ -23,6 +28,11 @@ mov rsi,rax ; pointer/address of string to write
 mov rax,1   ; invoke SYS_WRITE (kernel opcode 1 on 64 bit systems)
 mov rdi,[stdout]  ; write to the STDOUT file
 syscall     ; system call to write the message
+
+pop rdx
+pop rcx
+pop rbx
+pop rax
 
 ret ; this is the end of the putstring function return to calling location
 
@@ -96,13 +106,19 @@ ret
 
 putint: 
 
-push rax ;save rax on the stack to restore later
+push rax
+push rbx
+push rcx
+push rdx
 
 call intstr
 
 call putstring
 
-pop rax  ;load rax from the stack so it will be as it was before this function was called
+pop rdx
+pop rcx
+pop rbx
+pop rax
 
 ret
 
@@ -183,4 +199,23 @@ jmp read_strint ;jump back and continue the loop if nothing has exited it
 
 strint_end:
 
+ret
+;the next utility functions simply print a space or a newline
+;these help me save code when printing lots of things for debugging
+
+space db ' ',0
+line db 0Dh,0Ah,0
+
+putspace:
+push rax
+mov rax,space
+call putstring
+pop rax
+ret
+
+putline:
+push rax
+mov rax,line
+call putstring
+pop rax
 ret
