@@ -24,7 +24,7 @@ inc ax
 cmp ax,10h;
 jnz loop1
 
-call chaste_debug
+;call chaste_debug
 
 mov ah,0   ; call function 0 (terminate program)
 int 21h    ; call the DOS kernel
