@@ -132,13 +132,13 @@ ret
 
 strint:
 
-mov esi,eax ;copy string address from eax to esi because eax will be replaced soon!
+mov ebx,eax ;copy string address from eax to ebx because eax will be replaced soon!
 mov eax,0
 
 read_strint:
 mov ecx,0 ; zero ecx so only lower 8 bits are used
-mov cl,[esi]
-inc esi
+mov cl,[ebx]
+inc ebx
 cmp cl,0 ; compare byte at address edx with 0
 jz strint_end ; if comparison was zero, this is the end of string
 
