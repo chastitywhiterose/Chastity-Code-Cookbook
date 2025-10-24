@@ -12,22 +12,23 @@ push ebx
 push ecx
 push edx
 
-mov edx,eax ; copy eax to edx as well. Now both registers have the address of the main_string
+mov ebx,eax ; copy eax to ebx as well. Now both registers have the address of the main_string
 
 putstring_strlen_start: ; this loop finds the lenge of the string as part of the putstring function
 
-cmp [edx],byte 0 ; compare byte at address edx with 0
-jz strlen_end ; if comparison was zero, jump to loop end because we have found the length
-inc edx
+cmp [ebx],byte 0 ; compare byte at address ebx with 0
+jz putstring_strlen_end ; if comparison was zero, jump to loop end because we have found the length
+inc ebx
 jmp putstring_strlen_start
 
-strlen_end:
-sub edx,eax ; edx will now have correct number of bytes when we use it for the system write call
+putstring_strlen_end:
 
-mov ecx,eax ; pointer/address of string to write
-mov eax, 4  ; invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
-mov ebx,[stdout] ; write to the STDOUT file
-int 80h     ; system call to write the message
+sub ebx,eax ;ebx will now have correct number of bytes when we use it for the system write call
+mov ecx,eax      ;pointer/address of string to write
+mov edx,ebx      ;number of bytes to write
+mov eax, 4       ;invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
+mov ebx,[stdout] ;write to the STDOUT file
+int 80h          ;system call to write the message
 
 pop edx
 pop ecx
@@ -52,14 +53,13 @@ int_width dd 8
 
 intstr:
 
-mov ebp,int_newline-1 ;find address of lowest digit(just before the newline 0Ah)
+mov ebx,int_newline-1 ;find address of lowest digit(just before the newline 0Ah)
 mov ecx,1
 
 digits_start:
 
 mov edx,0;
-mov esi,[radix] ;radix is from memory location just before this function
-div esi
+div dword [radix]
 cmp edx,10
 jb decimal_digit
 jge hexadecimal_digit
@@ -74,10 +74,10 @@ add edx,'A'
 
 save_digit:
 
-mov [ebp],dl
+mov [ebx],dl
 cmp eax,0
 jz intstr_end
-dec ebp
+dec ebx
 inc ecx
 jmp digits_start
 
@@ -86,13 +86,13 @@ intstr_end:
 prefix_zeros:
 cmp ecx,[int_width]
 jnb end_zeros
-dec ebp
-mov [ebp],byte '0'
+dec ebx
+mov [ebx],byte '0'
 inc ecx
 jmp prefix_zeros
 end_zeros:
 
-mov eax,ebp ; now that the digits have been written to the string, display it!
+mov eax,ebx ; now that the digits have been written to the string, display it!
 
 ret
 
@@ -132,13 +132,13 @@ ret
 
 strint:
 
-mov esi,eax ;copy string address from eax to esi because eax will be replaced soon!
+mov ebx,eax ;copy string address from eax to ebx because eax will be replaced soon!
 mov eax,0
 
 read_strint:
 mov ecx,0 ; zero ecx so only lower 8 bits are used
-mov cl,[esi]
-inc esi
+mov cl,[ebx]
+inc ebx
 cmp cl,0 ; compare byte at address edx with 0
 jz strint_end ; if comparison was zero, this is the end of string
 

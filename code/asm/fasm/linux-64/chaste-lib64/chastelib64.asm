@@ -12,19 +12,20 @@ push rbx
 push rcx
 push rdx
 
-mov rdx,rax ; copy rax to rdx as well. Now both registers have the address of the main_string
+mov rbx,rax ; copy rax to rbx as well. Now both registers have the address of the main_string
 
 putstring_strlen_start: ; this loop finds the lenge of the string as part of the putstring function
 
-cmp [rdx],byte 0 ; compare byte at address rdx with 0
+cmp [rbx],byte 0 ; compare byte at address rdx with 0
 jz strlen_end ; if comparison was zero, jump to loop end because we have found the length
-inc rdx
+inc rbx
 jmp putstring_strlen_start
 
 strlen_end:
-sub rdx,rax ; rdx will now have correct number of bytes when we use it for the system write call
 
+sub rbx,rax ; rbx will now have correct number of bytes when we use it for the system write call
 mov rsi,rax ; pointer/address of string to write
+mov rdx,rbx ;number of bytes to write
 mov rax,1   ; invoke SYS_WRITE (kernel opcode 1 on 64 bit systems)
 mov rdi,[stdout]  ; write to the STDOUT file
 syscall     ; system call to write the message
@@ -52,14 +53,13 @@ int_width dq 8
 
 intstr:
 
-mov rbp,int_newline-1 ;find address of lowest digit(just before the newline 0Ah)
+mov rbx,int_newline-1 ;find address of lowest digit(just before the newline 0Ah)
 mov rcx,1
 
 digits_start:
 
 mov rdx,0;
-mov rsi,[radix] ;radix is from memory location just before this function
-div rsi
+div qword [radix]
 cmp rdx,10
 jb decimal_digit
 jge hexadecimal_digit
@@ -74,10 +74,10 @@ add rdx,'A'
 
 save_digit:
 
-mov [ebp],dl
+mov [rbx],dl
 cmp rax,0
 jz intstr_end
-dec rbp
+dec rbx
 inc rcx
 jmp digits_start
 
@@ -86,13 +86,13 @@ intstr_end:
 prefix_zeros:
 cmp rcx,[int_width]
 jnb end_zeros
-dec rbp
-mov [rbp],byte '0'
+dec rbx
+mov [rbx],byte '0'
 inc rcx
 jmp prefix_zeros
 end_zeros:
 
-mov rax,rbp ; now that the digits have been written to the string, display it!
+mov rax,rbx ; now that the digits have been written to the string, display it!
 
 ret
 
@@ -132,13 +132,13 @@ ret
 
 strint:
 
-mov rsi,rax ;copy string address from eax to esi because eax will be replaced soon!
+mov rbx,rax ;copy string address from eax to esi because eax will be replaced soon!
 mov rax,0
 
 read_strint:
 mov rcx,0 ; zero ecx so only lower 8 bits are used
-mov cl,[rsi]
-inc rsi
+mov cl,[rbx]
+inc rbx
 cmp cl,0 ; compare byte at address edx with 0
 jz strint_end ; if comparison was zero, this is the end of string
 

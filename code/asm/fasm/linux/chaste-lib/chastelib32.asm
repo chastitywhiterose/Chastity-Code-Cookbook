@@ -12,7 +12,7 @@ push ebx
 push ecx
 push edx
 
-mov ebx,eax ; copy eax to ebdx as well. Now both registers have the address of the main_string
+mov ebx,eax ; copy eax to ebx as well. Now both registers have the address of the main_string
 
 putstring_strlen_start: ; this loop finds the lenge of the string as part of the putstring function
 
