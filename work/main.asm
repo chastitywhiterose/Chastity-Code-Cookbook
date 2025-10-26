@@ -33,14 +33,42 @@ jnz filter ;if not at end, continue the filter
 filter_end:
 mov byte [bx],0 ;terminate the ending with a zero for safety
 
+;now that the argument string is prepared, we will try to use the first argument as a filename to open
+
+mov ah,3Dh ;call number for DOS open existing file
+mov al,2   ;file access: 0=read,1=write,2=read+write
+mov dx,[arg_index] ;string address to interpret as filename
+int 21h ;DOS call to finalize open function
+
+mov [file_handle],ax
+
+jc file_error ;if carry flag is set, we have an error, otherwise, file is open
+
+file_opened:
+mov ax,file_opened_message
+call putstring
+mov ax,[file_handle]
+call putint
+jmp use_file
+
+;this section prints error message and then ends the program if file error found
+file_error: ;prints error code2=file not found
+mov ax,file_error_message
+call putstring
+mov ax,[file_handle]
+call putint
+jmp arg_loop_end
+
+use_file:
+
+;this loop processes the rest of the arguments
 arg_loop:
-mov ax,dx ;get address of current arg
+mov ax,[arg_index] ;get address of current arg
 call putstring
 call putline
-call get_next_arg
-;mov ax,dx ;load address of string
-;call putint ;and print it for debugging
-cmp dx,[arg_string_end]
+call get_next_arg ;get address of next arg and return into ax register
+
+cmp ax,[arg_string_end] ;if the ax register contains the end of args string, end program to avoid failure
 jz arg_loop_end
 jmp arg_loop
 arg_loop_end:
@@ -51,12 +79,16 @@ int 21h
 
 arg_string_end dw 0
 arg_index dw 0
+file_error_message db 'Could not open the file! Error number: ',0
+file_opened_message db 'The file is open with handle: ',0
+file_handle dw 0
+
 
 ;function to move ahead to the next art
 ;only works after the filter has been applied to turn all spaces into zeroes
 
 get_next_arg:
-mov bx,dx ;dx has address of current arg
+mov bx,[arg_index] ;dx has address of current arg
 find_zero:
 cmp byte [bx],0
 jz found_zero
@@ -73,7 +105,7 @@ inc bx
 jmp find_non_zero ;otherwise, keep looking
 
 arg_finish:
-mov dx,bx ; mov dx to new string
+mov [arg_index],bx ; mov dx to new string
 ret
 
 
