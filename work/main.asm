@@ -93,6 +93,12 @@ int 21h
 
 jc arg_loop_end ;end program if seek error (though I can't imagine how it would fail)
 
+;check if there are any more args
+call get_next_arg
+cmp ax,[arg_string_end]
+jz dump_byte ;jump to dump_byte section and continue with read mode
+
+;this next section is the reading mode that reads one byte. It only executes if we have not provided bytes to write to the new address
 ;because we have an argument for an address we will read only this byte and display it
 dump_byte:
 
