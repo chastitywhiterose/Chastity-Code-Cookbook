@@ -45,6 +45,9 @@ mov [file_handle],ax
 jc file_error ;if carry flag is set, we have an error, otherwise, file is open
 
 file_opened:
+mov ax,dx
+call putstring
+call putline
 mov ax,file_opened_message
 call putstring
 mov ax,[file_handle]
@@ -53,13 +56,84 @@ jmp use_file
 
 ;this section prints error message and then ends the program if file error found
 file_error: ;prints error code2=file not found
+mov ax,dx
+call putstring
+call putline
 mov ax,file_error_message
 call putstring
 mov ax,[file_handle]
 call putint
 jmp arg_loop_end
 
+;how we use the file depends on the number of arguments given
+;if no arguments other than the filename exist, we do a regular hex dump
 use_file:
+
+call get_next_arg ;get address of next arg and return into ax register
+cmp ax,[arg_string_end] ;this time, if ax equals end of string, we hex dump and then end the program later
+jz hexdump ;jump to hexdump section
+jmp arg_loop_end ;end program if we are not at end of args
+
+hexdump:
+
+;we start the loop with a call to read exactly 16 bytes
+
+mov ah,3Fh           ;call number for read function
+mov bx,[file_handle] ;store file handle to read from in bx
+mov cx,16            ;we are reading sixteen bytes
+mov dx,byte_array    ;store the bytes here
+int 21h
+
+;call putint ;check the number of bytes read
+
+;important note: the number of bytes read should be 16 or less and this is not an error
+;zero is expected if we are at the end of the file.
+
+mov [int_newline],0 ;disable auto newline printing
+
+print_row:
+
+
+
+mov cx,ax ;number of bytes read
+
+;set width to 8 and display offset
+mov [int_width],8
+mov ax,[file_offset]
+call putint
+call putspace
+add [file_offset],cx ;next offset will show correctly
+
+mov ah,0 ;zero upper half of ax
+mov bx,byte_array
+
+mov [int_width],2
+
+print_byte:
+mov al,[bx]
+call putint
+call putspace
+inc bx
+dec cx
+cmp cx,0
+jnz print_byte
+
+
+jnc read_ok ;if carry is clear, there is no error. otherwise display error
+
+;this section prints error message and then ends the program if file error found
+read_error: ;prints error code2=file not found
+mov ax,dx
+call putstring
+call putline
+mov ax,read_error_message
+call putstring
+mov ax,[file_handle]
+call putint
+
+read_ok:
+
+jmp arg_loop_end ;end program after the hex dump is complete
 
 ;this loop processes the rest of the arguments
 arg_loop:
@@ -82,6 +156,11 @@ arg_index dw 0
 file_error_message db 'Could not open the file! Error number: ',0
 file_opened_message db 'The file is open with handle: ',0
 file_handle dw 0
+read_error_message db 'Failure during reading of file. Error number: ',0
+
+;where we will store data from the file
+byte_array db 16 dup '?',0
+file_offset dw 0
 
 
 ;function to move ahead to the next art
@@ -105,7 +184,8 @@ inc bx
 jmp find_non_zero ;otherwise, keep looking
 
 arg_finish:
-mov [arg_index],bx ; mov dx to new string
+mov [arg_index],bx ; save this index to variable
+mov ax,bx ;but also save it to ax register for use
 ret
 
 
