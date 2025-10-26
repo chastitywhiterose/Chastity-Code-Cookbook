@@ -48,10 +48,10 @@ file_opened:
 mov ax,dx
 call putstring
 call putline
-mov ax,file_opened_message
-call putstring
-mov ax,[file_handle]
-call putint
+;mov ax,file_opened_message
+;call putstring
+;mov ax,[file_handle]
+;call putint
 jmp use_file
 
 ;this section prints error message and then ends the program if file error found
@@ -72,7 +72,55 @@ use_file:
 call get_next_arg ;get address of next arg and return into ax register
 cmp ax,[arg_string_end] ;this time, if ax equals end of string, we hex dump and then end the program later
 jz hexdump ;jump to hexdump section
-jmp arg_loop_end ;end program if we are not at end of args
+
+;otherwise, if there are more args, as contains next arg
+;then we use the strint function to transform it into a number
+;call putstring
+;call putline
+
+call strint ;turn string at address ax into a number returned in ax
+;call putint
+
+;this number will be out new offset to seek to
+mov [file_offset],ax
+
+mov ah,42h           ;lseek call number
+mov al,0            ;seek origin 00h start of file,01h current file position,02h end of file
+mov bx,[file_handle]
+mov cx,0            ;upper word of offet
+mov dx,[file_offset]
+int 21h
+
+jc arg_loop_end ;end program if seek error (though I can't imagine how it would fail)
+
+;because we have an argument for an address we will read only this byte and display it
+dump_byte:
+
+mov ah,3Fh           ;call number for read function
+mov bx,[file_handle] ;store file handle to read from in bx
+mov cx,1             ;we are reading only 1 byte
+mov dx,byte_array    ;store the bytes here
+int 21h
+
+
+mov [int_newline],0 ;disable auto newline printing
+;set width to 8 and display offset
+mov [int_width],8
+mov ax,[file_offset]
+call putint
+call putspace
+
+mov ah,0 ;zero upper half of ax
+mov al,[byte_array]
+
+mov [int_width],2
+call putint
+;call putline
+
+
+
+
+jmp arg_loop_end ;we are done so we end the program
 
 hexdump:
 
@@ -149,10 +197,15 @@ call putstring
 call putline
 call get_next_arg ;get address of next arg and return into ax register
 
-cmp ax,[arg_string_end] ;if the ax register contains the end of args string, end program to avoid failure
+cmp ax,[arg_string_end] ;if the ax register contains address of the end of args string, end program to avoid failure
 jz arg_loop_end
 jmp arg_loop
 arg_loop_end:
+
+;close the file if it is open
+mov ah,3Eh
+mov bx,[file_handle]
+int 21h
 
 ending:
 mov ax,4C00h ; Exit program
@@ -164,7 +217,7 @@ file_error_message db 'Could not open the file! Error number: ',0
 file_opened_message db 'The file is open with handle: ',0
 file_handle dw 0
 read_error_message db 'Failure during reading of file. Error number: ',0
-end_of_file db 'EOF',0Ah,0
+end_of_file db 'EOF',0
 
 ;where we will store data from the file
 byte_array db 16 dup '?',0
