@@ -102,6 +102,7 @@ mov cx,1             ;we are reading only 1 byte
 mov dx,byte_array    ;store the bytes here
 int 21h
 
+mov cx,ax ;number of bytes read
 
 mov [int_newline],0 ;disable auto newline printing
 ;set width to 8 and display offset
@@ -110,15 +111,19 @@ mov ax,[file_offset]
 call putint
 call putspace
 
+cmp cx,1
+jz not_eof ;skip past here as long as one byte was read otherwise show EOF
+mov ax,end_of_file
+call putstring
+jmp arg_loop_end
+not_eof:
+
 mov ah,0 ;zero upper half of ax
 mov al,[byte_array]
 
 mov [int_width],2
 call putint
 ;call putline
-
-
-
 
 jmp arg_loop_end ;we are done so we end the program
 
