@@ -97,6 +97,8 @@ jc arg_loop_end ;end program if seek error (though I can't imagine how it would 
 call get_next_arg
 cmp ax,[arg_string_end]
 jz dump_byte ;jump to dump_byte section and continue with read mode
+mov [int_newline],0 ;disable auto newline printing
+jmp arg_loop ;otherwise we jump to the arg loop and write the values as bytes starting at offset
 
 ;this next section is the reading mode that reads one byte. It only executes if we have not provided bytes to write to the new address
 ;because we have an argument for an address we will read only this byte and display it
@@ -202,16 +204,40 @@ read_ok:
 jmp arg_loop_end ;end program after the hex dump is complete
 
 ;this loop processes the rest of the arguments
+;it interprets each one as a byte to write to the current offset
+;this loop should only execute if a file name and address have already been given
 arg_loop:
 mov ax,[arg_index] ;get address of current arg
-call putstring
+;call putstring
+
+call strint ;turn string at address ax into a number returned in ax
+
+mov [byte_array],al
+
+mov ah,40h           ; select DOS function 40h write 
+mov bx,[file_handle] ;store file handle to write to in bx
+mov cx,1             ;write 1 byte to this file
+mov dx,byte_array    ;write from this address
+int 21h
+
+;set width to 8 and display offset
+mov [int_width],8
+mov ax,[file_offset]
+call putint
+call putspace
+mov [int_width],2
+mov ah,0
+mov al,[byte_array]
+call putint
 call putline
+
 call get_next_arg ;get address of next arg and return into ax register
 
 cmp ax,[arg_string_end] ;if the ax register contains address of the end of args string, end program to avoid failure
 jz arg_loop_end
 jmp arg_loop
-arg_loop_end:
+
+arg_loop_end: ;this is the correct end of the program
 
 ;close the file if it is open
 mov ah,3Eh
