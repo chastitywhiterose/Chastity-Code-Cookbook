@@ -5,8 +5,14 @@ mov word [radix],16 ; can choose radix for integer output!
 mov ch,0     ;zero ch (upper half of cx)
 mov cl,[80h] ;load length of the command string
 cmp cx,0
-jz ending
+jnz args_exist
 
+mov ax,help
+call putstring
+
+jmp ending
+
+args_exist:
 mov dx,81h   ;Point dx to the beginning of string
 inc dx       ;go to next char
 dec cx       ;but subtract 1 from count
@@ -186,23 +192,6 @@ call putline
 
 jmp hexdump ;jump back to hexdump and attempt another read of a row
 
-
-jnc read_ok ;if carry is clear, there is no error. otherwise display error
-
-;this section prints error message and then ends the program if file error found
-read_error: ;prints error code2=file not found
-mov ax,dx
-call putstring
-call putline
-mov ax,read_error_message
-call putstring
-mov ax,[file_handle]
-call putint
-
-read_ok:
-
-jmp arg_loop_end ;end program after the hex dump is complete
-
 ;this loop processes the rest of the arguments
 ;it interprets each one as a byte to write to the current offset
 ;this loop should only execute if a file name and address have already been given
@@ -223,6 +212,7 @@ int 21h
 ;set width to 8 and display offset
 mov [int_width],8
 mov ax,[file_offset]
+inc [file_offset]
 call putint
 call putspace
 mov [int_width],2
@@ -257,7 +247,7 @@ read_error_message db 'Failure during reading of file. Error number: ',0
 end_of_file db 'EOF',0
 
 ;where we will store data from the file
-byte_array db 16 dup '?',0
+byte_array db 16 dup '?'
 file_offset dw 0
 
 
@@ -286,6 +276,11 @@ mov [arg_index],bx ; save this index to variable
 mov ax,bx ;but also save it to ax register for use
 ret
 
-
-
 include 'chastelib16.asm'
+
+help db 'Welcome to chastehex! The tool for reading and writing bytes of a file!',0Ah
+db 'To hexdump an entire file:',0Ah,9,'chastehex file',0Ah
+db 'To read a single byte at an address:',0Ah,9,'chastehex file address',0Ah
+db 'To write a single byte at an address:',0Ah,9,'chastehex file address value',0Ah
+db 'The file must exist before you launch the program.',0Ah
+db 'This design was to prevent accidentally opening a mistyped filename.',0Ah,0
