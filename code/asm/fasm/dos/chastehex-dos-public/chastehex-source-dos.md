@@ -1,3 +1,7 @@
+I finally rewrote my chastehex program in DOS Assembly Language. Unlike the Linux version, it is not prepared to handle files over 64 kilobytes. There may be ways to improve upon it but writing this program was more of a proof of concept than anything because I already wrote the C version and the Linux 32 bit Assembly version. When this is assembled using FASM, it becomes a .com file which can be run inside DOSBox.
+
+If no arguments are used when running the program, it will display a brief message explaining the 3 modes of usage. 
+
 ```
 org 100h     ;DOS programs start at this address
 
@@ -287,7 +291,7 @@ db 'The file must exist before you launch the program.',0Ah
 db 'This design was to prevent accidentally opening a mistyped filename.',0Ah,0
 ```
 
-Below is my
+Below is what is inside the 'chastelib16.asm' file which is included by the above source file. I keep it separate because it is my own standard library which was designed for everything needed to build chastehex. Routines for printing strings and numbers are the largest part. It also has the strint function which converts strings into numbers. That is how it interprets the second and beyond arguments as hexadecimal numbers.
 
 ```
 ; This file is where I keep my function definitions.
