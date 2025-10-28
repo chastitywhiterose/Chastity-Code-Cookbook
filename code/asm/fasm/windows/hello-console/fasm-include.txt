@@ -1,0 +1,4 @@
+To assemble FASM programs with the Windows API, set the path to the include files with an environment variable.
+Here is an example that assumed the zip for the Windows version of FASM was extracted to C:\fasm.
+
+set include=C:\fasm\INCLUDE
