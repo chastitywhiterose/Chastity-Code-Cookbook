@@ -26,8 +26,8 @@ jnz loop1
 
 ;call chaste_debug
 
-mov ah,0   ; call function 0 (terminate program)
-int 21h    ; call the DOS kernel
+mov ax,4C00h
+int 21h
 
 main_string db "This is Chastity's 16-bit Assembly Language counting program!",0Dh,0Ah,0
 
