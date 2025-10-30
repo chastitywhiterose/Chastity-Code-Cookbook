@@ -84,17 +84,19 @@ jz hexdump ;jump to hexdump section
 ;call putstring
 ;call putline
 
-call strint ;turn string at address ax into a number returned in ax
+call strint_32 ;turn string at address ax into a number returned in ax
+;call putint
+;mov ax,[extra_word]
 ;call putint
 
 ;this number will be out new offset to seek to
 mov [file_offset],ax
 
 mov ah,42h           ;lseek call number
-mov al,0            ;seek origin 00h start of file,01h current file position,02h end of file
+mov al,0             ;seek origin 00h start of file,01h current file position,02h end of file
 mov bx,[file_handle]
-mov cx,0            ;upper word of offet
-mov dx,[file_offset]
+mov cx,[extra_word]  ;upper word of offset
+mov dx,[file_offset] ;lower word of offset
 int 21h
 
 jc arg_loop_end ;end program if seek error (though I can't imagine how it would fail)
@@ -119,8 +121,10 @@ int 21h
 mov cx,ax ;number of bytes read
 
 mov [int_newline],0 ;disable auto newline printing
-;set width to 4 and display offset
+;set width to 4 and display extra:offset
 mov [int_width],4
+mov ax,[extra_word]
+call putint
 mov ax,[file_offset]
 call putint
 call putspace
@@ -168,12 +172,18 @@ print_row:
 mov cx,ax ;number of bytes read
 
 mov [int_newline],0 ;disable auto newline printing
-;set width to 4 and display offset
+
+;set width to 4 and display extra:offset
 mov [int_width],4
+mov ax,[extra_word]
+call putint
 mov ax,[file_offset]
 call putint
 call putspace
-add [file_offset],cx ;next offset will show correctly
+
+add [file_offset],1
+adc [extra_word],0
+
 
 mov ah,0 ;zero upper half of ax
 mov bx,byte_array
@@ -209,11 +219,16 @@ mov cx,1             ;write 1 byte to this file
 mov dx,byte_array    ;write from this address
 int 21h
 
-;set width to 4 and display offset
+;set width to 4 and display extra:offset
 mov [int_width],4
-mov ax,[file_offset]
-inc [file_offset]
+mov ax,[extra_word]
 call putint
+mov ax,[file_offset]
+call putint
+
+add [file_offset],1
+adc [extra_word],0
+
 call putspace
 mov [int_width],2
 mov ah,0
@@ -248,7 +263,7 @@ end_of_file db 'EOF',0
 
 ;where we will store data from the file
 byte_array db 16 dup '?'
-file_offset dw 0
+file_offset dw 0,0
 
 
 ;function to move ahead to the next art
@@ -277,6 +292,7 @@ mov ax,bx ;but also save it to ax register for use
 ret
 
 include 'chastelib16.asm'
+include 'strint32.asm'
 
 help db 'Welcome to chastehex! The tool for reading and writing bytes of a file!',0Ah
 db 'To hexdump an entire file:',0Ah,9,'chastehex file',0Ah
