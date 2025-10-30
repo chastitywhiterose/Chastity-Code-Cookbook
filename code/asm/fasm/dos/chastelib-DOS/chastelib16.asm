@@ -129,7 +129,7 @@ ret
 
 
 
-;this function converts a string pointed to by eax into an integer returned in eax instead
+;this function converts a string pointed to by ax into an integer returned in eax instead
 ;it is a little complicated because it has to account for whether the character in
 ;a string is a decimal digit 0 to 9, or an alphabet character for bases higher than ten
 ;it also checks for both uppercase and lowercase letters for bases 11 to 36
