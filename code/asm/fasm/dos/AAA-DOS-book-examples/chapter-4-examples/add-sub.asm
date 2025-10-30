@@ -4,9 +4,9 @@ main:
 mov word [radix],10
 mov word [int_width],1
 
-mov ax,12
+mov ax,8
 call putint
-mul ax
+add ax,ax
 call putint
 sub ax,4
 call putint
