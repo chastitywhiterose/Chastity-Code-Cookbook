@@ -59,6 +59,15 @@ int strint(char *s)
  return i;
 }
 
+void putstring(char *s)
+{
+ int c=0;
+ void buffer=s;
+ while(*s){s++;c++;} 
+ printf("%d\n",c);
+}
 
 
 
+/*fwrite( const void* buffer, size_t size, size_t count,
+               FILE* stream );*/
