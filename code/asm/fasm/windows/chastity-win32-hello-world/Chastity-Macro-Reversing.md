@@ -107,11 +107,11 @@ call [ExitProcess]
 main_string db 'Hello World!',0Ah
 ```
 
-I don't know much about the Windows API, but I did discover some helpful information when I searched the names of these functions that were part of the original macros.
-
+I don't know much about the Windows API, but I did discover some helpful information when I searched the names of these functions that were part of the original macros. Below are some links to Microsoft documentation about these functions.
 
 <https://learn.microsoft.com/en-us/windows/console/getstdhandle>  
-<https://learn.microsoft.com/en-us/windows/console/writeconsole>
+<https://learn.microsoft.com/en-us/windows/console/writeconsole>  
+<https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-writefile>
 
 ## Why I did this
 
