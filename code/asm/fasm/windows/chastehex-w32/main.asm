@@ -4,7 +4,7 @@ include 'chastelibw32.asm'
 
 main:
 
-mov [radix],10 ; Choose radix for integer output.
+mov [radix],16 ; Choose radix for integer output.
 mov [int_width],1
 
 ;get command line argument string
@@ -89,6 +89,23 @@ push 0           ;NULL: Share mode irrelevant. Only this program reads the file.
 push 0x10000000  ;GENERIC_ALL access mode (Read+Write)
 push [file_name] ;
 call [CreateFileA]
+
+;check eax for file handle or error code
+;call putint
+cmp eax,-1
+jnz file_ok
+
+mov eax,file_error_message
+call putstring
+call [GetLastError]
+call putint
+jmp args_none ;end program if the file was not opened
+
+;this label is jumped to when the file is opened correctly
+file_ok:
+
+
+
 
 ;this loop is very safe because it only prints arguments if they are valid
 ;if the end of the args are reached by comparison of eax with [arg_end]

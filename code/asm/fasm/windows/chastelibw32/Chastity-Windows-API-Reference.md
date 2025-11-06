@@ -8,6 +8,7 @@ Console API
 
 File API  
 <https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-writefile>  
+<https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-readfile>  
 <https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilea>  
 
 Command Line Arguments  
