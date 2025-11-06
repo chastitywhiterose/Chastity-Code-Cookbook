@@ -1,6 +1,5 @@
 format PE console
 include 'win32ax.inc'
-
 include 'chastelibw32.asm'
 
 main:
@@ -25,14 +24,13 @@ mov [radix],10 ; Choose radix 10 for integer output!
 mov [int_width],8
 call putint
 
-
 ;Exit the process with code 0
 push 0
 call [ExitProcess]
 
 .end main
 
-;a string to test if output works
+;A string to test if output works
 main_string db 'Hello World!',0Ah,0
 ;test string of integer for input
 test_int db '10011101001110011110011',0
