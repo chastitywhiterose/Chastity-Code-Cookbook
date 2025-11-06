@@ -1,4 +1,4 @@
 main-fasm-windows:
 	fasm main.asm
-	main testfile
+	main testfile 10
 

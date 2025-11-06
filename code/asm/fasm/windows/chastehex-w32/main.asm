@@ -58,7 +58,7 @@ arg_filter_end:
 ;get next arg (first one after name of program)
 call get_next_arg
 cmp eax,[arg_end]
-jz args_none
+jz help
 
 mov [file_name],eax
 mov eax,file_open_message
@@ -109,6 +109,61 @@ mov [file_handle],eax
 mov [int_newline],0 ;disable automatic printing of newlines after putint
 ;we will be manually printing spaces or newlines depending on context
 
+;before we proceed, we also check for more arguments.
+
+;get next arg (first one after name of program)
+call get_next_arg
+cmp eax,[arg_end]
+jz hexdump ;proceed to normal hex dump if no more args
+
+;otherwise interpret the arg as a hex address to seek to
+
+call strint
+mov [file_offset],eax
+mov eax,file_seek_message
+call putstring
+mov eax,[file_offset]
+call putint
+call putline
+
+;seek to address of file with SetFilePointer function
+;https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-setfilepointer
+push 0             ;seek from beginning of file (SEEK_SET)
+push 0             ;NULL: We are not using a 64 bit address
+push [file_offset] ;where we are seeking to
+push [file_handle] ;seek within this file
+call [SetFilePointer]
+
+;check for more args
+call get_next_arg
+cmp eax,[arg_end]
+jz read_one_byte ;proceed to normal hex dump if no more args
+
+read_one_byte:
+
+;read only 1 byte using Win32 ReadFile system call.
+push 0              ;Optional Overlapped Structure 
+push bytes_read     ;Store Number of Bytes Read from this call
+push 1             ;Number of bytes to read
+push byte_array     ;address to store bytes
+push [file_handle]  ;handle of the open file
+call [ReadFile]     ;all the data is in place, do the write thing!
+
+cmp [bytes_read],1 
+jl print_EOF ;if less than one bytes read, there is an error
+
+mov eax,[file_offset]
+mov [int_width],8
+call putint
+call putspace
+
+mov eax,0
+mov al,[byte_array]
+mov [int_width],2
+call putint
+call putline
+
+jmp args_none
 
 hexdump:
 
@@ -134,11 +189,18 @@ jmp hexdump
 
 print_EOF:
 
+mov eax,[file_offset]
+mov [int_width],8
+call putint
+call putspace
+
 mov eax,end_of_file
 call putstring
 call putline
 
-;jmp args_none
+jmp args_none
+
+
 
 
 ;this loop is very safe because it only prints arguments if they are valid
@@ -173,6 +235,7 @@ file_offset dd 0
 
 ;variables for displaying messages
 file_open_message db 'opening: ',0
+file_seek_message db 'seek: ',0
 file_error_message db 'error: ',0
 end_of_file db 'EOF',0
 read_error_message db 'Failure during reading of file. Error number: ',0
