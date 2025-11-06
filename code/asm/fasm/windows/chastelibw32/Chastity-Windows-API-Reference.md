@@ -4,7 +4,8 @@ This file has links where I can read about the Windows API calls that I need for
 
 <https://learn.microsoft.com/en-us/windows/console/getstdhandle>  
 <https://learn.microsoft.com/en-us/windows/console/writeconsole>  
-<https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-writefile>
+<https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-writefile>  
+<https://learn.microsoft.com/en-us/windows/win32/api/processenv/nf-processenv-getcommandlinea>  
 
 # Examples
 
