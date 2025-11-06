@@ -1,4 +1,5 @@
 format PE console
+entry main
 include 'win32ax.inc'
 include 'chastelibw32.asm'
 
@@ -138,8 +139,7 @@ mov eax,end_of_file
 call putstring
 call putline
 
-;jmp args_none
-
+jmp args_none
 
 ;this loop is very safe because it only prints arguments if they are valid
 ;if the end of the args are reached by comparison of eax with [arg_end]
@@ -156,8 +156,6 @@ args_none:
 ;Exit the process with code 0
 push 0
 call [ExitProcess]
-
-.end main
 
 arg_start  dd 0 ;start of arg string
 arg_end    dd 0 ;address of the end of the arg string
@@ -234,3 +232,9 @@ jnz next_byte
 call putline
 
 ret
+
+;This section includes Windows system libraries.
+section '.idata' import data readable writeable
+library kernel32,'KERNEL32.DLL'
+import_kernel32
+;Normally this section is included by the ".end macro" but I preferred to put it at the end of the file instead.
