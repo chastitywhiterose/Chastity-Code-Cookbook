@@ -137,20 +137,53 @@ call [SetFilePointer]
 ;check for more args
 call get_next_arg
 cmp eax,[arg_end]
-jz read_one_byte ;proceed to normal hex dump if no more args
+jz read_one_byte ;proceed to read one byte mode
+
+;otherwise, write the rest of the arguments as bytes to the file!
+write_bytes:
+call strint
+mov [byte_array],al
+
+;write only 1 byte using Win32 WriteFile system call.
+push 0              ;Optional Overlapped Structure 
+push 0              ;Optionally Store Number of Bytes Written
+push 1              ;Number of bytes to write
+push byte_array     ;address to store bytes
+push [file_handle]  ;handle of the open file
+call [WriteFile]
+
+mov eax,[file_offset]
+inc [file_offset]
+mov [int_width],8
+call putint
+call putspace
+
+mov eax,0
+mov al,[byte_array]
+mov [int_width],2
+call putint
+call putline
+
+;check for more args
+call get_next_arg
+cmp eax,[arg_end]
+jnz write_bytes
+;continue write if the args still exist
+;otherwise end program
+jmp args_none
 
 read_one_byte:
 
 ;read only 1 byte using Win32 ReadFile system call.
 push 0              ;Optional Overlapped Structure 
 push bytes_read     ;Store Number of Bytes Read from this call
-push 1             ;Number of bytes to read
+push 1              ;Number of bytes to read
 push byte_array     ;address to store bytes
 push [file_handle]  ;handle of the open file
-call [ReadFile]     ;all the data is in place, do the write thing!
+call [ReadFile]
 
 cmp [bytes_read],1 
-jl print_EOF ;if less than one bytes read, there is an error
+jb print_EOF ;if less than one bytes read, there is an error
 
 mov eax,[file_offset]
 mov [int_width],8
@@ -181,7 +214,7 @@ mov eax,[bytes_read]
 ;call putstring
 
 cmp [bytes_read],1 
-jl print_EOF ;if less than one bytes read, there is an error
+jb print_EOF ;if less than one bytes read, there is an error
 
 call print_bytes_row
 
@@ -240,8 +273,12 @@ file_error_message db 'error: ',0
 end_of_file db 'EOF',0
 read_error_message db 'Failure during reading of file. Error number: ',0
 
-help_message db 'Enter a filename to hex dump it.',0Ah,0
- 
+help_message db 'Welcome to chastehex! The tool for reading and writing bytes of a file!',0Ah,0Ah
+db 'To hexdump an entire file:',0Ah,0Ah,9,'chastehex file',0Ah,0Ah
+db 'To read a single byte at an address:',0Ah,0Ah,9,'chastehex file address',0Ah,0Ah
+db 'To write a single byte at an address:',0Ah,0Ah,9,'chastehex file address value',0Ah,0Ah
+db 'The file must exist before you launch the program.',0Ah
+db 'This design was to prevent accidentally opening a mistyped filename.',0Ah,0
 
 ;function to move ahead to the next art
 ;only works after the filter has been applied to turn all spaces into zeroes
