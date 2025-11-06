@@ -17,18 +17,23 @@ mov rbx,rax ; copy rax to rbx as well. Now both registers have the address of th
 putstring_strlen_start: ; this loop finds the lenge of the string as part of the putstring function
 
 cmp [rbx],byte 0 ; compare byte at address rdx with 0
-jz strlen_end ; if comparison was zero, jump to loop end because we have found the length
+jz putstring_strlen_end ; if comparison was zero, jump to loop end because we have found the length
 inc rbx
 jmp putstring_strlen_start
 
-strlen_end:
+putstring_strlen_end:
+sub rbx,rax ;rbx will now have correct number of bytes
 
-sub rbx,rax ; rbx will now have correct number of bytes when we use it for the system write call
-mov rsi,rax ; pointer/address of string to write
-mov rdx,rbx ;number of bytes to write
-mov rax,1   ; invoke SYS_WRITE (kernel opcode 1 on 64 bit systems)
-mov rdi,[stdout]  ; write to the STDOUT file
-syscall     ; system call to write the message
+;write string using Linux Write system call
+;https://www.chromium.org/chromium-os/developer-library/reference/linux-constants/syscalls/#x86_64-64-bit
+
+
+mov rdx,rbx      ;number of bytes to write
+mov rsi,rax      ;pointer/address of string to write
+mov rdi,[stdout] ;write to the STDOUT file
+mov rax,1        ;invoke SYS_WRITE (kernel opcode 1 on 64 bit systems)
+syscall          ;system call to write the message
+
 
 pop rdx
 pop rcx
