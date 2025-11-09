@@ -51,11 +51,11 @@ jnz next_arg_address ;but if there are more, jump to the next argument to proces
 
 hexdump:
 
-mov     edx, 0x10         ;number of bytes to read
-mov     ecx, byte_array   ;address to store the bytes
-mov     ebx, [filedesc]   ;move the opened file descriptor into EBX
-mov     eax, 3            ;invoke SYS_READ (kernel opcode 3)
-int     80h               ;call the kernel
+mov edx,0x10         ;number of bytes to read
+mov ecx,byte_array   ;address to store the bytes
+mov ebx,[filedesc]   ;move the opened file descriptor into EBX
+mov eax,3            ;invoke SYS_READ (kernel opcode 3)
+int 80h               ;call the kernel
 
 mov [bytes_read],eax
 
@@ -120,23 +120,15 @@ int 80h            ;call the kernel
 
 ;eax will have the number of bytes read after system call
 cmp eax,1
-jz print_byte_info ;if exactly 1 byte was read, proceed to print info
+jz print_byte_read ;if exactly 1 byte was read, proceed to print info
 
 call show_eof
 
 jmp main_end ;go to end of program
 
 ;print the address and the byte at that address
-print_byte_info:
-mov eax,[file_offset]
-mov [int_width],8
-call putint
-call putspace
-mov eax,0
-mov al,[byte_array]
-mov [int_width],2
-call putint
-call putline
+print_byte_read:
+call print_byte_info
 
 ;this section interprets the rest of the args as bytes to write
 next_arg_write:
@@ -149,29 +141,16 @@ call strint ;try to convert string to a hex number
 
 ;write that number as a byte value to the file
 
-mov [temp_byte],al
+mov [byte_array],al
 
 mov eax,4          ;invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
 mov ebx,[filedesc] ;write to the file (not STDOUT)
-mov ecx,temp_byte  ;pointer to temporary byte address
+mov ecx,byte_array  ;pointer to temporary byte address
 mov edx,1          ;write 1 byte
 int 80h            ;system call to write the message
 
-mov eax,[file_offset]
+call print_byte_info
 inc [file_offset]
-mov [int_width],8
-call putint
-call putspace
-mov eax,0
-mov al,[temp_byte]
-mov [int_width],2
-call putint
-call putline
-
-;don't use these except for debugging
-;call putstring
-;mov eax,int_newline
-;call putstring
 
 jmp next_arg_write
 
@@ -193,10 +172,7 @@ filename dd 0 ; name of the file to be opened
 filedesc dd 0 ; file descriptor
 bytes_read dd 0
 file_offset dd 0
-temp_byte db 0
 
-file_opened_string db ' was successfully opened!',0Ah,0
-file_failed_string db ' could not be opened!',0Ah,0
 end_of_file_string db 'EOF',0
 
 help_message db 'Welcome to chastehex! The tool for reading and writing bytes of a file!',0Ah,0Ah
@@ -205,7 +181,7 @@ db 'To read a single byte at an address:',0Ah,0Ah,9,'chastehex file address',0Ah
 db 'To write a single byte at an address:',0Ah,0Ah,9,'chastehex file address value',0Ah,0Ah,0
 
 ;where we will store data from the file
-byte_array db 16 dup '?',0
+byte_array db 16 dup '?'
 
 ;this function prints a row of hex bytes
 ;each row is 16 bytes
@@ -243,6 +219,20 @@ call putint
 call putspace
 mov eax,end_of_file_string
 call putstring
+call putline
+
+ret
+
+;print the address and the byte at that address
+print_byte_info:
+mov eax,[file_offset]
+mov [int_width],8
+call putint
+call putspace
+mov eax,0
+mov al,[byte_array]
+mov [int_width],2
+call putint
 call putline
 
 ret
