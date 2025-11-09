@@ -20,8 +20,7 @@ mov [argc],eax ;save the argument count for later
 pop eax
 dec [argc]
 
-;before we try to get the first argument as a file, we must check if it exists
-mov eax,[argc]
+;before we try to get the first argument as a filename, we must check if it exists
 cmp [argc],0
 jnz arg_open_file
 
@@ -46,15 +45,8 @@ js main_end
 mov [filedesc],eax ; save the file descriptor number for later use
 mov [file_offset],0 ;assume the offset is 0,beginning of file
 
-
-;call putint ;show the return of the open call
-cmp eax,0
-jb main_end ;if eax less than zero error occurred
-
 ;check next arg
-mov eax,[argc]
-;call putint
-cmp eax,0 ;if there are no more args after filename, just hexdump it
+cmp [argc],0 ;if there are no more args after filename, just hexdump it
 jnz next_arg_address ;but if there are more, jump to the next argument to process it as address
 
 hexdump:
@@ -69,20 +61,16 @@ mov [bytes_read],eax
 
 ; call putint
 
-cmp [bytes_read],1 
-jl file_error ;if less than one bytes read, there is an error
-jmp file_success
+cmp eax,0
+jnz file_success ;if more than zero bytes read, proceed to display
 
-file_error:
-mov eax,[filename]
-;call putstring
-mov eax,[file_offset]
-mov [int_newline],' '
-mov [int_width],8
-call putint
-mov eax,end_of_file_string
-call putstring
-call putline
+;if the offset is zero, display EOF to indicate empty file
+;otherwise, end without displaying this because there should already be bytes printed to the display
+cmp [file_offset],0
+jnz main_end
+
+call show_eof
+
 jmp main_end
 
 ; this point is reached if file was read from successfully
@@ -102,58 +90,41 @@ cmp [bytes_read],1
 jl main_end ;if less than one bytes read, there is an error
 jmp hexdump
 
-jmp main_end ;end program here
-
-; address argument section
+;address argument section
 next_arg_address:
 
 ;if there is at least one more arg
 pop eax ;pop the argument into eax and process it as a hex number
 dec [argc]
 call strint
-;call putint
 
-; use the hex number as an address to seek to in the file
-    mov     edx, 0              ; whence argument (SEEK_SET)
-    mov     ecx, eax            ; move the file cursor to this address
-    mov     ebx, [filedesc]     ; move the opened file descriptor into EBX
-    mov     eax, 19             ; invoke SYS_LSEEK (kernel opcode 19)
-    int     80h                 ; call the kernel
+;use the hex number as an address to seek to in the file
+mov edx,0          ;whence argument (SEEK_SET)
+mov ecx,eax        ;move the file cursor to this address
+mov ebx,[filedesc] ;move the opened file descriptor into EBX
+mov eax,19         ;invoke SYS_LSEEK (kernel opcode 19)
+int 80h            ;call the kernel
 
-mov [file_offset],ecx ; move the new offset
+mov [file_offset],eax ;move the new offset
 
 ;check the number of args still remaining
-mov eax,[argc]
-;call putint ;display number of args left
-;call putline
-
-cmp eax,0
+cmp [argc],0
 jnz next_arg_write ; if there are still arguments, skip this read section and enter writing mode
 
 read_one_byte:
-    mov     edx, 1         ;number of bytes to read
-    mov     ecx, byte_array   ;address to store the bytes
-    mov     ebx, [filedesc]   ;move the opened file descriptor into EBX
-    mov     eax, 3            ;invoke SYS_READ (kernel opcode 3)
-    int     80h               ;call the kernel
+mov edx,1          ;number of bytes to read
+mov ecx,byte_array ;address to store the bytes
+mov ebx,[filedesc] ;move the opened file descriptor into EBX
+mov eax,3          ;invoke SYS_READ (kernel opcode 3)
+int 80h            ;call the kernel
 
 ;eax will have the number of bytes read after system call
 cmp eax,1
 jz print_byte_info ;if exactly 1 byte was read, proceed to print info
 
-;otherwise, print an EOF message for this address
-mov eax,[file_offset]
-mov [int_width],8
-call putint
-call putspace
-mov eax,end_of_file_string
-call putstring
-call putline
+call show_eof
 
 jmp main_end ;go to end of program
-
-mov eax,end_of_file_string
-call putstring
 
 ;print the address and the byte at that address
 print_byte_info:
@@ -166,8 +137,6 @@ mov al,[byte_array]
 mov [int_width],2
 call putint
 call putline
-
-;;;;;;;;;;
 
 ;this section interprets the rest of the args as bytes to write
 next_arg_write:
@@ -211,9 +180,8 @@ main_end:
 ;this is the end of the program
 ;we close the open file and then use the exit call
 
-mov eax, 6         ; invoke SYS_CLOSE (kernel opcode 6)
-mov ebx,[filedesc] ;file number to close
-int 80h            ; call the kernel
+mov eax,[filedesc] ;file number to close
+call close
 
 mov eax, 1  ; invoke SYS_EXIT (kernel opcode 1)
 mov ebx, 0  ; return 0 status on exit - 'No Errors'
@@ -234,14 +202,12 @@ end_of_file_string db 'EOF',0
 help_message db 'Welcome to chastehex! The tool for reading and writing bytes of a file!',0Ah,0Ah
 db 'To hexdump an entire file:',0Ah,0Ah,9,'chastehex file',0Ah,0Ah
 db 'To read a single byte at an address:',0Ah,0Ah,9,'chastehex file address',0Ah,0Ah
-db 'To write a single byte at an address:',0Ah,0Ah,9,'chastehex file address value',0Ah,0Ah
-db 'The file must exist before you launch the program.',0Ah
-db 'This design was to prevent accidentally opening a mistyped filename.',0Ah,0
+db 'To write a single byte at an address:',0Ah,0Ah,9,'chastehex file address value',0Ah,0Ah,0
 
 ;where we will store data from the file
 byte_array db 16 dup '?',0
 
-;this function prints a row of bytes
+;this function prints a row of hex bytes
 ;each row is 16 bytes
 print_bytes_row:
 mov eax,[file_offset]
@@ -264,6 +230,21 @@ dec ecx
 cmp ecx,0
 jnz next_byte
 
+call putline
+
+ret
+
+;function to display EOF with address
+;this function saves space because it occurs in two places in the program
+show_eof:
+
+;otherwise, print an EOF message for this address
+mov eax,[file_offset]
+mov [int_width],8
+call putint
+call putspace
+mov eax,end_of_file_string
+call putstring
 call putline
 
 ret
