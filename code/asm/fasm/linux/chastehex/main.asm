@@ -235,10 +235,8 @@ call putline
 ret
 
 ;function to display EOF with address
-;this function saves space because it occurs in two places in the program
 show_eof:
 
-;otherwise, print an EOF message for this address
 mov eax,[file_offset]
 mov [int_width],8
 call putint

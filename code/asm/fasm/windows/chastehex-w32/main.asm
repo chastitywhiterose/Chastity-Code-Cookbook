@@ -294,9 +294,7 @@ read_error_message db 'Failure during reading of file. Error number: ',0
 help_message db 'Welcome to chastehex! The tool for reading and writing bytes of a file!',0Ah,0Ah
 db 'To hexdump an entire file:',0Ah,0Ah,9,'chastehex file',0Ah,0Ah
 db 'To read a single byte at an address:',0Ah,0Ah,9,'chastehex file address',0Ah,0Ah
-db 'To write a single byte at an address:',0Ah,0Ah,9,'chastehex file address value',0Ah,0Ah
-db 'The file must exist before you launch the program.',0Ah
-db 'This design was to prevent accidentally opening a mistyped filename.',0Ah,0
+db 'To write a single byte at an address:',0Ah,0Ah,9,'chastehex file address value',0Ah,0Ah,0
 
 ;function to move ahead to the next art
 ;only works after the filter has been applied to turn all spaces into zeroes
@@ -353,12 +351,9 @@ call putline
 
 ret
 
-
 ;function to display EOF with address
-;this function saves space because it occurs in two places in the program
 show_eof:
 
-;otherwise, print an EOF message for this address
 mov eax,[file_offset]
 mov [int_width],8
 call putint
