@@ -68,3 +68,5 @@ sed '/NR/!d;s/#define[^a-z]*//;s/^/sys_/;s/ / = /' /usr/include/x86_64-linux-gnu
 <https://www.chromium.org/chromium-os/developer-library/reference/linux-constants/syscalls/#x86-32-bit>  
 
 <https://www.chromium.org/chromium-os/developer-library/reference/linux-constants/syscalls/#x86_64-64-bit>  
+
+<https://www.chromium.org/chromium-os/developer-library/reference/linux-constants/errnos/>

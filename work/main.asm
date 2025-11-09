@@ -4,6 +4,7 @@ format ELF executable
 entry main
 
 include 'chastelib32.asm'
+include "chasteio32.asm"
 
 main:
 
@@ -21,15 +22,13 @@ dec [argc]
 
 ;before we try to get the first argument as a file, we must check if it exists
 mov eax,[argc]
-;call putint
-;call putline
 cmp [argc],0
 jnz arg_open_file
 
 help:
 mov eax,help_message
 call putstring
-jmp zero_args
+jmp main_end
 
 arg_open_file:
 
@@ -39,10 +38,10 @@ mov [filename],eax ; save the name of the file we will open to read
 call putstring
 call putline
 
-mov ecx, 2          ;open file in read and write mode 
-mov ebx, [filename] ; filename we created above
-mov eax, 5          ; invoke SYS_OPEN (kernel opcode 5)
-int 80h             ; call the kernel
+call open
+
+cmp eax,0
+js main_end
 
 mov [filedesc],eax ; save the file descriptor number for later use
 mov [file_offset],0 ;assume the offset is 0,beginning of file
@@ -50,7 +49,7 @@ mov [file_offset],0 ;assume the offset is 0,beginning of file
 
 ;call putint ;show the return of the open call
 cmp eax,0
-jb zero_args ;if eax less than zero error occurred
+jb main_end ;if eax less than zero error occurred
 
 ;check next arg
 mov eax,[argc]
@@ -84,7 +83,7 @@ call putint
 mov eax,end_of_file_string
 call putstring
 call putline
-jmp zero_args
+jmp main_end
 
 ; this point is reached if file was read from successfully
 
@@ -100,10 +99,10 @@ mov eax,byte_array
 call print_bytes_row
 
 cmp [bytes_read],1 
-jl zero_args ;if less than one bytes read, there is an error
+jl main_end ;if less than one bytes read, there is an error
 jmp hexdump
 
-jmp zero_args ;end program here
+jmp main_end ;end program here
 
 ; address argument section
 next_arg_address:
@@ -151,7 +150,7 @@ mov eax,end_of_file_string
 call putstring
 call putline
 
-jmp zero_args ;go to end of program
+jmp main_end ;go to end of program
 
 mov eax,end_of_file_string
 call putstring
@@ -173,7 +172,7 @@ call putline
 ;this section interprets the rest of the args as bytes to write
 next_arg_write:
 cmp [argc],0
-jz zero_args
+jz main_end
 
 pop eax
 dec [argc]
@@ -207,7 +206,7 @@ call putline
 
 jmp next_arg_write
 
-zero_args:
+main_end:
 
 ;this is the end of the program
 ;we close the open file and then use the exit call
