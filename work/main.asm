@@ -1,61 +1,163 @@
-org 100h
+;Linux 32-bit Assembly Source for chastecmp
+;a special tool originally written in C
+format ELF executable
+entry main
+
+include 'chastelib32.asm'
+include "chasteio32.asm"
+
 main:
 
-mov word [radix],10
-mov word [int_width],1
-mov [int_newline],0
+;radix will be 16 because this whole program is about hexadecimal
+mov [radix],16 ; can choose radix for integer input/output!
+mov [int_newline],0 ;disable automatic printing of newlines after putint
+;we will be manually printing spaces or newlines depending on context
 
-;the only even prime is 2
-mov ax,2
-call putint
+pop eax
+mov [argc],eax ;save the argument count for later
+
+;first arg is the name of the program. we skip past it
+pop eax
+dec [argc]
+mov eax,[argc]
+
+;call putint
+;call putspace
+
+cmp eax,2
+jb help
+mov [file_offset],0 ;assume the offset is 0,beginning of file
+jmp arg_open_file_1
+
+help:
+mov eax,help_message
+call putstring
+jmp main_end
+
+arg_open_file_1:
+pop eax
+mov [filename1],eax ; save the name of the file we will open to read
+call open
+cmp eax,0
+js main_end ;end program if the file can't be opened
+mov [filedesc1],eax ; save the file descriptor number for later use
+
+arg_open_file_2:
+pop eax
+mov [filename2],eax ; save the name of the file we will open to read
+call open
+cmp eax,0
+js main_end ;end program if the file can't be opened
+mov [filedesc2],eax ; save the file descriptor number for later use
+
+mov eax,f1_text
+call putstring
+mov eax,[filename1]
+call putstring
 call putspace
 
-;fill array with zeros up to length
-mov bx,0
-array_zero:
-mov [array+bx],0
-inc bx
-cmp bx,length
-jb array_zero
+mov eax,f2_text
+call putstring
+mov eax,[filename2]
+call putstring
+call putline
 
-;start by filtering multiples of first odd prime: 3
-mov ax,3
 
-primes:
+files_compare:
 
-;print this number because it is prime
+file_1_read_one_byte:
+mov edx,1          ;number of bytes to read
+mov ecx,byte1 ;address to store the bytes
+mov ebx,[filedesc1] ;move the opened file descriptor into EBX
+mov eax,3          ;invoke SYS_READ (kernel opcode 3)
+int 80h            ;call the kernel
+
+;eax will have the number of bytes read after system call
+cmp eax,0
+jz main_end ;no bytes were read, end program
+
+file_2_read_one_byte:
+mov edx,1          ;number of bytes to read
+mov ecx,byte2 ;address to store the bytes
+mov ebx,[filedesc2] ;move the opened file descriptor into EBX
+mov eax,3          ;invoke SYS_READ (kernel opcode 3)
+int 80h            ;call the kernel
+
+;eax will have the number of bytes read after system call
+cmp eax,0
+jz main_end ;no bytes were read, end program
+
+mov al,[byte1]
+mov bl,[byte2]
+
+;compare the two bytes and skip printing them if they are the same
+cmp al,bl
+jz same
+call print_bytes_info
+same:
+
+inc [file_offset]
+
+jmp files_compare
+
+main_end:
+
+;this is the end of the program
+;we close the open file and then use the exit call
+
+mov eax,[filedesc1] ;file number to close
+call close
+
+mov eax, 1  ; invoke SYS_EXIT (kernel opcode 1)
+mov ebx, 0  ; return 0 status on exit - 'No Errors'
+int 80h
+
+;variables for managing arguments
+argc dd 0
+filename1 dd 0 ; name of the file to be opened
+filename2 dd 0 ; name of the file to be opened
+filedesc1 dd 0 ; file descriptor
+filedesc2 dd 0 ; file descriptor
+byte1 db 0
+byte2 db 0
+bytes_read dd 0
+file_offset dd 0
+
+end_of_file_string db 'EOF',0
+
+help_message db 'chastecmp: compares two files in hexadecimal',0Ah
+db 9,'chastecmp file1 file2',0Ah,0
+
+f1_text db 'file1=',0
+f2_text db 'file2=',0
+
+
+;function to display EOF with address
+show_eof:
+
+mov eax,[file_offset]
+mov [int_width],8
 call putint
 call putspace
+mov eax,end_of_file_string
+call putstring
+call putline
 
-mov bx,ax ;mov ax to bx as our array index variable
-mov cx,ax ;mov ax to cx
-add cx,cx ;add cx to itself
+ret
 
-sieve:
-mov [array+bx],1 ;mark element as multiple of prime
-add bx,cx ;check only multiples of prime times 2 to exclude even numbers
-cmp bx,length
-jb sieve
-
-;check odd numbers until we find unused one not marked as multiple of prime
-mov bx,ax
-next_odd:
-add bx,2
-cmp [array+bx],0
-jz prime_found
-cmp bx,length
-jb next_odd
-prime_found:
-
-;get next prime read to print in ax
-mov ax,bx
-cmp ax,length
-jb primes
-
-mov ax,4C00h
-int 21h
-
-include 'chastelib16.asm'
-
-length=1000
-array rb length
+;print the address and the bytes at that address
+print_bytes_info:
+mov eax,[file_offset]
+mov [int_width],8
+call putint
+call putspace
+mov [int_width],2
+mov eax,0
+mov al,[byte1]
+call putint
+call putspace
+mov al,[byte2]
+call putint
+call putspace
+call putline
+ret
