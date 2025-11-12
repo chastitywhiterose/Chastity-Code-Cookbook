@@ -1,17 +1,16 @@
 ;Linux 32-bit Assembly Source for chastecmp
-;a special tool originally written in C
 format ELF executable
 entry main
 
 include 'chastelib32.asm'
-include "chasteio32.asm"
+include 'chasteio32.asm'
 
 main:
 
 ;radix will be 16 because this whole program is about hexadecimal
 mov [radix],16 ; can choose radix for integer input/output!
+mov [int_width],1
 mov [int_newline],0 ;disable automatic printing of newlines after putint
-;we will be manually printing spaces or newlines depending on context
 
 pop eax
 mov [argc],eax ;save the argument count for later
@@ -49,19 +48,6 @@ call open
 cmp eax,0
 js main_end ;end program if the file can't be opened
 mov [filedesc2],eax ; save the file descriptor number for later use
-
-mov eax,f1_text
-call putstring
-mov eax,[filename1]
-call putstring
-call putspace
-
-mov eax,f2_text
-call putstring
-mov eax,[filename2]
-call putstring
-call putline
-
 
 files_compare:
 
@@ -123,27 +109,8 @@ byte2 db 0
 bytes_read dd 0
 file_offset dd 0
 
-end_of_file_string db 'EOF',0
-
 help_message db 'chastecmp: compares two files in hexadecimal',0Ah
 db 9,'chastecmp file1 file2',0Ah,0
-
-f1_text db 'file1=',0
-f2_text db 'file2=',0
-
-
-;function to display EOF with address
-show_eof:
-
-mov eax,[file_offset]
-mov [int_width],8
-call putint
-call putspace
-mov eax,end_of_file_string
-call putstring
-call putline
-
-ret
 
 ;print the address and the bytes at that address
 print_bytes_info:
