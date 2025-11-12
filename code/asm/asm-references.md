@@ -70,3 +70,8 @@ sed '/NR/!d;s/#define[^a-z]*//;s/^/sys_/;s/ / = /' /usr/include/x86_64-linux-gnu
 <https://www.chromium.org/chromium-os/developer-library/reference/linux-constants/syscalls/#x86_64-64-bit>  
 
 <https://www.chromium.org/chromium-os/developer-library/reference/linux-constants/errnos/>
+
+
+
+<https://github.com/torvalds/linux/blob/master/arch/x86/entry/syscalls/syscall_32.tbl>  
+<https://github.com/torvalds/linux/blob/master/arch/x86/entry/syscalls/syscall_64.tbl>  
