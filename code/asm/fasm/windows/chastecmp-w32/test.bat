@@ -1,4 +1,3 @@
-echo off
 cls
 type old-name.txt
 type new-name.txt
