@@ -40,6 +40,4 @@ She thanked the great minds, and shared what she took
 You will learn a language of numbers if you take a look
 And find time to read Chastity's Code Cookbook
 
-
-----
-Numbers are infinite, they never exhaust
+https://chastitywhiterose.github.io/Chastity-Code-Cookbook/
