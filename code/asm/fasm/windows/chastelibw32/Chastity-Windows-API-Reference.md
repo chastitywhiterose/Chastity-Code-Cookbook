@@ -15,6 +15,9 @@ File API
 
 https://learn.microsoft.com/en-us/windows/win32/api/lzexpand/nf-lzexpand-lzseek 
 
+https://learn.microsoft.com/en-us/windows/win32/api/errhandlingapi/nf-errhandlingapi-getlasterror
+
+https://learn.microsoft.com/en-us/windows/win32/debug/system-error-codes--0-499-
 
 Command Line Arguments  
 <https://learn.microsoft.com/en-us/windows/win32/api/processenv/nf-processenv-getcommandlinea>  
