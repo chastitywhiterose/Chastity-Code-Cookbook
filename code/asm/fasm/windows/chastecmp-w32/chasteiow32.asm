@@ -23,6 +23,7 @@ mov eax,file_error_message
 call putstring
 call [GetLastError]
 call putint
+call putspace
 
 cmp eax,2
 jz error_exist

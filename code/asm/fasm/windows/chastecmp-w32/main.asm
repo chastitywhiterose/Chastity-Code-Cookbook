@@ -7,6 +7,7 @@ main:
 
 mov [radix],16 ; Choose radix for integer output.
 mov [int_width],1
+mov [int_newline],0 ;disable automatic printing of newlines after putint
 
 ;get command line argument string
 call [GetCommandLineA]
@@ -136,7 +137,45 @@ mov [filedesc2],eax ;first file is opened, save its handle
 ;for this reason, I also saved this as a template for future programs that need two files opened for reading
 ;the original purpose of this was designed for chastecmp, my hexadecimal file comparison tool
 
+files_compare:
 
+file_1_read_one_byte:
+;read only 1 byte using Win32 ReadFile system call.
+push 0           ;Optional Overlapped Structure 
+push bytes_read  ;Store Number of Bytes Read from this call
+push 1           ;Number of bytes to read
+push byte1       ;address to store bytes
+push [filedesc1] ;handle of the open file
+call [ReadFile]
+
+cmp [bytes_read],0
+jz main_end ;if no bytes were read, we have reached the end of this file and should end the program
+
+file_2_read_one_byte:
+;read only 1 byte using Win32 ReadFile system call.
+push 0           ;Optional Overlapped Structure 
+push bytes_read  ;Store Number of Bytes Read from this call
+push 1           ;Number of bytes to read
+push byte2       ;address to store bytes
+push [filedesc2] ;handle of the open file
+call [ReadFile]
+
+cmp [bytes_read],0
+jz main_end ;if no bytes were read, we have reached the end of this file and should end the program
+
+;store the two bytes into the 8 bit lower parts of eax and ebx for a byte comparison.
+mov al,[byte1]
+mov bl,[byte2]
+
+;compare the two bytes and skip printing them if they are the same
+cmp al,bl
+jz same
+call print_bytes_info
+same:
+
+inc [file_offset]
+
+jmp files_compare
 
 
 
@@ -169,8 +208,6 @@ file_error_message db 'error: ',0
 end_of_file db 'EOF',0
 read_error_message db 'Failure during reading of file. Error number: ',0
 
-
-
 ;variables for managing arguments
 argc dd 0
 filename1 dd 0 ; name of the file to be opened
@@ -180,6 +217,7 @@ filedesc2 dd 0 ; file descriptor
 byte1 db 0
 byte2 db 0
 file_offset dd 0
+bytes_read dd 0 ;how many bytes are read with ReadFile operation
 
 help_message db 'chastecmp: compares two files in hexadecimal',0Ah
 db 9,'chastecmp file1 file2',0Ah,0
@@ -210,15 +248,19 @@ ret
 ;we can know that there are no more arguments when
 ;the either [arg_start] or eax are equal to [arg_end]
 
-;function to display EOF with address
-show_eof:
-
+;print the address and the bytes at that address
+print_bytes_info:
 mov eax,[file_offset]
 mov [int_width],8
 call putint
 call putspace
-mov eax,end_of_file
-call putstring
+mov [int_width],2
+mov eax,0
+mov al,[byte1]
+call putint
+call putspace
+mov al,[byte2]
+call putint
+call putspace
 call putline
-
 ret
