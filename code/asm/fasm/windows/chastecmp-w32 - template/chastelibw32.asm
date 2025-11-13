@@ -24,16 +24,15 @@ jmp putstring_strlen_start
 putstring_strlen_end:
 sub ebx,eax ;ebx will now have correct number of bytes
 
-;write string using Linux Write system call
-;https://www.chromium.org/chromium-os/developer-library/reference/linux-constants/syscalls/#x86-32-bit
-
-
-mov edx,ebx      ;number of bytes to write
-mov ecx,eax      ;pointer/address of string to write
-mov ebx,[stdout] ;write to the STDOUT file
-mov eax, 4       ;invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
-int 80h          ;system call to write the message
-
+;Write String using Win32 WriteFile system call.
+push 0              ;Optional Overlapped Structure 
+push 0              ;Optionally Store Number of Bytes Written
+push ebx            ;Number of bytes to write
+push eax            ;address of string to print
+push -11            ;STD_OUTPUT_HANDLE = Negative Eleven
+call [GetStdHandle] ;use the above handle
+push eax            ;eax is return value of previous function
+call [WriteFile]    ;all the data is in place, do the write thing!
 
 pop edx
 pop ecx
@@ -100,6 +99,7 @@ end_zeros:
 mov eax,ebx ; now that the digits have been written to the string, display it!
 
 ret
+
 
 ; function to print string form of whatever integer is in eax
 ; The radix determines which number base the string form takes.
@@ -204,6 +204,8 @@ jmp read_strint ;jump back and continue the loop if nothing has exited it
 strint_end:
 
 ret
+
+
 
 ;the next utility functions simply print a space or a newline
 ;these help me save code when printing lots of things for debugging

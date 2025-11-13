@@ -10,10 +10,11 @@ File API
 <https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-writefile>  
 <https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-readfile>  
 <https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilea>  
+
+<https://learn.microsoft.com/en-us/windows/win32/secauthz/generic-access-rights>  
+
 <https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-setfilepointer>  
 <https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle>  
-
-https://learn.microsoft.com/en-us/windows/win32/api/lzexpand/nf-lzexpand-lzseek 
 
 https://learn.microsoft.com/en-us/windows/win32/api/errhandlingapi/nf-errhandlingapi-getlasterror
 
