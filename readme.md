@@ -2558,7 +2558,7 @@ Most of the time, the default 32-bit or 64-bit integer size of your cpu is enoug
 
 However, these methods are based on the same way I do addition or multiplication with paper and pencil as I was taught by school books as a child. I have no idea what they are teaching kids in school these days, and even my mother was not the one who taught me math. I had a natural gift at arithmetic that works well in my computer programming today. Every number is in fact an array of digits.
 
-In chapter 1, the "Advanced Powers of Two" program showed my method for displaying powers of two by using arrays of bytes as if they were decimal digits. In this chapter, I will be presenting a modified version of this same program which allocates memory on the heap using the C malloc function. This may not be that essential for a simple program like this, but keep in mind that this is the "proper" way to create arrays in C when you intent to have arrays of millions of bytes. Your computer needs to have a way of stopping if there is not enough memory in the system.
+In chapter 1, the "Advanced Powers of Two" program showed my method for displaying powers of two by using arrays of bytes as if they were decimal digits. In this chapter, I will be presenting a modified version of this same program which allocates memory on the heap using the C malloc function. This may not be that essential for a simple program like this, but keep in mind that this is the "proper" way to create arrays in C when you intend to have arrays of millions of bytes. Your computer needs to have a way of stopping if there is not enough memory in the system.
 
 After that, I will also be presenting more programs which generate large numbers quickly. All of these use only the standard C library and my own math routines. Therefore, they work on any C compiler and can also easily be translated to any programming language.
 
@@ -2829,3 +2829,149 @@ int main()
  return 0;
 }
 ```
+
+# Chapter 9: Assembly Language
+
+No book on programming would be complete without at least a mention of assembly language. I will describe assembly language in the most basic of terms and at least give you a "Hello World" example that runs under Linux.
+
+You see, assembly language is platform specific. This means that the language itself only runs on one brand of CPUs (Central Processing Units). On top of that, code is not portable between Windows and Linux because these operating systems each work in a different way and you are expected to call the kernel through the API of that system.
+
+If you want to write programs for their general usage, you probably don't want to learn Assembly Language. However, if you are a nerd who likes more control over your computer, you may find that assembly can actually be quite fun.
+
+I am certainly no expert on assembly, but I have an example that will give you a small taste of what it looks like on an Intel CPU (this is the most commonly used brand of CPU.) This example will work on any modern 32 or 64 bit Intel CPU.
+
+## Linux Example
+
+```
+format ELF executable
+entry main
+
+main:
+
+mov edx, 13  ; number of bytes to write including 0Ah (line feed)
+mov ecx, msg ; move the memory address of our message string into ecx
+mov ebx, 1   ; write to the STDOUT file
+mov eax, 4   ; invoke SYS_WRITE (kernel opcode 4)
+int 80h
+
+mov ebx, 0   ; return 0 status on exit - 'No Errors'
+mov eax, 1   ; invoke SYS_EXIT (kernel opcode 1)
+int 80h
+
+msg db 'Hello World!', 0Ah     ; assign msg variable with your message string
+```
+
+In order to assemble and run this example, you will need the FASM assembler, which can be found here:
+
+<https://flatassembler.net/>
+
+I recommend the FASM assembler mostly because I am used to it, however you can also try NASM and see if you like it better. The method for assembling and running it might look different though.
+
+Save the example source code above into a file named "main.asm" and then run these three commands.
+
+```
+fasm main.asm
+chmod +x main
+./main
+```
+
+If you have the Gnu Make program installed on your PC, then the following makefile is a convenient way to run those three commands automatically without having to type them every time.
+
+```
+main-fasm:
+	fasm main.asm
+	chmod +x main
+	./main
+```
+
+If you did everything right, you will see a "Hello World!" message in the terminal. Obviously this example isn't fancy and it would have been easier just to write a C program for this, but this is only a test for making sure it works.
+
+You might be wondering what eax,ebx,ecx, and edx are in the source. They are general purpose hardware registers on 32 bit Intel CPUs. Think of them as being variables like a,b,c,d. In any case, these registers are used as arguments passed to the Linux Kernel. Interrupt 80h which is 0x80 hexadecimal or 128 decimal is how you call the kernel in 32 bit code.
+
+The previous program simply loaded these registers for the call to "write" a series of bytes and the call to "exit" which of course ends the program. There is a convenient table of Linux system calls and which registers must be filled with what type of data to work.
+
+<https://www.chromium.org/chromium-os/developer-library/reference/linux-constants/syscalls/>
+
+I am not as experienced with Assembly and am not qualified to teach the details about how it works, but one thing I do know is that it has the same features as you would expect in C. Memory locations can be accessed through pointers if a register is loaded with that location. Much like C, text strings are just a series of bytes. The system call for write must be specifically told how many bytes it needs to write from pointer register ecx. Register edx is loaded with 13 so that it will write 13 bytes. The ebx register is set to 1 because this is standard output. It can also write to open files if they are set up with other system calls.
+
+One thing that is common no matter the system call is that eax decides which function will be run. Therefore, eax will probably be your most used register if you decide to program Assembly under Linux.
+
+## Windows Example
+
+It is also possible to use Assembly under Windows, but I have found that it is not as easy as it is in Linux. I have a working example that works for me on Windows 11 using the header files provided by the Windows version of FASM.
+
+```
+format PE console
+include 'win32ax.inc'
+
+main:
+
+;Write 13 bytes from a string to standard output
+push 0              ;Optional Overlapped Structure 
+push 0              ;Optionally Store Number of Bytes Written
+push 13             ;Number of bytes to write
+push main_string    ;address of string to print
+push -11            ;STD_OUTPUT_HANDLE = Negative Eleven
+call [GetStdHandle] ;use the above handle
+push eax            ;eax is return value of previous function
+call [WriteFile]    ;all the data is in place, do the write thing!
+
+;Exit the process with code 0
+push 0
+call [ExitProcess]
+
+.end main
+
+main_string db 'Hello World!',0Ah
+```
+
+Although it may look quite different, it does the exact same thing as the Linux version. However, arguments to the WriteFile and ExitProcess functions required their arguments to be pushed to the stack. Also, the reason that they are in [ ] brackets is because the Windows headers dynamically load these functions from DLL files using the headers included from "win32ax.inc".
+
+To tell you the truth, I really don't know much about the Windows API. I also think the Linux way is superior because the system of calling an interrupt to access predefined functions in the Linux kernel means that nothing needs to be "linked" into the program.
+
+This means that Windows executables are on average twice the size of the equivalent program in Linux.
+
+## DOS Example
+
+You might find it surprising that Linux isn't even my favorite operating system to program in Assembly. DOS makes it even easier than Linux does. The following works the same as the Linux and Windows versions above.
+
+```
+org 100h
+
+main:
+
+mov ah,40h         ;select DOS function 40h write 
+mov bx,1           ;file handle 1=stdout
+mov cx,13          ;number of bytes to write including 0Ah (line feed)
+mov dx,main_string ;dx will have address of string to write
+int 21h            ;call the DOS kernel to complete the write
+
+mov ax,4C00h       ;function to end the program
+int 21h            ;call the DOS kernel to exit the program
+
+main_string db 'Hello World!', 0Ah 
+```
+
+If you assemble that file with FASM, you will get a 31 byte com file that is a valid DOS program! Here is a hexadecimal dump of it.
+
+```
+main.com
+00000000 B4 40 BB 01 00 B9 0D 00 BA 12 01 CD 21 B8 00 4C 
+00000010 CD 21 48 65 6C 6C 6F 20 57 6F 72 6C 64 21 0A
+```
+
+DOS files with the .com extension are programs that have no header. DOS operating systems like MS-DOS or FreeDOS load them an execute 16 bit Intel Assembly code with no error checking or validation to see if the file is safe. But because of this, programs for DOS are smaller and faster than those run on modern operating systems in general.
+
+The only downside is, you will need an emulator to run them like DOSBox unless you have a spare computer to install FreeDOS on or that still has MS-DOS from back in the twentieth century!
+
+As it so happens, I have slowly been working on a book for programming in DOS using Assembly Language. However, for now, Assembly is too big of a topic to cover in this book, as is the C Programming Language.
+
+But hopefully this chapter will have introduced you to information that will help you decide if you want to pursue writing code in Assembly for one of these 3 operating systems.
+
+And don't forget, there are other operating systems like FreeBSD, Chromium, MenuetOS, Minix, ReactOS many countless others that I have never used and couldn't tell you much bout.
+
+But one approach that has worked well for me is to write a program in C first to make sure the logic is correct and that it works before trying to translate it into Assembly Language for a particular platform.
+
+Chapter 10: Software Licenses
+
+To be written later.
