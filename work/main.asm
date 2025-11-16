@@ -1,5 +1,7 @@
 format ELF executable
 entry main
+start:
+
 
 include 'chastelib32.asm'
 include 'ansi.asm'
@@ -10,7 +12,7 @@ mov [radix],16 ; Choose radix for integer output!
 mov [int_width],8
 mov [int_newline],0 ;disable automatic printing of newlines after putint
 
-mov [memory_address],main
+mov [memory_address],start;main
 
 keyloop:
 
@@ -27,7 +29,9 @@ call putint
 call putline
 
 ;print the memory at current address
-call print_memory_bytes_row
+call print_memory_row_hex
+
+
 
 mov eax,msg
 call putstring
@@ -88,7 +92,7 @@ memory_address dd 0
 
 ;this function prints a row of hex bytes
 ;each row is 16 bytes
-print_memory_bytes_row:
+print_memory_row_hex:
 mov eax,[memory_address]
 mov [int_width],8
 call putint
@@ -108,8 +112,46 @@ dec ecx
 cmp ecx,0
 jnz next_byte
 
+call print_memory_row_text
+
 call putline
 
 ret
 
+text_dump db 16 dup '?',0
 
+print_memory_row_text:
+
+mov ebx,[memory_address]
+mov edi,text_dump
+mov ecx,0x10
+next_char:
+mov eax,0
+mov al,[ebx]
+mov [int_width],2
+
+;if char is below '0' or above '9', it is outside the range of these and is not a digit
+cmp al,0x20
+jb not_printable
+cmp al,0x7E
+ja not_printable
+
+;if char is in printable range,copy as is and proceed to next index
+jmp next_index
+
+not_printable:
+mov al,'.' ;otherwise replace with placeholder value
+
+next_index:
+mov [edi],al
+inc edi
+inc ebx
+dec ecx
+cmp ecx,0
+jnz next_char
+
+
+mov eax,text_dump
+call putstring
+
+ret
