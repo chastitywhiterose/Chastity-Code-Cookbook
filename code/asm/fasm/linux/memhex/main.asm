@@ -42,6 +42,12 @@ cmp [key],0x41
 jz memory_prev_row
 cmp [key],0x42
 jz memory_next_row
+
+cmp [key],0x44
+jz memory_prev_byte
+cmp [key],0x43
+jz memory_next_byte
+
 jmp keyloop_end
 
 ;conditional blocks based on input
@@ -51,6 +57,14 @@ jmp keyloop_end
 memory_next_row:
 add [memory_address],0x10
 jmp keyloop_end
+
+memory_prev_byte:
+sub [memory_address],1
+jmp keyloop_end
+memory_next_byte:
+add [memory_address],1
+jmp keyloop_end
+
 
 keyloop_end:
 cmp [key],'q' ;loop will go until q is pressed
