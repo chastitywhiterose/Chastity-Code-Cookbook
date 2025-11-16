@@ -2,7 +2,11 @@ ELF Format
 
 ELF is the Linkable Executable Format. It is the format of executable program used on Linux. For the first time, I am making a serious attempt to learn this format. Here are some links about it.
 
-https://flatassembler.net/docs.php?article=manual#2.4
+<https://flatassembler.net/docs.php?article=manual#2.4>
+
+<https://www.muppetlabs.com/~breadbox/software/tiny/teensy.html>
+
+
 
 ## Why learn this format.
 
