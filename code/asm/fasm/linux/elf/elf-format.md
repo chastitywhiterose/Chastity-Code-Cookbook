@@ -1,6 +1,8 @@
-ELF Format
+# ELF Format
 
 ELF is the Linkable Executable Format. It is the format of executable program used on Linux. For the first time, I am making a serious attempt to learn this format. Here are some links about it.
+
+<https://en.wikipedia.org/wiki/Executable_and_Linkable_Format>
 
 <https://flatassembler.net/docs.php?article=manual#2.4>
 
@@ -40,6 +42,8 @@ other ways of obtaining a hex dump work such as
 
 However, these 52 bytes do not make a value program at all. Here is a complete program that does nothing except exit with a Linux system call.
 
+## Exit Program
+
 ```
 format ELF executable
 mov eax,1 ;function SYS_EXIT (kernel opcode 1 on 32 bit systems)
@@ -70,7 +74,18 @@ elf-new-exit Opened OK
 0000002C 00 01 
 ```
 
-These bytes are different but at this point I don't know why yet.
+These bytes are different. Address 18 contains the length of the header and/or the byte address at which the actual machine instructions start. I don't know what address 2C is without looking up a reference, more on that later.
+
+This information is useful because we can use ndisasm to disassemble the executable, assuming you have it installed. It comes with NASM which is a different assembler.
+
+`ndisasm -b 32 -e 0x54 elf-new-exit`
+
+```
+00000000  B801000000        mov eax,0x1
+00000005  BB00000000        mov ebx,0x0
+0000000A  CD80              int 0x80
+```
+
 However, the new program is capable of being executed without error. First we have to give it permissions with the chmod command.
 
 `chmod +x ./elf-new-exit`
@@ -80,6 +95,8 @@ At least it will execute without segmentation fault if we run it.
 `./elf-new-exit`
 
 But here is a program that actually displays hello world to the terminal before it exits.
+
+## Hello Program
 
 ```
 format ELF executable
