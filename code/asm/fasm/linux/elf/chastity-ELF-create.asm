@@ -17,8 +17,20 @@
 db 0x7F,"ELF" ;ELFMAGIC: 4 bytes that identify this as an ELF file. The magic numbers you could say.
 db 1          ;EI_CLASS: 1=32-bit 2=64-bit
 db 1          ;EI_DATA: The endianness of the data. 1=ELFDATA2LSB 2=ELFDATA2MSB For Intel x86 this is always 1 as far as I know.
-db 1          ;EV_CURRENT: ELF version 1 (which is current at time of specification Version 4.2 I was using)
+db 1          ;EI_VERSION: 1=EV_CURRENT (ELF identity version 1) (which is current at time of specification Version 4.2 I was using)
 db 9 dup 0    ;padding zeros to bring us to address 0x10
+dw 2          ;e_type: 2=ET_EXEC (executable instead of object file)
+dw 3          ;e_machine : 3=EM_386 (Intel 80386)
+dd 1          ;e_version: 1=EV_CURRENT (ELF object file version.)
+
+e_entry=0x8048054 ;we will be reusing this constant later 
+
+dd e_entry    ;e_entry: the virtual address at which the program starts
+dd 0x34       ;e_phoff: where in the file the program header offset is
+db 8 dup 0    ;e_shoff and e_flags are unused in this example,therefore all zeros
+dw 0x34       ;e_ehsize: size of the ELF header
+dw 0x20       ;e_phentsize: size of program header which happens after ELF header
+dw 1          ;e_phnum: How many program headers. Only 1 in this case
 
 
 ;chastity@chastity-um250:~/git/Chastity-Code-Cookbook/code/asm/fasm/linux/elf$ hd ./elf-new-hello
