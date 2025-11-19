@@ -31,6 +31,12 @@ db 8 dup 0    ;e_shoff and e_flags are unused in this example,therefore all zero
 dw 0x34       ;e_ehsize: size of the ELF header
 dw 0x20       ;e_phentsize: size of program header which happens after ELF header
 dw 1          ;e_phnum: How many program headers. Only 1 in this case
+dw 0x28       ;e_shentsize: Size of a section header
+dw 0          ;e_shnum number of section headers
+dw 0          ;e_shstrndx: section header string index (not used here)
+
+;That is the end of the 0x34 byte (52 bytes decimal) ELF header. Sadly, this is not the end and a program header is also required (what drunk person made this format?)
+
 
 
 ;chastity@chastity-um250:~/git/Chastity-Code-Cookbook/code/asm/fasm/linux/elf$ hd ./elf-new-hello
