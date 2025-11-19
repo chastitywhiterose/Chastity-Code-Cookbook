@@ -38,6 +38,33 @@ dw 0          ;e_shstrndx: section header string index (not used here)
 ;That is the end of the 0x34 byte (52 bytes decimal) ELF header. Sadly, this is not the end and a program header is also required (what drunk person made this format?)
 
 
+dd 1           ;Elf32_Word p_type: 1=PT_LOAD
+dd 0           ;Elf32_Off p_offset: Base address from file (zero)
+dd 0x8048000   ;Elf32_Addr p_vaddr: Virtual address in memory where the file will be.
+dd 0x8048000   ;Elf32_Addr p_paddr: Physical address. Same as previous
+
+;not sure about these two values yet
+
+dd 0x1000       ;Elf32_Word p_filesz: This member gives the number of bytes in the file image of the segment; it may be zero.
+dd 0x1000       ;Elf32_Word p_memsz: This member gives the number of bytes in the memory image of the segment; it may be zero.
+
+dd 7           ;Elf32_Word p_flags; 7=4(Read)+2(Write)+1(Execute)
+dd 0x1000      ;Elf32_Word p_align; Alignment
+
+use32 ;tell assembler that 32 bit code is being used
+org e_entry ;origin of new code begins at the entry point
+
+mov eax,4   ; invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
+mov ebx,1   ; write to the STDOUT file
+mov ecx,msg ; pointer/address of string to write
+mov edx,13  ; number of bytes to write
+int 80h
+
+mov eax,1 ;function SYS_EXIT (kernel opcode 1 on 32 bit systems)
+mov ebx,0 ;return 0 status on exit - 'No Errors'
+int 80h   ;call Linux kernel with interrupt
+
+msg db 'Hello World!',0Ah
 
 ;chastity@chastity-um250:~/git/Chastity-Code-Cookbook/code/asm/fasm/linux/elf$ hd ./elf-new-hello
 ;00000000  7f 45 4c 46 01 01 01 00  00 00 00 00 00 00 00 00  |.ELF............|
