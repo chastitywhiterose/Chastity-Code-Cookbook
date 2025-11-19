@@ -2,6 +2,8 @@
 
 ELF is the Linkable Executable Format. It is the format of executable program used on Linux. For the first time, I am making a serious attempt to learn this format. Here are some links about it.
 
+<https://github.com/xinuos/gabi>
+
 <https://en.wikipedia.org/wiki/Executable_and_Linkable_Format>
 
 <https://flatassembler.net/docs.php?article=manual#2.4>

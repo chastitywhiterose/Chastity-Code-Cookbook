@@ -12,7 +12,7 @@ mov [radix],16 ; Choose radix for integer output!
 mov [int_width],8
 mov [int_newline],0 ;disable automatic printing of newlines after putint
 
-mov [memory_address],start;main
+mov [memory_address],esp;start;main
 
 keyloop:
 
