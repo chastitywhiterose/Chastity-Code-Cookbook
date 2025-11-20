@@ -149,7 +149,14 @@ push [filedesc1] ;handle of the open file
 call [ReadFile]
 
 cmp [bytes_read],0
-jz main_end ;if no bytes were read, we have reached the end of this file and should end the program
+jnz file_2_read_one_byte ;unless zero bytes were read, proceed to read from next file
+
+mov eax,[filename1]
+call putstring
+mov eax,end_of_file_string
+call putstring
+
+jmp main_end ;we have reach end of one file and should end program
 
 file_2_read_one_byte:
 ;read only 1 byte using Win32 ReadFile system call.
@@ -161,7 +168,16 @@ push [filedesc2] ;handle of the open file
 call [ReadFile]
 
 cmp [bytes_read],0
-jz main_end ;if no bytes were read, we have reached the end of this file and should end the program
+jnz compare_bytes ;unless zero bytes were read, proceed to compare bytes from both files
+
+mov eax,[filename2]
+call putstring
+mov eax,end_of_file_string
+call putstring
+
+jmp main_end ;we have reach end of one file and should end program
+
+compare_bytes:
 
 ;store the two bytes into the 8 bit lower parts of eax and ebx for a byte comparison.
 mov al,[byte1]
@@ -205,7 +221,7 @@ arg_length dd 0 ;length of arg string
 file_open_message db 'opening: ',0
 file_seek_message db 'seek: ',0
 file_error_message db 'error: ',0
-end_of_file db 'EOF',0
+end_of_file_string db ' has reached EOF',0Ah,0
 read_error_message db 'Failure during reading of file. Error number: ',0
 
 ;variables for managing arguments
