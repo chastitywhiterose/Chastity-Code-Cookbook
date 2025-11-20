@@ -272,17 +272,7 @@ call [ExitProcess]
 
 .end main
 
-arg_start  dd 0 ;start of arg string
-arg_end    dd 0 ;address of the end of the arg string
-arg_length dd 0 ;length of arg string
-arg_spaces dd 0 ;how many spaces exist in the arg command line
 
-;variables for managing file IO.
-file_name dd 0
-bytes_read dd 0 ;how many bytes are read with ReadFile operation
-byte_array db 16 dup '?',0
-file_handle dd 0
-file_offset dd 0
 
 ;variables for displaying messages
 file_open_message db 'opening: ',0
@@ -324,7 +314,7 @@ ret
 
 
 
-;this function prints a row of bytes
+;this function prints a row of hex bytes
 ;each row is 16 bytes
 print_bytes_row:
 mov eax,[file_offset]
@@ -347,9 +337,57 @@ dec ecx
 cmp ecx,0
 jnz next_byte
 
+mov ecx,[bytes_read]
+pad_spaces:
+cmp ecx,0x10
+jz pad_spaces_end
+mov eax,space_three
+call putstring
+inc ecx
+jmp pad_spaces
+pad_spaces_end:
+
+;optionally, print chars after hex bytes
+call print_bytes_row_text
 call putline
 
 ret
+
+space_three db '   ',0
+
+print_bytes_row_text:
+mov ebx,byte_array
+mov ecx,[bytes_read]
+next_char:
+mov eax,0
+mov al,[ebx]
+
+;if char is below '0' or above '9', it is outside the range of these and is not a digit
+cmp al,0x20
+jb not_printable
+cmp al,0x7E
+ja not_printable
+
+printable:
+;if char is in printable range,copy as is and proceed to next index
+jmp next_index
+
+not_printable:
+mov al,'.' ;otherwise replace with placeholder value
+
+next_index:
+mov [ebx],al
+inc ebx
+dec ecx
+cmp ecx,0
+jnz next_char
+mov [ebx],byte 0 ;make sure string is zero terminated
+
+mov eax,byte_array
+call putstring
+
+ret
+
 
 ;function to display EOF with address
 show_eof:
@@ -363,3 +401,16 @@ call putstring
 call putline
 
 ret
+
+;variables for managing arguments
+arg_start  dd ? ;start of arg string
+arg_end    dd ? ;address of the end of the arg string
+arg_length dd ? ;length of arg string
+arg_spaces dd ? ;how many spaces exist in the arg command line
+
+;variables for managing file IO.
+file_name dd ?
+bytes_read dd ? ;how many bytes are read with ReadFile operation
+byte_array db 16 dup ?,0
+file_handle dd ?
+file_offset dd ?
