@@ -19,7 +19,7 @@ open_check_error:
 cmp eax,-1
 jnz error_none ;jump to end of function and do nothing if this is not an error
 
-mov eax,file_error_message
+mov eax,open_error_message
 call putstring
 call [GetLastError]
 call putint
