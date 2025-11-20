@@ -166,22 +166,6 @@ mov eax, 1  ; invoke SYS_EXIT (kernel opcode 1)
 mov ebx, 0  ; return 0 status on exit - 'No Errors'
 int 80h
 
-;variables for managing arguments
-argc dd 0
-filename dd 0 ; name of the file to be opened
-filedesc dd 0 ; file descriptor
-bytes_read dd 0
-file_offset dd 0
-
-end_of_file_string db 'EOF',0
-
-help_message db 'Welcome to chastehex! The tool for reading and writing bytes of a file!',0Ah,0Ah
-db 'To hexdump an entire file:',0Ah,0Ah,9,'chastehex file',0Ah,0Ah
-db 'To read a single byte at an address:',0Ah,0Ah,9,'chastehex file address',0Ah,0Ah
-db 'To write a single byte at an address:',0Ah,0Ah,9,'chastehex file address value',0Ah,0Ah,0
-
-;where we will store data from the file
-byte_array db 16 dup '?'
 
 ;this function prints a row of hex bytes
 ;each row is 16 bytes
@@ -206,9 +190,57 @@ dec ecx
 cmp ecx,0
 jnz next_byte
 
+mov ecx,[bytes_read]
+pad_spaces:
+cmp ecx,0x10
+jz pad_spaces_end
+mov eax,space_three
+call putstring
+inc ecx
+jmp pad_spaces
+pad_spaces_end:
+
+;optionally, print chars after hex bytes
+call print_bytes_row_text
 call putline
 
 ret
+
+space_three db '   ',0
+
+print_bytes_row_text:
+mov ebx,byte_array
+mov ecx,[bytes_read]
+next_char:
+mov eax,0
+mov al,[ebx]
+
+;if char is below '0' or above '9', it is outside the range of these and is not a digit
+cmp al,0x20
+jb not_printable
+cmp al,0x7E
+ja not_printable
+
+printable:
+;if char is in printable range,copy as is and proceed to next index
+jmp next_index
+
+not_printable:
+mov al,'.' ;otherwise replace with placeholder value
+
+next_index:
+mov [ebx],al
+inc ebx
+dec ecx
+cmp ecx,0
+jnz next_char
+mov [ebx],byte 0 ;make sure string is zero terminated
+
+mov eax,byte_array
+call putstring
+
+ret
+
 
 ;function to display EOF with address
 show_eof:
@@ -236,3 +268,23 @@ call putint
 call putline
 
 ret
+
+end_of_file_string db 'EOF',0
+
+help_message db 'Welcome to chastehex! The tool for reading and writing bytes of a file!',0Ah,0Ah
+db 'To hexdump an entire file:',0Ah,0Ah,9,'chastehex file',0Ah,0Ah
+db 'To read a single byte at an address:',0Ah,0Ah,9,'chastehex file address',0Ah,0Ah
+db 'To write a single byte at an address:',0Ah,0Ah,9,'chastehex file address value',0Ah,0Ah,0
+
+;variables for managing arguments
+argc dd 0
+filename dd 0 ; name of the file to be opened
+filedesc dd 0 ; file descriptor
+bytes_read dd 0
+file_offset dd 0
+
+
+
+
+;where we will store data from the file
+byte_array db 17 dup ?

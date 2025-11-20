@@ -5,4 +5,5 @@ main-fasm:
 chastehex:
 	fasm main.asm
 	chmod +x main
-	./main thefile 10 ff
+	./main testfile
+
