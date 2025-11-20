@@ -1,6 +1,6 @@
 ;Chastity's Source for ELF 32-bit executable creation
 ;
-;All data as defined in this file is basd off of the specification of the ELF file format.
+;All data as defined in this file is based off of the specification of the ELF file format.
 ;I first looked at the type of file created by FASM's "format ELF executable" directive.
 ;It is great that FASM can create an executable file automatically. (Thanks Tomasz Grysztar, you are a true warrior!)
 ;However, I wanted to understand the format for theoretical use in other assemblers like NASM.
@@ -42,8 +42,6 @@ dd 1           ;p_type: 1=PT_LOAD
 dd 0           ;p_offset: Base address from file (zero)
 dd 0x8048000   ;p_vaddr: Virtual address in memory where the file will be.
 dd 0x8048000   ;p_paddr: Physical address. Same as previous
-
-;not sure about these two values yet
 
 image_size=0x1000 ;Chosen size for file and memory size. At minimum this must be as big as the actual binary file (code after header included)
                   ;By choosing a default size of 0x1000, I am assuming all assembly programs I write will be less than 4 kilobytes
