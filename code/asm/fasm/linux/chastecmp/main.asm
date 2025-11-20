@@ -267,7 +267,9 @@ pop eax
 
 ret
 
-;the strint function from chastelib32.asm has been excluded for this program because unlike in chastehex, we are not reading strings to get numbers. We are only outputting byte numbers by converting them to strings with intstr
+;the strint function from chastelib32.asm has been excluded for this program
+;unlike in chastehex, we are not reading strings to get numbers.
+;We are only outputting byte numbers by converting them to strings with intstr
 
 ;the next utility functions simply print a space or a newline
 ;these help me save code when printing lots of things for debugging
