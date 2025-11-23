@@ -2,35 +2,63 @@
 #include <stdlib.h>
 #include "chastelib.h"
 
+FILE* fp; /*file pointer*/
+char bytes[17]; /*the byte buffer for hex and text dumping*/
+int count=1; /*keeps track of how many bytes were read during each row*/
 
-void hexdump(FILE* fp)
+/*outputs the ASCII text to the right of the hex field*/
+void textdump()
 {
- int x,c,address=0,width=16;
- x=0;
- while ((c = fgetc(fp)) != EOF)
- {
-  if(x%width==0)
-  {
-   int_width=8;
-   putint(address);
-   putstring(" ");
-  }
-  int_width=2;
-  putint(c);
-  x++;
+ int a,x=0;
 
-  if(x==width){printf("\n");x=0;}
-  else{printf(" ");}
-   
-  address++;
+ x=count;
+ while(x<0x10)
+ {
+  putstring("   ");
+  x++;
  }
- if(x!=width){printf("\n");}
+
+ x=0;
+ while(x<count)
+ {
+  a=bytes[x];
+  if( a < 0x20 || a > 0x7E ){a='.';bytes[x]=a;}
+  x++;
+ }
+ bytes[x]=0;
+
+ putstring(bytes);
 }
- 
+
+/*outputs up to 16 bytes on each row in hexadecimal*/
+void hexdump()
+{
+ int x,address=0;
+ x=0;
+ while((count=fread(bytes,1,16,fp)))
+ {
+  int_width=8;
+  putint(address);
+  putstring(" ");
+
+  int_width=2;
+  x=0;
+  while(x<count)
+  {
+   putint(bytes[x]);
+   printf(" ");
+   x++;
+  }
+  textdump();
+  printf("\n");
+
+  address+=count;
+ }
+}
+
 int main(int argc, char *argv[])
 {
  int argx,x,c;
- FILE* fp; /*file pointer*/
    
  /*printf("argc=%i\n",argc);*/
 
@@ -66,7 +94,7 @@ int main(int argc, char *argv[])
 
  if(argc==2)
  {
-  hexdump(fp); /*hex dump if only filename given*/
+  hexdump(); /*hex dump only if filename given*/
  }
 
  if(argc>2)
