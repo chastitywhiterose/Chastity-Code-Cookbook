@@ -18,7 +18,7 @@ This function is one that I wrote because the standard library can display integ
 
 char* intstr(unsigned int i)
 {
- int width=int_width;
+ int width=0;
  char *s=us+usl;
  *s=0;
  do
@@ -27,9 +27,9 @@ char* intstr(unsigned int i)
   *s=i%radix;
   i/=radix;
   if(*s<10){*s+='0';}else{*s=*s+'A'-10;}
-  width--;
+  width++;
  }
- while(i!=0 || width>0);
+ while(i!=0 || width<int_width);
  return s;
 }
 

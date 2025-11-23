@@ -11,10 +11,12 @@ void hexdump(FILE* fp)
  {
   if(x%width==0)
   {
-   printf("%08X ",address);
+   int_width=8;
+   putint(address);
+   putstring(" ");
   }
-  
-  printf("%02X",c);
+  int_width=2;
+  putint(c);
   x++;
 
   if(x==width){printf("\n");x=0;}
@@ -32,7 +34,7 @@ int main(int argc, char *argv[])
    
  /*printf("argc=%i\n",argc);*/
 
- radix=10; /*set radix for integer output*/
+ radix=0x10; /*set radix for integer output*/
  int_width=1; /*set default integer width*/
 
  if(argc==1)
@@ -52,7 +54,7 @@ int main(int argc, char *argv[])
   fp=fopen(argv[1],"rb+");
   if(fp==NULL)
   {
-   printf("File \"%s\" does not exist.\n",argv[1]);
+   printf("File \"%s\" cannot be opened.\n",argv[1]);
    return 1;
   }
   else
@@ -99,7 +101,6 @@ int main(int argc, char *argv[])
   }
  }
  
- printf("fclose(fp);\n");
  fclose(fp);
  return 0;
 }
