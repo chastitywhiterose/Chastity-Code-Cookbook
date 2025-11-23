@@ -107,10 +107,15 @@ int main(int argc, char *argv[])
  if(argc==3)
  {
   c=fgetc(fp);
+  int_width=8;
   putstring(intstr(x));
   putstring(" ");
   if(c==EOF){putstring("EOF");}
-  else{putstring(intstr(c));}
+  else
+  {
+   int_width=2;
+   putstring(intstr(c));
+  }
   putstring("\n");
  }
 
@@ -121,8 +126,12 @@ int main(int argc, char *argv[])
   while(argx<argc)
   {
    c=strint(argv[argx]);
-   printf("%s: ",intstr(x));
-   printf("%s\n",intstr(c));
+   int_width=8;
+   putstring(intstr(x));
+   putstring(" ");
+   int_width=2;
+   putstring(intstr(c));
+   putstring("\n");
    fputc(c,fp);
    x++;
    argx++;
