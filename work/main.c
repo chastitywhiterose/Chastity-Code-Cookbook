@@ -50,7 +50,7 @@ void hexdump()
    x++;
   }
   textdump();
-  printf("\n");
+  putstring("\n");
 
   address+=count;
  }
@@ -60,8 +60,6 @@ int main(int argc, char *argv[])
 {
  int argx,x,c;
    
- /*printf("argc=%i\n",argc);*/
-
  radix=0x10; /*set radix for integer output*/
  int_width=1; /*set default integer width*/
 
@@ -109,9 +107,16 @@ int main(int argc, char *argv[])
  if(argc==3)
  {
   c=fgetc(fp);
-  printf("%s ",intstr(x));
-  if(c==EOF){printf("EOF\n");}
-  else{printf("%s\n",intstr(c));}
+  int_width=8;
+  putstring(intstr(x));
+  putstring(" ");
+  if(c==EOF){putstring("EOF");}
+  else
+  {
+   int_width=2;
+   putstring(intstr(c));
+  }
+  putstring("\n");
  }
 
  /*any arguments past the address are hex bytes to be written*/
@@ -120,9 +125,13 @@ int main(int argc, char *argv[])
   argx=3;
   while(argx<argc)
   {
-   c=strtol(argv[argx],NULL,16);
-   printf("%s: ",intstr(x));
-   printf("%s\n",intstr(c));
+   c=strint(argv[argx]);
+   int_width=8;
+   putstring(intstr(x));
+   putstring(" ");
+   int_width=2;
+   putstring(intstr(c));
+   putstring("\n");
    fputc(c,fp);
    x++;
    argx++;
