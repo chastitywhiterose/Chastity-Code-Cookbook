@@ -2832,7 +2832,7 @@ int main()
 
 # Chapter 9: Assembly Language
 
-No book on programming would be complete without at least a mention of assembly language. I will describe assembly language in the most basic of terms and at least give you a "Hello World" example that runs under Linux.
+No book on programming would be complete without at least a mention of Assembly language. I will describe Assembly language in the most basic of terms and at least give you a "Hello World" example that runs under Linux.
 
 You see, assembly language is platform specific. This means that the language itself only runs on one brand of CPUs (Central Processing Units). On top of that, code is not portable between Windows and Linux because these operating systems each work in a different way and you are expected to call the kernel through the API of that system.
 
@@ -2972,6 +2972,191 @@ And don't forget, there are other operating systems like FreeBSD, Chromium, Menu
 
 But one approach that has worked well for me is to write a program in C first to make sure the logic is correct and that it works before trying to translate it into Assembly Language for a particular platform.
 
-Chapter 10: Software Licenses
+# Chapter 10: Software Licenses
 
-To be written later.
+Perhaps it could be said that once you have written a program, what you do with it is even more important. For most of my life, I never considered the concept of copyright or ownership of the toy programs I wrote. I figured that unless I made a great game or operating system that I would not need to consider writing the terms and conditions about what people can or should do with my work.
+
+And even now, I don't think my programs have enough of an impact for anyone to care about software licenses. However, I have found some software licenses that are compatible with my personal philosophy for how software should be shared and distributed.
+
+Generally, I only recommend software that is considered "Free Software" by the definitions of the [Free Software Foundation](https://fsf.org/).
+
+I have been an advocate of Free Software as it is directly tied to Freedom of speech. I am well aware that Software Freedom and Open source are usually, but not always, the same thing.
+This page by the FSF on the GNU project links to licenses where you can read the full text. However, I will also provide my summaries based on my understanding.
+
+<https://www.gnu.org/licenses/license-list.html>
+
+## GNU GENERAL PUBLIC LICENSE Version 3
+
+<https://www.gnu.org/licenses/gpl-3.0.html>
+
+This section is the abridged and simplified version by Chastity White Rose. In case of confusion, see the original text.
+
+The General Public License guarantees your Freedom to change a program licensed under it and to share it with others. However, when you share it with others, they must have the same Freedom you do. Therefore, you must give others access to your source code if you choose to distribute your own modified version.
+
+Part of this Freedom is to include the source code when you distribute it. Source code is the preferred form of the program that makes it possible and/or easy to modify, provided you know the programming language being used. Examples include source files for languages such as C, C++, Assembly, Pascal, or Java. Also included in this definition are build scripts written in Bash, Windows Batch, GNU Make, or any similar system.
+
+In my opinion, the benefit of the GPL3, as well as past and future versions of it, is that it declares the author does not intend it to be used in proprietary programs. As a programmer and author, I would not want a big tech company to come along and use my code for evil purposes or to restrict others from accessing what I intended to be free.
+
+At the time of this writing, I don't think anything I have written is in danger of being misused. Still, I hope that people use my programs if they find them useful, modify them to make them more useful to their purposes, and share their work with others who go on to do the same.
+
+The reason for restricting proprietary use is so that another person or company can't take my code, claim to be the original owner, and turn it into something opposed to what I intended. More importantly, I never want someone to charge money for my software. Specifically in the case of software written by me, Chastity White Rose, Free Software is free as in Free Speech and Free Price.
+
+Considering all this, I place all my code in this book under the GPL3 license so that the Free Software Foundation and entire world of Open Source and Free Software nerds can take action on my behalf if someone ever tries to restrict my work after my death. These words are my statement that you can't steal what was made to be free.
+
+## GNU Lesser General Public License Version 3
+
+<https://www.gnu.org/licenses/lgpl-3.0.html>
+
+The Lesser GPL is very much like the regular GPL with an important exception. It is to allow proprietary programs to use a library. At first, I didn't see the point of this; however, when I read the following article, I came to understand better.
+
+<https://www.gnu.org/licenses/why-not-lgpl.html>
+
+The reason it was to the advantage of the Free Software community to allow the GNU C library to be linked by proprietary programs is that it prevents the need for those developers to rely on other proprietary software.
+
+When I think about it, would I really want someone to have to rely on a C compiler or library made by Microsoft or Apple because they couldn't use GNU Libc for the proprietary game they made? No, I wouldn't want that. I will explain my reasons for this.
+
+Basically, complying with the normal GPL3 prevents someone from profiting from their work. If you are required to provide the source code, then anyone smart enough to compile it on their system can copy and modify your game infinitely without paying you.
+
+The Lesser GPL3 allows someone, for example, to use a free library to implement the graphics, sound, etc., for their game or utility program without providing the source code to their own program, which uses these libraries, but does not copy code from it.
+
+In short, if you want to make money, you probably want the Lesser GPL, but if you just want to be a nice person and make your code free for the education and entertainment of all people without promise of reward, the normal GPL serves the purpose best in my opinion.
+
+There are hundreds of other software licenses to be considered if you have written a program and want to decide which terms to release it under. You can, of course, create your own from scratch, but it might be worth reading about those that already exist to see if they match your ideals.
+
+## Free vs. Proprietary
+
+I am not against proprietary programs when they are video games for entertainment only. I also believe the programmers should be paid for their work, like any other job, to help them survive.
+
+But my personal ideals are different from those of most programmers. My goal is to write books to share my code and to teach people how to do things, but I don't plan to profit off the code because I value individual Freedom more than I do money. I hope that even after my death, others will still learn the joy of computer programming and use it to make great things.
+
+Writing computer software isn't just a hobby or a business; it is a ministry. Think about all the software that has been written to create the internet and allow people to write books and share them with the world. Think about the programmers who made video and audio recording, encoding, and formatting possible.
+
+This book is about computer programming, not religion, but I must say, if you had a message that would save the lives or the souls of others, would you really want to be restricted in what manner you use to share that information? Therefore, I propose that Free Software is a necessity in light of Digital Rights Management and companies like Amazon removing ebooks from people's devices that they have already paid for.
+
+Traditional books are dying, and bookstores are closing. If we don't work together to stop digital book burning, then we lose the final method of sharing words of eternal value.
+
+# Chapter 11: The Prayer of Saint Chastity
+
+Dear God,
+
+I don't know how long I have to live
+And I don't have much left to give
+But while I am here, let me say
+Thank you for giving me today
+
+Give me the strength to do what I must do
+And remind me always to speak what is true
+Not hold back because of my fear
+Of what people will do to me if they hear
+
+I am sorry that I put money over you
+And I forgot that you gave me a job to do
+I see what the gift you gave me is, now I understand
+What I am worried about is not what you have planned
+
+You made me special; that is no lie
+And I will serve you before and after I die
+My voice is weak now, and I can't sing a song
+But still, my honest heart is equally strong
+
+I walked to Walmart on my night off to make up for the shift I missed
+But I coughed and spread germs on the boxes I punched with my fist
+I was too sick to be working, and I worked myself to death
+I had no energy and couldn't catch my breath
+
+I thought money would save me
+That my job was my source
+And forgot that even money
+It is not the strongest force
+
+Yes, I tried to come to work tonight and do the best I can
+But in my pure heart, I knew it wasn't right, and it was not my plan
+Maybe the point wasn't how much work I did or how much I earned
+It was to be reminded of the lesson I had learned
+
+Money was all I desired
+But it only crushed what you inspired
+My income was what I believed
+Would be the only way to set me free
+
+But when it disappeared
+and I lost the path ahead
+That's when you came to see me
+And I remember the words you said
+
+When we first met, I didn't know you were God
+Because you looked extremely odd
+You were a horse with a shiny silver horn
+But, of course, a unicorn always comes to heal what has been torn
+
+Forgive me for the fact that I forgot
+That even the rich will someday rot
+That truth always wins in the end
+But we will remember the kindness of a friend
+
+I have seen what happens when people value money over life
+That's why there is so much murder, theft, hypocrisy, and strife
+Life is not about getting what we think we deserve
+And if someone wants to be the best, then others they must serve
+
+But not serve those who promise us financial gain
+Because their words are deceptive and will only give us pain
+They don't actually mean or deliver the things they claim
+And when their world crumbles, they always shift the blame
+
+But if I abort myself by chasing a pot of gold
+Then I forgot the meaning of the rainbow, as you told
+For a second, I forgot, but I remember now
+That my life matters just like a horse, chicken, or cow
+
+I can't think straight, and it seems I lost my mind
+But you are the one who gives sight to the blind
+So give me the eyes to see the inner heart of all
+So I do the right thing when you give me the call
+
+And now I know my gift is Something only I can do
+Because I can't refrain from speaking the things I learn from you
+I will see you even if you take a different form
+Because you will come when I need you to save me from the storm
+
+Sometimes faith is hard because the world can be so loud
+And what you speak to me is drowned out by the crowd
+But I heard you speak to me, and that's enough
+To keep me going even when life is rough
+
+You told me to go home because there is writing I must do
+To remind myself the experience I had with you
+You've done so much for me, but let me ask for one more thing
+That you will heal my voice so I can praise you as I sing
+
+And tell others that you will find them both inside and outside of church
+And that they will find the answers if they don't give up the search
+And to those who can't believe because they are full of doubt
+Just like with Thomas, you'll show up, and they'll know what you're about
+
+Some call you Jesus, the light, truth, or the way
+But that was not how you showed up to save my day
+To me, you are always my unicorn named Honesty
+Because I remember your words with every rainbow I see
+
+You said rainbows are made when the light touches my tears
+That's why when I see the rainbow, it opens up my ears
+And I listen to what my favorite unicorn has to say
+Because you speak words to me in a most unusual way
+
+I don't understand exactly what you've planned
+And there is still so much I don't understand
+But I need your horn of truth to guide me along the way
+Because my God is a unicorn, even though it sounds totally gay
+
+---
+
+Matthew 6:19: "Do not store up for yourselves treasures on earth, where moths and vermin destroy, and where thieves break in and steal. 20 But store up for yourselves treasures in heaven, where moths and vermin do not destroy, and where thieves do not break in and steal. 21 For where your treasure is, there your heart will be also. 22 "The eye is the lamp of the body. If your eyes are healthy, your whole body will be full of light. 23 But if your eyes are unhealthy, your whole body will be full of darkness. If then the light within you is darkness, how great is that darkness! 24 "No one can serve two masters. Either you will hate the one and love the other, or you will be devoted to the one and despise the other. You cannot serve both God and money.
+
+---
+
+Matthew 19:16 Now someone came up to him and said, “Teacher, what good thing must I do to gain eternal life?” 17 He said to him, “Why do you ask me about what is good? There is only one who is good. But if you want to enter into life, keep the commandments.” 18 “Which ones?” he asked. Jesus replied, “Do not murder, do not commit adultery, do not steal, do not give false testimony, 19 honor your father and mother, and love your neighbor as yourself.” 20 The young man said to him, “I have wholeheartedly obeyed all these laws. What do I still lack?” 21 Jesus said to him, “If you wish to be perfect, go sell your possessions and give the money to the poor, and you will have treasure in heaven. Then come, follow me.” 22 But when the young man heard this he went away sorrowful, for he was very rich. 23 Then Jesus said to his disciples, “I tell you the truth, it will be hard for a rich person to enter the kingdom of heaven! 24 Again I say, it is easier for a camel to go through the eye of a needle than for a rich person to enter into the kingdom of God.” 25 The disciples were greatly astonished when they heard this and said, “Then who can be saved?” 26 Jesus looked at them and replied, “This is impossible for mere humans, but for God all things are possible.” 27
+
+---
+
+If you read my poem and these Bible verses from the book of Matthew, perhaps you will better understand my commitment to keeping software free and teaching people how to create and share software for the benefit of everyone. You never know, I might just write something that saves someone's life, or enable one of my readers to do greater works than I can and they may save the lives of many animals (that includes humans BTW).
