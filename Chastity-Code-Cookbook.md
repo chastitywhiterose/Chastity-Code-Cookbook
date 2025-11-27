@@ -2978,5 +2978,39 @@ Perhaps it could be said that once you have written a program, what you do with 
 
 And even now, I don't think my programs have enough of an impact for anyone to care about software licenses. However, I have found some software licenses that are compatible with what my personal philosophy is for how software should be shared and distributed.
 
-<https://www.fsf.org/licensing/>
+Generally, I only recommend software that is considered "Free Software" by the definitions of the [Free Software Foundation](https://fsf.org/).
 
+I have been an advocate of Free Software as it is directly tied to Freedom of speech. I am well aware that Software Freedom and Open source are usually, but not always, the same thing.
+This page by the FSF on the GNU project links to licenses where you can read the full text. However, I will also provide my summaries based on my understanding.
+
+<https://www.gnu.org/licenses/license-list.html>
+
+## GNU GENERAL PUBLIC LICENSE Version 3
+
+<https://www.gnu.org/licenses/gpl-3.0.html>
+
+This is the abridged and simplified version by Chastity White Rose. In case of confusion, see the original text.
+
+The General Public License guarantees your freedom to change a program licensed under it and to share it with others. However, when you share it with others, they must have the same freedom you do. Therefore you must give others access to your source code if you choose to distribute your own modified version.
+
+Part of this freedom is to include the source code when you distribute it. Source code is the preferred form of the program that makes it possible and/or easy to modify, provided you know the programming language being used. Examples include source files for languages such as C, C++, Assembly, Pascal, or Java. Also included in this definition are build scripts written in Bash, Windows Batch, Gnu Make, or any similar system.
+
+In my opinion, the benefit of the GPL3, as well as past and future versions of it, is that it declares the author does not intend it to be used in proprietary programs. As a programmer and author, I would not want a big tech company to come along and use my code for evil purposes or to restrict others from accessing what I intended to be free.
+
+At the time of this writing, I don't think anything I have written is in danger of being misused, but my hope is that people use my programs if they find them useful, modify them to make them more useful to their purposes, and share their work with others who go on to do the same.
+
+The reason for restricting proprietary use is so that another person or company can't take my code, claim to be the original owner, and turn it into something I opposite of what I indended. More importantly, I never want someone to be charged money for my software. Specifically in the case of software written by me, Chastity White Rose, Free Software is free as in Free Speech and Free Price.
+
+Considering all this, I place all my code in this book under the GPL3 license so that the Free Software Foundation and entire world of Open Source and Free Software nerds can take action on my behalf if someone ever tries to restrict my work after my death. These words are my statement that you can't steal what was made to be free.
+
+## GNU Lesser General Public License Version 3
+
+<https://www.gnu.org/licenses/lgpl-3.0.html>
+
+The Lesser GPL is very much like the regular GPL with an important exception. It is to allow proprietary programs to use a library. At first I didn't see the point of this, however when I read the following article, I came to understand better.
+
+<https://www.gnu.org/licenses/why-not-lgpl.html>
+
+The reason it was to the advantage of the Free Software community to alloy the GNU C library to be linked by propriety programs is that it prevents the need for those developers to rely on other proprietary software.
+
+When I think about it, would I really want someone to have to rely on a C compiler or library made by Microsoft ore
