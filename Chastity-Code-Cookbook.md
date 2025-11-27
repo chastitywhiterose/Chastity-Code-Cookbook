@@ -2832,7 +2832,7 @@ int main()
 
 # Chapter 9: Assembly Language
 
-No book on programming would be complete without at least a mention of assembly language. I will describe assembly language in the most basic of terms and at least give you a "Hello World" example that runs under Linux.
+No book on programming would be complete without at least a mention of Assembly language. I will describe Assembly language in the most basic of terms and at least give you a "Hello World" example that runs under Linux.
 
 You see, assembly language is platform specific. This means that the language itself only runs on one brand of CPUs (Central Processing Units). On top of that, code is not portable between Windows and Linux because these operating systems each work in a different way and you are expected to call the kernel through the API of that system.
 
@@ -2972,6 +2972,11 @@ And don't forget, there are other operating systems like FreeBSD, Chromium, Menu
 
 But one approach that has worked well for me is to write a program in C first to make sure the logic is correct and that it works before trying to translate it into Assembly Language for a particular platform.
 
-Chapter 10: Software Licenses
+# Chapter 10: Software Licenses
 
-To be written later.
+Perhaps it could be said that once you have written a program, what you do with it is even more important. For most of my life, I never considered the concept of copyright or ownership of the toy programs I wrote. I figured that unless I made a great game or operating system that I would not need to consider writing the terms and conditions about what people can or should do with my work.
+
+And even now, I don't think my programs have enough of an impact for anyone to care about software licenses. However, I have found some software licenses that are compatible with what my personal philosophy is for how software should be shared and distributed.
+
+<https://www.fsf.org/licensing/>
+
