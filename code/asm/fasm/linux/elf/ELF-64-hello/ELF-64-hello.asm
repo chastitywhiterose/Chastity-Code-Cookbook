@@ -24,7 +24,7 @@ dw 2          ;e_type: 2=ET_EXEC (executable instead of object file)
 dw 0x3E       ;e_machine : 3=EM_386 (Intel 80386) 0x3E (AMD x86-64 architecture)
 dd 1          ;e_version: 1=EV_CURRENT (ELF object file version.)
 
-p_vaddr=400000
+p_vaddr=0x400000
 e_entry=0x400078 ;we will be reusing this constant later 
 
 dq e_entry    ;e_entry: the virtual address at which the program starts
@@ -42,17 +42,16 @@ dw 0          ;e_shstrndx: section header string index (not used here)
 dd 1           ;p_type: 1=PT_LOAD
 dd 7           ;p_flags: permission flags: 7=4(Read)+2(Write)+1(Execute)
 dq 0           ;p_offset: Base address from file (zero)
-dd p_vaddr     ;p_vaddr: Virtual address in memory where the file will be.
-dd p_vaddr     ;p_paddr: Physical address. Same as previous
+dq p_vaddr     ;p_vaddr: Virtual address in memory where the file will be.
+dq p_vaddr     ;p_paddr: Physical address. Same as previous
 
 image_size=0x1000 ;Chosen size for file and memory size. At minimum this must be as big as the actual binary file (code after header included)
                   ;By choosing a default size of 0x1000, I am assuming all assembly programs I write will be less than 4 kilobytes
 
-dd image_size  ;p_filesz: Size of file image of the segment. Must be equal to the file size or greater
-dd image_size  ;p_memsz: Size of memory image of the segment, which may be equal to or greater than file image.
+dq image_size  ;p_filesz: Size of file image of the segment. Must be equal to the file size or greater
+dq image_size  ;p_memsz: Size of memory image of the segment, which may be equal to or greater than file image.
 
-
-dd 0           ;p_align; Alignment (none)
+dq 0           ;p_align; Alignment (none)
 
 ;important FASM directives
 use64          ;tell assembler that 32 bit code is being used

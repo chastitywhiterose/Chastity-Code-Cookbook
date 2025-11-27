@@ -24,6 +24,7 @@ dw 2          ;e_type: 2=ET_EXEC (executable instead of object file)
 dw 3          ;e_machine : 3=EM_386 (Intel 80386)
 dd 1          ;e_version: 1=EV_CURRENT (ELF object file version.)
 
+p_vaddr=0x8048000
 e_entry=0x8048054 ;we will be reusing this constant later 
 
 dd e_entry    ;e_entry: the virtual address at which the program starts
@@ -38,10 +39,10 @@ dw 0          ;e_shstrndx: section header string index (not used here)
 
 ;That is the end of the 0x34 byte (52 bytes decimal) ELF header. Sadly, this is not the end and a program header is also required (what drunk person made this format?)
 
-dd 1           ;p_type: 1=PT_LOAD
-dd 0           ;p_offset: Base address from file (zero)
-dd 0x8048000   ;p_vaddr: Virtual address in memory where the file will be.
-dd 0x8048000   ;p_paddr: Physical address. Same as previous
+dd 1          ;p_type: 1=PT_LOAD
+dd 0          ;p_offset: Base address from file (zero)
+dd p_vaddr    ;p_vaddr: Virtual address in memory where the file will be.
+dd p_vaddr    ;p_paddr: Physical address. Same as previous
 
 image_size=0x1000 ;Chosen size for file and memory size. At minimum this must be as big as the actual binary file (code after header included)
                   ;By choosing a default size of 0x1000, I am assuming all assembly programs I write will be less than 4 kilobytes
