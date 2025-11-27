@@ -3,18 +3,18 @@
 ;All data as defined in this file is based off of the specification of the ELF file format.
 ;I first looked at the type of file created by FASM's "format ELF executable" directive.
 ;It is great that FASM can create an executable file automatically. (Thanks Tomasz Grysztar, you are a true warrior!)
-;However, I wanted to understand the format for theoretical use in other assemblers like NASM.
+
+;However, I wanted to understand the format for theoretical use in other assemblers like NASM. Therefore, what you see here is a complete Hello World program that should work within NASM to create an executable file without using a linker. It worked perfectly on my machine running Debian Linux and NASM version 2.16.01.
 
 ;The Github repository with the spec I used is here.
 ;<https://github.com/xinuos/gabi>
 ;And this is the wikipedia article which linked me to the specification document
 ;<https://en.wikipedia.org/wiki/Executable_and_Linkable_Format>
 
-;This file contains a raw binary ELF32 header created using db,dw,dd commands.
+;This rest of this file contains a raw binary ELF64 header created using db,dw,dd,dq commands.
 ;After that, it proceeds to assemble a real "Hello World!" program
 
 ;Header for 64 bit ELF executable (with comments based on specification)
-
 
 db 0x7F,"ELF" ;ELFMAGIC: 4 bytes that identify this as an ELF file. The magic numbers you could say.
 db 2          ;EI_CLASS: 1=32-bit 2=64-bit
@@ -60,7 +60,6 @@ use64          ;tell assembler that 64 bit code is being used
 
 ;Now, the actual hello world program can begin!
 
-
 main:
 mov rax,1   ; invoke SYS_WRITE (kernel opcode 1 on 64 bit systems)
 mov rdi,1   ; write to the STDOUT file
@@ -73,3 +72,13 @@ mov rdi,0    ; return 0 status on exit - 'No Errors'
 syscall
 
 msg db 'Hello World!',0Ah
+
+;To Assemble and run this program on Linux, you can use the following makefile which has rules to Assemble and disassemble it!
+
+;main-nasm:
+;	nasm ELF-64-hello.asm
+;	chmod +x ELF-64-hello
+;	./ELF-64-hello
+;ndisasm:
+;	ndisasm -b 64 -o 0x400078 -e 0x78 ELF-64-hello
+
