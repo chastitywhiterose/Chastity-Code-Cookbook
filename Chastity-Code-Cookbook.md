@@ -3013,4 +3013,13 @@ The Lesser GPL is very much like the regular GPL with an important exception. It
 
 The reason it was to the advantage of the Free Software community to alloy the GNU C library to be linked by propriety programs is that it prevents the need for those developers to rely on other proprietary software.
 
-When I think about it, would I really want someone to have to rely on a C compiler or library made by Microsoft ore
+When I think about it, would I really want someone to have to rely on a C compiler or library made by Microsoft or Apple because they couldn't use Gnu Libc for the proprietary game they made? No, I wouldn't want that. I will explain my reasons for this.
+
+Basically, complying with the normal GPL3 prevents someone from profiting off of their work. If you are required to provide the source code, then anyone smart enough to compile it on their system can copy and modify your game infinitely without paying you.
+
+The Lesser GPL3 allows someone for example to use a free library to implement the graphics,sound, etc. for their game or utility program without providing the source code to their own program which uses these libraries, but does not copy code from it.
+
+In short, if you want to make money, you probably want the Lesser GPL but if you just want to be a nice person and make your code free for education and entertainment of all people without promise of reward, the normal GPL serves the purpose best in my opinion.
+
+There are other licenses to be considered though.
+
