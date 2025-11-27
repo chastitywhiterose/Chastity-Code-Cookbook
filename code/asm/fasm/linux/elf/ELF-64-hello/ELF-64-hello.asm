@@ -64,8 +64,8 @@ mov rsi,msg ; pointer/address of string to write
 mov rdx,13  ; number of bytes to write
 syscall
 
-mov rax,60  ; invoke SYS_EXIT (kernel opcode 60 on 64 bit systems)
-mov rdi,0   ; return 0 status on exit - 'No Errors'
+mov rax,0x3C ; invoke SYS_EXIT (kernel opcode 0x3C on 64 bit systems)
+mov rdi,0    ; return 0 status on exit - 'No Errors'
 syscall
 
 msg db 'Hello World!',0Ah
