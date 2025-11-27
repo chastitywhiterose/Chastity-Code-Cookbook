@@ -54,7 +54,7 @@ dq image_size  ;p_memsz: Size of memory image of the segment, which may be equal
 dq 0           ;p_align; Alignment (none)
 
 ;important FASM directives
-use64          ;tell assembler that 32 bit code is being used
+use64          ;tell assembler that 64 bit code is being used
 org e_entry    ;origin of new code begins at the entry point
 
 ;now, the actual hello world program
