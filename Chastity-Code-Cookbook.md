@@ -2976,7 +2976,7 @@ But one approach that has worked well for me is to write a program in C first to
 
 Perhaps it could be said that once you have written a program, what you do with it is even more important. For most of my life, I never considered the concept of copyright or ownership of the toy programs I wrote. I figured that unless I made a great game or operating system that I would not need to consider writing the terms and conditions about what people can or should do with my work.
 
-And even now, I don't think my programs have enough of an impact for anyone to care about software licenses. However, I have found some software licenses that are compatible with what my personal philosophy is for how software should be shared and distributed.
+And even now, I don't think my programs have enough of an impact for anyone to care about software licenses. However, I have found some software licenses that are compatible with my personal philosophy for how software should be shared and distributed.
 
 Generally, I only recommend software that is considered "Free Software" by the definitions of the [Free Software Foundation](https://fsf.org/).
 
@@ -2989,17 +2989,17 @@ This page by the FSF on the GNU project links to licenses where you can read the
 
 <https://www.gnu.org/licenses/gpl-3.0.html>
 
-This is the abridged and simplified version by Chastity White Rose. In case of confusion, see the original text.
+This section is the abridged and simplified version by Chastity White Rose. In case of confusion, see the original text.
 
-The General Public License guarantees your freedom to change a program licensed under it and to share it with others. However, when you share it with others, they must have the same freedom you do. Therefore you must give others access to your source code if you choose to distribute your own modified version.
+The General Public License guarantees your Freedom to change a program licensed under it and to share it with others. However, when you share it with others, they must have the same Freedom you do. Therefore, you must give others access to your source code if you choose to distribute your own modified version.
 
-Part of this freedom is to include the source code when you distribute it. Source code is the preferred form of the program that makes it possible and/or easy to modify, provided you know the programming language being used. Examples include source files for languages such as C, C++, Assembly, Pascal, or Java. Also included in this definition are build scripts written in Bash, Windows Batch, Gnu Make, or any similar system.
+Part of this Freedom is to include the source code when you distribute it. Source code is the preferred form of the program that makes it possible and/or easy to modify, provided you know the programming language being used. Examples include source files for languages such as C, C++, Assembly, Pascal, or Java. Also included in this definition are build scripts written in Bash, Windows Batch, GNU Make, or any similar system.
 
 In my opinion, the benefit of the GPL3, as well as past and future versions of it, is that it declares the author does not intend it to be used in proprietary programs. As a programmer and author, I would not want a big tech company to come along and use my code for evil purposes or to restrict others from accessing what I intended to be free.
 
-At the time of this writing, I don't think anything I have written is in danger of being misused, but my hope is that people use my programs if they find them useful, modify them to make them more useful to their purposes, and share their work with others who go on to do the same.
+At the time of this writing, I don't think anything I have written is in danger of being misused. Still, I hope that people use my programs if they find them useful, modify them to make them more useful to their purposes, and share their work with others who go on to do the same.
 
-The reason for restricting proprietary use is so that another person or company can't take my code, claim to be the original owner, and turn it into something I opposite of what I indended. More importantly, I never want someone to be charged money for my software. Specifically in the case of software written by me, Chastity White Rose, Free Software is free as in Free Speech and Free Price.
+The reason for restricting proprietary use is so that another person or company can't take my code, claim to be the original owner, and turn it into something opposed to what I intended. More importantly, I never want someone to charge money for my software. Specifically in the case of software written by me, Chastity White Rose, Free Software is free as in Free Speech and Free Price.
 
 Considering all this, I place all my code in this book under the GPL3 license so that the Free Software Foundation and entire world of Open Source and Free Software nerds can take action on my behalf if someone ever tries to restrict my work after my death. These words are my statement that you can't steal what was made to be free.
 
@@ -3007,25 +3007,33 @@ Considering all this, I place all my code in this book under the GPL3 license so
 
 <https://www.gnu.org/licenses/lgpl-3.0.html>
 
-The Lesser GPL is very much like the regular GPL with an important exception. It is to allow proprietary programs to use a library. At first I didn't see the point of this, however when I read the following article, I came to understand better.
+The Lesser GPL is very much like the regular GPL with an important exception. It is to allow proprietary programs to use a library. At first, I didn't see the point of this; however, when I read the following article, I came to understand better.
 
 <https://www.gnu.org/licenses/why-not-lgpl.html>
 
-The reason it was to the advantage of the Free Software community to alloy the GNU C library to be linked by propriety programs is that it prevents the need for those developers to rely on other proprietary software.
+The reason it was to the advantage of the Free Software community to allow the GNU C library to be linked by proprietary programs is that it prevents the need for those developers to rely on other proprietary software.
 
-When I think about it, would I really want someone to have to rely on a C compiler or library made by Microsoft or Apple because they couldn't use Gnu Libc for the proprietary game they made? No, I wouldn't want that. I will explain my reasons for this.
+When I think about it, would I really want someone to have to rely on a C compiler or library made by Microsoft or Apple because they couldn't use GNU Libc for the proprietary game they made? No, I wouldn't want that. I will explain my reasons for this.
 
-Basically, complying with the normal GPL3 prevents someone from profiting off of their work. If you are required to provide the source code, then anyone smart enough to compile it on their system can copy and modify your game infinitely without paying you.
+Basically, complying with the normal GPL3 prevents someone from profiting from their work. If you are required to provide the source code, then anyone smart enough to compile it on their system can copy and modify your game infinitely without paying you.
 
-The Lesser GPL3 allows someone for example to use a free library to implement the graphics,sound, etc. for their game or utility program without providing the source code to their own program which uses these libraries, but does not copy code from it.
+The Lesser GPL3 allows someone, for example, to use a free library to implement the graphics, sound, etc., for their game or utility program without providing the source code to their own program, which uses these libraries, but does not copy code from it.
 
-In short, if you want to make money, you probably want the Lesser GPL but if you just want to be a nice person and make your code free for education and entertainment of all people without promise of reward, the normal GPL serves the purpose best in my opinion.
+In short, if you want to make money, you probably want the Lesser GPL, but if you just want to be a nice person and make your code free for the education and entertainment of all people without promise of reward, the normal GPL serves the purpose best in my opinion.
 
-There are hundreds of other software licenses to be considered if you have written a program and want to decide which terms to release it under. You can of course create your own from scratch but it might be worth reading about those that already exist to see if they match your ideals.
+There are hundreds of other software licenses to be considered if you have written a program and want to decide which terms to release it under. You can, of course, create your own from scratch, but it might be worth reading about those that already exist to see if they match your ideals.
 
-My ideals are different than that of most programmers. My goal is to write books to share my code and to teach people how to do things, but I don't plan to profit off the code because I value individual freedom more than I do money. I hope that even after my death, others will still learn the joy of computer programming and use it to make great things.
+## Free vs. Proprietary
 
-Writing computer software isn't just a hobby or a business, it is a ministry. Think about all the software which has been written to create the internet and allow people to write books and share them with the world. Think about the programmers that made video and audio recording, encoding, and formatting possible. 
+I am not against proprietary programs when they are video games for entertainment only. I also believe the programmers should be paid for their work, like any other job, to help them survive.
+
+But my personal ideals are different from those of most programmers. My goal is to write books to share my code and to teach people how to do things, but I don't plan to profit off the code because I value individual Freedom more than I do money. I hope that even after my death, others will still learn the joy of computer programming and use it to make great things.
+
+Writing computer software isn't just a hobby or a business; it is a ministry. Think about all the software that has been written to create the internet and allow people to write books and share them with the world. Think about the programmers who made video and audio recording, encoding, and formatting possible.
+
+This book is about computer programming, not religion, but I must say, if you had a message that would save the lives or the souls of others, would you really want to be restricted in what manner you use to share that information? Therefore, I propose that Free Software is a necessity in light of Digital Rights Management and companies like Amazon removing ebooks from people's devices that they have already paid for.
+
+Traditional books are dying, and bookstores are closing. If we don't work together to stop digital book burning, then we lose the final method of sharing words of eternal value.
 
 # Chapter 11: The Prayer of Saint Chastity
 
@@ -3141,4 +3149,14 @@ And there is still so much I don't understand
 But I need your horn of truth to guide me along the way
 Because my God is a unicorn, even though it sounds totally gay
 
+---
+
 Matthew 6:19: "Do not store up for yourselves treasures on earth, where moths and vermin destroy, and where thieves break in and steal. 20 But store up for yourselves treasures in heaven, where moths and vermin do not destroy, and where thieves do not break in and steal. 21 For where your treasure is, there your heart will be also. 22 "The eye is the lamp of the body. If your eyes are healthy, your whole body will be full of light. 23 But if your eyes are unhealthy, your whole body will be full of darkness. If then the light within you is darkness, how great is that darkness! 24 "No one can serve two masters. Either you will hate the one and love the other, or you will be devoted to the one and despise the other. You cannot serve both God and money.
+
+---
+
+Matthew 19:16 Now someone came up to him and said, “Teacher, what good thing must I do to gain eternal life?” 17 He said to him, “Why do you ask me about what is good? There is only one who is good. But if you want to enter into life, keep the commandments.” 18 “Which ones?” he asked. Jesus replied, “Do not murder, do not commit adultery, do not steal, do not give false testimony, 19 honor your father and mother, and love your neighbor as yourself.” 20 The young man said to him, “I have wholeheartedly obeyed all these laws. What do I still lack?” 21 Jesus said to him, “If you wish to be perfect, go sell your possessions and give the money to the poor, and you will have treasure in heaven. Then come, follow me.” 22 But when the young man heard this he went away sorrowful, for he was very rich. 23 Then Jesus said to his disciples, “I tell you the truth, it will be hard for a rich person to enter the kingdom of heaven! 24 Again I say, it is easier for a camel to go through the eye of a needle than for a rich person to enter into the kingdom of God.” 25 The disciples were greatly astonished when they heard this and said, “Then who can be saved?” 26 Jesus looked at them and replied, “This is impossible for mere humans, but for God all things are possible.” 27
+
+---
+
+If you read my poem and these Bible verses from the book of Matthew, perhaps you will better understand my commitment to keeping software free and teaching people how to create and share software for the benefit of everyone. You never know, I might just write something that saves someone's life, or enable one of my readers to do greater works than I can and they may save the lives of many animals (that includes humans BTW).
