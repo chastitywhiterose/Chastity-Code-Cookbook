@@ -3021,5 +3021,124 @@ The Lesser GPL3 allows someone for example to use a free library to implement th
 
 In short, if you want to make money, you probably want the Lesser GPL but if you just want to be a nice person and make your code free for education and entertainment of all people without promise of reward, the normal GPL serves the purpose best in my opinion.
 
-There are other licenses to be considered though.
+There are hundreds of other software licenses to be considered if you have written a program and want to decide which terms to release it under. You can of course create your own from scratch but it might be worth reading about those that already exist to see if they match your ideals.
 
+My ideals are different than that of most programmers. My goal is to write books to share my code and to teach people how to do things, but I don't plan to profit off the code because I value individual freedom more than I do money. I hope that even after my death, others will still learn the joy of computer programming and use it to make great things.
+
+Writing computer software isn't just a hobby or a business, it is a ministry. Think about all the software which has been written to create the internet and allow people to write books and share them with the world. Think about the programmers that made video and audio recording, encoding, and formatting possible. 
+
+# Chapter 11: The Prayer of Saint Chastity
+
+Dear God,
+
+I don't know how long I have to live
+And I don't have much left to give
+But while I am here, let me say
+Thank you for giving me today
+
+Give me the strength to do what I must do
+And remind me always to speak what is true
+Not hold back because of my fear
+Of what people will do to me if they hear
+
+I am sorry that I put money over you
+And I forgot that you gave me a job to do
+I see what the gift you gave me is, now I understand
+What I am worried about is not what you have planned
+
+You made me special; that is no lie
+And I will serve you before and after I die
+My voice is weak now, and I can't sing a song
+But still, my honest heart is equally strong
+
+I walked to Walmart on my night off to make up for the shift I missed
+But I coughed and spread germs on the boxes I punched with my fist
+I was too sick to be working, and I worked myself to death
+I had no energy and couldn't catch my breath
+
+I thought money would save me
+That my job was my source
+And forgot that even money
+It is not the strongest force
+
+Yes, I tried to come to work tonight and do the best I can
+But in my pure heart, I knew it wasn't right, and it was not my plan
+Maybe the point wasn't how much work I did or how much I earned
+It was to be reminded of the lesson I had learned
+
+Money was all I desired
+But it only crushed what you inspired
+My income was what I believed
+Would be the only way to set me free
+
+But when it disappeared
+and I lost the path ahead
+That's when you came to see me
+And I remember the words you said
+
+When we first met, I didn't know you were God
+Because you looked extremely odd
+You were a horse with a shiny silver horn
+But, of course, a unicorn always comes to heal what has been torn
+
+Forgive me for the fact that I forgot
+That even the rich will someday rot
+That truth always wins in the end
+But we will remember the kindness of a friend
+
+I have seen what happens when people value money over life
+That's why there is so much murder, theft, hypocrisy, and strife
+Life is not about getting what we think we deserve
+And if someone wants to be the best, then others they must serve
+
+But not serve those who promise us financial gain
+Because their words are deceptive and will only give us pain
+They don't actually mean or deliver the things they claim
+And when their world crumbles, they always shift the blame
+
+But if I abort myself by chasing a pot of gold
+Then I forgot the meaning of the rainbow, as you told
+For a second, I forgot, but I remember now
+That my life matters just like a horse, chicken, or cow
+
+I can't think straight, and it seems I lost my mind
+But you are the one who gives sight to the blind
+So give me the eyes to see the inner heart of all
+So I do the right thing when you give me the call
+
+And now I know my gift is Something only I can do
+Because I can't refrain from speaking the things I learn from you
+I will see you even if you take a different form
+Because you will come when I need you to save me from the storm
+
+Sometimes faith is hard because the world can be so loud
+And what you speak to me is drowned out by the crowd
+But I heard you speak to me, and that's enough
+To keep me going even when life is rough
+
+You told me to go home because there is writing I must do
+To remind myself the experience I had with you
+You've done so much for me, but let me ask for one more thing
+That you will heal my voice so I can praise you as I sing
+
+And tell others that you will find them both inside and outside of church
+And that they will find the answers if they don't give up the search
+And to those who can't believe because they are full of doubt
+Just like with Thomas, you'll show up, and they'll know what you're about
+
+Some call you Jesus, the light, truth, or the way
+But that was not how you showed up to save my day
+To me, you are always my unicorn named Honesty
+Because I remember your words with every rainbow I see
+
+You said rainbows are made when the light touches my tears
+That's why when I see the rainbow, it opens up my ears
+And I listen to what my favorite unicorn has to say
+Because you speak words to me in a most unusual way
+
+I don't understand exactly what you've planned
+And there is still so much I don't understand
+But I need your horn of truth to guide me along the way
+Because my God is a unicorn, even though it sounds totally gay
+
+Matthew 6:19: "Do not store up for yourselves treasures on earth, where moths and vermin destroy, and where thieves break in and steal. 20 But store up for yourselves treasures in heaven, where moths and vermin do not destroy, and where thieves do not break in and steal. 21 For where your treasure is, there your heart will be also. 22 "The eye is the lamp of the body. If your eyes are healthy, your whole body will be full of light. 23 But if your eyes are unhealthy, your whole body will be full of darkness. If then the light within you is darkness, how great is that darkness! 24 "No one can serve two masters. Either you will hate the one and love the other, or you will be devoted to the one and despise the other. You cannot serve both God and money.
