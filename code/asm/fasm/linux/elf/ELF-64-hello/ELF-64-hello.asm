@@ -10,7 +10,7 @@
 ;And this is the wikipedia article which linked me to the specification document
 ;<https://en.wikipedia.org/wiki/Executable_and_Linkable_Format>
 
-;This file contains a raw binary ELF32 header created using db,dw,dd commands.
+;This rest of this file contains a raw binary ELF64 header created using db,dw,dd,dq commands.
 ;After that, it proceeds to assemble a real "Hello World!" program
 
 ;Header for 64 bit ELF executable (with comments based on specification)
