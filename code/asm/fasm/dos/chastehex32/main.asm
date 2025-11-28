@@ -162,43 +162,16 @@ int 21h
 ;however, if it is zero, we print an EOF message and exit
 
 cmp ax,0
-jnz print_row
+jnz hexdump_print_row
 mov ax,end_of_file
 call putstring
 jmp arg_loop_end
 
-print_row:
+hexdump_print_row:
 
-mov cx,ax ;number of bytes read
+mov [bytes_read],ax
 
-mov [int_newline],0 ;disable auto newline printing
-
-;set width to 4 and display extra:offset
-mov [int_width],4
-mov ax,[extra_word]
-call putint
-mov ax,[file_offset]
-call putint
-call putspace
-
-add [file_offset],1
-adc [extra_word],0
-
-
-mov ah,0 ;zero upper half of ax
-mov bx,byte_array
-
-mov [int_width],2
-
-print_byte:
-mov al,[bx]
-call putint
-call putspace
-inc bx
-dec cx
-cmp cx,0
-jnz print_byte
-call putline
+call print_bytes_row
 
 jmp hexdump ;jump back to hexdump and attempt another read of a row
 
@@ -262,8 +235,9 @@ read_error_message db 'Failure during reading of file. Error number: ',0
 end_of_file db 'EOF',0
 
 ;where we will store data from the file
-byte_array db 16 dup '?'
+byte_array db 16 dup '?',0
 file_offset dw 0,0
+bytes_read dw 0
 
 
 ;function to move ahead to the next art
@@ -289,6 +263,90 @@ jmp find_non_zero ;otherwise, keep looking
 arg_finish:
 mov [arg_index],bx ; save this index to variable
 mov ax,bx ;but also save it to ax register for use
+ret
+
+;this function prints a row of hex bytes
+;each row is 16 bytes
+print_bytes_row:
+mov cx,[bytes_read] ;number of bytes read
+
+mov [int_newline],0 ;disable auto newline printing
+
+;set width to 4 and display extra:offset
+mov [int_width],4
+mov ax,[extra_word]
+call putint
+mov ax,[file_offset]
+call putint
+call putspace
+
+add [file_offset],cx
+adc [extra_word],0
+
+mov ah,0 ;zero upper half of ax
+mov bx,byte_array
+
+mov [int_width],2
+
+print_byte:
+mov al,[bx]
+call putint
+call putspace
+inc bx
+dec cx
+cmp cx,0
+jnz print_byte
+
+;optionally, print chars after hex bytes
+call print_bytes_row_text
+call putline
+
+ret
+
+space_three db '   ',0
+
+print_bytes_row_text:
+
+mov cx,[bytes_read]
+pad_spaces:
+cmp cx,0x10
+jz pad_spaces_end
+mov ax,space_three
+call putstring
+inc cx
+jmp pad_spaces
+pad_spaces_end:
+
+mov bx,byte_array
+mov cx,[bytes_read]
+next_char:
+mov ax,0
+mov al,[bx]
+
+;if char is below '0' or above '9', it is outside the range of these and is not a digit
+cmp al,0x20
+jb not_printable
+cmp al,0x7E
+ja not_printable
+
+printable:
+;if char is in printable range,copy as is and proceed to next index
+jmp next_index
+
+not_printable:
+mov al,'.' ;otherwise replace with placeholder value
+
+next_index:
+mov [bx],al
+inc bx
+dec cx
+cmp cx,0
+jnz next_char
+mov [bx],byte 0 ;make sure string is zero terminated
+
+mov ax,byte_array
+call putstring
+
 ret
 
 include 'chastelib16.asm'

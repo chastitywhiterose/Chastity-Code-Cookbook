@@ -235,8 +235,8 @@ read_error_message db 'Failure during reading of file. Error number: ',0
 end_of_file db 'EOF',0
 
 ;where we will store data from the file
-byte_array db 16 dup '?'
-file_offset dw 0
+byte_array db 16 dup '?',0
+file_offset dw 0,0
 bytes_read dw 0
 
 
@@ -280,9 +280,8 @@ mov ax,[file_offset]
 call putint
 call putspace
 
-add [file_offset],1
+add [file_offset],cx
 adc [extra_word],0
-
 
 mov ah,0 ;zero upper half of ax
 mov bx,byte_array
@@ -297,13 +296,27 @@ inc bx
 dec cx
 cmp cx,0
 jnz print_byte
+
+;optionally, print chars after hex bytes
+call print_bytes_row_text
 call putline
 
 ret
 
-
+space_three db '   ',0
 
 print_bytes_row_text:
+
+mov cx,[bytes_read]
+pad_spaces:
+cmp cx,0x10
+jz pad_spaces_end
+mov ax,space_three
+call putstring
+inc cx
+jmp pad_spaces
+pad_spaces_end:
+
 mov bx,byte_array
 mov cx,[bytes_read]
 next_char:
