@@ -10,11 +10,13 @@ ELF is the Linkable Executable Format. It is the format of executable program us
 
 <https://www.muppetlabs.com/~breadbox/software/tiny/teensy.html>
 
+<https://linux-audit.com/elf-binaries-on-linux-understanding-and-analysis/>
+
 
 
 ## Why learn this format.
 
-During my time using FASM, I benefitted from the fact that FASM can create an executable file without a linker.
+During my time using FASM, I benefited from the fact that FASM can create an executable file without a linker.
 
 
 For example, when I create a file named elf-new.asm that contains only the line
