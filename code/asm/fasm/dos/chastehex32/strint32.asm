@@ -65,7 +65,7 @@ ja not_upper_32
 is_upper_32:
 sub cl,'A'
 add cl,10
-jmp process_char
+jmp process_char_32
 
 not_upper_32:
 
