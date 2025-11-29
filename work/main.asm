@@ -1,6 +1,8 @@
 org 100h     ;DOS programs start at this address
 
 mov word [radix],16 ; can choose radix for integer output!
+mov [int_width],1
+mov [int_newline],0
 
 mov ch,0     ;zero ch (upper half of cx)
 mov cl,[80h] ;load length of the command string
@@ -51,16 +53,101 @@ cmp ax,[arg_string_end]
 jz print_help ;show help if you forgot to include both filenames
 mov [filename2],ax
 
+;At this point, both filenames exist, we will attempt to open both of them.
+
+mov [file_offset],0
+mov [extra_word],0
+
+open_file_1:
+
+mov ax,[filename1]
+call putstring
+call putline
+
+mov ah,3Dh ;call number for DOS open existing file
+mov al,0   ;file access: 0=read,1=write,2=read+write
+mov dx,[filename1] ;string address to interpret as filename
+int 21h ;DOS call to finalize open function
+
+mov [filedesc1],ax
+
+jc file_1_error
+jmp open_file_2
+
+file_1_error: ;prints error message when file can't be opened
+mov ax,file_error_message
+call putstring
+mov ax,[filedesc1]
+call putint
+jmp main_end
+
+open_file_2:
+
+mov ax,[filename2]
+call putstring
+call putline
+
+mov ah,3Dh ;call number for DOS open existing file
+mov al,0   ;file access: 0=read,1=write,2=read+write
+mov dx,[filename2] ;string address to interpret as filename
+int 21h ;DOS call to finalize open function
+
+mov [filedesc2],ax
+
+jc file_2_error
+jmp files_compare
+
+file_2_error: ;prints error message when file can't be opened
+mov ax,file_error_message
+call putstring
+mov ax,[filedesc1]
+call putint
+jmp main_end
+
 
 files_compare:
 
+file_1_read_one_byte:
+mov ah,3Fh           ;call number for read function
+mov bx,[filedesc1] ;store file handle to read from in bx
+mov cx,1             ;we are reading only 1 byte
+mov dx,byte1    ;store the bytes here
+int 21h
+
+cmp ax,0
+jz main_end ;end program if no bytes read
+
+file_2_read_one_byte:
+mov ah,3Fh           ;call number for read function
+mov bx,[filedesc2] ;store file handle to read from in bx
+mov cx,1             ;we are reading only 1 byte
+mov dx,byte2    ;store the bytes here
+int 21h
+
+cmp ax,0
+jz main_end ;end program if no bytes read
+
+compare_bytes:
+
+mov al,[byte1]
+mov bl,[byte2]
+
+;compare the two bytes and skip printing them if they are the same
+cmp al,bl
+jz same
+call print_bytes_info
+same:
+
+inc [file_offset]
+
+jmp files_compare
 
 
 main_end: ;this is the correct end of the program
 
-;close the file if it is open
+;close the files if it is open
 mov ah,3Eh
-mov bx,[file_handle]
+mov bx,[filedesc1]
 int 21h
 
 ending:
@@ -71,7 +158,7 @@ arg_string_end dw 0
 arg_index dw 0
 file_error_message db 'Could not open the file! Error number: ',0
 file_opened_message db 'The file is open with handle: ',0
-file_handle dw 0
+
 read_error_message db 'Failure during reading of file. Error number: ',0
 end_of_file db 'EOF',0
 
@@ -98,6 +185,29 @@ jmp find_non_zero ;otherwise, keep looking
 arg_finish:
 mov [arg_index],bx ; save this index to variable
 mov ax,bx ;but also save it to ax register for use
+ret
+
+
+
+;print the address and the bytes at that address
+print_bytes_info:
+
+mov [int_width],4
+mov ax,[extra_word]
+call putint
+mov ax,[file_offset]
+call putint
+call putspace
+
+mov [int_width],2
+mov eax,0
+mov al,[byte1]
+call putint
+call putspace
+mov al,[byte2]
+call putint
+call putspace
+call putline
 ret
 
 
