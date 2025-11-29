@@ -138,7 +138,8 @@ jz same
 call print_bytes_info
 same:
 
-inc [file_offset]
+add [file_offset],1
+adc [extra_word],0  ;add 1 to extra word if carry flag set
 
 jmp files_compare
 
