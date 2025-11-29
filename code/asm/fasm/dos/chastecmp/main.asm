@@ -146,9 +146,14 @@ jmp files_compare
 
 main_end: ;this is the correct end of the program
 
-;close the files if it is open
+;close the files if they are open
+
 mov ah,3Eh
 mov bx,[filedesc1]
+int 21h
+
+mov ah,3Eh
+mov bx,[filedesc2]
 int 21h
 
 ending:
@@ -201,7 +206,7 @@ call putint
 call putspace
 
 mov [int_width],2
-mov eax,0
+mov ax,0
 mov al,[byte1]
 call putint
 call putspace
@@ -214,7 +219,6 @@ ret
 
 
 include 'chastelib16.asm'
-;include 'strint32.asm'
 
 help db 'chastecmp: compares two files in hexadecimal',0Ah
 db 9,'chastecmp file1 file2',0Ah
