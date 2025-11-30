@@ -1,0 +1,6 @@
+The GMP library is a library I used to use a long time ago, but it still exists. It is capable of doing math on large integers.
+
+http://gmplib.org/manual/
+
+/usr/share/doc/libgmp10
+
