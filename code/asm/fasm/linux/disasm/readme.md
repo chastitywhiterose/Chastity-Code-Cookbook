@@ -1,0 +1,1 @@
+These folders contain programs to generate binary files which can theoretically be used for testing disassemblers on every set of bytes.
