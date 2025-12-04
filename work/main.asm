@@ -104,18 +104,19 @@ mov rdi,[filedesc] ;move the opened file descriptor into rdi
 mov rax,8          ;invoke SYS_LSEEK (kernel opcode 8 on 64 bit Intel)
 syscall            ;call the kernel
 
-mov [file_offset],eax ;move the new offset
+mov [file_offset],rax ;move the new offset
 
 ;check the number of args still remaining
 cmp [argc],0
 jnz next_arg_write ; if there are still arguments, skip this read section and enter writing mode
 
 read_one_byte:
-mov edx,1          ;number of bytes to read
-mov ecx,byte_array ;address to store the bytes
-mov ebx,[filedesc] ;move the opened file descriptor into EBX
-mov eax,3          ;invoke SYS_READ (kernel opcode 3)
-int 80h            ;call the kernel
+mov rdx,0x10         ;number of bytes to read
+mov rsi,byte_array   ;address to store the bytes
+mov rdi,[filedesc]   ;move the opened file descriptor into rdi
+mov rax,0            ;invoke SYS_READ (kernel opcode 0 on 64 bit Intel)
+syscall              ;call the kernel
+
 
 ;eax will have the number of bytes read after system call
 cmp eax,1
