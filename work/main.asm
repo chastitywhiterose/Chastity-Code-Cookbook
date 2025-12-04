@@ -175,28 +175,28 @@ mov [int_width],8
 call putint
 call putspace
 
-mov ebx,byte_array
-mov ecx,[bytes_read]
-add [file_offset],ecx
+mov rbx,byte_array
+mov rcx,[bytes_read]
+add [file_offset],rcx
 next_byte:
 mov rax,0
-mov al,[ebx]
+mov al,[rbx]
 mov [int_width],2
 call putint
 call putspace
 
-inc ebx
-dec ecx
-cmp ecx,0
+inc rbx
+dec rcx
+cmp rcx,0
 jnz next_byte
 
-mov ecx,[bytes_read]
+mov rcx,[bytes_read]
 pad_spaces:
-cmp ecx,0x10
+cmp rcx,0x10
 jz pad_spaces_end
 mov rax,space_three
 call putstring
-inc ecx
+inc rcx
 jmp pad_spaces
 pad_spaces_end:
 
@@ -209,11 +209,11 @@ ret
 space_three db '   ',0
 
 print_bytes_row_text:
-mov ebx,byte_array
-mov ecx,[bytes_read]
+mov rbx,byte_array
+mov rcx,[bytes_read]
 next_char:
 mov rax,0
-mov al,[ebx]
+mov al,[rbx]
 
 ;if char is below '0' or above '9', it is outside the range of these and is not a digit
 cmp al,0x20
@@ -229,12 +229,12 @@ not_printable:
 mov al,'.' ;otherwise replace with placeholder value
 
 next_index:
-mov [ebx],al
-inc ebx
-dec ecx
-cmp ecx,0
+mov [rbx],al
+inc rbx
+dec rcx
+cmp rcx,0
 jnz next_char
-mov [ebx],byte 0 ;make sure string is zero terminated
+mov [rbx],byte 0 ;make sure string is zero terminated
 
 mov rax,byte_array
 call putstring
@@ -277,7 +277,7 @@ db 'To read a single byte at an address:',0Ah,0Ah,9,'chastehex file address',0Ah
 db 'To write a single byte at an address:',0Ah,0Ah,9,'chastehex file address value',0Ah,0Ah,0
 
 ;variables for managing arguments
-argc dd 0
+argc dq 0
 filename dq 0 ; name of the file to be opened
 filedesc dq 0 ; file descriptor
 bytes_read dq 0
