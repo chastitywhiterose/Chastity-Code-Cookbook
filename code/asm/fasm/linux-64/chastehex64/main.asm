@@ -111,7 +111,7 @@ cmp [argc],0
 jnz next_arg_write ; if there are still arguments, skip this read section and enter writing mode
 
 read_one_byte:
-mov rdx,0x10         ;number of bytes to read
+mov rdx,1            ;number of bytes to read
 mov rsi,byte_array   ;address to store the bytes
 mov rdi,[filedesc]   ;move the opened file descriptor into rdi
 mov rax,0            ;invoke SYS_READ (kernel opcode 0 on 64 bit Intel)
