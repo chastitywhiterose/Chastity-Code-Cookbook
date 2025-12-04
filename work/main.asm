@@ -14,7 +14,7 @@ mov [int_newline],0 ;disable automatic printing of newlines after putint
 ;we will be manually printing spaces or newlines depending on context
 
 pop rax
-mov [argc],eax ;save the argument count for later
+mov [argc],rax ;save the argument count for later
 
 ;first arg is the name of the program. we skip past it
 pop rax
@@ -25,7 +25,7 @@ cmp [argc],0
 jnz arg_open_file
 
 help:
-mov eax,help_message
+mov rax,help_message
 call putstring
 jmp main_end
 
@@ -39,7 +39,7 @@ call putline
 
 call open
 
-cmp eax,0
+cmp rax,0
 js main_end
 
 mov [filedesc],rax ; save the file descriptor number for later use
@@ -76,12 +76,12 @@ jmp main_end
 ; this point is reached if file was read from successfully
 
 file_success:
-;mov eax,[filename]
+;mov rax,[filename]
 ;call putstring
-;mov eax,file_opened_string
+;mov rax,file_opened_string
 ;call putstring
 
-mov eax,byte_array
+mov rax,byte_array
 ;call putstring
 
 call print_bytes_row
@@ -94,7 +94,7 @@ jmp hexdump
 next_arg_address:
 
 ;if there is at least one more arg
-pop rax ;pop the argument into eax and process it as a hex number
+pop rax ;pop the argument into rax and process it as a hex number
 dec [argc]
 call strint
 
@@ -118,8 +118,8 @@ mov rax,0            ;invoke SYS_READ (kernel opcode 0 on 64 bit Intel)
 syscall              ;call the kernel
 
 
-;eax will have the number of bytes read after system call
-cmp eax,1
+;rax will have the number of bytes read after system call
+cmp rax,1
 jz print_byte_read ;if exactly 1 byte was read, proceed to print info
 
 call show_eof
@@ -159,7 +159,7 @@ main_end:
 ;this is the end of the program
 ;we close the open file and then use the exit call
 
-mov eax,[filedesc] ;file number to close
+mov rax,[filedesc] ;file number to close
 call close
 
 mov rax, 0x3C ; invoke SYS_EXIT (kernel opcode 0x3C (60 decimal) on 64 bit systems)
@@ -170,7 +170,7 @@ syscall
 ;this function prints a row of hex bytes
 ;each row is 16 bytes
 print_bytes_row:
-mov eax,[file_offset]
+mov rax,[file_offset]
 mov [int_width],8
 call putint
 call putspace
@@ -179,7 +179,7 @@ mov ebx,byte_array
 mov ecx,[bytes_read]
 add [file_offset],ecx
 next_byte:
-mov eax,0
+mov rax,0
 mov al,[ebx]
 mov [int_width],2
 call putint
@@ -194,7 +194,7 @@ mov ecx,[bytes_read]
 pad_spaces:
 cmp ecx,0x10
 jz pad_spaces_end
-mov eax,space_three
+mov rax,space_three
 call putstring
 inc ecx
 jmp pad_spaces
@@ -212,7 +212,7 @@ print_bytes_row_text:
 mov ebx,byte_array
 mov ecx,[bytes_read]
 next_char:
-mov eax,0
+mov rax,0
 mov al,[ebx]
 
 ;if char is below '0' or above '9', it is outside the range of these and is not a digit
@@ -236,7 +236,7 @@ cmp ecx,0
 jnz next_char
 mov [ebx],byte 0 ;make sure string is zero terminated
 
-mov eax,byte_array
+mov rax,byte_array
 call putstring
 
 ret
@@ -245,11 +245,11 @@ ret
 ;function to display EOF with address
 show_eof:
 
-mov eax,[file_offset]
+mov rax,[file_offset]
 mov [int_width],8
 call putint
 call putspace
-mov eax,end_of_file_string
+mov rax,end_of_file_string
 call putstring
 call putline
 
@@ -257,11 +257,11 @@ ret
 
 ;print the address and the byte at that address
 print_byte_info:
-mov eax,[file_offset]
+mov rax,[file_offset]
 mov [int_width],8
 call putint
 call putspace
-mov eax,0
+mov rax,0
 mov al,[byte_array]
 mov [int_width],2
 call putint
