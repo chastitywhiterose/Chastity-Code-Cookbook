@@ -38,6 +38,7 @@ int mul(int di,int si)
  return ax;
 }
 
+
 /*
 this division function returns the quotient, but also stores the remainder of division in a global variable
 */
@@ -65,4 +66,5 @@ int bitdiv(int di,int si)
  mod=di;
  return ax;
 }
+
 

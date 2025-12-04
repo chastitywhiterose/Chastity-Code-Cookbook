@@ -20,6 +20,10 @@ int main(int argc, char *argv[])
  a=mul(9,8);
  printf("%s\n",intstr(a));
 
+ a=1<<30;
+/*a=-1;*/
+ printf("%s\n",intstr(a));
+
  a=bitdiv(a,10);
  printf("%s\n",intstr(a));
 
