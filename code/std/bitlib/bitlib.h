@@ -66,25 +66,3 @@ int bitdiv(int di,int si)
  return ax;
 }
 
-
-
-/*
-function divide(dividend, divisor):
-  if divisor == 0:
-    // Handle division by zero error
-  
-  quotient = 0
-  temp_divisor = divisor
-  
-  // Align divisor with dividend by shifting
-  while temp_divisor <= dividend:
-    temp_divisor = temp_divisor << 1
-  
-  while temp_divisor > divisor:
-    temp_divisor = temp_divisor >> 1
-    quotient = quotient << 1
-    if dividend >= temp_divisor:
-      dividend = subtract(dividend, temp_divisor)
-      quotient = add(quotient, 1)
-  return quotient
-*/
