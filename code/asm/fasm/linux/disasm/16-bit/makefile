@@ -3,4 +3,4 @@ main-fasm:
 	chmod +x main
 	./main
 disasm:
-	ndisasm data16.bin
+	ndisasm -b16 data16.bin

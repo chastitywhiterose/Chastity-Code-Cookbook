@@ -18,6 +18,8 @@ mov [filedesc],eax
 
 ;next the complex writing of data begins
 
+;first byte zero
+
 mov eax,0
 data_loop_0:
 
@@ -31,6 +33,27 @@ mov ebx,[filedesc] ;write to the STDOUT file
 mov eax, 4         ;invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
 int 80h            ;system call to write the message
 popa
+
+mov bl,al
+and bl,0x7
+cmp bl,6
+jz add_to_16_bit_address
+jmp skip_add_to_16_bit_address
+
+add_to_16_bit_address:
+mov di,1
+
+mov word [filedata+2],di
+
+pusha
+mov edx,2          ;number of bytes to write
+mov ecx,filedata+2   ;pointer/address of string to write
+mov ebx,[filedesc] ;write to the STDOUT file
+mov eax, 4         ;invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
+int 80h            ;system call to write the message
+popa
+
+skip_add_to_16_bit_address:
 
 ;call putint
 
