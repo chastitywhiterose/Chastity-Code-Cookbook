@@ -127,7 +127,7 @@ pop rax
 
 ret
 
-;this function converts a string pointed to by eax into an integer returned in eax instead
+;this function converts a string pointed to by rax into an integer returned in rax instead
 ;it is a little complicated because it has to account for whether the character in
 ;a string is a decimal digit 0 to 9, or an alphabet character for bases higher than ten
 ;it also checks for both uppercase and lowercase letters for bases 11 to 36
@@ -137,14 +137,14 @@ ret
 
 strint:
 
-mov rbx,rax ;copy string address from eax to esi because eax will be replaced soon!
+mov rbx,rax ;copy string address from rax to esi because rax will be replaced soon!
 mov rax,0
 
 read_strint:
-mov rcx,0 ; zero ecx so only lower 8 bits are used
+mov rcx,0 ; zero rcx so only lower 8 bits are used
 mov cl,[rbx]
 inc rbx
-cmp cl,0 ; compare byte at address edx with 0
+cmp cl,0 ; compare byte at address rdx with 0
 jz strint_end ; if comparison was zero, this is the end of string
 
 ;if char is below '0' or above '9', it is outside the range of these and is not a digit
@@ -196,8 +196,8 @@ process_char:
 cmp rcx,[radix] ;compare char with radix
 jae strint_end ;if this value is above or equal to radix, it is too high despite being a valid digit/alpha
 
-mov rdx,0 ;zero edx because it is used in mul sometimes
-mul [radix]    ;mul eax with radix
+mov rdx,0 ;zero rdx because it is used in mul sometimes
+mul [radix]    ;mul rax with radix
 add rax,rcx
 
 jmp read_strint ;jump back and continue the loop if nothing has exited it
