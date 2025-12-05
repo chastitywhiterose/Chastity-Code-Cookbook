@@ -1,4 +1,15 @@
-/*bitlib.h*/
+/*
+ bitlib.h
+
+ This library simulates the four arithmetic functions: ( addition, subtraction, multiplication, and division )
+ Using only bitwise operations: ( AND, OR, XOR, SHL, SHR )
+ 
+ Most of the time I would not need to do this, however, there exist applications where this information may prove useful.
+ 
+ - Programming ARM CPUs which don't have a division instruction.
+ - Arbitary Precision Arithmetic involving thousands of digits.
+
+*/
 
 int add(int di,int si)
 {
@@ -42,9 +53,9 @@ int mul(int di,int si)
 this division function returns the quotient, but also stores the remainder of division in a global variable
 */
 
-int sign_bit=1<<((sizeof(int)<<3)-1);
+int sign_bit=1<<((sizeof(int)<<3)-1); /*used to extract the most significant bit during division function*/
 
-int mod=0; /*the modulus/remainder of the division*/
+int mod=0; /*to store the modulus/remainder of the division function*/
 
 int bitdiv(int di,int si)
 {
@@ -60,7 +71,8 @@ int bitdiv(int di,int si)
   
   if(bx>=si)
   {
-   bx=sub(bx,si);ax|=1;
+   bx=sub(bx,si);
+   ax|=1;
   }
  
   cx<<=1;
