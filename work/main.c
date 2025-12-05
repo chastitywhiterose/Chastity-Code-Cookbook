@@ -1,15 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h>
 #include "chastelib.h"
-
 #include "bitlib.h"
 int main(int argc, char *argv[])
 {
- integer a;
+ int a;
+ 
 
  radix=10;
  int_width=1;
+ 
+ 
 
  a=1987;
 
@@ -22,15 +23,16 @@ int main(int argc, char *argv[])
  a=mul(9,8);
  printf("%s\n",intstr(a));
 
- a=1<<40;
+ a=1<<28;
 /*a=-1;*/
- printf("%s\n",intstr(a));
+ printf("%s\n\n",intstr(a));
 
- a=bitdiv(a,10);
+a=bitdiv(a,10);
+ 
  printf("%s\n",intstr(a));
 
  printf("%s\n",intstr(mod));
-
  
+  
  return 0;
 }
