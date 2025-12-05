@@ -48,24 +48,25 @@ int mod=0; /*the modulus/remainder of the division*/
 
 int bitdiv(int di,int si)
 {
- int ax=0,bx=si;
+ int ax=0,bx=0,cx=1;
  if(si==0){return 0;} /*division by zero is invalid*/
 
-
- while(bx<=di)
+ while(cx!=0)
  {
-  bx<<=1;
- }
- 
-
- while(bx>si)
- {
-  bx>>=1;
   ax<<=1;
-  if(di>=bx){di=sub(di,bx);ax=add(ax,1);}
+  bx<<=1;
+  if(di&sign_bit){bx|=1;}
+  di<<=1;
+  
+  if(bx>=si)
+  {
+   bx=sub(bx,si);ax|=1;
+  }
+ 
+  cx<<=1;
  }
 
- mod=di;
+ mod=bx;
  return ax;
 }
 

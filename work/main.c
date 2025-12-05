@@ -23,8 +23,8 @@ int main(int argc, char *argv[])
  a=mul(9,8);
  printf("%s\n",intstr(a));
 
- a=1<<28;
-/*a=-1;*/
+/* a=(1<<31);*/
+a=-1;
  printf("%s\n\n",intstr(a));
 
 a=bitdiv(a,10);
