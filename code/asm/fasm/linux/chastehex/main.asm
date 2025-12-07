@@ -9,8 +9,8 @@ include "chasteio32.asm"
 main:
 
 ;radix will be 16 because this whole program is about hexadecimal
-mov [radix],16 ; can choose radix for integer input/output!
-mov [int_newline],0 ;disable automatic printing of newlines after putint
+mov dword [radix],16 ; can choose radix for integer input/output!
+mov byte [int_newline],0 ;disable automatic printing of newlines after putint
 ;we will be manually printing spaces or newlines depending on context
 
 pop eax
@@ -18,10 +18,10 @@ mov [argc],eax ;save the argument count for later
 
 ;first arg is the name of the program. we skip past it
 pop eax
-dec [argc]
+dec dword [argc]
 
 ;before we try to get the first argument as a filename, we must check if it exists
-cmp [argc],0
+cmp dword [argc],0
 jnz arg_open_file
 
 help:
@@ -32,7 +32,7 @@ jmp main_end
 arg_open_file:
 
 pop eax
-dec [argc]
+dec dword [argc]
 mov [filename],eax ; save the name of the file we will open to read
 call putstring
 call putline
@@ -43,10 +43,10 @@ cmp eax,0
 js main_end
 
 mov [filedesc],eax ; save the file descriptor number for later use
-mov [file_offset],0 ;assume the offset is 0,beginning of file
+mov dword [file_offset],0 ;assume the offset is 0,beginning of file
 
 ;check next arg
-cmp [argc],0 ;if there are no more args after filename, just hexdump it
+cmp dword [argc],0 ;if there are no more args after filename, just hexdump it
 jnz next_arg_address ;but if there are more, jump to the next argument to process it as address
 
 hexdump:
@@ -66,7 +66,7 @@ jnz file_success ;if more than zero bytes read, proceed to display
 
 ;if the offset is zero, display EOF to indicate empty file
 ;otherwise, end without displaying this because there should already be bytes printed to the display
-cmp [file_offset],0
+cmp dword [file_offset],0
 jnz main_end
 
 call show_eof
@@ -86,7 +86,7 @@ mov eax,byte_array
 
 call print_bytes_row
 
-cmp [bytes_read],1 
+cmp dword [bytes_read],1 
 jl main_end ;if less than one bytes read, there is an error
 jmp hexdump
 
@@ -95,7 +95,7 @@ next_arg_address:
 
 ;if there is at least one more arg
 pop eax ;pop the argument into eax and process it as a hex number
-dec [argc]
+dec dword [argc]
 call strint
 
 ;use the hex number as an address to seek to in the file
@@ -108,7 +108,7 @@ int 80h            ;call the kernel
 mov [file_offset],eax ;move the new offset
 
 ;check the number of args still remaining
-cmp [argc],0
+cmp dword [argc],0
 jnz next_arg_write ; if there are still arguments, skip this read section and enter writing mode
 
 read_one_byte:
@@ -132,11 +132,11 @@ call print_byte_info
 
 ;this section interprets the rest of the args as bytes to write
 next_arg_write:
-cmp [argc],0
+cmp dword [argc],0
 jz main_end
 
 pop eax
-dec [argc]
+dec dword [argc]
 call strint ;try to convert string to a hex number
 
 ;write that number as a byte value to the file
@@ -150,7 +150,7 @@ mov edx,1          ;write 1 byte
 int 80h            ;system call to write the message
 
 call print_byte_info
-inc [file_offset]
+inc dword [file_offset]
 
 jmp next_arg_write
 
@@ -171,7 +171,7 @@ int 80h
 ;each row is 16 bytes
 print_bytes_row:
 mov eax,[file_offset]
-mov [int_width],8
+mov dword [int_width],8
 call putint
 call putspace
 
@@ -181,7 +181,7 @@ add [file_offset],ecx
 next_byte:
 mov eax,0
 mov al,[ebx]
-mov [int_width],2
+mov dword [int_width],2
 call putint
 call putspace
 
@@ -246,7 +246,7 @@ ret
 show_eof:
 
 mov eax,[file_offset]
-mov [int_width],8
+mov dword [int_width],8
 call putint
 call putspace
 mov eax,end_of_file_string
@@ -258,12 +258,12 @@ ret
 ;print the address and the byte at that address
 print_byte_info:
 mov eax,[file_offset]
-mov [int_width],8
+mov dword [int_width],8
 call putint
 call putspace
 mov eax,0
 mov al,[byte_array]
-mov [int_width],2
+mov dword [int_width],2
 call putint
 call putline
 
@@ -283,8 +283,5 @@ filedesc dd 0 ; file descriptor
 bytes_read dd 0
 file_offset dd 0
 
-
-
-
 ;where we will store data from the file
-byte_array db 17 dup ?
+byte_array db 17 dup '?'

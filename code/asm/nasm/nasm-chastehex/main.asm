@@ -7,7 +7,7 @@ _start:
 
 ;radix will be 16 because this whole program is about hexadecimal
 mov dword [radix],16 ; can choose radix for integer input/output!
-mov dword [int_newline],0 ;disable automatic printing of newlines after putint
+mov byte [int_newline],0 ;disable automatic printing of newlines after putint
 ;we will be manually printing spaces or newlines depending on context
 
 pop eax
