@@ -1,9 +1,7 @@
-;format ELF64 executable
-;entry main
-
 use64
+global  _start
 
-main:
+_start:
 
 mov rax,1   ; invoke SYS_WRITE (kernel opcode 1 on 64 bit systems)
 mov rdi,1   ; write to the STDOUT file
