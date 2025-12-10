@@ -33,3 +33,8 @@ Once emulating, Ctrl+Alt+G removes the window's grab on the keyboard and mouse.
 The emulation was successful. I booted from the .iso installation for FreeBSD and installed it to the 16 GB disk that was created. After the installation, I rebooted and then it automatically new to boot from the disk rather than the ISO this time.
 
 This means that for the first time, I am able to run a successful emulator in qemu. This has potential for me to learn the Assembly language of other operating systems or even other CPU types if I learn how to emulate them.
+
+However, I can't get the internet working. I will learn more about this.
+
+https://www.youtube.com/watch?v=Q1PebvpQUvI
+https://wiki.qemu.org/Documentation/Networking
