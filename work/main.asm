@@ -7,13 +7,24 @@ main:
 mov ax, 0xB800
 mov es, ax ; Or mov ds, ax
 
+
+;80 columes times 25 rows is 2000 chars
+;but since each char is two bytes, 4000 is the number of bytes we have to clear the screen with
+
+mov bx,0
+screen_clear:
+mov [es:bx],byte 0
+inc bx
+cmp bx,4000
+jnz screen_clear
+
 mov ax,title  ;the string we intend to write to video RAM
 mov ch,0x0F   ;the character attribute
 mov dx,0x0100
 call putstring_vram
 
 mov ax,v_str  ;the string we intend to write to video RAM
-mov ch,0x50   ;the character attribute
+mov ch,0x70   ;the character attribute
 mov dx,0x0400
 call putstring_vram
 
@@ -37,11 +48,9 @@ int 21h
 title db 'Chastity Video RAM Demonstration!',0
 v_str db 'Hello World! This string will be written to video RAM using Assembly language!',0
 
-
-include 'chastelib16.asm'
-
 ;Unlike previous functions I wrote that use DOS interrupts to write text to the screen
 ;this one makes use of several registers which are not meant to be preserved
+;registers ax,cx,and dx must be set before calling this function
 
 ;ax = address of string to write
 ;bx = copied from ax and used to index the string
@@ -87,5 +96,3 @@ jmp putstring_vram_strlen_start ;jump to the start of the loop and keep trying u
 putstring_vram_strlen_end:
 
 ret
-
-
