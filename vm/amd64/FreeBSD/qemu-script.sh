@@ -1,0 +1,11 @@
+qemu-system-x86_64  -monitor none \
+  -cpu qemu64 \
+  -vga std \
+  -m 4096 \
+  -smp 4   \
+  -cdrom FreeBSD-15.0-RELEASE-amd64-dvd1.iso \
+  -boot order=cd,menu=on \
+  -blockdev driver=file,aio=threads,node-name=imgleft,filename=FreeBSD-amd64.img \
+  -blockdev driver=raw,node-name=drive0,file=imgleft \
+  -device virtio-blk-pci,drive=drive0,bootindex=1  \
+  -name \"FreeBSD\"
