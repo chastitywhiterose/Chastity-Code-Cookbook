@@ -3037,6 +3037,10 @@ Traditional books are dying, and bookstores are closing. If we don't work togeth
 
 # Chapter 11: The Prayer of Saint Chastity
 
+For this chapter of Chastity's Code Cookbook, I am including a poem I wrote one night as God told me to go home and rest. I have a tendency to work myself to death, even when I am too sick to function. Part of it is worry that my bosses will get angry and fire me. Part of it is worrying about money. But that night, God spoke to me while I worked in the Frozen department at Walmart. Every time I am too sick to work, I remember this poem I wrote about my experience that night. It is an important part of my philosophy about software, the love of money, and questioning the concept of copyright and ownership entirely.
+
+---
+
 Dear God,
 
 I don't know how long I have to live
@@ -3160,3 +3164,21 @@ Matthew 19:16 Now someone came up to him and said, “Teacher, what good thing m
 ---
 
 If you read my poem and these Bible verses from the book of Matthew, perhaps you will better understand my commitment to keeping software free and teaching people how to create and share software for the benefit of everyone. You never know, I might just write something that saves someone's life, or enable one of my readers to do greater works than I can and they may save the lives of many animals (that includes humans BTW).
+
+Perhaps it might interest you to know that the origin of my commitment to free software came one day as I realized that several versions of the Christian Bible were copyrighted. In some cases, people had to pay royalties or license fees to the copyright owner of specific Bible versions before they were allowed to use it in their books.
+
+It was at that moment when I realized that anyone who claimed to say the Bible is God's word but that you have to pay specific humans money in order to use their ***translation*** from the Hebrew and Greek because now that they have translated it, they think they own it.
+
+And as I pondered on that, I realized that for them to make the Bible proprietary by claiming ownership of a translation, yet at the same time claim that it is the word of God is a contradiction. Clearly one of these statements is a lie.
+
+In a similar way, how can I claim to be the owner of even the computer code I wrote. Did I invent electricity? Can I own a number and the electrical signals of the bits in a computer that represent that number? Can I own letters of the alphabet, or the punctuation symbols? No, I didn't bring these things into the world nor can I take them out of it.
+
+---
+
+1 Timothy 6:7 For we have brought nothing into this world and so we cannot take a single thing out either. 8 But if we have food and shelter, we will be satisfied with that. 9 Those who long to be rich, however, stumble into temptation and a trap and many senseless and harmful desires that plunge people into ruin and destruction. 10 For the love of money is the root of all evils. Some people in reaching for it have strayed from the faith and stabbed themselves with many pains. 11 But you, as a person dedicated to God, keep away from all that. Instead pursue righteousness, godliness, faithfulness, love, endurance, and gentleness. 
+
+---
+
+So you see, Free and Open Source Software is based on the idea that freely we have received and so we must freely give. Moreover, although hardware is physical in nature and requires money to produce and distribute, software can be copied infinitely from one computer to another without loss in quality. So when you copy software, you are not taking it from anyone because they still have the original.
+
+So to sum it up briefly. Free Software matches the teachings of Jesus and also accomplishes 
