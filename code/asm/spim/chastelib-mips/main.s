@@ -164,8 +164,7 @@ blt $t0,'A',not_upper
 bgt $t0,'Z',not_upper
 
 is_upper:
-#sub cl,'A'
-#add cl,10
+
 sub $t0,$t0,'A'
 addi $t0,$t0,10
 j process_char
@@ -177,8 +176,7 @@ blt $t0,'a',not_lower
 bgt $t0,'z',not_lower
 
 is_lower:
-#sub cl,'a'
-#add cl,10
+
 sub $t0,$t0,'a'
 addi $t0,$t0,10
 j process_char
@@ -193,9 +191,6 @@ process_char:
 
 bgt $t0,$t2 strint_end #;if this value is above or equal to radix, it is too high despite being a valid digit/alpha
 
-#mov edx,0 ;zero edx because it is used in mul sometimes
-#mul  dword [radix]    ;mul eax with radix
-#add eax,ecx
 mul $s0,$s0,$t2 # multiply $s0 by the radix
 add $s0,$s0,$t0     # add the correct value of this digit
 
