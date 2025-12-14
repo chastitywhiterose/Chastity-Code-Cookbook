@@ -29,12 +29,9 @@ intstr:
 la $t1,int_newline # load target index address of lowest digit
 addi $t1,$t1,-1
 
-la $t0,radix # load address of radix
-lb $t2,($t0) # load value of radix into $t2
-
-la $t0,int_width # get the int_width (minimum digits)
-lb $t4,($t0) # load value of int_width into $t4
-li $t3,1
+lb $t2,radix     # load value of radix into $t2
+lb $t4,int_width # load value of int_width into $t4
+li $t3,1         # load current number of digits, always 1
 
 digits_start:
 
@@ -42,7 +39,6 @@ divu $s0,$s0,$t2 # $s0=$s0/$t2 (divide s0 by the radix value in $t2)
 mfhi $t0        # $t0=remainder of the previous division
 blt $t0,10,decimal_digit
 bge $t0,10,hexadecimal_digit
-
 
 decimal_digit: # we go here if it is only a digit 0 to 9
 addi $t0,$t0,'0'
