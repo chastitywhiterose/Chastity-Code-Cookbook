@@ -1,5 +1,5 @@
 .data
-title: .asciiz "Modifying a string in memory!\n"
+title: .asciiz "A test of Chastity's integer and string conversion functions.\n"
 
 # test string of integer for input
 test_int: .asciiz "10011101001110011110011"
@@ -13,6 +13,9 @@ int_width: .byte 4
 .text
 main:
 
+la $s0,title
+jal putstring
+
 li $s0,0 #we will load the $s0 register with the number we want to convert to string
 
 loop:
@@ -20,13 +23,27 @@ jal putint
 addi $s0,$s0,1
 blt $s0,16,loop
 
-la $s0,test_int
+la $s0,test_int # convert string to integer
 jal strint
-jal putint
 
+li $t0,10    #change radix
+sb $t0,radix
+
+li $t0,8    #change width
+sb $t0,int_width
+
+jal putint
 
 li   $v0, 10     # exit syscall
 syscall
+
+
+putstring:
+li $v0,4      # load immediate, v0 = 4 (4 is print string system call)
+move $a0,$s0  # load address of string to print into a0
+syscall
+jr $ra
+
 
 #this is the intstr function, the ultimate integer to string conversion function
 #just like the Intel Assembly version, it can convert an integer into a string
