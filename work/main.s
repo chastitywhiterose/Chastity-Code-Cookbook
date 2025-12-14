@@ -4,8 +4,8 @@ title: .asciiz "Modifying a string in memory!\n"
 #this is the location in memory where digits are written to by the putint function
 int_string: .byte '?':32
 int_newline: .byte 10,0
-radix: .byte 16
-int_width: .byte 8
+radix: .byte 10
+int_width: .byte 6
 
 .text
 main:
@@ -59,6 +59,15 @@ addi $t3,1
 j digits_start
 
 intstr_end:
+
+li $t0,'0'
+prefix_zeros:
+bge $t3,$t4,end_zeros
+addi $t1,-1
+sb $t0,($t1) # store byte from $t0 at address $t1
+addi $t3,1
+j prefix_zeros
+end_zeros:
 
 jr $ra
 
