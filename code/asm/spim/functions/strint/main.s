@@ -1,16 +1,3 @@
-# This is the source of the MIPS version of chastelib
-# The four basic functions have been translated from Intel x86 Assembly
-# They are as follows
-#
-# putstring (prints string pointed to by $s0 register)
-# intstr (converts integer in $s0 register to a string)
-# putint (prints integer in $s0 register by use of the previous two functions)
-# strint (converts a string pointed to by $s0 register into an integer in $s0)
-#
-# Most importantly, the intstr and strint functions depend on a global variable (radix)
-# In fact, these two functions are the foundation of everything.
-# They can convert to and from any radix from 2 to 36
-
 .data
 title: .asciiz "A test of Chastity's integer and string conversion functions.\n"
 
@@ -204,4 +191,3 @@ j read_strint # jump back and continue the loop if nothing has exited it
 strint_end:
 
 jr $ra
-
