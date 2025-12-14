@@ -2,10 +2,10 @@
 # The four basic functions have been translated from Intel x86 Assembly
 # They are as follows
 #
-# putstring (prints string pointed to by $s0 register)
-# intstr (converts integer in $s0 register to a string)
-# putint (prints integer in $s0 register by use of the previous two functions)
-# strint (converts a string pointed to by $s0 register into an integer in $s0)
+# putstring (prints string pointed to by s0 register)
+# intstr (converts integer in s0 register to a string)
+# putint (prints integer in s0 register by use of the previous two functions)
+# strint (converts a string pointed to by s0 register into an integer in s0)
 #
 # Most importantly, the intstr and strint functions depend on a global variable (radix)
 # In fact, these two functions are the foundation of everything.
@@ -58,15 +58,15 @@ intstr:
 la t1,int_newline # load target index address of lowest digit
 addi t1,t1,-1
 
-lb t2,radix     # load value of radix into $t2
-lb t4,int_width # load value of int_width into $t4
+lb t2,radix     # load value of radix into t2
+lb t4,int_width # load value of int_width into t4
 li t3,1         # load current number of digits, always 1
 
 
 digits_start:
 
-remu t0,s0,t2 # $t0=remainder of the previous division
-divu s0,s0,t2 # $s0=$s0/$t2 (divide s0 by the radix value in $t2)
+remu t0,s0,t2 # t0=remainder of the previous division
+divu s0,s0,t2 # s0=s0/t2 (divide s0 by the radix value in t2)
 
 li t5,10 # load t5 with 10 because RISC-V does not allow constants for branches
 blt t0,t5,decimal_digit
@@ -81,7 +81,7 @@ addi t0,t0,-10
 addi t0,t0,'A'
 
 save_digit:
-sb t0,(t1) # store byte from $t0 at address $t1
+sb t0,(t1) # store byte from t0 at address t1
 beq s0,zero,intstr_end
 addi t1,t1,-1
 addi t3,t3,1
@@ -93,7 +93,7 @@ li t0,'0'
 prefix_zeros:
 bge t3,t4,end_zeros
 addi t1,t1,-1
-sb t0,(t1) # store byte from $t0 at address $t1
+sb t0,(t1) # store byte from t0 at address t1
 addi t3,t3,1
 j prefix_zeros
 end_zeros:
@@ -102,9 +102,9 @@ mv s0,t1
 
 jr ra
 
-#this function calls intstr to convert the $s0 register into a string
+#this function calls intstr to convert the s0 register into a string
 #then it uses a system call to print the string
-#it also uses the stack to save the value of $s0 and $ra (return address)
+#it also uses the stack to save the value of s0 and ra (return address)
 
 putint:
 sw ra,0(sp)
@@ -119,3 +119,81 @@ lw s0,4(sp)
 jr ra
 
 
+
+
+#li t5,10 # load t5 with 10 because RISC-V does not allow constants for branches
+
+
+
+strint:
+
+mv t1,s0 # copy string address from s0 to t1
+li s0,0
+
+lb t2,radix     # load value of radix into t2
+
+read_strint:
+lb t0,(t1)
+addi t1,t1,1
+beq t0,zero,strint_end
+
+#if char is below '0' or above '9', it is outside the range of these and is not a digit
+li t5,'0'
+blt t0,t5,not_digit
+li t5,'9'
+bgt t0,t5,not_digit
+
+#but if it is a digit, then correct and process the character
+is_digit:
+andi t0,t0,0xF
+j process_char
+
+not_digit:
+#it isn't a digit, but it could be perhaps and alphabet character
+#which is a digit in a higher base
+
+#if char is below 'A' or above 'Z', it is outside the range of these and is not capital letter
+li t5,'A'
+blt t0,t5,not_upper
+li t5,'Z'
+bgt t0,t5,not_upper
+
+is_upper:
+li t5,'A'
+sub t0,t0,t5
+addi t0,t0,10
+j process_char
+
+not_upper:
+
+#if char is below 'a' or above 'z', it is outside the range of these and is not lowercase letter
+li t5,'a'
+blt t0,t5,not_lower
+li t5,'z'
+bgt t0,t5,not_lower
+
+is_lower:
+li t5,'a'
+sub t0,t0,t5
+addi t0,t0,10
+j process_char
+
+not_lower:
+
+#if we have reached this point, result invalid and end function
+#this is only reached if the byte was not a valid digit or alphabet character
+j strint_end
+
+process_char:
+
+bgt t0,t2 strint_end #;if this value is above or equal to radix, it is too high despite being a valid digit/alpha
+
+
+mul s0,s0,t2 # multiply s0 by the radix
+add s0,s0,t0     # add the correct value of this digit
+
+j read_strint # jump back and continue the loop if nothing has exited it
+
+strint_end:
+
+jr ra
