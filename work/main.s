@@ -1,4 +1,4 @@
-# This is the source of the MIPS version of chastelib
+# This is the source of the RISC-V version of chastelib
 # The four basic functions have been translated from Intel x86 Assembly
 # They are as follows
 #
@@ -29,6 +29,17 @@ main:
 la s0,title
 jal putstring
 
+li s0,0 #we will load the $s0 register with the number we want to convert to string
+li s1,16
+
+loop:
+jal putint
+addi s0,s0,1
+blt s0,s1,loop
+
+la s0,test_int # convert string to integer
+jal strint
+
 li t0,10    #change radix
 la t1,radix
 sb t0,0(t1)
@@ -37,7 +48,6 @@ li t0,8    #change width
 la t1,int_width
 sb t0,0(t1)
 
-li s0,1987
 jal putint
 
 li   a7, 10     # exit syscall
@@ -61,7 +71,6 @@ addi t1,t1,-1
 lb t2,radix     # load value of radix into t2
 lb t4,int_width # load value of int_width into t4
 li t3,1         # load current number of digits, always 1
-
 
 digits_start:
 
@@ -121,9 +130,12 @@ jr ra
 
 
 
-#li t5,10 # load t5 with 10 because RISC-V does not allow constants for branches
-
-
+# RISC-V does not allow constants for branches
+# Because of this fact, the RISC-V version of strint
+# requires a lot more code than the MIPS version
+# Whatever value I wanted to compare in the branch statement
+# was placed in the t5 register on the line before the conditional branch
+# Even though it is completely stupid, it has proven to work
 
 strint:
 
