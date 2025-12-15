@@ -1,5 +1,5 @@
 /*
-
+This source file and the program based on it is meant to help me visualize the output of bitwise operations for the Steam game "Turing Complete". I am very familiar with bitwise operations but seeing them visually and verifying them with a valid program will help me figure out how some gates are used to make other gates.
 */
 
 void turing_bitwise(int a,int b)
@@ -28,13 +28,6 @@ void turing_bitwise(int a,int b)
  c=(a|b)^0xF;
  printf("%s NOR\n",intstr(c));
  c=(a^b)^0xF;
- printf("%s NXOR\n",intstr(c));
-
-/*
- c=a^0xF;
- printf("%s NOT A\n",intstr(c));
- c=b^0xF;
- printf("%s NOT B\n\n",intstr(c));
- */
+ printf("%s NXOR\n\n",intstr(c));
 
 }
