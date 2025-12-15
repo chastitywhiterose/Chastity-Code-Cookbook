@@ -9,4 +9,6 @@ Test of Bitwise Operations
 
 1110 NAND
 1000 NOR
-1001 NXOR
+1001 XNOR
+
+This data is for the game "Turing Complete" on Steam. I can look at the result for the 6 possible bitwise operations. This means AND,OR,XOR and also the inverted ones by the NOT operation, NAND,NOR,XNOR

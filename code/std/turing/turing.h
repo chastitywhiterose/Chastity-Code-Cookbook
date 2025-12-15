@@ -28,6 +28,6 @@ void turing_bitwise(int a,int b)
  c=(a|b)^0xF;
  printf("%s NOR\n",intstr(c));
  c=(a^b)^0xF;
- printf("%s NXOR\n\n",intstr(c));
+ printf("%s XNOR\n\n",intstr(c));
 
 }
