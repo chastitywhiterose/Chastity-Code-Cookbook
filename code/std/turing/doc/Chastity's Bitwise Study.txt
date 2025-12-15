@@ -1,0 +1,12 @@
+Test of Bitwise Operations
+
+0011 A
+0101 B
+
+0001 AND
+0111 OR
+0110 XOR
+
+1110 NAND
+1000 NOR
+1001 NXOR
