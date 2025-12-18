@@ -19,7 +19,7 @@
 # RISC-V does not use dollar signs ($) in the name of registers but MIPS does 
 
 .data
-title: .asciz "A test of Chastity's integer and string conversion functions.\n"
+title: .asciz "Using command line arguments in Risc-V\n"
 
 # test string of integer for input
 test_int: .asciz "10011101001110011110011"
@@ -30,8 +30,40 @@ int_newline: .byte 10,0
 radix: .byte 2
 int_width: .byte 4
 
+argc: .word 0
+argv: .word 0
+
 .text
 main:
+
+# at the beginning of the program a0 has the number of arguments
+# so we will save it in the argc variable
+la t1,argc
+sw a0,0(t1)
+
+# at the beginning of the program a1 has a pointer to the argument strings
+# so we save it because we may need a1 for system calls
+la t1,argv
+sw a1,0(t1)
+
+#li a7, 4
+#lw a0, 0(a1)
+#ecall
+
+# next, we load this value from the memory so we can display the number of arguments
+la t1,argc
+lw s0,0(t1)
+jal putint
+
+la t1,argv
+lw t0,0(t1) #load the string pointer located in argv into t0 register
+lw s0,0(t0) #load the data being pointed to by t0 into s0 for displaying the string
+jal putstring
+
+
+
+
+
 
 la s0,title
 jal putstring
@@ -40,7 +72,7 @@ li s0,0 #we will load the $s0 register with the number we want to convert to str
 li s1,16
 
 loop:
-jal putint
+#jal putint
 addi s0,s0,1
 blt s0,s1,loop
 
