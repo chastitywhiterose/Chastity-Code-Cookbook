@@ -118,33 +118,44 @@ la a1,file_data # where to store data
 li a2,16        # how many bytes to read
 ecall           # a0 will have number of bytes read after this call
 
+mv s2,a0 #save a0 to s2 to keep count of how many bytes read
+
 beq a0,zero,hexdump_end
 
-li t0,8    #change width
-la t1,int_width
-sb t0,0(t1)
+li s0,8    #change width
+la s1,int_width
+sb s0,0(s1)
 
 mv s0,s10
 jal putint
 jal putspace
 
-li t0,2    #change width to 2 for the bytes printed this row
-la t1,int_width
-sb t0,0(t1)
+li s0,2    #change width to 2 for the bytes printed this row
+la s1,int_width
+sb s0,0(s1)
 
-la t1,file_data
+la s1,file_data
 hex_row_print:
-lb t0,0(t1)
-addi t1,t1,1
+lb s0,0(s1)
+#mv s0,s2
+jal putint
+jal putspace
+addi s1,s1,1
 
-addi a0,a0,-1
-bne a0,zero,hex_row_print
-
+addi s2,s2,-1
+bne s2,zero,hex_row_print
 
 la s0,file_data
 jal putstring
 
+
 jal putline
+
+#jal putline
+
+
+j hex_read_row
+
 
 hexdump_end:
 lw ra,0(sp)
