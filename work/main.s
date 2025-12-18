@@ -1,23 +1,3 @@
-# This is the source of the RISC-V version of chastelib
-# The four basic functions have been translated from Intel x86 Assembly
-# They are as follows
-#
-# putstring (prints string pointed to by s0 register)
-# intstr (converts integer in s0 register to a string)
-# putint (prints integer in s0 register by use of the previous two functions)
-# strint (converts a string pointed to by s0 register into an integer in s0)
-#
-# Most importantly, the intstr and strint functions depend on a global variable (radix)
-# In fact, these two functions are the foundation of everything.
-# They can convert to and from any radix from 2 to 36
-#
-# There is also a MIPS assembly source of this library.
-# The primary differences between the two assembly languages from my experience are:
-# RISC-V requires registers for all branch comparisons
-# RISC-V uses ecall but MIPS uses syscall
-# RISC-V selects system call with a7 but MIPS uses $v0
-# RISC-V does not use dollar signs ($) in the name of registers but MIPS does 
-
 .data
 title: .asciz "Using command line arguments in Risc-V\n"
 
@@ -46,9 +26,11 @@ sw a0,0(t1)
 la t1,argv
 sw a1,0(t1)
 
-#li a7, 4
-#lw a0, 0(a1)
-#ecall
+#Now that the argument data is stored away, we can access it even if it is overwritten.
+#For example, the putstring function uses a0 for system call number 4, which prints a string
+
+la s0,title
+jal putstring
 
 # next, we load this value from the memory so we can display the number of arguments
 la t1,argc
@@ -65,8 +47,7 @@ jal putstring
 
 
 
-la s0,title
-jal putstring
+
 
 li s0,0 #we will load the $s0 register with the number we want to convert to string
 li s1,16
