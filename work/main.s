@@ -118,6 +118,7 @@ la a1,file_data # where to store data
 li a2,16        # how many bytes to read
 ecall           # a0 will have number of bytes read after this call
 
+mv s3,a0 #save a0 to s3 to keep count of how many bytes read
 mv s2,a0 #save a0 to s2 to keep count of how many bytes read
 
 beq a0,zero,hexdump_end
@@ -127,6 +128,7 @@ la s1,int_width
 sb s0,0(s1)
 
 mv s0,s10
+add s10,s10,s3
 jal putint
 jal putspace
 
@@ -137,7 +139,6 @@ sb s0,0(s1)
 la s1,file_data
 hex_row_print:
 lb s0,0(s1)
-#mv s0,s2
 jal putint
 jal putspace
 addi s1,s1,1
@@ -145,14 +146,36 @@ addi s1,s1,1
 addi s2,s2,-1
 bne s2,zero,hex_row_print
 
-la s0,file_data
+#now the hex form of the bytes are printed
+#we will filter the text form and also print it
+
+#li s2,0
+#la s1,file_data
+char_filter:
+#lb s0,0(s1)
+
+#if char is below 0x20 or above 0x7E, it is outside the range of printable characters
+#li t5,0x20
+#blt s0,t5,not_printable
+#li t5,0x7E
+#bgt s0,t5,not_printable
+
+#j next_char_index
+
+#not_printable:
+#li s0,'.'
+#sb s0,0(s1)
+
+#next_char_index:
+#addi s1,s1,1
+#addi s2,s2,1
+#blt s2,s3,char_filter
+
+#la s0,file_data
 #jal putstring
 
 
 jal putline
-
-#jal putline
-
 
 j hex_read_row
 
