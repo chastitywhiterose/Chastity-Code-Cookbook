@@ -19,6 +19,30 @@ int not(int a)
  return nand(a,a);
 }
 
+int and(int a,int b)
+{
+ return not(nand(a,b));
+}
+
+int or(int a,int b)
+{
+ return nand(not(a),not(b));
+}
+
+int nor(int a,int b)
+{
+ return not(nand(not(a),not(b)));
+}
+
+int xor(int a,int b)
+{
+ return and( nand(a,b) , nand(not(a),not(b) ) );
+}
+
+int xnor(int a,int b)
+{
+ return nand( nand(a,b) , nand(not(a),not(b) ) );
+}
 
 void turing_bitwise_nand(int a,int b)
 {
@@ -32,16 +56,15 @@ void turing_bitwise_nand(int a,int b)
   
  c=not(nand(a,b));
  printf("%s AND\n",intstr(c));
- c=a|b;
+ c=nand(not(a),not(b));
  printf("%s OR\n",intstr(c));
- c=a^b;
+ c=and( nand(a,b) , nand(not(a),not(b) ) );
  printf("%s XOR\n\n",intstr(c));
  
  c=nand(a,b);
  printf("%s NAND\n",intstr(c));
- c=(a|b)^0xF;
+ c=not(nand(not(a),not(b)));
  printf("%s NOR\n",intstr(c));
- c=(a^b)^0xF;
+ c=nand( nand(a,b) , nand(not(a),not(b) ) );
  printf("%s XNOR\n\n",intstr(c));
-
 }
