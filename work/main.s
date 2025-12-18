@@ -146,7 +146,7 @@ addi s2,s2,-1
 bne s2,zero,hex_row_print
 
 la s0,file_data
-jal putstring
+#jal putstring
 
 
 jal putline
