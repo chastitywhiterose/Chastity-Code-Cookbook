@@ -1,5 +1,6 @@
+#hexdump for RISC-V emulator: rars
 .data
-title: .asciz "Using command line arguments in Risc-V\n\n"
+title: .asciz "hexdump program in RISC-V assembly language\n\n"
 
 # test string of integer for input
 test_int: .asciz "10011101001110011110011"
@@ -8,6 +9,7 @@ file_message_yes: "The file is open.\n"
 file_message_no: "The file could not be opened.\n"
 file_data: .byte '?':16
            .byte 0
+space_three: .asciz "   "
 
 #this is the location in memory where digits are written to by the putint function
 int_string: .byte '?':32
@@ -49,17 +51,14 @@ sb t0,0(t1)
 # next, we load argc from the memory so we can display the number of arguments
 la t1,argc
 lw s0,0(t1)
-jal putint
+#jal putint
 
 beq s0,zero,exit # if the number of arguments is zero, exit the program because nothing else to print
-
-# output newline
-jal putline
 
 # this section processes the filename and opens the file from the first argument
 
 jal next_argument
-jal putstring
+#jal putstring
 mv s11,s0 #save the filename in register s11 so we can use it any time
 
 li a7,1024 # open file call number
@@ -68,13 +67,13 @@ li a1,0    # read only access for the file we will open (rars does not support r
 ecall
 
 mv s0,a0
-jal putint
+#jal putint
 
 blt s0,zero,file_error # branch if argc is not equal to zero
 
 mv s9,s0 # save the find handle in register s9
 la s0,file_message_yes
-jal putstring
+#jal putstring
 jal hexdump
 
 j exit
@@ -92,8 +91,6 @@ li a7, 10     # exit syscall
 ecall
 
 # this is the hexdump function
-
-
 
 hexdump:
 addi sp,sp,-4
@@ -146,46 +143,56 @@ addi s1,s1,1
 addi s2,s2,-1
 bne s2,zero,hex_row_print
 
+#pad the row with extra spaces
+
+mv t2,s3
+li t3,16
+extra_row_space:
+beq t2,t3,extra_row_space_complete
+la s0,space_three
+jal putstring
+addi t2,t2,1
+j extra_row_space
+extra_row_space_complete:
+
 #now the hex form of the bytes are printed
 #we will filter the text form and also print it
 
-#li s2,0
-#la s1,file_data
+li s2,0
+la s1,file_data
 char_filter:
-#lb s0,0(s1)
+lb s0,0(s1)
 
 #if char is below 0x20 or above 0x7E, it is outside the range of printable characters
-#li t5,0x20
-#blt s0,t5,not_printable
-#li t5,0x7E
-#bgt s0,t5,not_printable
 
-#j next_char_index
+li t5,0x20
+blt s0,t5,not_printable
+li t5,0x7E
+bgt s0,t5,not_printable
 
-#not_printable:
-#li s0,'.'
-#sb s0,0(s1)
+j next_char_index
 
-#next_char_index:
-#addi s1,s1,1
-#addi s2,s2,1
-#blt s2,s3,char_filter
+not_printable:
+li s0,'.'
+sb s0,0(s1)
 
-#la s0,file_data
-#jal putstring
+next_char_index:
+addi s1,s1,1
+addi s2,s2,1
+blt s2,s3,char_filter
+
+la s0,file_data
+jal putstring
 
 
 jal putline
 
 j hex_read_row
 
-
 hexdump_end:
 lw ra,0(sp)
 addi sp,sp,4
 jr ra
-
-
 
 # this function gets the next command line argument and returns it in s0
 # it also decrements the argc variable so that it can be checked for 0 to exit the program if needed by the main program
