@@ -9,13 +9,9 @@ void turing_bitwise(int a,int b)
  radix=2;
  int_width=4;
 
- putstring("Test of Bitwise Operations\n\n");
- 
  printf("%s A\n",intstr(a));
  printf("%s B\n\n",intstr(b));
- 
-
- 
+  
  c=a&b;
  printf("%s AND\n",intstr(c));
  c=a|b;
