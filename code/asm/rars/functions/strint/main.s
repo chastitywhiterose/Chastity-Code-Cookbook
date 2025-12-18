@@ -123,16 +123,19 @@ jr ra
 #it also uses the stack to save the value of s0 and ra (return address)
 
 putint:
+addi sp,sp,-8
 sw ra,0(sp)
-sw s0,-4(sp)
+sw s0,4(sp)
 jal intstr
 #print string
 li a7,4      # load immediate, v0 = 4 (4 is print string system call)
 mv a0,s0  # load address of string to print into a0
 ecall
 lw ra,0(sp)
-lw s0,-4(sp)
+lw s0,4(sp)
+addi sp,sp,8
 jr ra
+
 
 
 
