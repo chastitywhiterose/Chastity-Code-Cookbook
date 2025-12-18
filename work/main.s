@@ -6,7 +6,8 @@ test_int: .asciz "10011101001110011110011"
 hex_message: .asciz "Hex Dump of File: "
 file_message_yes: "The file is open.\n"
 file_message_no: "The file could not be opened.\n"
-
+file_data: .byte '?':16
+           .byte 0
 
 #this is the location in memory where digits are written to by the putint function
 int_string: .byte '?':32
@@ -71,6 +72,7 @@ jal putint
 
 blt s0,zero,file_error # branch if argc is not equal to zero
 
+mv s9,s0 # save the find handle in register s9
 la s0,file_message_yes
 jal putstring
 jal hexdump
@@ -94,16 +96,59 @@ ecall
 
 
 hexdump:
+addi sp,sp,-4
 sw ra,0(sp)
 
 la s0,hex_message
 jal putstring
 mv s0,s11
 jal putstring
+jal putline
+
+li t0,0    #disable automatic newlines after putint
+la t1,int_newline
+sb t0,0(t1)
+
+li, s10,0 # we will use s10 register as current offset
+
+hex_read_row:
+li a7,63        # read system call
+mv a0,s9        # file handle
+la a1,file_data # where to store data
+li a2,16        # how many bytes to read
+ecall           # a0 will have number of bytes read after this call
+
+beq a0,zero,hexdump_end
+
+li t0,8    #change width
+la t1,int_width
+sb t0,0(t1)
+
+mv s0,s10
+jal putint
+jal putspace
+
+li t0,2    #change width to 2 for the bytes printed this row
+la t1,int_width
+sb t0,0(t1)
+
+la t1,file_data
+hex_row_print:
+lb t0,0(t1)
+addi t1,t1,1
+
+addi a0,a0,-1
+bne a0,zero,hex_row_print
+
+
+la s0,file_data
+jal putstring
 
 jal putline
 
+hexdump_end:
 lw ra,0(sp)
+addi sp,sp,4
 jr ra
 
 
@@ -136,6 +181,11 @@ li a0,10
 ecall
 jr ra
 
+putspace:
+li a7,11
+li a0,' '
+ecall
+jr ra
 
 
 
@@ -217,15 +267,17 @@ jr ra
 #it also uses the stack to save the value of s0 and ra (return address)
 
 putint:
+addi sp,sp,-8
 sw ra,0(sp)
-sw s0,-4(sp)
+sw s0,4(sp)
 jal intstr
 #print string
 li a7,4      # load immediate, v0 = 4 (4 is print string system call)
 mv a0,s0  # load address of string to print into a0
 ecall
 lw ra,0(sp)
-lw s0,-4(sp)
+lw s0,4(sp)
+addi sp,sp,8
 jr ra
 
 
