@@ -1,0 +1,1 @@
+This is my known list of ways to assemble the hello.asm for the symon 6502 simulator.
