@@ -5,8 +5,8 @@ title: .asciz "hexdump program in RISC-V assembly language\n\n"
 # test string of integer for input
 test_int: .asciz "10011101001110011110011"
 hex_message: .asciz "Hex Dump of File: "
-file_message_yes: "The file is open.\n"
-file_message_no: "The file could not be opened.\n"
+file_message_yes: .asciz "The file is open.\n"
+file_message_no: .asciz "The file could not be opened.\n"
 file_data: .byte '?':16
            .byte 0
 space_three: .asciz "   "

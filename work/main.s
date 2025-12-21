@@ -1,15 +1,15 @@
 #hexdump for MIPS emulator: mars
 .data
-title: .asciz "hexdump program in RISC-V assembly language\n\n"
+title: .asciiz "hexdump program in RISC-V assembly language\n\n"
 
 # test string of integer for input
-test_int: .asciz "10011101001110011110011"
-hex_message: .asciz "Hex Dump of File: "
-file_message_yes: "The file is open.\n"
-file_message_no: "The file could not be opened.\n"
+test_int: .asciiz "10011101001110011110011"
+hex_message: .asciiz "Hex Dump of File: "
+file_message_yes: .asciiz "The file is open.\n"
+file_message_no: .asciiz "The file could not be opened.\n"
 file_data: .byte '?':16
            .byte 0
-space_three: .asciz "   "
+space_three: .asciiz "   "
 
 #this is the location in memory where digits are written to by the putint function
 int_string: .byte '?':32
@@ -25,54 +25,54 @@ main:
 
 # at the beginning of the program a0 has the number of arguments
 # so we will save it in the argc variable
-la t1,argc
-sw a0,0(t1)
+la $t1,argc
+sw $a0,0($t1)
 
 # at the beginning of the program a1 has a pointer to the argument strings
 # so we save it because we may need a1 for system calls
-la t1,argv
-sw a1,0(t1)
+la $t1,argv
+sw $a1,0($t1)
 
 #Now that the argument data is stored away, we can access it even if it is overwritten.
 #For example, the putstring function uses a0 for system call number 4, which prints a string
 
-la s0,title
+la $s0,title
 jal putstring
 
-li t0,16    #change radix
-la t1,radix
-sb t0,0(t1)
+li $t0,16    #change radix
+la $t1,radix
+sb $t0,0($t1)
 
-li t0,1    #change width
-la t1,int_width
-sb t0,0(t1)
+li $t0,1    #change width
+la $t1,int_width
+sb $t0,0($t1)
 
 
 # next, we load argc from the memory so we can display the number of arguments
-la t1,argc
-lw s0,0(t1)
+la $t1,argc
+lw $s0,0($t1)
 #jal putint
 
-beq s0,zero,exit # if the number of arguments is zero, exit the program because nothing else to print
+beq $s0,$zero,exit # if the number of arguments is zero, exit the program because nothing else to print
 
 # this section processes the filename and opens the file from the first argument
 
 jal next_argument
 #jal putstring
-mv s11,s0 #save the filename in register s11 so we can use it any time
+move $s7,$s0 #save the filename in register s11 so we can use it any time
 
-li a7,1024 # open file call number
-mv a0,s11  # copy filename for the open call
-li a1,0    # read only access for the file we will open (rars does not support read+write mode)
-ecall
+li $v0,13 # open file call number
+move $a0,$s7  # copy filename for the open call
+li $a1,0    # read only access for the file we will open (rars does not support read+write mode)
+syscall
 
-mv s0,a0
+move $s0,$a0
 #jal putint
 
-blt s0,zero,file_error # branch if argc is not equal to zero
+blt $s0,$zero,file_error # branch if argc is not equal to zero
 
-mv s9,s0 # save the find handle in register s9
-la s0,file_message_yes
+move $s6,$s0 # save the find handle in register s6
+la $s0,file_message_yes
 #jal putstring
 jal hexdump
 
@@ -80,20 +80,40 @@ j exit
 
 file_error:
 
-la s0,file_message_no
+la $s0,file_message_no
 jal putstring
 
 
 j exit
 
 exit:
-li a7, 10     # exit syscall
-ecall
+li $v0, 10     # exit syscall
+syscall
 
 
 
 
 
+# this function gets the next command line argument and returns it in s0
+# it also decrements the argc variable so that it can be checked for 0 to exit the program if needed by the main program
+
+next_argument:
+
+la $t1,argv
+lw $t0,0($t1) #load the string pointer located in argv into t0 register
+lw $s0,0($t0) #load the data being pointed to by t0 into s0 for displaying the string
+addi $t0,$t0,4 #add 4 to the pointer
+sw $t0,0($t1)  #store the pointer so it will be loaded at the next string if the loop continues
+
+# load the number of arguments from memory, subtract 1, store back to memory
+# then use to compare and loop if nonzero
+la $t1,argc
+lw $t0,0($t1)
+
+addi $t0,$t0,-1
+sw $t0,0($t1)
+
+jr $ra
 
 
 
@@ -175,13 +195,6 @@ lw $ra,0($sp)
 lw $s0,4($sp)
 addi $sp,$sp,8
 jr $ra
-
-
-
-
-
-
-
 
 
 
