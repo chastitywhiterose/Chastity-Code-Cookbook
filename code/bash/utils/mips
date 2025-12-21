@@ -1,0 +1,12 @@
+#!/bin/bash
+
+if [ $# -eq 0 ]
+then
+ echo "Enter the name of a MIPS assembly source file to run it."
+fi 
+
+if [ $# -ne 0 ] # if the number of arguments is not equal to zero
+then
+ java -jar ~/Mars4_5.jar $1
+fi
+
