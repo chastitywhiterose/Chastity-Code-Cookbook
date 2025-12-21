@@ -59,10 +59,10 @@ beq s0,zero,exit # if the number of arguments is zero, exit the program because 
 
 jal next_argument
 #jal putstring
-mv s11,s0 #save the filename in register s11 so we can use it any time
+mv s7,s0 #save the filename in register s7 so we can use it any time
 
 li a7,1024 # open file call number
-mv a0,s11  # copy filename for the open call
+mv a0,s7  # copy filename for the open call
 li a1,0    # read only access for the file we will open (rars does not support read+write mode)
 ecall
 
@@ -71,7 +71,7 @@ mv s0,a0
 
 blt s0,zero,file_error # branch if argc is not equal to zero
 
-mv s9,s0 # save the find handle in register s9
+mv s6,s0 # save the find handle in register s6
 la s0,file_message_yes
 #jal putstring
 jal hexdump
@@ -98,7 +98,7 @@ sw ra,0(sp)
 
 la s0,hex_message
 jal putstring
-mv s0,s11
+mv s0,s7
 jal putstring
 jal putline
 
@@ -106,11 +106,11 @@ li t0,0    #disable automatic newlines after putint
 la t1,int_newline
 sb t0,0(t1)
 
-li, s10,0 # we will use s10 register as current offset
+li, s5,0 # we will use s5 register as current offset
 
 hex_read_row:
 li a7,63        # read system call
-mv a0,s9        # file handle
+mv a0,s6        # file handle
 la a1,file_data # where to store data
 li a2,16        # how many bytes to read
 ecall           # a0 will have number of bytes read after this call
@@ -124,8 +124,8 @@ li s0,8    #change width
 la s1,int_width
 sb s0,0(s1)
 
-mv s0,s10
-add s10,s10,s3
+mv s0,s5
+add s5,s5,s3
 jal putint
 jal putspace
 

@@ -72,7 +72,7 @@ move $s0,$v0
 
 blt $s0,$zero,file_error # branch if argc is not equal to zero
 
-move $s6,$s0 # save the find handle in register s6
+move $s6,$s0 # save the file handle in register s6
 la $s0,file_message_yes
 #jal putstring
 
