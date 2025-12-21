@@ -1,6 +1,6 @@
 #hexdump for MIPS emulator: mars
 .data
-title: .asciiz "hexdump program in RISC-V assembly language\n\n"
+title: .asciiz "hexdump program in MIPS assembly language\n\n"
 
 # test string of integer for input
 test_int: .asciiz "10011101001110011110011"
@@ -59,14 +59,15 @@ beq $s0,$zero,exit # if the number of arguments is zero, exit the program becaus
 
 jal next_argument
 #jal putstring
-move $s7,$s0 #save the filename in register s11 so we can use it any time
+move $s7,$s0 #save the filename in register s7 so we can use it any time
 
 li $v0,13 # open file call number
 move $a0,$s7  # copy filename for the open call
 li $a1,0    # read only access for the file we will open (rars does not support read+write mode)
 syscall
 
-move $s0,$a0
+move $s0,$v0
+#jal putspace
 #jal putint
 
 blt $s0,$zero,file_error # branch if argc is not equal to zero
@@ -74,6 +75,7 @@ blt $s0,$zero,file_error # branch if argc is not equal to zero
 move $s6,$s0 # save the find handle in register s6
 la $s0,file_message_yes
 #jal putstring
+
 jal hexdump
 
 j exit
@@ -89,6 +91,126 @@ j exit
 exit:
 li $v0, 10     # exit syscall
 syscall
+
+
+
+
+
+
+
+
+# this is the hexdump function
+
+hexdump:
+addi $sp,$sp,-4
+sw $ra,0($sp)
+
+la $s0,hex_message
+jal putstring
+move $s0,$s7
+jal putstring
+jal putline
+
+
+li $t0,0    #disable automatic newlines after putint
+la $t1,int_newline
+sb $t0,0($t1)
+
+li, $s5,0 # we will use s5 register as current offset
+
+
+
+hex_read_row:
+li $v0,14        # read system call
+move $a0,$s6        # file handle
+la $a1,file_data # where to store data
+li $a2,16        # how many bytes to read
+syscall           # a0 will have number of bytes read after this call
+
+move $s3,$v0 #save v0 to s3 to keep count of how many bytes read
+move $s2,$v0 #save v0 to s2 to keep count of how many bytes read
+
+beq $v0,$zero,hexdump_end
+
+li $s0,8    #change width
+la $s1,int_width
+sb $s0,0($s1)
+
+move $s0,$s5
+add $s5,$s5,$s3
+jal putint
+jal putspace
+
+li $s0,2    #change width to 2 for the bytes printed this row
+la $s1,int_width
+sb $s0,0($s1)
+
+la $s1,file_data
+hex_row_print:
+lb $s0,0($s1)
+jal putint
+jal putspace
+addi $s1,$s1,1
+
+addi $s2,$s2,-1
+bne $s2,$zero,hex_row_print
+
+#pad the row with extra spaces
+
+move $t2,$s3
+li $t3,16
+extra_row_space:
+beq $t2,$t3,extra_row_space_complete
+la $s0,space_three
+jal putstring
+addi $t2,$t2,1
+j extra_row_space
+extra_row_space_complete:
+
+#now the hex form of the bytes are printed
+#we will filter the text form and also print it
+
+li $s2,0
+la $s1,file_data
+char_filter:
+lb $s0,0($s1)
+
+#if char is below 0x20 or above 0x7E, it is outside the range of printable characters
+
+li $t5,0x20
+blt $s0,$t5,not_printable
+li $t5,0x7E
+bgt $s0,$t5,not_printable
+
+j next_char_index
+
+not_printable:
+li $s0,'.'
+sb $s0,0($s1)
+
+next_char_index:
+addi $s1,$s1,1
+addi $s2,$s2,1
+blt $s2,$s3,char_filter
+
+li $s0,0
+sb $s0,0($s1)   #terminate string with a zero
+
+la $s0,file_data
+jal putstring
+
+
+jal putline
+
+j hex_read_row
+
+hexdump_end:
+lw $ra,0($sp)
+addi $sp,$sp,4
+jr $ra
+
+
+
 
 
 
@@ -116,6 +238,18 @@ sw $t0,0($t1)
 jr $ra
 
 
+
+putline:
+li $v0,11
+li $a0,10
+syscall
+jr $ra
+
+putspace:
+li $v0,11
+li $a0,' '
+syscall
+jr $ra
 
 
 
