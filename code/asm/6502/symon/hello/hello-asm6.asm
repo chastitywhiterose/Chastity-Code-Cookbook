@@ -1,4 +1,7 @@
 ; 6502 Assembly source for assembler asm6
+
+; asm6 hello-asm6.asm hello-asm6.bin
+
 ; The program runs in the symon simulator for 6502 which was written in java
 ; Output the string 'Hello, World!' repeatedly
 
