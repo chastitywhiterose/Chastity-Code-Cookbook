@@ -1,0 +1,22 @@
+Example commands to assemble a 6502 source file named "main.asm" and output "main.bin"
+
+Using xa (assembler from xa65 package)
+
+xa main.asm -o main.bin
+
+Using 64tass
+
+64tass main.asm -o main.bin -b
+
+The -b flag removes the starting address. The help said:
+"-b, --nostart          Strip starting address"
+
+And of course I can see the bytes generated with chastehex:
+
+chastehex main.bin
+
+Using ca65 (installed as part of cc65 package)
+
+ca65 main.asm -o main.bin
+
+It works but creates weird debug information that is not needed for me.

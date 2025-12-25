@@ -1,1 +1,5 @@
 This is my known list of ways to assemble the hello.asm for the symon 6502 simulator.
+
+The first is to use "asm6", which is a 6502 assembler I found on github.
+
+asm6 hello-asm6.asm hello-asm6.bin
