@@ -1,10 +1,6 @@
 fn main()
 {
- let s:&str;
-
- s="My name is Chastity";
-
- putstringln(s);
+ putstringln("This is \n a test of the putint function);
 
  let number:i32=76;
 
