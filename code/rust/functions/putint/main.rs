@@ -16,11 +16,55 @@ fn main()
   putint(a,16,2);
   print!(" ");
   putint(a,10,3);
+
+  if a>=0x20 && a<=0x7E
+  {
+   print!(" ");
+   print!("{}",(a as u8) as char);
+  }
+
   println!();
   a+=1;
  }
 
+ println!("The chart above shows all numbers from 0 to {} in their binary,hexadecimal and decimal form.",intstr(a,10,1));
+ println!("It also shows the valid printable ASCII characters where relevant. Knowing which numbers equal which characters is essential to how my integer conversion functions operate, so this list is a good reminder for me.");
+
 }
+
+/*
+ this function returns an integer in a certain radix as a String object which can be printed with the standard print! macro.
+ This makes the text output cood look more convenient but is otherwise identical to what you would get from calling the putint function directly.
+ The algorithm is identical to the putstr function but it creates a string object and then pushes the characters to it with the .push method instead of printing them.
+*/
+fn intstr(mut i:u32,radix:u32,int_width:usize) -> String
+{
+ let mut s = String::new();
+ let mut a: [u8;32]=[0;32]; //create array of max size needed for 32 bit integer
+ let mut width=0; //keeps track of current width of integer (how many digits in the chosen radix)
+ let mut r:u32; //used to store the remainder of division
+
+ while i!=0 || width<int_width
+ {
+  r=i%radix;
+  i/=radix;
+  if r<10 { r+=0x30 }
+  else {r+=0x37}
+  a[width]=r as u8;
+  width+=1;
+ }
+
+ while width>0
+ {
+  width-=1;
+  s.push(a[width] as char);
+ }
+
+ return s;
+}
+
+
+
 
 /*
  This is the putint function for printing an integer in any base from 2 to 36.
