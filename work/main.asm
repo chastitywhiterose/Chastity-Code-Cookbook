@@ -1,7 +1,5 @@
 format ELF executable
 entry main
-start:
-
 
 include 'chastelib32.asm'
 include 'ansi.asm'
@@ -11,8 +9,6 @@ main: ; the main function of our assembly function, just as if I were writing C.
 mov [radix],16 ; Choose radix for integer output!
 mov [int_width],8
 mov [int_newline],0 ;disable automatic printing of newlines after putint
-
-mov [memory_address],start;main
 
 keyloop:
 
@@ -24,148 +20,88 @@ call putstring
 mov eax,ansi_home
 call putstring
 
+mov eax,prefix_k
+call putstring
 mov eax,[key]
 call putint
 call putline
 
-;print the memory at current address
-call print_memory_row_hex
+mov eax,prefix_x
+call putstring
+mov eax,[x]
+call putint
+call putspace
 
-
+mov eax,prefix_y
+call putstring
+mov eax,[y]
+call putint
+call putline
 
 mov eax,msg
 call putstring
 
+cmp [showhelp],0
+jz help_skip
+
+print_help:
+mov eax,help
+call putstring
+
+help_skip:
+
+
 call read_key
 
+cmp [key],0x68
+jz toggle_help
+
 cmp [key],0x41
-jz memory_prev_row
+jz key_up
 cmp [key],0x42
-jz memory_next_row
+jz key_down
 
 cmp [key],0x44
-jz memory_prev_byte
+jz key_left
 cmp [key],0x43
-jz memory_next_byte
+jz key_right
 
 jmp keyloop_end
 
 ;conditional blocks based on input
-memory_prev_row:
-sub [memory_address],0x10
+key_up:
+dec [y]
 jmp keyloop_end
-memory_next_row:
-add [memory_address],0x10
-jmp keyloop_end
-
-memory_prev_byte:
-sub [memory_address],1
-jmp keyloop_end
-memory_next_byte:
-add [memory_address],1
+key_down:
+inc [y]
 jmp keyloop_end
 
+key_left:
+dec [x]
+jmp keyloop_end
+key_right:
+inc [x]
+jmp keyloop_end
+
+toggle_help:
+xor [showhelp],1
+jmp keyloop_end
 
 keyloop_end:
 cmp [key],'q' ;loop will go until q is pressed
 jnz keyloop
 
 
-
+main_end:
 mov eax, 1  ; invoke SYS_EXIT (kernel opcode 1)
 mov ebx, 0  ; return 0 status on exit - 'No Errors'
 int 80h
 
 ; this is where I keep my string variables
 
-msg db 'Press q to quit, h for help', 0Ah,0     ; assign msg variable with your message string
-
-;read one byte from stdin
-;named read_key do signal that is is for keyboard input rather than a file
-
-;BUT, and this is very important, this will not do what I desire of reading a single character
-;unless I first run the command "stty cbreak" to set the terminal to break on a character rather than a line
-;by default, it waits until enter is pressed to process any input
-
-;key is defined as dword even though only a byte is used
-;this way, it loads into eax without trouble
-key dd 0
-
-read_key:
-
-mov edx,1     ;number of bytes to read
-mov ecx,key   ;address to store the bytes
-mov ebx,0     ;read from stdin
-mov eax,3     ;invoke SYS_READ (kernel opcode 3)
-int 80h       ;call the kernel
-
-ret
+msg db "Press q to quit, h for help", 0Ah,0     ; assign msg variable with your message string
+help db "This program operates the terminal by using ANSI escape sequences.",0
+showhelp dd 0
 
 
-memory_address dd 0
 
-;this function prints a row of hex bytes
-;each row is 16 bytes
-print_memory_row_hex:
-mov eax,[memory_address]
-mov [int_width],8
-call putint
-call putspace
-
-mov ebx,[memory_address]
-mov ecx,0x10
-next_byte:
-mov eax,0
-mov al,[ebx]
-mov [int_width],2
-call putint
-call putspace
-
-inc ebx
-dec ecx
-cmp ecx,0
-jnz next_byte
-
-call print_memory_row_text
-
-call putline
-
-ret
-
-text_dump db 16 dup '?',0
-
-print_memory_row_text:
-
-mov ebx,[memory_address]
-mov edi,text_dump
-mov ecx,0x10
-next_char:
-mov eax,0
-mov al,[ebx]
-mov [int_width],2
-
-;if char is below '0' or above '9', it is outside the range of these and is not a digit
-cmp al,0x20
-jb not_printable
-cmp al,0x7E
-ja not_printable
-
-;if char is in printable range,copy as is and proceed to next index
-jmp next_index
-
-not_printable:
-mov al,'.' ;otherwise replace with placeholder value
-
-next_index:
-mov [edi],al
-inc edi
-inc ebx
-dec ecx
-cmp ecx,0
-jnz next_char
-
-
-mov eax,text_dump
-call putstring
-
-ret
