@@ -4,8 +4,8 @@ This file is a library of functions written by Chastity White Rose. The function
 
 /* These two lines define a static array with a size big enough to store the digits of an integer including padding it with extra zeroes. The function which follows always returns a pointer to this global string and this allows other standard library functions such as printf to display the integers to standard output or even possibly to files.*/
 
-#define usl 32
-char int_string[usl+1]; /*global string which will be used to store string of integers*/
+#define usl 256
+char us[usl+1]; /*global string which will be used to store string of integers*/
 
  /*radix or base for integer output. 2=binary, 8=octal, 10=decimal, 16=hexadecimal*/
 int radix=2;
@@ -19,9 +19,9 @@ This function is one that I wrote because the standard library can display integ
 char* intstr(unsigned int i)
 {
  int width=0;
- char *s=int_string+usl;
+ char *s=us+usl;
  *s=0;
- while(i!=0 || width<int_width)
+ do
  {
   s--;
   *s=i%radix;
@@ -29,7 +29,7 @@ char* intstr(unsigned int i)
   if(*s<10){*s+='0';}else{*s=*s+'A'-10;}
   width++;
  }
-
+ while(i!=0 || width<int_width);
  return s;
 }
 
