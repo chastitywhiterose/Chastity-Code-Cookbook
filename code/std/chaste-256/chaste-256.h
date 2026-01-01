@@ -18,6 +18,24 @@ void Load_Register_Integer(char *r,char i)
  *r=i;
 }
 
+void Load_Register_Memory(char *r,char i)
+{
+ *r=RAM[(int)i];
+}
+
+
+
+void Save_Register_Memory(char *r,char i)
+{
+ RAM[(int)i]=*r;
+}
+
+
+
+
+
+
+
 void print_RAM()
 {
  int x,y;

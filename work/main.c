@@ -11,6 +11,10 @@ int main(int argc, char *argv[])
 
  Load_Register_Integer(A,3);
  Load_Register_Integer(B,5);
+ 
+ Save_Register_Memory(A,0x30);
+ Save_Register_Memory(B,0x38);
+
 
  putstring("\nRegisters\n");
 
