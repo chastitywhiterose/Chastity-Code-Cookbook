@@ -80,27 +80,6 @@ int 80h
 
 msg db 'Press q to quit, h for help', 0Ah,0     ; assign msg variable with your message string
 
-;read one byte from stdin
-;named read_key do signal that is is for keyboard input rather than a file
-
-;BUT, and this is very important, this will not do what I desire of reading a single character
-;unless I first run the command "stty cbreak" to set the terminal to break on a character rather than a line
-;by default, it waits until enter is pressed to process any input
-
-;key is defined as dword even though only a byte is used
-;this way, it loads into eax without trouble
-key dd 0
-
-read_key:
-
-mov edx,1     ;number of bytes to read
-mov ecx,key   ;address to store the bytes
-mov ebx,0     ;read from stdin
-mov eax,3     ;invoke SYS_READ (kernel opcode 3)
-int 80h       ;call the kernel
-
-ret
-
 
 memory_address dd 0
 
