@@ -53,6 +53,8 @@ help_skip:
 
 ;move the cursor with the function I wrote in ansi.asm
 call move_cursor
+mov eax,k
+call putstring
 
 call read_key
 
