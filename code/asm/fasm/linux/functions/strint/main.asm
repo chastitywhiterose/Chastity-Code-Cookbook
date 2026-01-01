@@ -2,7 +2,7 @@
 format ELF executable
 entry main
 
-include 'chaste-lib.asm'
+include 'chastelib32.asm'
 
 ;the main function of our assembly function, just as if I were writing C.
 main: 

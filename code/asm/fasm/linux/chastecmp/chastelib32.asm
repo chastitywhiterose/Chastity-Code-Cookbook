@@ -1,5 +1,12 @@
-; This file is where I keep my function definitions.
-; These are usually my string and integer output routines.
+; This file is where I keep the source of my most important Assembly functions
+; These are my string and integer output routines.
+
+; putstring; Prints a zero terminated string from the address pointer to by eax register.
+; intstr;    Converts the number in eax into a zero terminated string and points eax to that address
+; putint;    Prints the integer in eax by calling intstr and then putstring.
+; strint;    Converts the zero terminated string into an integer and sets eax to that value
+   
+; Now, the source of the functions begins, with comments included for parts that I felt needed explanation.
 
 ; function to print zero terminated string pointed to by register eax
 
@@ -12,9 +19,9 @@ push ebx
 push ecx
 push edx
 
-mov ebx,eax ; copy eax to ebx as well. Now both registers have the address of the main_string
+mov ebx,eax ; copy eax to ebx. ebx will be used as index to the string
 
-putstring_strlen_start: ; this loop finds the lenge of the string as part of the putstring function
+putstring_strlen_start: ; this loop finds the length of the string as part of the putstring function
 
 cmp [ebx],byte 0 ; compare byte at address ebx with 0
 jz putstring_strlen_end ; if comparison was zero, jump to loop end because we have found the length
@@ -22,18 +29,16 @@ inc ebx
 jmp putstring_strlen_start
 
 putstring_strlen_end:
-sub ebx,eax ;ebx will now have correct number of bytes
+sub ebx,eax ;By subtracting the start of the string with the current address, we have the length of the string.
 
-;write string using Linux Write system call
-;https://www.chromium.org/chromium-os/developer-library/reference/linux-constants/syscalls/#x86-32-bit
-
+; Write string using Linux Write system call. Reference for 32 bit x86 syscalls is below.
+; https://www.chromium.org/chromium-os/developer-library/reference/linux-constants/syscalls/#x86-32-bit
 
 mov edx,ebx      ;number of bytes to write
 mov ecx,eax      ;pointer/address of string to write
 mov ebx,[stdout] ;write to the STDOUT file
 mov eax, 4       ;invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
 int 80h          ;system call to write the message
-
 
 pop edx
 pop ecx
@@ -42,10 +47,14 @@ pop eax
 
 ret ; this is the end of the putstring function return to calling location
 
-;this is the location in memory where digits are written to by the putint function
-int_string     db 32 dup '?' ;enough bytes to hold maximum size 32-bit binary integer
+; This is the location in memory where digits are written to by the intstr function
+; The string of bytes and settings such as the radix and width are global variables defined below.
+
+int_string db 32 dup '?' ;enough bytes to hold maximum size 32-bit binary integer
+
 ; this is the end of the integer string optional line feed and terminating zero
-; clever use of this label can change the ending to be a different character when needed 
+; clever use of this label can change the ending to be a different character when needed
+
 int_newline db 0Ah,0
 
 radix dd 2 ;radix or base for integer output. 2=binary, 8=octal, 10=decimal, 16=hexadecimal
@@ -67,7 +76,7 @@ mov edx,0;
 div dword [radix]
 cmp edx,10
 jb decimal_digit
-jge hexadecimal_digit
+jae hexadecimal_digit
 
 decimal_digit: ;we go here if it is only a digit 0 to 9
 add edx,'0'
@@ -158,8 +167,7 @@ sub cl,'0'
 jmp process_char
 
 not_digit:
-;it isn't a digit, but it could be perhaps and alphabet character
-;which is a digit in a higher base
+;it isn't a digit, but it could an alphabet character which is a digit in a higher base
 
 ;if char is below 'A' or above 'Z', it is outside the range of these and is not capital letter
 cmp cl,'A'
@@ -196,7 +204,7 @@ cmp ecx,[radix] ;compare char with radix
 jae strint_end ;if this value is above or equal to radix, it is too high despite being a valid digit/alpha
 
 mov edx,0 ;zero edx because it is used in mul sometimes
-mul  dword [radix]    ;mul eax with radix
+mul  dword [radix] ;mul eax with radix
 add eax,ecx
 
 jmp read_strint ;jump back and continue the loop if nothing has exited it
@@ -205,8 +213,8 @@ strint_end:
 
 ret
 
-;the next utility functions simply print a space or a newline
-;these help me save code when printing lots of things for debugging
+;The utility functions below simply print a space or a newline.
+;these help me save code when printing lots of strings and integers.
 
 space db ' ',0
 line db 0Dh,0Ah,0

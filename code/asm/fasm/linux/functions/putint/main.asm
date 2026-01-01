@@ -1,12 +1,33 @@
-; This file is where I keep the source of my most important Assembly functions
-; These are my string and integer output routines.
+format ELF executable
+entry main
 
-; putstring; Prints a zero terminated string from the address pointer to by eax register.
-; intstr;    Converts the number in eax into a zero terminated string and points eax to that address
-; putint;    Prints the integer in eax by calling intstr and then putstring.
-; strint;    Converts the zero terminated string into an integer and sets eax to that value
-   
-; Now, the source of the functions begins, with comments included for parts that I felt needed explanation.
+main: ; the main function of our assembly function, just as if I were writing C.
+
+; I can load any string address into eax and print it!
+
+mov eax,msg
+call putstring
+mov eax,main_string ; move the address of main_string into eax register
+call putstring
+
+
+mov eax,0
+loop1:
+call putint
+inc eax
+cmp eax,16;
+jnz loop1
+
+mov eax, 1  ; invoke SYS_EXIT (kernel opcode 1)
+mov ebx, 0  ; return 0 status on exit - 'No Errors'
+int 80h
+
+; this is where I keep my string variables
+
+msg: db 'Hello World!', 0Ah,0     ; assign msg variable with your message string
+main_string db 'This is the assembly counting program!',0Ah,0
+
+; this is where I keep my function definitions
 
 ; function to print zero terminated string pointed to by register eax
 
@@ -135,101 +156,10 @@ pop eax
 
 ret
 
-;this function converts a string pointed to by eax into an integer returned in eax instead
-;it is a little complicated because it has to account for whether the character in
-;a string is a decimal digit 0 to 9, or an alphabet character for bases higher than ten
-;it also checks for both uppercase and lowercase letters for bases 11 to 36
-;finally, it checks if that letter makes sense for the base.
-;For example, G to Z cannot be used in hexadecimal, only A to F can
-;The purpose of writing this function was to be able to accept user input as integers
 
-strint:
-
-mov ebx,eax ;copy string address from eax to ebx because eax will be replaced soon!
-mov eax,0
-
-read_strint:
-mov ecx,0 ; zero ecx so only lower 8 bits are used
-mov cl,[ebx]
-inc ebx
-cmp cl,0 ; compare byte at address edx with 0
-jz strint_end ; if comparison was zero, this is the end of string
-
-;if char is below '0' or above '9', it is outside the range of these and is not a digit
-cmp cl,'0'
-jb not_digit
-cmp cl,'9'
-ja not_digit
-
-;but if it is a digit, then correct and process the character
-is_digit:
-sub cl,'0'
-jmp process_char
-
-not_digit:
-;it isn't a digit, but it could an alphabet character which is a digit in a higher base
-
-;if char is below 'A' or above 'Z', it is outside the range of these and is not capital letter
-cmp cl,'A'
-jb not_upper
-cmp cl,'Z'
-ja not_upper
-
-is_upper:
-sub cl,'A'
-add cl,10
-jmp process_char
-
-not_upper:
-
-;if char is below 'a' or above 'z', it is outside the range of these and is not lowercase letter
-cmp cl,'a'
-jb not_lower
-cmp cl,'z'
-ja not_lower
-
-is_lower:
-sub cl,'a'
-add cl,10
-jmp process_char
-
-not_lower:
-
-;if we have reached this point, result invalid and end function
-jmp strint_end
-
-process_char:
-
-cmp ecx,[radix] ;compare char with radix
-jae strint_end ;if this value is above or equal to radix, it is too high despite being a valid digit/alpha
-
-mov edx,0 ;zero edx because it is used in mul sometimes
-mul  dword [radix] ;mul eax with radix
-add eax,ecx
-
-jmp read_strint ;jump back and continue the loop if nothing has exited it
-
-strint_end:
-
-ret
-
-;The utility functions below simply print a space or a newline.
-;these help me save code when printing lots of strings and integers.
-
-space db ' ',0
-line db 0Dh,0Ah,0
-
-putspace:
-push eax
-mov eax,space
-call putstring
-pop eax
-ret
-
-putline:
-push eax
-mov eax,line
-call putstring
-pop eax
-ret
-
+; This Assembly source file has been formatted for the FASM assembler.
+; The following 3 commands assemble, give executable permissions, and run the program
+;
+;	fasm main.asm
+;	chmod +x main
+;	./main
