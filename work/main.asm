@@ -100,7 +100,8 @@ int 80h
 ; this is where I keep my string variables
 
 msg db "Press q to quit, h for help", 0Ah,0     ; assign msg variable with your message string
-help db "This program operates the terminal by using ANSI escape sequences.",0
+help db "This program operates the terminal by using ANSI escape sequences."
+     db "You can turn this help message on or off with the h key again.",0
 showhelp dd 0
 
 
