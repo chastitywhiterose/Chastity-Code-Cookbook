@@ -6,11 +6,11 @@ include 'ansi.asm'
 
 main: ; the main function of our assembly function, just as if I were writing C.
 
+keyloop:
+
 mov [radix],16 ; Choose radix for integer output!
 mov [int_width],8
 mov [int_newline],0 ;disable automatic printing of newlines after putint
-
-keyloop:
 
 ;first clear the screen
 mov eax, ansi_clear
@@ -47,9 +47,17 @@ jz help_skip
 print_help:
 mov eax,help
 call putstring
+call putline
 
 help_skip:
 
+;this section helps me debug the ansi string
+
+call move_cursor
+
+mov eax,ansi_string
+call putstring
+call putline
 
 call read_key
 
@@ -100,7 +108,7 @@ int 80h
 ; this is where I keep my string variables
 
 msg db "Press q to quit, h for help", 0Ah,0     ; assign msg variable with your message string
-help db "This program operates the terminal by using ANSI escape sequences."
+help db "This program operates the terminal by using ANSI escape sequences. "
      db "You can turn this help message on or off with the h key again.",0
 showhelp dd 0
 

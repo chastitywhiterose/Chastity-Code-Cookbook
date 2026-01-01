@@ -35,15 +35,55 @@ y dd 0
 prefix_x db "x=",0
 prefix_y db "y=",0
 
+ansi_string db 32 dup '?',0 ;string storage for buildable ansi sequence.
 
+move_cursor:
 
+mov [radix],10
+mov [int_width],1
 
+mov edi,ansi_string
+mov [edi],byte '['
+inc edi
 
+mov eax,[x]
+call intstr ; get the string for x
 
+mov esi,eax ; set source index to the new integer string
+call strcpy
 
+mov [edi],byte ';'
+inc edi
 
+mov eax,[y]
+call intstr ; get the string for y
 
+mov esi,eax ; set source index to the new integer string
+call strcpy
 
+mov [edi], byte 0 ;terminate the string with zero
+
+ret
+
+;copies bytes from address edi to esi until a zero is found
+;This is not optimized for speed because it doesn't use the special x86 instructions for that purpose.
+;However, it is easily portable to any CPU I might write assembly for, if I choose which registers to use for that purpose.
+;However, since this is an x86 function, I use edi(destination index) and esi(source index) in their traditional contexts
+
+strcpy:
+
+;jmp strcpy_end
+
+mov al,[esi]
+cmp al,0
+jz strcpy_end
+mov [edi],al
+inc edi
+inc esi
+jmp strcpy
+
+strcpy_end:
+ret
 
 
 
