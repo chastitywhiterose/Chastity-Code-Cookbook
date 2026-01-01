@@ -51,13 +51,8 @@ call putline
 
 help_skip:
 
-;this section helps me debug the ansi string
-
+;move the cursor with the function I wrote in ansi.asm
 call move_cursor
-
-mov eax,ansi_string
-call putstring
-call putline
 
 call read_key
 

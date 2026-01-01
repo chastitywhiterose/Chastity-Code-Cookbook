@@ -43,11 +43,15 @@ mov [radix],10
 mov [int_width],1
 
 mov edi,ansi_string
+mov [edi],byte 0x1B ;all escape sequences start with the escape character.
+inc edi
+
 mov [edi],byte '['
 inc edi
 
-mov eax,[x]
-call intstr ; get the string for x
+mov eax,[y]
+inc eax
+call intstr ; get the string for y
 
 mov esi,eax ; set source index to the new integer string
 call strcpy
@@ -55,13 +59,20 @@ call strcpy
 mov [edi],byte ';'
 inc edi
 
-mov eax,[y]
-call intstr ; get the string for y
+mov eax,[x]
+inc eax
+call intstr ; get the string for x
 
 mov esi,eax ; set source index to the new integer string
 call strcpy
 
-mov [edi], byte 0 ;terminate the string with zero
+
+mov [edi],byte 'H' ;finish the escape code for setting cursor position
+inc edi
+mov [edi],byte 0 ;terminate the string with zero
+
+mov eax,ansi_string
+call putstring
 
 ret
 
