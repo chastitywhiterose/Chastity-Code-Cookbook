@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
 
  putstring("This program is the official test suite for the C++ version of chastelib.\n");
 
- b=strint("10");
+ b=strint("100");
  while(a<b)
  {
   radix=2;

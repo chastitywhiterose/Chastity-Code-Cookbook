@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
  radix=16;
  int_width=1;
 
- putstring("This is the official test program for the C version of chastelib.\n");
+ putstring("This program is the official test suite for the C version of chastelib.\n");
 
  b=strint("100");
  while(a<b)
