@@ -49,7 +49,7 @@ void hexdump()
   x=0;
   while(x<count)
   {
-   putint(bytes[x]);
+   putint(bytes[x]&0xFF);
    putstring(" ");
    x++;
   }
@@ -57,12 +57,14 @@ void hexdump()
   putstring("\n");
 
   address+=count;
+  f.read(bytes,16);
+  count=f.gcount();
  }
 }
 
 int main(int argc, char *argv[])
 {
- int argx,x,c;
+ int argx,x;
    
  radix=0x10; /*set radix for integer output*/
  int_width=1; /*set default integer width*/
@@ -114,13 +116,13 @@ int main(int argc, char *argv[])
   f.read(&bytes[0],1);
   count=f.gcount();
   int_width=8;
-  putstring(intstr(x));
+  putint(x);
   putstring(" ");
   if(count==0){putstring("EOF");}
   else
   {
    int_width=2;
-   putstring(intstr(bytes[0]));
+   putint(bytes[0]&0xFF);
   }
   putstring("\n");
  }
@@ -131,14 +133,14 @@ int main(int argc, char *argv[])
   argx=3;
   while(argx<argc)
   {
-   c=strint(argv[argx]);
+   bytes[0]=strint(argv[argx]);
    int_width=8;
-   putstring(intstr(x));
+   putint(x);
    putstring(" ");
    int_width=2;
-   putstring(intstr(c));
+   putint(bytes[0]&0xFF);
    putstring("\n");
-   //fputc(c,fp);
+   f.write(bytes,1);
    x++;
    argx++;
   }
