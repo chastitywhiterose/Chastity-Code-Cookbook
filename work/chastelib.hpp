@@ -44,19 +44,29 @@ char* intstr(unsigned int i)
 }
 
 /*
- This function prints a string using fwrite.
- This is the best C representation of how my Assembly programs also work/
+ This function prints a string using cout instead of fwrite.
+ This is the best C++ representation of how my Assembly programs also work/
  It's true purpose is to be used in the putint function for conveniently printing integers, 
  but it can print any valid string.
+
+ In the original C version, the putstring function was implemented with some pointer math to
+ get the length of the string and then fwrite was used:
+    fwrite(s,1,c,stdout);
+
+ Technically this entire function could have been summed up in one statement:
+    cout<<s;
+
+ But where is the fun in that? I already had the logic for determining the length of the string.
+ I also think that the new way of using << to write to cout is confusing because it is the left shift operator from C.
+ Therefore, I wrote the function the following way to rebel against this common practice.
 */
 
 void putstring(const char *s)
 {
- //int c=0;
- //const char *p=s;
- //while(*p++){c++;} 
- //fwrite(s,1,c,stdout);
- cout<<s;
+ int c=0;
+ const char *p=s;
+ while(*p++){c++;} 
+ cout.write(s,c);
 }
 
 /*

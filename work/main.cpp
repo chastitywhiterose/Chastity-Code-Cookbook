@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
  radix=16;
  int_width=1;
 
- putstring("This program is the official test program for the C++ version of chastelib.\n");
+ putstring("This program is the official test suite for the C++ version of chastelib.\n");
 
  b=strint("10");
  while(a<b)
@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
   if(a>=0x20 && a<=0x7E)
   {
    putstring(" ");
-   cout << a;
+   cout.put(a);
   }
 
   putstring("\n");
