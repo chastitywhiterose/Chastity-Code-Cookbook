@@ -1,8 +1,10 @@
 #include <iostream>
+#include <fstream>
 using namespace std;
 #include "chastelib.hpp"
 
-FILE* fp; /*file pointer*/
+//FILE* fp; /*file pointer*/
+std::fstream f;
 char bytes[17]; /*the byte buffer for hex and text dumping*/
 int count=1; /*keeps track of how many bytes were read during each row*/
 
@@ -35,7 +37,9 @@ void hexdump()
 {
  int x,address=0;
  x=0;
- while((count=fread(bytes,1,16,fp)))
+ f.read(bytes,16);
+ count=f.gcount();
+ while(count)
  {
   int_width=8;
   putint(address);
@@ -77,8 +81,9 @@ int main(int argc, char *argv[])
 
  if(argc>1)
  {
-  fp=fopen(argv[1],"rb+");
-  if(fp==NULL)
+  //fp=fopen(argv[1],"rb+");
+  f.open(argv[1],ios::in|ios::out|ios::binary);
+  if(!f.is_open())
   {
    printf("File \"%s\" cannot be opened.\n",argv[1]);
    return 1;
@@ -98,7 +103,7 @@ int main(int argc, char *argv[])
  if(argc>2)
  {
   x=strint(argv[2]);
-  fseek(fp,x,SEEK_SET);
+  f.seekp(x);
  }
 
 
@@ -106,15 +111,16 @@ int main(int argc, char *argv[])
  /*read a byte at address of second arg*/
  if(argc==3)
  {
-  c=fgetc(fp);
+  f.read(&bytes[0],1);
+  count=f.gcount();
   int_width=8;
   putstring(intstr(x));
   putstring(" ");
-  if(c==EOF){putstring("EOF");}
+  if(count==0){putstring("EOF");}
   else
   {
    int_width=2;
-   putstring(intstr(c));
+   putstring(intstr(bytes[0]));
   }
   putstring("\n");
  }
@@ -132,13 +138,13 @@ int main(int argc, char *argv[])
    int_width=2;
    putstring(intstr(c));
    putstring("\n");
-   fputc(c,fp);
+   //fputc(c,fp);
    x++;
    argx++;
   }
  }
  
- fclose(fp);
+ f.close();
  return 0;
 }
 
