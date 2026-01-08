@@ -10,10 +10,8 @@ int main(int argc, char *argv[])
  int_width=1;
 
  putstring("This is the official test program for the C version of chastelib.\n");
- b=strint("100");
 
- putstring("Hello World!\n");
- 
+ b=strint("100");
  while(a<b)
  {
   radix=2;
@@ -40,3 +38,4 @@ int main(int argc, char *argv[])
   
  return 0;
 }
+

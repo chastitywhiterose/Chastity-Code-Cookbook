@@ -1,11 +1,20 @@
 /*
-This file is a library of functions written by Chastity White Rose. The functions are for converting strings into integers and integers into strings. I did it partly for future programming plans and also because it helped me learn a lot in the process about how pointers work as well as which features the standard library provides and which things I need to write my own functions for.
+ This file is a library of functions written by Chastity White Rose. The functions are for converting strings into integers and integers into strings.
+ I did it partly for future programming plans and also because it helped me learn a lot in the process about how pointers work
+ as well as which features the standard library provides and which things I need to write my own functions for.
+
+ As it turns out, the integer output routines for C are too limited for my tastes. This library corrects this problem.
+ Using the global variables and functions in this file, integers can be output in bases/radixes 2 to 36
 */
 
-/* These two lines define a static array with a size big enough to store the digits of an integer including padding it with extra zeroes. The function which follows always returns a pointer to this global string and this allows other standard library functions such as printf to display the integers to standard output or even possibly to files.*/
+/*
+ These two lines define a static array with a size big enough to store the digits of an integer including padding it with extra zeroes.
+ The function which follows always returns a pointer to this global string and this allows other standard library functions
+ such as printf to display the integers to standard output or even possibly to files.
+*/
 
-#define usl 32
-char int_string[usl+1]; /*global string which will be used to store string of integers*/
+#define usl 32 /*usl stands for Unsigned String Length*/
+char int_string[usl+1]; /*global string which will be used to store string of integers. Size is usl+1 for terminating zero*/
 
  /*radix or base for integer output. 2=binary, 8=octal, 10=decimal, 16=hexadecimal*/
 int radix=2;
@@ -13,7 +22,8 @@ int radix=2;
 int int_width=1;
 
 /*
-This function is one that I wrote because the standard library can display integers as decimai, octai, or hexadecimal but not any other bases(including binary which is my favorite). My function corrects this and in my opinion such a function should have been part of the standard library but I'm not complaining because now I have my own which I can use forever!
+This function is one that I wrote because the standard library can display integers as decimai, octai, or hexadecimal but not any other bases(including binary which is my favorite).
+My function corrects this and in my opinion such a function should have been part of the standard library but I'm not complaining because now I have my own which I can use forever!
 */
 
 char* intstr(unsigned int i)
@@ -34,10 +44,36 @@ char* intstr(unsigned int i)
 }
 
 /*
-This function is my own replacement for the strtol function from the C standard library. I didn't technically need to make this function because the functions from stdlib.h can already convert strings from bases 2 to 36 into integers. However my function is simpler because it only requires 2 arguments instead of three and it also does not handle negative numbers. Never have I needed negative integers but if I ever do I can use the standard functions or write my own in the future.
+ This function prints a string using fwrite.
+ This is the best C representation of how my Assembly programs also work/
+ It's true purpose is to be used in the putint function for conveniently printing integers, 
+ but it can print any valid string.
 */
 
-int strint(char *s)
+void putstring(const char *s)
+{
+ int c=0;
+ const char *p=s;
+ while(*p++){c++;} 
+ fwrite(s,1,c,stdout);
+}
+
+/*
+ This function uses both intstr and putstring to print an integer in the currently selected radix and width
+*/
+void putint(unsigned int i)
+{
+ putstring(intstr(i));
+}
+
+/*
+ This function is my own replacement for the strtol function from the C standard library.
+ I didn't technically need to make this function because the functions from stdlib.h can already convert strings from bases 2 to 36 into integers.
+ However my function is simpler because it only requires 2 arguments instead of three and it also does not handle negative numbers.
+ Never have I needed negative integers but if I ever do I can use the standard functions or write my own in the future.
+*/
+
+int strint(const char *s)
 {
  int i=0;
  char c;
@@ -60,20 +96,7 @@ int strint(char *s)
 }
 
 /*
-this function prints a string using fwrite
-This is the best C representation of how my Assembly programs also work/
+ Those four functions above are pretty much the entirety of chastelib.
+ While there may be extensions written for specific programs, these functions are essential for absolutely every program.
+ The only reason you would not need them is if you only output numbers in decimal or hexadecimal, because printf in C can do all that just fine.
 */
-
-void putstring(char *s)
-{
- int c=0;
- char *p=s;
- while(*p++){c++;} 
- fwrite(s,1,c,stdout);
-}
-
-void putint(unsigned int i)
-{
- putstring(intstr(i));
-}
-
