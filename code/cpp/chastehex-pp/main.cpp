@@ -3,7 +3,6 @@
 using namespace std;
 #include "chastelib.hpp"
 
-//FILE* fp; /*file pointer*/
 std::fstream f;
 char bytes[17]; /*the byte buffer for hex and text dumping*/
 int count=1; /*keeps track of how many bytes were read during each row*/
@@ -83,7 +82,6 @@ int main(int argc, char *argv[])
 
  if(argc>1)
  {
-  //fp=fopen(argv[1],"rb+");
   f.open(argv[1],ios::in|ios::out|ios::binary);
   if(!f.is_open())
   {
@@ -150,4 +148,3 @@ int main(int argc, char *argv[])
  return 0;
 }
 
-/* gcc -Wall -ansi -pedantic main.c -o chastehex */
