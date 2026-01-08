@@ -44,7 +44,33 @@ char* intstr(unsigned int i)
 }
 
 /*
-This function is my own replacement for the strtol function from the C standard library. I didn't technically need to make this function because the functions from stdlib.h can already convert strings from bases 2 to 36 into integers. However my function is simpler because it only requires 2 arguments instead of three and it also does not handle negative numbers. Never have I needed negative integers but if I ever do I can use the standard functions or write my own in the future.
+ This function prints a string using fwrite.
+ This is the best C representation of how my Assembly programs also work/
+ It's true purpose is to be used in the putint function for conveniently printing integers, 
+ but it can print any valid string.
+*/
+
+void putstring(const char *s)
+{
+ int c=0;
+ const char *p=s;
+ while(*p++){c++;} 
+ fwrite(s,1,c,stdout);
+}
+
+/*
+ This function uses both intstr and putstring to print an integer in the currently selected radix and width
+*/
+void putint(unsigned int i)
+{
+ putstring(intstr(i));
+}
+
+/*
+ This function is my own replacement for the strtol function from the C standard library.
+ I didn't technically need to make this function because the functions from stdlib.h can already convert strings from bases 2 to 36 into integers.
+ However my function is simpler because it only requires 2 arguments instead of three and it also does not handle negative numbers.
+ Never have I needed negative integers but if I ever do I can use the standard functions or write my own in the future.
 */
 
 int strint(const char *s)
@@ -70,20 +96,7 @@ int strint(const char *s)
 }
 
 /*
-this function prints a string using fwrite
-This is the best C representation of how my Assembly programs also work/
+ Those four functions above are pretty much the entirety of chastelib.
+ While there may be extensions written for specific programs, these functions are essential for absolutely every program.
+ The only reason you would not need them is if you only output numbers in decimal or hexadecimal, because printf in C can do all that just fine.
 */
-
-void putstring(const char *s)
-{
- int c=0;
- const char *p=s;
- while(*p++){c++;} 
- fwrite(s,1,c,stdout);
-}
-
-void putint(unsigned int i)
-{
- putstring(intstr(i));
-}
-
