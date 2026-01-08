@@ -44,10 +44,21 @@ char* intstr(unsigned int i)
 }
 
 /*
- This function prints a string using fwrite.
- This is the best C representation of how my Assembly programs also work/
+ This function prints a string using cout instead of fwrite.
+ This is the best C++ representation of how my Assembly programs also work/
  It's true purpose is to be used in the putint function for conveniently printing integers, 
  but it can print any valid string.
+
+ In the original C version, the putstring function was implemented with some pointer math to
+ get the length of the string and then fwrite was used:
+    fwrite(s,1,c,stdout);
+
+ Technically this entire function could have been summed up in one statement:
+    cout<<s;
+
+ But where is the fun in that? I already had the logic for determining the length of the string.
+ I also think that the new way of using << to write to cout is confusing because it is the left shift operator from C.
+ Therefore, I wrote the function the following way to rebel against this common practice.
 */
 
 void putstring(const char *s)
@@ -55,7 +66,7 @@ void putstring(const char *s)
  int c=0;
  const char *p=s;
  while(*p++){c++;} 
- fwrite(s,1,c,stdout);
+ cout.write(s,c);
 }
 
 /*
@@ -77,7 +88,7 @@ int strint(const char *s)
 {
  int i=0;
  char c;
- if( radix<2 || radix>36 ){printf("Error: radix %i is out of range!\n",radix);return i;}
+ if( radix<2 || radix>36 ){ cout << "Error: radix " << i << " is out of range!\n"; return i;}
  while( *s == ' ' || *s == '\n' || *s == '\t' ){s++;} /*skip whitespace at beginning*/
  while(*s!=0)
  {
@@ -86,8 +97,8 @@ int strint(const char *s)
   else if( c >= 'A' && c <= 'Z' ){c-='A';c+=10;}
   else if( c >= 'a' && c <= 'z' ){c-='a';c+=10;}
   else if( c == ' ' || c == '\n' || c == '\t' ){return i;}
-  else{printf("Error: %c is not an alphanumeric character!\n",c);return i;}
-  if(c>=radix){printf("Error: %c is not a valid character for radix %i\n",*s,radix);return i;}
+  else{ cout << "Error: " << c << " is not an alphanumeric character!\n";return i;}
+  if(c>=radix){ cout << "Error: " << c << " is not a valid character for radix " << radix; return i;}
   i*=radix;
   i+=c;
   s++;
