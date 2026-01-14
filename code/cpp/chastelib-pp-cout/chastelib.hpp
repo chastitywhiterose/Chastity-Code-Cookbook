@@ -98,7 +98,7 @@ int strint(const char *s)
   else if( c >= 'a' && c <= 'z' ){c-='a';c+=10;}
   else if( c == ' ' || c == '\n' || c == '\t' ){return i;}
   else{ cout << "Error: " << c << " is not an alphanumeric character!\n";return i;}
-  if(c>=radix){ cout << "Error: " << c << " is not a valid character for radix " << radix; return i;}
+  if(c>=radix){ cout << "Error: " << *s << " is not a valid character for radix " << radix << "\n"; return i;}
   i*=radix;
   i+=c;
   s++;
