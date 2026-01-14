@@ -3190,3 +3190,9 @@ Of course, some people do go on to earn lots of money with their technical skill
 But of course, money is a means to an end, not an end in itself. That is why my highest priority has been to write my books and my software with the highest quality so that people benefit from them after I am dead. If only earning money were the final goal, then I would be on a very different path instead of being a writer who works at Walmart for their only income.
 
 This chapter is only meant to help people understand where my priorities are. It also perfectly explains why I am dedicated to teaching people things like Chess and Computer programming through my books. In a hundred years, it will be more important to remember what I taught you than to agree on who or what I was. I can only imagine how Jesus must feel the same so much more about his teachings.
+
+# Chapter 12: Why are There so Many Programming Languages?
+
+In this book alone, I have briefly touched on C, Bash, JavaScript, HTML, SVG, Markdown, and even Assembly. You might be wondering why there are so many programming languages to choose from. For some people, this sends them into an analysis paralysis. Someone can be so overwhelmed by the variety of languages that they just give up and never learn to code.
+
+But I think this is a mistake. The point of having so many languages is so that each person can choose the language that works best for them. There is no objectively best programming language that works for all people, but there IS a best language for each person. To help someone choose a programming language for getting started, I recommend either C or C++ as a first language. In this chapter not only will I give you some advice for choosing between these two languages, I also will explain why one of these are a good starting choice.
