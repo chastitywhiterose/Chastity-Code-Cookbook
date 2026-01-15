@@ -8,7 +8,6 @@ int RAM_address=0;
 int RAM_view_x=16;
 int RAM_view_y=4;
 
-
 /*outputs the ASCII text to the right of the hex field*/
 void RAM_textdump(int y,int width)
 {
@@ -68,18 +67,32 @@ void RAM_hexdump()
 
 }
 
+int key=0;
+
 int main(int argc, char *argv[])
 {
- putstring(ansi_clear);
-/* putstring(ansi_home);*/
+
 
  putstring(ansi_green);
- 
 
- move_xy(RAM_view_x,RAM_view_y);
-
- RAM_hexdump();
+ while(key!=0x1B&&key!='q')
+ {
  
- move_xy(0,0);
+  putstring(ansi_clear);
+  putstring(ansi_home);
+ 
+  putchar(key);
+  putstring(" ");
+  move_xy(10,0);
+  putint(key);
+   
+  move_xy(RAM_view_x,RAM_view_y);
+
+  RAM_hexdump();
+ 
+  move_xy(0,0);
+  key=getchar();
+ }
+ 
  return 0;
 }
