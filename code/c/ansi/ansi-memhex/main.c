@@ -65,7 +65,10 @@ void RAM_hexdump()
 
 int main(int argc, char *argv[])
 {
- putstring(ansi_red);
+ putstring(ansi_clear);
+ putstring(ansi_home);
+
+ putstring(ansi_green);
 
  RAM_hexdump();
   
