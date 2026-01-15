@@ -92,6 +92,7 @@ int main(int argc, char *argv[])
  
   move_xy(0,0);
   key=getchar();
+  
  }
  
  return 0;
