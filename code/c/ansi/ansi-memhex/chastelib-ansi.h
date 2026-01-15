@@ -13,25 +13,35 @@ char ansi_home[]="\x1B[H";
 
 char ansi_move[0x100]; /*global string which will be used to build the move escape sequence*/
 
-void mov_xy(int x,int y)
+void move_xy(int x,int y)
 {
  char *si,*di;
  
  di=ansi_move;
  
- /* *di++=0x1B;*/
+ *di++=0x1B;
  *di++='[';
  
  radix=10;
  int_width=1;
  
- si=intstr(y);
- 
+ si=intstr(y+1);
  while(*si!=0)
  {
   *di++=*si++;
  }
  
+ *di++=';';
  
+ si=intstr(x+1);
+ while(*si!=0)
+ {
+  *di++=*si++;
+ }
+
+ *di++='H';
+ *di++=0;
  
+ putstring(ansi_move);
+
 }

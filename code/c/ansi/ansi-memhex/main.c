@@ -5,6 +5,9 @@
 
 char RAM[0x1000];
 int RAM_address=0;
+int RAM_view_x=16;
+int RAM_view_y=4;
+
 
 /*outputs the ASCII text to the right of the hex field*/
 void RAM_textdump(int y,int width)
@@ -57,8 +60,10 @@ void RAM_hexdump()
    x++;
   }
   RAM_textdump(y,width);
+  
   putstring("\n");
   y++;
+  move_xy(RAM_view_x,RAM_view_y+y); radix=16;
  }
 
 }
@@ -66,11 +71,15 @@ void RAM_hexdump()
 int main(int argc, char *argv[])
 {
  putstring(ansi_clear);
- putstring(ansi_home);
+/* putstring(ansi_home);*/
 
  putstring(ansi_green);
+ 
+
+ move_xy(RAM_view_x,RAM_view_y);
 
  RAM_hexdump();
-  
+ 
+ move_xy(0,0);
  return 0;
 }
