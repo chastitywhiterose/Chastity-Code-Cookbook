@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "chastelib.h"
+#include "chastelib-ansi.h"
 
 char RAM[0x1000];
 int RAM_address=0;
@@ -64,6 +65,7 @@ void RAM_hexdump()
 
 int main(int argc, char *argv[])
 {
+ putstring(ansi_red);
 
  RAM_hexdump();
   
