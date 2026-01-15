@@ -5,7 +5,32 @@
 char RAM[0x1000];
 int RAM_address=0;
 
-void print_RAM()
+/*outputs the ASCII text to the right of the hex field*/
+void RAM_textdump(int y,int width)
+{
+ int a,x=0;
+ int count=16;
+ x=count;
+ while(x<0x10)
+ {
+  putstring("   ");
+  x++;
+ }
+
+ x=0;
+ while(x<count)
+ {
+  a=RAM[RAM_address+x+y*width];
+  if( a < 0x20 || a > 0x7E ){a='.';}
+  putchar(a);
+  x++;
+ }
+/* RAM[RAM_address+y*width]=0;*/
+
+ /*putstring(bytes);*/
+}
+
+void RAM_hexdump()
 {
  int x,y;
  int width=16,height=16;
@@ -30,6 +55,7 @@ void print_RAM()
    putstring(" ");
    x++;
   }
+  RAM_textdump(y,width);
   putstring("\n");
   y++;
  }
@@ -39,7 +65,7 @@ void print_RAM()
 int main(int argc, char *argv[])
 {
 
- print_RAM();
+ RAM_hexdump();
   
  return 0;
 }
