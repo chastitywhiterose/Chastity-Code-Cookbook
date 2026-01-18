@@ -1,0 +1,86 @@
+Sections:
+00: "seg801" (801-846)
+
+
+Source: "C64_HelloWorld.asm"
+                        	     1:  ;Text after a semicolon is comments, you don't need to type it in
+                        	     2: 
+                        	     3: 	org $0801			;Header starts at address $0801
+                        	     4: 
+                        	     5: ;Init Routine. This is the basic code for command to run our program
+00:0801 0E              	     6: 	db $0E,$08,$0A,$00,$9E,$20,$28,$32,$30,$36,$34,$29,$00,$00,$00  
+00:0802 08
+00:0803 0A
+00:0804 00
+00:0805 9E
+00:0806 20
+00:0807 28
+00:0808 32
+00:0809 30
+00:080A 36
+00:080B 34
+00:080C 29
+00:080D 00
+00:080E 00
+00:080F 00
+                        	     7: 
+                        	     8: ;Program Start at $0810
+                        	     9: 
+00:0810 A90E            	    10: 	lda #$0e			;Full Charset (not just uppercase)
+00:0812 20D2FF          	    11: 	jsr $ffd2			;CHROUT - Output a character  
+                        	    12: 
+                        	    13: ;Load in the address of the Message into the zero page address $0020/21
+                        	    14: 
+00:0815 A908            	    15: 	lda #>HelloWorld	;> takes the High byte of a 16 bit address
+00:0817 8521            	    16: 	sta $21				;H Byte of string address
+00:0819 A93A            	    17: 	lda #<HelloWorld	;< takes the Low byte of a 16 bit address
+00:081B 8520            	    18: 	sta $20				;L Byte of string address
+                        	    19: 	
+00:081D 202108          	    20: 	jsr PrintStr		;Show to the screen
+00:0820 60              	    21: 	rts					;Return to basic
+                        	    22: 
+                        	    23: PrintStr:
+00:0821 A000            	    24: 	ldy #0				;Reset Y
+                        	    25: PrintStr_again:
+00:0823 B120            	    26: 	lda ($20),y			;Read in a character
+00:0825 C9FF            	    27: 	cmp #255
+00:0827 F007            	    28: 	beq PrintStr_Done	;Return if we've reached a 255
+00:0829 203108          	    29: 	jsr PrintChar		;Print to screen if not
+00:082C C8              	    30: 	iny
+00:082D 4C2308          	    31: 	jmp PrintStr_again	;repeat
+                        	    32: PrintStr_Done:
+00:0830 60              	    33: 	rts					;Return when done
+                        	    34: 	
+                        	    35: PrintChar:
+00:0831 C940            	    36: 	cmp #64				;Check if character >64 (any letter)
+00:0833 9002            	    37: 	bcc	PrintCharOKB
+00:0835 4920            	    38: 	eor #%00100000		;Convert to lower/uppercase (Swap them)
+                        	    39: PrintCharOKB:	
+00:0837 4CD2FF          	    40: 	jmp $FFD2			;CHROUT - Output a character 
+                        	    41: 	
+                        	    42: HelloWorld:				;Test string to show
+00:083A 48656C6C6F20576F	    43: 	db "Hello World"
+00:0842 726C64
+00:0845 FF              	    44: 	db 255				;End of string
+                        	    45: 	
+                        	    46: 	
+                        	    47: 	
+                        	    48: 	 
+                        	    49: 
+
+
+Symbols by name:
+HelloWorld                       A:083A
+PrintChar                        A:0831
+PrintCharOKB                     A:0837
+PrintStr                         A:0821
+PrintStr_Done                    A:0830
+PrintStr_again                   A:0823
+
+Symbols by value:
+0821 PrintStr
+0823 PrintStr_again
+0830 PrintStr_Done
+0831 PrintChar
+0837 PrintCharOKB
+083A HelloWorld
