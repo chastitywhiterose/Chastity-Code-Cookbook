@@ -41,9 +41,6 @@ void RAM_hexdump()
 {
  int x,y;
  int width=16,height=16;
- 
- RAM[0x66]=0x40;
- 
  radix=16;
  
  y=0;
@@ -90,17 +87,22 @@ int key=0;
 
 void input_operate()
 {
+ int width=16,height=16;
+ 
  if(key=='A'){byte_selected_y--;if(byte_selected_y<0){byte_selected_y=15;}}
- if(key=='B'){byte_selected_y++;if(byte_selected_y>15){byte_selected_y=0;}}
+ if(key=='B'){byte_selected_y++;if(byte_selected_y>=15){byte_selected_y=0;}}
  if(key=='C'){byte_selected_x++;if(byte_selected_x>15){byte_selected_x=0;}}
  if(key=='D'){byte_selected_x--;if(byte_selected_x<0){byte_selected_x=15;}}
+
+ if(key=='+'){RAM[byte_selected_x+byte_selected_y*width]++;}
+ if(key=='-'){RAM[byte_selected_x+byte_selected_y*width]--;}
+ 
+ 
 
 }
 
 int main(int argc, char *argv[])
 {
-
-
 
  while(/*key!=0x1B&&*/key!='q')
  {
