@@ -5,8 +5,8 @@
 
 char RAM[0x1000];
 int RAM_address=0;
-int RAM_view_x=16;
-int RAM_view_y=4;
+int RAM_view_x=0;
+int RAM_view_y=2;
 
 int byte_selected_x=0;
 int byte_selected_y=0;
@@ -60,12 +60,12 @@ void RAM_hexdump()
    if(x==byte_selected_x&&y==byte_selected_y)
    {
     text_rgb(0x00,0xFF,0x00); /*change color before next byte is printed*/
-    putint(RAM[x+y*width]); /*print this byte in the new color*/
+    putint(RAM[x+y*width]&0xFF); /*print this byte in the new color*/
     text_rgb(0xFF,0x00,0xFF); /*change it back*/
    }
    else
    {
-    putint(RAM[x+y*width]);
+    putint(RAM[x+y*width]&0xFF);
    }
  
    putstring(" ");
