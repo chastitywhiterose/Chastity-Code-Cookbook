@@ -8,6 +8,10 @@ int RAM_address=0;
 int RAM_view_x=16;
 int RAM_view_y=4;
 
+int byte_selected_x=0;
+int byte_selected_y=0;
+
+
 /*outputs the ASCII text to the right of the hex field*/
 void RAM_textdump(int y,int width)
 {
@@ -45,19 +49,34 @@ void RAM_hexdump()
  y=0;
  while(y<height)
  {
- 
+  text_rgb(0x00,0xFF,0xFF);
   int_width=8;
+  radix=16;
   putint(RAM_address+y*width);
   putstring(" ");
- 
+  text_rgb(0xFF,0x00,0xFF);
   int_width=2;
   x=0;
   while(x<width)
   {
-   putint(RAM[x+y*width]);
+  
+   if(x==byte_selected_x&&y==byte_selected_y)
+   {
+    text_rgb(0x00,0xFF,0x00); /*change color before next byte is printed*/
+    putint(RAM[x+y*width]); /*print this byte in the new color*/
+    text_rgb(0xFF,0x00,0xFF); /*change it back*/
+   }
+   else
+   {
+    putint(RAM[x+y*width]);
+   }
+ 
    putstring(" ");
+
+
    x++;
   }
+  text_rgb(0xFF,0xFF,0x00);
   RAM_textdump(y,width);
   
   putstring("\n");
@@ -69,14 +88,24 @@ void RAM_hexdump()
 
 int key=0;
 
+void input_operate()
+{
+ if(key=='A'){byte_selected_y--;if(byte_selected_y<0){byte_selected_y=15;}}
+ if(key=='B'){byte_selected_y++;if(byte_selected_y>15){byte_selected_y=0;}}
+ if(key=='C'){byte_selected_x++;if(byte_selected_x>15){byte_selected_x=0;}}
+ if(key=='D'){byte_selected_x--;if(byte_selected_x<0){byte_selected_x=15;}}
+
+}
+
 int main(int argc, char *argv[])
 {
 
 
- putstring(ansi_green);
 
- while(key!=0x1B&&key!='q')
+ while(/*key!=0x1B&&*/key!='q')
  {
+ 
+  text_rgb(0xFF,0xFF,0xFF);
  
   putstring(ansi_clear);
   putstring(ansi_home);
@@ -84,6 +113,8 @@ int main(int argc, char *argv[])
   putchar(key);
   putstring(" ");
   move_xy(10,0);
+ 
+  radix=16;
   putint(key);
    
   move_xy(RAM_view_x,RAM_view_y);
@@ -91,7 +122,8 @@ int main(int argc, char *argv[])
   RAM_hexdump();
  
   move_xy(0,0);
-  key=getchar();
+  key=getchar();  /*fread(&key,1,1,stdin);*/
+  input_operate();
   
  }
  
