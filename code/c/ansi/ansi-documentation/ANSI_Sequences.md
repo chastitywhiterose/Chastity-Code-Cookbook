@@ -15,4 +15,8 @@ In order to make an interactive program in a terminal, it is essentialy to disab
 
 `stty cbreak`
 
-Therefore
+Therefore, if this is run either before the program, or during it such as C's system function:
+
+`system("stty cbreak");`
+
+Then it is possible to make a game using only the C standard library on a Linux system. You have to handle the keys pressed by using getchar or a similar function to read from stdin, but it can be done!

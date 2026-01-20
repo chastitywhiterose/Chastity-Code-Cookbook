@@ -88,17 +88,23 @@ int key=0;
 void input_operate()
 {
  int width=16,height=16;
+ int x=byte_selected_x;
+ int y=byte_selected_y;
  
- if(key=='A'){byte_selected_y--;if(byte_selected_y<0){byte_selected_y=15;}}
- if(key=='B'){byte_selected_y++;if(byte_selected_y>=15){byte_selected_y=0;}}
- if(key=='C'){byte_selected_x++;if(byte_selected_x>15){byte_selected_x=0;}}
- if(key=='D'){byte_selected_x--;if(byte_selected_x<0){byte_selected_x=15;}}
+ if(key=='A'){y--;if(y<0){y=15;}}
+ if(key=='B'){y++;if(y>=height){y=0;}}
+ if(key=='C'){x++;if(x>=width){x=0;}}
+ if(key=='D'){x--;if(x<0){x=15;}}
 
  if(key=='+'){RAM[byte_selected_x+byte_selected_y*width]++;}
  if(key=='-'){RAM[byte_selected_x+byte_selected_y*width]--;}
  
+ /*handle hexadecimal number input*/
+ if( key >= 'a' && key <= 'f' ){key-='a';key+=10;}
  
-
+ 
+ byte_selected_x=x;
+ byte_selected_y=y;
 }
 
 /*
