@@ -99,9 +99,9 @@ void input_operate()
  if(key=='-'){RAM[x+y*width]--;}
  
  /*handle hexadecimal number input*/
- if( key >= 'a' && key <= 'f' ){c=key-'a';c+=10;}
- 
- 
+ if( key >= '0' && key <= '9' ){c=key-'0';   RAM[x+y*width]<<=4;RAM[x+y*width]|=c;}
+ if( key >= 'a' && key <= 'f' ){c=key-'a'+10;RAM[x+y*width]<<=4;RAM[x+y*width]|=c;}
+  
  byte_selected_x=x;
  byte_selected_y=y;
 }
@@ -125,18 +125,37 @@ int main(int argc, char *argv[])
 
  while(/*key!=0x1B&&*/key!='q')
  {
- 
   text_rgb(0xFF,0xFF,0xFF);
  
   putstring(ansi_clear);
   putstring(ansi_home);
  
+  /*display a character based representation of key pressed*/
   putchar(key);
-  putstring(" ");
-  move_xy(10,0);
+  
+  move_xy(16,0);
+  putstring("Hexplore : Chastity White Rose");  ;
+
+  move_xy(0,19);
+  putstring("Arrows : Select Byte");
+  move_xy(0,20);
+  putstring("0 to f : Enter Hexadecimal");
  
+  /*
+   display hexadecimal byte value of key pressed
+   some keys evaluate to the same number
+  */
+  move_xy(6,0);
   radix=16;
+  int_width=2;
   putint(key);
+ 
+  /*display x and y of selection*/
+  move_xy(57,0);
+  putstring("X=");
+  putint(byte_selected_x);
+  putstring(" Y=");
+  putint(byte_selected_y);
    
   move_xy(RAM_view_x,RAM_view_y);
 
@@ -145,8 +164,8 @@ int main(int argc, char *argv[])
   move_xy(0,0);
   key=getchar();  /*fread(&key,1,1,stdin);*/
   input_operate();
-  
  }
  
  return 0;
 }
+
