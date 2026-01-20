@@ -8,3 +8,11 @@ ANSI escape codes allow moving the cursor and changing the color of text in a Li
 My goals are very simple. I want to create a small text program involving cursor movement and some colors. Perhaps a hex editor or text editor will be good projects.
 
 However, if I have the time and skill, I would like to make a text mode game that is fun to play and is an original idea.
+
+# Correct Input
+
+In order to make an interactive program in a terminal, it is essentialy to disable line buffering so that each key can trigger an action without waiting until an entire line of text has been entered. By my research, I discovered that the magic command to do this on a Linux system is this:
+
+`stty cbreak`
+
+Therefore

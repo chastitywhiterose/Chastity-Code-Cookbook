@@ -101,17 +101,22 @@ void input_operate()
 
 }
 
-
-void buffer_change()
+/*
+ This function is only one command, but it is extemely important so I made it a separate function.
+ With this, every character pressed on the keyboard will pass the control back to the program
+ instead of waiting for a new line. This is essential for text editors and games where arrow keys move
+ the cursor or player. But remember, this only works in Linux but not Windows.
+*/
+void stty_cbreak()
 {
- setvbuf(stream, NULL, _IONBF, 0);
+ system("stty cbreak");
 }
 
 
 int main(int argc, char *argv[])
 {
 
- buffer_change();
+ stty_cbreak(); /*disable line buffering for this program*/
 
  while(/*key!=0x1B&&*/key!='q')
  {
