@@ -101,8 +101,17 @@ void input_operate()
 
 }
 
+
+void buffer_change()
+{
+ setvbuf(stream, NULL, _IONBF, 0);
+}
+
+
 int main(int argc, char *argv[])
 {
+
+ buffer_change();
 
  while(/*key!=0x1B&&*/key!='q')
  {
