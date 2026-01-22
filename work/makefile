@@ -1,8 +1,8 @@
-main-fasm-dos:
-	fasm main.asm
-main-nasm-dos:
-	nasm main.asm -o main.com
-main-fasm-linux:
-	fasm main.asm
-	chmod +x main
-	./main
+Unix_SDL:
+	gcc -Wall -ansi -pedantic main.c -o main `sdl2-config --cflags --libs` -lm && ./main
+static:
+	gcc -Wall -ansi -pedantic main.c -o main `sdl2-config --cflags --static-libs` -lm -static && ./main
+clean:
+	rm main
+clean_frames:
+	rm o/*.bmp
