@@ -9,7 +9,7 @@
 
 /*
  These two lines define a static array with a size big enough to store the digits of an integer including padding it with extra zeroes.
- The function which follows always returns a pointer to this global string and this allows other standard library functions
+ The integer conversion function always references a pointer to this global string and this allows other standard library functions
  such as printf to display the integers to standard output or even possibly to files.
 */
 
@@ -26,7 +26,7 @@ This function is one that I wrote because the standard library can display integ
 My function corrects this and in my opinion such a function should have been part of the standard library but I'm not complaining because now I have my own which I can use forever!
 */
 
-char* intstr(unsigned int i)
+char *intstr(unsigned int i)
 {
  int width=0;
  char *s=int_string+usl;
