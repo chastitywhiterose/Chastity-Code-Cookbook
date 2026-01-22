@@ -26,7 +26,7 @@ This function is one that I wrote because the standard library can display integ
 My function corrects this and in my opinion such a function should have been part of the standard library but I'm not complaining because now I have my own which I can use forever!
 */
 
-char* intstr(unsigned int i)
+char *intstr(unsigned int i)
 {
  int width=0;
  char *s=int_string+usl;
@@ -88,7 +88,7 @@ int strint(const char *s)
 {
  int i=0;
  char c;
- if( radix<2 || radix>36 ){ cout << "Error: radix " << i << " is out of range!\n"; return i;}
+ if( radix<2 || radix>36 ){ cout << "Error: radix " << i << " is out of range!\n";}
  while( *s == ' ' || *s == '\n' || *s == '\t' ){s++;} /*skip whitespace at beginning*/
  while(*s!=0)
  {
@@ -96,9 +96,9 @@ int strint(const char *s)
   if( c >= '0' && c <= '9' ){c-='0';}
   else if( c >= 'A' && c <= 'Z' ){c-='A';c+=10;}
   else if( c >= 'a' && c <= 'z' ){c-='a';c+=10;}
-  else if( c == ' ' || c == '\n' || c == '\t' ){return i;}
-  else{ cout << "Error: " << c << " is not an alphanumeric character!\n";return i;}
-  if(c>=radix){ cout << "Error: " << *s << " is not a valid character for radix " << radix << "\n"; return i;}
+  else if( c == ' ' || c == '\n' || c == '\t' ){break;}
+  else{ cout << "Error: " << c << " is not an alphanumeric character!\n";break;}
+  if(c>=radix){ cout << "Error: " << *s << " is not a valid character for radix " << radix << "\n"; break;}
   i*=radix;
   i+=c;
   s++;
