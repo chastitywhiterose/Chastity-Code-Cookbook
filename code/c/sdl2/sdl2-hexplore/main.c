@@ -7,6 +7,9 @@ This is an SDL program meant to use my LGBT library for drawing text
 #include <time.h>
 #include <SDL.h>
 
+#include "chastelib.h"
+#include "chastebuf.h"
+
 /*
 most variables in the program are global. Unless I create temporary variables in other functions.
 */
@@ -27,6 +30,7 @@ int seconds,minutes,hours; /*to keep track of time*/
 int sdl_time,sdl_time1;
 
 #include "sdl_lgbt_format-lite.h"
+#include "sdl_hexplore.h"
 
 int main(int argc, char **argv)
 {
@@ -49,7 +53,7 @@ int main(int argc, char **argv)
 
 
 
- lgbt_demo();
+ hexplore();
 
  SDL_DestroyRenderer(renderer);
  SDL_DestroyWindow(window);
