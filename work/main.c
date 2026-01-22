@@ -27,6 +27,7 @@ int seconds,minutes,hours; /*to keep track of time*/
 int sdl_time,sdl_time1;
 
 #include "sdl_lgbt_format-lite.h"
+#include "sdl_hexsplore.h"
 
 int main(int argc, char **argv)
 {
