@@ -15,6 +15,7 @@ void bufcat(char *s)
  {
   *bp++=*s++;
  }
+ *bp=0;
 }
 
 /*
@@ -25,6 +26,7 @@ void bufput()
 {
  fwrite(buffer,1,bp-buffer,stdout);
  bp=buffer;
+ *bp=0;
 }
 
 /*
@@ -34,3 +36,4 @@ void bufchar(char c)
 {
  *bp++=c;
 }
+
