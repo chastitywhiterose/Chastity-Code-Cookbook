@@ -6,17 +6,78 @@ int RAM_view_y=2;
 int byte_selected_x=0;
 int byte_selected_y=0;
 
+
+/*outputs the ASCII text to the right of the hex field*/
+void std_RAM_textdump(int y,int width)
+{
+ int a,x=0;
+ int count=16;
+ x=count;
+ while(x<0x10)
+ {
+  putstring("   ");
+  x++;
+ }
+
+ x=0;
+ while(x<count)
+ {
+  a=RAM[RAM_address+x+y*width];
+  if( a < 0x20 || a > 0x7E ){a='.';}
+  putchar(a);
+  x++;
+ }
+
+}
+
+/*
+prints the current page of RAM to the terminal
+this lets me know if things are working as expected
+*/
+void std_RAM_hexdump()
+{
+ int x,y;
+ int width=16,height=16;
+ radix=16;
+ 
+ y=0;
+ while(y<height)
+ {
+  int_width=8;
+  radix=16;
+  putint(RAM_address+y*width);
+  putstring(" ");
+  int_width=2;
+  x=0;
+  while(x<width)
+  {
+   putint(RAM[x+y*width]&0xFF);
+   putstring(" ");
+
+   x++;
+  }
+
+  std_RAM_textdump(y,width);
+  
+  putstring("\n");
+  y++;
+ }
+
+}
+
+
+
 /*
 this function is really the entire game. It calls other functions as needed to render everything.
 */
 void hexplore()
 {
-
  int scale=8;
  int text_x=width*1/6;
+ 
+ std_RAM_hexdump(); /*dump the RAM to terminal once just for testing*/
 
  delay=1000/fps;
-
  loop=1;
  while(loop)
  {
@@ -27,7 +88,7 @@ void hexplore()
   SDL_RenderClear(renderer);
 
   main_color=0x00FFFF;
-  scale=16;
+  scale=8;
   lgbt_draw_text("Hexplore",text_x,main_lgbt.height*1*scale,scale);
 
   main_color=0xFFFF00;
