@@ -28,7 +28,7 @@ void hexplore()
 
   main_color=0x00FFFF;
   scale=16;
-  lgbt_draw_text("LGBT",text_x,main_lgbt.height*1*scale,scale);
+  lgbt_draw_text("Hexplore",text_x,main_lgbt.height*1*scale,scale);
 
   main_color=0xFFFF00;
   scale=8;
