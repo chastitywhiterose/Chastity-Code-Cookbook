@@ -114,7 +114,7 @@ void input_operate()
 */
 void stty_cbreak()
 {
- system("stty raw");
+ system("stty cbreak");
 }
 
 

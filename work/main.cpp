@@ -31,7 +31,7 @@ class integer
 
  void println()
  {
-  cout << i << endl;
+  cout << i << '\n';
  }
 
 
