@@ -165,7 +165,7 @@ void hexplore()
   lgbt_draw_text("Hexplore",text_x,0x10,scale);
 
   /*print hex dump of current page in real time*/
-  main_color=0xFFFF00;
+  main_color=0xFF00FF;
   scale=2;
 
   sdl_RAM_hexdump(); /*send hexdump to buffer*/
@@ -178,7 +178,7 @@ void hexplore()
   
   /*print information about the program*/
   
-  main_color=0xFF00FF;
+  main_color=0xFFFF00;
   scale=2;
 
   bufcat("This program is the start of a game, but what kind of game?");
