@@ -13,7 +13,7 @@ using namespace std;
 
 class integer
 {
- static int id; //the number that idenfifies the order in which this object was created*/
+ static int id; //the number that idenfifies the order in which this object was created
 
  public:
 
@@ -71,3 +71,4 @@ int main(int argc, char *argv[])
 
  return 0;
 }
+
