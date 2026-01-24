@@ -56,8 +56,6 @@ class integer
 
 int integer::id=0; //this is where the starting value for the static integer is declared
 
-
-
 int main(int argc, char *argv[])
 {
  integer a,b;
@@ -65,10 +63,10 @@ int main(int argc, char *argv[])
  a.set(1);
  b.set(256);
 
- while(a.i<b.i)
+ while(a.i<b.i && a.i>0)
  {
   a.println();
-  a.mul(3);
+  a.mul(2);
  }
 
  return 0;
