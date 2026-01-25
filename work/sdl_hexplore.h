@@ -137,7 +137,51 @@ void sdl_RAM_hexdump()
 
 
 
+/*this function is an SDL port of the keyboard function from the Raylib version of Chaste Tris*/
+void keyboard()
+{
+ int key;
+ int width=16,height=16;
+ int x=byte_selected_x;
+ int y=byte_selected_y;
 
+  if( e.type == SDL_QUIT ){loop=0; printf("X clicked! This program will close!\n");}
+  if (e.type == SDL_KEYDOWN && e.key.repeat==0)
+  {
+
+
+   key=e.key.keysym.sym;
+
+   switch(key)
+   {
+    case SDLK_ESCAPE:
+     loop=0;
+    break;
+
+    case SDLK_q:
+     loop=0;
+    break;
+   
+    /*the main 4 directions*/
+    case SDLK_UP:
+     y--;if(y<0){y=15;}
+    break;
+    case SDLK_DOWN:
+     y++;if(y>=height){y=0;}
+    break;
+    case SDLK_LEFT:
+     x--;if(x<0){x=15;}
+    break;
+    case SDLK_RIGHT:
+     x++;if(x>=width){x=0;}
+    break;
+    
+   
+   }
+
+  }
+
+}
 
 
 
@@ -183,7 +227,11 @@ void hexplore()
   
  /*RAM[0]++;
   RAM[4]--;*/
-
+  
+  main_color=0x00FF00;
+  bufcat(intstr(RAM[byte_selected_x+byte_selected_y*width]&0xFF));
+ 
+  bp=buffer;
   
   /*print information about the program*/
   
@@ -207,11 +255,7 @@ void hexplore()
   /*test for events and only process if they exist*/
   while(SDL_PollEvent(&e))
   {
-   if(e.type == SDL_QUIT){loop=0;}
-   if(e.type == SDL_KEYUP)
-   {
-    if(e.key.keysym.sym==SDLK_ESCAPE){loop=0;}
-   }
+   keyboard();
   }
   
  }
