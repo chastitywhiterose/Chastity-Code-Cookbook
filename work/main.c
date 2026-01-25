@@ -139,9 +139,37 @@ void stty_cbreak()
  system("stty cbreak");
 }
 
+FILE* fp; /*file pointer*/
+int count=0; /*keeps track of how many bytes were last read from file*/
 
 int main(int argc, char *argv[])
 {
+
+ if(argc==1)
+ {
+  putstring
+  (
+   "Welcome to Hexplore! The tool for exploring a file in hexadecimal!\n\n"
+   "Enter a filename as an argument to this program to read from it.\n"
+   "You will then see an interface where you can modify the bytes of the file\n"
+  );
+  return 0;
+ }
+
+ if(argc>1)
+ {
+  fp=fopen(argv[1],"rb+");
+  if(fp==NULL)
+  {
+   printf("File \"%s\" cannot be opened.\n",argv[1]);
+   return 1;
+  }
+  else
+  {
+   putstring(argv[1]);
+   putstring("\n");
+  }
+ }
 
  stty_cbreak(); /*disable line buffering for this program*/
 
@@ -196,6 +224,8 @@ int main(int argc, char *argv[])
   key=getchar();  /*fread(&key,1,1,stdin);*/
   input_operate();
  }
+ 
+ fclose(fp);
  
  return 0;
 }
