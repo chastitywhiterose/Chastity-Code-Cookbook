@@ -4,6 +4,11 @@
 #include "chastebuf.h"
 #include "chastelib-ansi.h"
 
+FILE* fp; /*file pointer*/
+int file_address=0;
+int count=0; /*keeps track of how many bytes were last read from file*/
+int eof_char='?'; /*character used by this program to show user the end of file is reached*/
+
 char RAM[0x1000];
 int RAM_address=0;
 int RAM_view_x=0;
@@ -48,7 +53,7 @@ void RAM_hexdump()
   text_rgb(0x00,0xFF,0xFF);
   int_width=8;
   radix=16;
-  putint(RAM_address+y*width);
+  putint(RAM_address+file_address+y*width);
   putstring(" ");
   text_rgb(0xFF,0x00,0xFF);
   int_width=2;
@@ -105,17 +110,46 @@ void input_operate()
   key1=getchar();
   key2=getchar();
   
-  /*
-  RAM[0x80]=key;
+  
+  /*RAM[0x80]=key;
   RAM[0x81]=key1;
-  RAM[0x82]=key2;
-  */
+  RAM[0x82]=key2;*/
+  
  }
  
  if(key2=='A'){y--;if(y<0){y=15;}}
  if(key2=='B'){y++;if(y>=height){y=0;}}
  if(key2=='C'){x++;if(x>=width){x=0;}}
  if(key2=='D'){x--;if(x<0){x=15;}}
+
+
+ if(key2==0x35)
+ {
+  if(file_address!=0)
+  {
+   /*before changing page, save the modified bytes from this page back to the file*/
+   fseek(fp,file_address,SEEK_SET);
+   fwrite(RAM,1,count,fp);
+   /*change page and read from the correct file position*/
+   file_address-=0x100;
+   fseek(fp,file_address,SEEK_SET);
+   count=fread(RAM,1,0x100,fp);
+   c=count;while(c<0x100){RAM[c]=eof_char;c++;}
+  }
+ }
+
+ 
+ if(key2==0x36)
+ {
+  /*before changing page, save the modified bytes from this page back to the file*/
+  fseek(fp,file_address,SEEK_SET);
+  fwrite(RAM,1,count,fp);
+  /*change page and read from the correct file position*/
+  file_address+=0x100;
+  fseek(fp,file_address,SEEK_SET);
+  count=fread(RAM,1,0x100,fp);
+  c=count;while(c<0x100){RAM[c]=eof_char;c++;}
+ }
 
  if(key=='+'){RAM[x+y*width]++;}
  if(key=='-'){RAM[x+y*width]--;}
@@ -140,12 +174,49 @@ void stty_cbreak()
 }
 
 
+
 int main(int argc, char *argv[])
 {
+ int c; /*used to index the RAM sometimes*/
+
+ if(argc==1)
+ {
+  putstring
+  (
+   "Welcome to Hexplore! The tool for exploring a file in hexadecimal!\n\n"
+   "Enter a filename as an argument to this program to read from it.\n"
+   "You will then see an interface where you can modify the bytes of the file\n"
+  );
+  return 0;
+ }
+
+ if(argc>1)
+ {
+  fp=fopen(argv[1],"rb+");
+  if(fp==NULL)
+  {
+   printf("File \"%s\" cannot be opened.\n",argv[1]);
+   return 1;
+  }
+  else
+  {
+   putstring(argv[1]);
+   putstring("\n");
+  }
+ }
+ 
+ /*
+ if we reach this point, the file was opened and we turn off line buffering
+ we will then attempt to read from the file
+ */
 
  stty_cbreak(); /*disable line buffering for this program*/
+ 
+ /*attempt to read 256 bytes for the first page*/
+ count=fread(RAM,1,0x100,fp);
+ c=count;while(c<0x100){RAM[c]=eof_char;c++;}
 
- while(/*key!=0x1B&&*/key!='q')
+ while(key!='q')
  {
   text_rgb(0xFF,0xFF,0xFF);
  
@@ -175,12 +246,14 @@ int main(int argc, char *argv[])
   putstring("Hexplore : Chastity White Rose");  ;
 
   move_xy(0,19);
-  putstring("Arrows : Select Byte");
+  putstring("Arrows: Select Byte");
   move_xy(0,20);
-  putstring("0 to f : Enter Hexadecimal");
- 
+  putstring("0 to f: Enter Hexadecimal");
+  move_xy(60,19);
+  putstring("q: quit");
+  move_xy(27,20);
+  putstring("page up/down: navigate file");
 
- 
   /*display x and y of selection*/
   move_xy(57,0);
   putstring("X=");
@@ -196,6 +269,16 @@ int main(int argc, char *argv[])
   key=getchar();  /*fread(&key,1,1,stdin);*/
   input_operate();
  }
+ 
+ /*
+  before closing the file and ending the program, we must write the modified bytes to the file
+  However, we only write (count) bytes to the file so that we don't accidentally add the full
+  256 bytes of the current hex page if they were not in the original file
+ */
+ fseek(fp,file_address,SEEK_SET); /*seek back to the file address for this page*/
+ fwrite(RAM,1,count,fp); /*write count bytes back into the original location they were read from*/
+ 
+ fclose(fp);
  
  return 0;
 }

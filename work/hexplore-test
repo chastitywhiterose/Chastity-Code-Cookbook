@@ -1,0 +1,39 @@
+Hello World!   
+I am Chastity  
+This file is   
+used to test   
+Hexplore       
+The terminal   
+hex editor     
+Unlike other   
+hex editors    
+this one does  
+not use the    
+ncurses or     
+any external   
+dependencies!  
+               
+Everything is  
+done using     
+ANSI escape    
+sequences for  
+Linux terminals
+               
+Bytes can be   
+modified that  
+were not part  
+of the original
+file but they  
+will be ignored
+               
+This program is
+Free and Open
+Source Software
+but is very new
+and may have   
+errors! Use it
+at your own
+risk!          
+               
+May the source
+be with you!   
