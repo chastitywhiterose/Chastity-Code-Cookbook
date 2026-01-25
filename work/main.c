@@ -170,8 +170,16 @@ int main(int argc, char *argv[])
    putstring("\n");
   }
  }
+ 
+ /*
+ if we reach this point, the file was opened and we turn off line buffering
+ we will then attempt to read from the file
+ */
 
  stty_cbreak(); /*disable line buffering for this program*/
+ 
+ /*attempt to read 256 bytes for the first page*/
+ count=fread(RAM,1,0x100,fp);
 
  while(/*key!=0x1B&&*/key!='q')
  {
