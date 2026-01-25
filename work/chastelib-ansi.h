@@ -20,7 +20,6 @@ char ansi_clear[]="\x1B[2J";
 
 char ansi_home[]="\x1B[H";
 
-
 int temp_radix;
 int temp_width;
 
@@ -39,22 +38,12 @@ void load_radix()
 
 char ansi_string[0x100]; /*global string which will be used to build the move escape sequence*/
 
+/*a function to set the text to any color I want!*/
+
 void text_rgb(int r,int g,int b)
 {
- char *si,*di;
  save_radix();
 
- 
- di=ansi_string;
- 
- *di++=0x1B;
- *di++='[';
- *di++='3';
- *di++='8';
- *di++=';';
- *di++='2';
- *di++=';';
- 
  bufcat("\x1B[38;2;");
  
  radix=10;
@@ -74,43 +63,23 @@ void text_rgb(int r,int g,int b)
  load_radix();
 }
 
-
-
-
-
+/*a function to move the cursor wherever I want with escape sequences*/
 
 void move_xy(int x,int y)
 {
- char *si,*di;
  save_radix();
-
  
- di=ansi_string;
- 
- *di++=0x1B;
- *di++='[';
+ bufcat("\x1B[");
  
  radix=10;
  int_width=1;
  
- si=intstr(y+1);
- while(*si!=0)
- {
-  *di++=*si++;
- }
+ bufcat(intstr(y+1));
+ bufchar(';');
  
- *di++=';';
+ bufcat(intstr(x+1));
+ bufchar('H');
  
- si=intstr(x+1);
- while(*si!=0)
- {
-  *di++=*si++;
- }
-
- *di++='H';
- *di++=0;
- 
-  putstring(ansi_string);
-  load_radix();
-
- }
+ bufput(); 
+ load_radix();
+}
