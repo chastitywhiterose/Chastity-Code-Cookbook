@@ -20,3 +20,7 @@ Therefore, if this is run either before the program, or during it such as C's sy
 `system("stty cbreak");`
 
 Then it is possible to make a game using only the C standard library on a Linux system. You have to handle the keys pressed by using getchar or a similar function to read from stdin, but it can be done!
+
+# Other Resources
+
+https://shtrom.ssji.net/skb/getc.html
