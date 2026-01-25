@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "chastelib.h"
+#include "chastebuf.h"
 #include "chastelib-ansi.h"
 
 char RAM[0x1000];
@@ -81,7 +82,7 @@ void RAM_hexdump()
 
 }
 
-int key=0;
+int key=0,key1,key2;
 
 void input_operate()
 {
@@ -89,11 +90,32 @@ void input_operate()
  int x=byte_selected_x;
  int y=byte_selected_y;
  int c; /*character used for some operations*/
+
+ /*these secondary keys are used for control characters such as arrow keys*/
+ key1=0;
+ key2=0;
+
+ /*
+  when a special key such as an arrow key is pressed, it actually sends an escape sequence which is really hard to debug by conventional means
+  We have to use getchar immediately to get these characters and branch according to what they are
+  so that we can process them and they won't be mistaken as other characters
+ */ 
+ if(key==0x1B)
+ {
+  key1=getchar();
+  key2=getchar();
+  
+  /*
+  RAM[0x80]=key;
+  RAM[0x81]=key1;
+  RAM[0x82]=key2;
+  */
+ }
  
- if(key=='A'){y--;if(y<0){y=15;}}
- if(key=='B'){y++;if(y>=height){y=0;}}
- if(key=='C'){x++;if(x>=width){x=0;}}
- if(key=='D'){x--;if(x<0){x=15;}}
+ if(key2=='A'){y--;if(y<0){y=15;}}
+ if(key2=='B'){y++;if(y>=height){y=0;}}
+ if(key2=='C'){x++;if(x>=width){x=0;}}
+ if(key2=='D'){x--;if(x<0){x=15;}}
 
  if(key=='+'){RAM[x+y*width]++;}
  if(key=='-'){RAM[x+y*width]--;}
@@ -130,8 +152,24 @@ int main(int argc, char *argv[])
   putstring(ansi_clear);
   putstring(ansi_home);
  
+  
+  /*
+   display hexadecimal byte value of key pressed
+   some keys evaluate to the same number
+  */
+  move_xy(0,0);
+  radix=16;
+  int_width=2;
+  putint(key);
+  putstring(" ");
+  putint(key1);
+  putstring(" ");
+  putint(key2);
+  
   /*display a character based representation of key pressed*/
+  move_xy(9,0);
   putchar(key);
+
   
   move_xy(16,0);
   putstring("Hexplore : Chastity White Rose");  ;
@@ -141,14 +179,7 @@ int main(int argc, char *argv[])
   move_xy(0,20);
   putstring("0 to f : Enter Hexadecimal");
  
-  /*
-   display hexadecimal byte value of key pressed
-   some keys evaluate to the same number
-  */
-  move_xy(6,0);
-  radix=16;
-  int_width=2;
-  putint(key);
+
  
   /*display x and y of selection*/
   move_xy(57,0);
