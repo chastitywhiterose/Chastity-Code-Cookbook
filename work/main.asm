@@ -7,6 +7,21 @@ main:
 mov eax,main_string
 call putstring
 
+file_1_read_one_byte:
+;read only 1 byte using Win32 ReadFile system call.
+push 0           ;Optional Overlapped Structure 
+push keys_read  ;Store Number of Bytes Read from this call
+push 1           ;Number of bytes to read
+push key       ;address to store bytes
+
+;push [filedesc1] ;handle of the open file
+
+push -10            ;STD_INPUT_HANDLE = Negative Ten
+call [GetStdHandle] ;use the above handle
+push eax            ;eax is return value of previous function
+
+call [ReadFile]
+
 mov [radix],16 ; can choose radix for integer output!
 mov [int_width],1
 mov [int_newline],0
@@ -56,4 +71,8 @@ call [ExitProcess]
 ;A string to test if output works
 main_string db 'This program is the official test suite for the Windows Assembly version of chastelib.',0Ah,0
 ;test string of integer for input
-input_string_int db '100',0
+input_string_int db '10',0
+
+keys_read dd 0
+key db 0
+
