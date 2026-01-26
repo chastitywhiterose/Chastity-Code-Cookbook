@@ -135,12 +135,12 @@ void sdl_RAM_hexdump()
 
 }
 
-
+ int key=0;
 
 /*this function is an SDL port of the keyboard function from the Raylib version of Chaste Tris*/
 void keyboard()
 {
- int key;
+
  int width=16,height=16;
  int x=byte_selected_x;
  int y=byte_selected_y;
@@ -181,6 +181,8 @@ void keyboard()
 
   }
 
+ byte_selected_x=x;
+ byte_selected_y=y;
 }
 
 
@@ -227,11 +229,23 @@ void hexplore()
   
  /*RAM[0]++;
   RAM[4]--;*/
-  
-  main_color=0x00FF00;
-  bufcat(intstr(RAM[byte_selected_x+byte_selected_y*width]&0xFF));
  
+  /*display the selected byte in green so we can see it*/ 
+  main_color=0x00FF00;
+  
+  bufcat(intstr(RAM[byte_selected_x+byte_selected_y*16]&0xFF));
+  lgbt_draw_text(buffer,(0x10+(9*8*scale))+byte_selected_x*3*8*scale,0x80+(byte_selected_y*8*scale),scale);
   bp=buffer;
+
+  bufcat("X=");  
+  bufcat(intstr(byte_selected_x));
+  bufcat(" Y=");  
+  bufcat(intstr(byte_selected_y));
+  bufcat(" K=");  
+  bufcat(intstr(key));
+  lgbt_draw_text(buffer,8*scale,0x60,scale);
+  bp=buffer;
+
   
   /*print information about the program*/
   
@@ -241,7 +255,7 @@ void hexplore()
   bufcat("This program is the start of a game, but what kind of game?");
   lgbt_draw_text(buffer,0x10,0x190,scale);
   bp=buffer;
-
+  
   
  
   SDL_RenderPresent(renderer);
