@@ -1,3 +1,8 @@
+FILE* fp; /*file pointer*/
+int file_address=0;
+int count=0; /*keeps track of how many bytes were last read from file*/
+int eof_char='?'; /*character used by this program to show user the end of file is reached*/
+
 char RAM[0x10000];
 int RAM_address=0;
 int RAM_view_x=0;
@@ -110,7 +115,7 @@ void sdl_RAM_hexdump()
  {
   int_width=8;
   radix=16;
-  bufcat(intstr(RAM_address+y*width));
+  bufcat(intstr(RAM_address+file_address+y*width));
   bufcat(" ");
   int_width=2;
   x=0;
@@ -130,9 +135,94 @@ void sdl_RAM_hexdump()
 
 }
 
+ int key=0;
+
+/*this function is an SDL port of the keyboard function from the Raylib version of Chaste Tris*/
+void keyboard()
+{
+ int i;
+ int width=16,height=16;
+ int x=byte_selected_x;
+ int y=byte_selected_y;
+
+  if( e.type == SDL_QUIT ){loop=0; printf("X clicked! This program will close!\n");}
+  if (e.type == SDL_KEYDOWN && e.key.repeat==0)
+  {
 
 
+   key=e.key.keysym.sym;
 
+   switch(key)
+   {
+    case SDLK_ESCAPE:
+     loop=0;
+    break;
+
+    case SDLK_q:
+     loop=0;
+    break;
+   
+    /*the main 4 directions*/
+    case SDLK_UP:
+     y--;if(y<0){y=15;}
+    break;
+    case SDLK_DOWN:
+     y++;if(y>=height){y=0;}
+    break;
+    case SDLK_LEFT:
+     x--;if(x<0){x=15;}
+    break;
+    case SDLK_RIGHT:
+     x++;if(x>=width){x=0;}
+    break;
+    
+    /*change page*/
+    case SDLK_PAGEUP:
+     if(file_address!=0)
+     {
+      /*before changing page, save the modified bytes from this page back to the file*/
+      fseek(fp,file_address,SEEK_SET);
+      fwrite(RAM,1,count,fp);
+      /*change page and read from the correct file position*/
+      file_address-=0x100;
+      fseek(fp,file_address,SEEK_SET);
+      count=fread(RAM,1,0x100,fp);
+      i=count;while(i<0x100){RAM[i]=eof_char;i++;}
+     }
+    break;
+    case SDLK_PAGEDOWN:
+     /*before changing page, save the modified bytes from this page back to the file*/
+     fseek(fp,file_address,SEEK_SET);
+     fwrite(RAM,1,count,fp);
+     /*change page and read from the correct file position*/
+     file_address+=0x100;
+     fseek(fp,file_address,SEEK_SET);
+     count=fread(RAM,1,0x100,fp);
+      i=count;while(i<0x100){RAM[i]=eof_char;i++;}
+    break;
+    
+    case SDLK_MINUS:
+    case SDLK_KP_MINUS:
+     RAM[x+y*width]--;
+    break;
+    case SDLK_PLUS:
+    case SDLK_KP_PLUS:
+     RAM[x+y*width]++;
+    break;
+    
+    default:
+ 
+    /*handle hexadecimal number input*/
+    if( key >= '0' && key <= '9' ){i=key-'0';   RAM[x+y*width]<<=4;RAM[x+y*width]|=i;}
+    if( key >= 'a' && key <= 'f' ){i=key-'a'+10;RAM[x+y*width]<<=4;RAM[x+y*width]|=i;}
+   
+   }
+
+  }
+
+ byte_selected_x=x;
+ byte_selected_y=y;
+}
 
 
 
@@ -145,9 +235,13 @@ void hexplore()
 {
  int scale=8;
  int text_x=width*1/6;
+ int i; /*used to index the RAM sometimes*/
+ 
+ /*attempt to read 256 bytes for the first page*/
+ count=fread(RAM,1,0x100,fp);
+ i=count;while(i<0x100){RAM[i]=eof_char;i++;}
  
  std_RAM_hexdump(); /*dump the RAM to terminal once just for testing*/
-
 
  delay=1000/fps;
  loop=1;
@@ -172,8 +266,24 @@ void hexplore()
   lgbt_draw_text(buffer,0x10,0x80,scale);
   bp=buffer;
   
-  RAM[0]++;
-  RAM[4]--;
+ /*RAM[0]++;
+  RAM[4]--;*/
+ 
+  /*display the selected byte in green so we can see it*/ 
+  main_color=0x00FF00;
+  
+  bufcat(intstr(RAM[byte_selected_x+byte_selected_y*16]&0xFF));
+  lgbt_draw_text(buffer,(0x10+(9*8*scale))+byte_selected_x*3*8*scale,0x80+(byte_selected_y*8*scale),scale);
+  bp=buffer;
+
+  bufcat("X=");  
+  bufcat(intstr(byte_selected_x));
+  bufcat(" Y=");  
+  bufcat(intstr(byte_selected_y));
+  bufcat(" K=");  
+  bufcat(intstr(key));
+  lgbt_draw_text(buffer,8*scale,0x60,scale);
+  bp=buffer;
 
   
   /*print information about the program*/
@@ -184,7 +294,7 @@ void hexplore()
   bufcat("This program is the start of a game, but what kind of game?");
   lgbt_draw_text(buffer,0x10,0x190,scale);
   bp=buffer;
-
+  
   
  
   SDL_RenderPresent(renderer);
@@ -198,11 +308,7 @@ void hexplore()
   /*test for events and only process if they exist*/
   while(SDL_PollEvent(&e))
   {
-   if(e.type == SDL_QUIT){loop=0;}
-   if(e.type == SDL_KEYUP)
-   {
-    if(e.key.keysym.sym==SDLK_ESCAPE){loop=0;}
-   }
+   keyboard();
   }
   
  }

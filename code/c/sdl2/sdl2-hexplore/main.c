@@ -34,6 +34,34 @@ int sdl_time,sdl_time1;
 
 int main(int argc, char **argv)
 {
+
+ if(argc==1)
+ {
+  putstring
+  (
+   "Welcome to Hexplore! The tool for exploring a file in hexadecimal!\n\n"
+   "Enter a filename as an argument to this program to read from it.\n"
+   "You will then see an interface where you can modify the bytes of the file\n"
+  );
+  return 0;
+ }
+
+ if(argc>1)
+ {
+  fp=fopen(argv[1],"rb+");
+  if(fp==NULL)
+  {
+   printf("File \"%s\" cannot be opened.\n",argv[1]);
+   return 1;
+  }
+  else
+  {
+   putstring(argv[1]);
+   putstring("\n");
+  }
+ }
+
+
  if(SDL_Init(SDL_INIT_VIDEO)){printf( "SDL could not initialize! SDL_Error: %s\n",SDL_GetError());return -1;}
  window=SDL_CreateWindow( "LGBT",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,width,height,Window_Flags);
  if(window==NULL){printf( "Window could not be created! SDL_Error: %s\n", SDL_GetError() );return -1;}
@@ -54,6 +82,16 @@ int main(int argc, char **argv)
 
 
  hexplore();
+ 
+ /*
+  before closing the file and ending the program, we must write the modified bytes to the file
+  However, we only write (count) bytes to the file so that we don't accidentally add the full
+  256 bytes of the current hex page if they were not in the original file
+ */
+ fseek(fp,file_address,SEEK_SET); /*seek back to the file address for this page*/
+ fwrite(RAM,1,count,fp); /*write count bytes back into the original location they were read from*/
+ 
+ fclose(fp);
 
  SDL_DestroyRenderer(renderer);
  SDL_DestroyWindow(window);

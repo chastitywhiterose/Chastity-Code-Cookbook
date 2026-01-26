@@ -115,7 +115,7 @@ void sdl_RAM_hexdump()
  {
   int_width=8;
   radix=16;
-  bufcat(intstr(RAM_address+y*width));
+  bufcat(intstr(RAM_address+file_address+y*width));
   bufcat(" ");
   int_width=2;
   x=0;
@@ -140,7 +140,7 @@ void sdl_RAM_hexdump()
 /*this function is an SDL port of the keyboard function from the Raylib version of Chaste Tris*/
 void keyboard()
 {
-
+ int i;
  int width=16,height=16;
  int x=byte_selected_x;
  int y=byte_selected_y;
@@ -187,7 +187,7 @@ void keyboard()
       file_address-=0x100;
       fseek(fp,file_address,SEEK_SET);
       count=fread(RAM,1,0x100,fp);
-      c=count;while(c<0x100){RAM[c]=eof_char;c++;}
+      i=count;while(i<0x100){RAM[i]=eof_char;i++;}
      }
     break;
     case SDLK_PAGEDOWN:
@@ -198,17 +198,23 @@ void keyboard()
      file_address+=0x100;
      fseek(fp,file_address,SEEK_SET);
      count=fread(RAM,1,0x100,fp);
-     c=count;while(c<0x100){RAM[c]=eof_char;c++;}
+      i=count;while(i<0x100){RAM[i]=eof_char;i++;}
+    break;
+    
+    case SDLK_MINUS:
+    case SDLK_KP_MINUS:
+     RAM[x+y*width]--;
+    break;
+    case SDLK_PLUS:
+    case SDLK_KP_PLUS:
+     RAM[x+y*width]++;
     break;
     
     default:
-    
-    if(key=='+'){RAM[x+y*width]++;}
-    if(key=='-'){RAM[x+y*width]--;}
  
     /*handle hexadecimal number input*/
-    if( key >= '0' && key <= '9' ){c=key-'0';   RAM[x+y*width]<<=4;RAM[x+y*width]|=c;}
-    if( key >= 'a' && key <= 'f' ){c=key-'a'+10;RAM[x+y*width]<<=4;RAM[x+y*width]|=c;}
+    if( key >= '0' && key <= '9' ){i=key-'0';   RAM[x+y*width]<<=4;RAM[x+y*width]|=i;}
+    if( key >= 'a' && key <= 'f' ){i=key-'a'+10;RAM[x+y*width]<<=4;RAM[x+y*width]|=i;}
    
    }
 
