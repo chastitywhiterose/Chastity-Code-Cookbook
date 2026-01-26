@@ -24,7 +24,7 @@ SDL_Rect rect;
 
 int rect_color;
 
-int frame=0,lastframe=0,fps=3,delay,framelimit=1; /*only used for animation demos*/
+int frame=0,lastframe=0,fps=30,delay,framelimit=1; /*only used for animation demos*/
 time_t time0,time1;
 int seconds,minutes,hours; /*to keep track of time*/
 int sdl_time,sdl_time1;
