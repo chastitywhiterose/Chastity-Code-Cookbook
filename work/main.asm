@@ -7,7 +7,15 @@ main:
 mov eax,main_string
 call putstring
 
-file_1_read_one_byte:
+fix_stdin:
+push 0 ; mode zero, no console mode selected
+push -10            ;STD_INPUT_HANDLE = Negative Ten
+call [GetStdHandle] ;use the above handle
+push eax            ;eax is return value of previous function
+call [SetConsoleMode]
+
+
+getchar:
 ;read only 1 byte using Win32 ReadFile system call.
 push 0           ;Optional Overlapped Structure 
 push keys_read  ;Store Number of Bytes Read from this call
