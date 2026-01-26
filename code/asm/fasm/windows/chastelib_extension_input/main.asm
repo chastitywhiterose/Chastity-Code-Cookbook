@@ -29,9 +29,7 @@ call [ExitProcess]
 .end main
 
 ;A string to test if output works
-main_string db 'This program is the official test suite for the Windows Assembly version of chastelib.',0Ah,0
-;test string of integer for input
-input_string_int db '10',0
+main_string db 'This program reads from the keyboard until you press q.',0Ah,0
 
 ;this function disables line buffering in the terminal on windows
 fix_stdin:
