@@ -1,4 +1,4 @@
-This program is the official test suite for the C version of chastelib.
+This program is the official test suite for the Windows Assembly version of chastelib.
 00000000 00 000
 00000001 01 001
 00000010 02 002

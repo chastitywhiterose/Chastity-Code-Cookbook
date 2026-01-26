@@ -225,3 +225,15 @@ call putstring
 pop eax
 ret
 
+;a function for printing a single character that is the value of al
+
+char: db 0,0
+
+putchar:
+push eax
+mov [char],al
+mov eax,char
+call putstring
+pop eax
+ret
+

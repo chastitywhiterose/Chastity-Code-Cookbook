@@ -231,6 +231,7 @@ char: db 0,0
 
 putchar:
 push eax
+mov [char],al
 mov eax,char
 call putstring
 pop eax
