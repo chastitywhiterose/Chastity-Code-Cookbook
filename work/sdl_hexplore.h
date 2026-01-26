@@ -176,6 +176,39 @@ void keyboard()
      x++;if(x>=width){x=0;}
     break;
     
+    /*change page*/
+    case SDLK_PAGEUP:
+     if(file_address!=0)
+     {
+      /*before changing page, save the modified bytes from this page back to the file*/
+      fseek(fp,file_address,SEEK_SET);
+      fwrite(RAM,1,count,fp);
+      /*change page and read from the correct file position*/
+      file_address-=0x100;
+      fseek(fp,file_address,SEEK_SET);
+      count=fread(RAM,1,0x100,fp);
+      c=count;while(c<0x100){RAM[c]=eof_char;c++;}
+     }
+    break;
+    case SDLK_PAGEDOWN:
+     /*before changing page, save the modified bytes from this page back to the file*/
+     fseek(fp,file_address,SEEK_SET);
+     fwrite(RAM,1,count,fp);
+     /*change page and read from the correct file position*/
+     file_address+=0x100;
+     fseek(fp,file_address,SEEK_SET);
+     count=fread(RAM,1,0x100,fp);
+     c=count;while(c<0x100){RAM[c]=eof_char;c++;}
+    break;
+    
+    default:
+    
+    if(key=='+'){RAM[x+y*width]++;}
+    if(key=='-'){RAM[x+y*width]--;}
+ 
+    /*handle hexadecimal number input*/
+    if( key >= '0' && key <= '9' ){c=key-'0';   RAM[x+y*width]<<=4;RAM[x+y*width]|=c;}
+    if( key >= 'a' && key <= 'f' ){c=key-'a'+10;RAM[x+y*width]<<=4;RAM[x+y*width]|=c;}
    
    }
 
