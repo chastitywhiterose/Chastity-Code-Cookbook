@@ -132,6 +132,11 @@ inc ebx
 inc ecx
 cmp ecx,0x10;
 jnz dump_byte_row
+
+;optionally, print chars after hex bytes
+call print_bytes_row_text
+
+call putline
 call putline
 add ebp,0x10
 inc edx
