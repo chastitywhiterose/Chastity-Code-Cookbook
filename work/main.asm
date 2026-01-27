@@ -42,11 +42,19 @@ call putstring
 
 call RAM_hexdump
 
+;obtain selected byte for proper indexing changes
+mov ebx,[RAM_y_select]
+shl ebx,4
+add ebx,[RAM_y_select]
+call putint
+add [RAM+ebx],1;
+
 
 call getchar           ;call my function that reads a single byte from the keyboard
 call putspace
 call putint            ;print the number of this key
 call putline           ;print a line to make it easier to read
+
 
 cmp al,'q'             ;test for q key. q stands for quit in this context
 jnz loop_read_keyboard
@@ -106,8 +114,8 @@ ansi_home: db 0x1b,'[H',0 ;move cursor to top left (Home)
 
 RAM db 0x100 dup '?',0
 RAM_address dd 0
-RAM_x_select dd 0
-RAM_y_select dd 0
+RAM_x_select dd 4
+RAM_y_select dd 4
 
 
 RAM_hexdump:
@@ -126,8 +134,24 @@ mov [int_width],2
 mov eax,0
 dump_byte_row:
 mov al,[ebx]
+
+;;;;;;;;;;;
+;cmp ecx,[RAM_x_select]
+;jz check_selected_phase_0
+;jmp normal_print
+;check_selected_phase_0:
+;cmp edx,[RAM_y_select]
+;jz check_selected_phase_1
+;jmp normal_print
+;check_selected_phase_1:
+;call putint_brackets
+;jmp normal_print_skip
+
+normal_print:
 call putint
 call putspace
+normal_print_skip:
+
 inc ebx
 inc ecx
 cmp ecx,0x10;
@@ -136,7 +160,6 @@ jnz dump_byte_row
 ;optionally, print chars after hex bytes
 call RAM_hexdump_text_row
 
-call putline
 call putline
 add ebp,0x10
 inc edx
@@ -152,10 +175,10 @@ push eax
 push ebx
 push ecx
 push edx
-mov ebx,byte_array
-mov ecx,[bytes_read]
-next_char:
+sub ebx,0x10
+mov ecx,0
 mov eax,0
+next_char:
 mov al,[ebx]
 
 ;if char is below '0' or above '9', it is outside the range of these and is not a digit
@@ -165,26 +188,37 @@ cmp al,0x7E
 ja not_printable
 
 printable:
-;if char is in printable range,copy as is and proceed to next index
+;if char is in printable range,leave as is and proceed to next index
 jmp next_index
 
 not_printable:
 mov al,'.' ;otherwise replace with placeholder value
 
 next_index:
-mov [ebx],al
+call putchar
 inc ebx
-dec ecx
-cmp ecx,0
+inc ecx
+cmp ecx,0x10
 jnz next_char
-mov [ebx],byte 0 ;make sure string is zero terminated
-
-mov eax,byte_array
-call putstring
 
 pop edx
-pop edx
+pop ecx
 pop ebx
 pop eax
 
 ret
+
+
+putint_brackets: 
+push eax
+mov al,'['
+call putchar
+pop eax
+call putint
+mov al,']'
+call putchar
+ret
+
+
+
+
