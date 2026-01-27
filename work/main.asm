@@ -40,9 +40,6 @@ call putstring
 mov eax,ansi_home ;move to top left of screen
 call putstring
 
-;mov eax,RAM
-;call putstring
-
 call RAM_hexdump
 
 
@@ -93,9 +90,9 @@ mov eax,3     ;invoke SYS_READ (kernel opcode 3)
 int 80h       ;call the kernel
 xor eax,eax   ;set eax to 0
 mov al,[key]  ;set lowest part of eax to key read
-push edx
-push ecx
-push ebx
+pop edx
+pop ecx
+pop ebx
 ret
 
 ;this part is important!
@@ -118,28 +115,27 @@ RAM_hexdump:
 mov ebx,RAM
 mov ebp,[RAM_address]
 
-mov ecx,0
-mov edx,0
-
+mov edx,0 ;the Y value for this loop
 RAM_dump_loop:
+mov ecx,0 ;the X value for this loop
 mov eax,ebp
 mov [int_width],8
 call putint
 call putspace
 mov [int_width],2
-dump_byte_row:
 mov eax,0
+dump_byte_row:
 mov al,[ebx]
 call putint
 call putspace
 inc ebx
 inc ecx
-cmp ecx,16;
+cmp ecx,0x10;
 jnz dump_byte_row
 call putline
-;add ebp,0x10
+add ebp,0x10
 inc edx
-cmp edx,2
+cmp edx,0x10
 jnz RAM_dump_loop
 
 ret
