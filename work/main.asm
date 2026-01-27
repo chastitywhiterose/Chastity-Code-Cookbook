@@ -134,7 +134,7 @@ cmp ecx,0x10;
 jnz dump_byte_row
 
 ;optionally, print chars after hex bytes
-call print_bytes_row_text
+call RAM_hexdump_text_row
 
 call putline
 call putline
@@ -142,5 +142,49 @@ add ebp,0x10
 inc edx
 cmp edx,0x10
 jnz RAM_dump_loop
+
+ret
+
+
+
+RAM_hexdump_text_row:
+push eax
+push ebx
+push ecx
+push edx
+mov ebx,byte_array
+mov ecx,[bytes_read]
+next_char:
+mov eax,0
+mov al,[ebx]
+
+;if char is below '0' or above '9', it is outside the range of these and is not a digit
+cmp al,0x20
+jb not_printable
+cmp al,0x7E
+ja not_printable
+
+printable:
+;if char is in printable range,copy as is and proceed to next index
+jmp next_index
+
+not_printable:
+mov al,'.' ;otherwise replace with placeholder value
+
+next_index:
+mov [ebx],al
+inc ebx
+dec ecx
+cmp ecx,0
+jnz next_char
+mov [ebx],byte 0 ;make sure string is zero terminated
+
+mov eax,byte_array
+call putstring
+
+pop edx
+pop edx
+pop ebx
+pop eax
 
 ret
