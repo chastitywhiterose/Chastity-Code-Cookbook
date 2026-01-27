@@ -11,7 +11,7 @@ mov [int_newline],0
 mov eax,main_string
 call putstring
 
-call fix_stdin         ;call function to disable line buffering in console(set the source below in this file) 
+call fix_stdin         ;call function to disable line buffering in console(see the source below in this file) 
 
 loop_read_keyboard:    ;this loop keeps reading from the keyboard
 
