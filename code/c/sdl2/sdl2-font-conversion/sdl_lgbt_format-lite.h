@@ -144,18 +144,6 @@ void lgbt_draw_text(const char *s,int cx,int cy,int scale)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 /*
 This uses direct pixel access of the source lgbt font to draw only when the source pixel is not black.
 But the main purpose of this function is actually to print the characters to the terminal in a way
@@ -164,6 +152,7 @@ It is too slow to be used in a real SDL program but will help me as I translate 
 */
 void lgbt_draw_text_debug(const char *s,int cx,int cy,int scale)
 {
+ int bit=0,byte=0;
  int x,y,i,c,cx_start=cx;
  int sx,sy,sx2,sy2,dx,dy; /*x,y coordinates for both source and destination*/
  Uint32 pixel,r,g,b; /*pixel that will be read from*/
@@ -177,6 +166,8 @@ void lgbt_draw_text_debug(const char *s,int cx,int cy,int scale)
  while(s[i]!=0)
  {
   c=s[i];
+  
+  printf("/* char: %c  */\n\n",c);
   if(c=='\n'){ cx=cx_start; cy+=char_height*scale;}
   else
   {
@@ -201,6 +192,8 @@ void lgbt_draw_text_debug(const char *s,int cx,int cy,int scale)
    {
     dx=cx;
     sx=rect_source.x;
+    byte=0;
+    printf("/* ");
     while(sx<sx2)
     {
      pixel=main_lgbt.pixels[sx+sy*main_lgbt.width];
@@ -208,7 +201,7 @@ void lgbt_draw_text_debug(const char *s,int cx,int cy,int scale)
      
      if(pixel!=0) /*only if source pixel is nonzero(not black) draw square to destination*/
      {
-      putchar('1');
+      bit=1;
       rect_dest.x=dx;
       rect_dest.y=dy;
       rect_dest.w=scale;
@@ -226,12 +219,19 @@ void lgbt_draw_text_debug(const char *s,int cx,int cy,int scale)
      }
      else
      {
-      putchar('0');
+      bit=0;
      }
+     byte<<=1; /*left shift once*/
+     byte+=bit; /*add the value of this bit*/
+     putchar(bit|0x30);
      
      sx++;
      dx+=scale;
     }
+    printf(" */");
+    printf(" %02X",byte);
+
+
     putchar('\n');
     sy++;
     dy+=scale;
@@ -267,6 +267,8 @@ void lgbt_draw_text_debug(const char *s,int cx,int cy,int scale)
 
 
 
+
+
 /*
 the demo which involves drawing text but does not use the SDL specific functions!
 this is important because it means having a way to draw text that does not depend on which media library is being used!
@@ -278,6 +280,10 @@ void lgbt_demo()
  int text_x=width*1/6;
 
  delay=1000/fps;
+ 
+  main_color=0x00FFFF;
+  scale=16;
+  lgbt_draw_text_debug("LGBT",text_x,main_lgbt.height*1*scale,scale);
 
  loop=1;
  while(loop)
@@ -288,13 +294,11 @@ void lgbt_demo()
   SDL_SetRenderDrawColor(renderer,0,0,0,255);
   SDL_RenderClear(renderer);
 
-  main_color=0x00FFFF;
-  scale=16;
-  lgbt_draw_text("LGBT",text_x,main_lgbt.height*1*scale,scale);
+
 
   main_color=0xFFFF00;
   scale=8;
-  lgbt_draw_text("Light\nGraphics\nBinary\nText",text_x,main_lgbt.height*5*scale,scale);
+  lgbt_draw_text("LGBT",text_x,main_lgbt.height*1*scale,scale);
 
   main_color=0xFF00FF;
   lgbt_draw_text("This text was drawn with a program written by Chastity White Rose\nSimilar methods were used in her games:\nChaste Tris, Chaste Puyo, and Chaste Panel",16,main_lgbt.height*10*scale,2);
