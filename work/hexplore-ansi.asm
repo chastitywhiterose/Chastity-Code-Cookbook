@@ -114,7 +114,82 @@ hexplore_input:
 mov ebx,[RAM_y_select]
 shl ebx,4
 add ebx,[RAM_x_select]
-mov dword[RAM],ebx
+add ebx,RAM
+
+cmp al,'0'
+jz key_is_0
+cmp al,'1'
+jz key_is_1
+cmp al,'2'
+jz key_is_2
+cmp al,'3'
+jz key_is_3
+cmp al,'4'
+jz key_is_4
+cmp al,'5'
+jz key_is_5
+cmp al,'6'
+jz key_is_6
+cmp al,'7'
+jz key_is_7
+cmp al,'8'
+jz key_is_8
+cmp al,'9'
+jz key_is_9
+
+jmp check_other_operations
+
+key_is_0:
+shl byte[ebx],4    ;left shift the current selection by 4 bits
+add byte[ebx],0
+jmp hexplore_input_end
+
+key_is_1:
+shl byte[ebx],4    ;left shift the current selection by 4 bits
+add byte[ebx],1
+jmp hexplore_input_end
+
+key_is_2:
+shl byte[ebx],4    ;left shift the current selection by 4 bits
+add byte[ebx],2
+jmp hexplore_input_end
+
+key_is_3:
+shl byte[ebx],4    ;left shift the current selection by 4 bits
+add byte[ebx],3
+jmp hexplore_input_end
+
+key_is_4:
+shl byte[ebx],4    ;left shift the current selection by 4 bits
+add byte[ebx],4
+jmp hexplore_input_end
+
+key_is_5:
+shl byte[ebx],4    ;left shift the current selection by 4 bits
+add byte[ebx],5
+jmp hexplore_input_end
+
+key_is_6:
+shl byte[ebx],4    ;left shift the current selection by 4 bits
+add byte[ebx],6
+jmp hexplore_input_end
+
+key_is_7:
+shl byte[ebx],4    ;left shift the current selection by 4 bits
+add byte[ebx],7
+jmp hexplore_input_end
+
+key_is_8:
+shl byte[ebx],4    ;left shift the current selection by 4 bits
+add byte[ebx],8
+jmp hexplore_input_end
+
+key_is_9:
+shl byte[ebx],4    ;left shift the current selection by 4 bits
+add byte[ebx],9        ;or the al value to it
+jmp hexplore_input_end
+
+check_other_operations:
 
 cmp al,'+'
 jz current_index_increment
@@ -123,11 +198,11 @@ jz current_index_decrement
 jmp hexplore_input_end ;jump to end of this function if none of these comparisons were equal
 
 current_index_increment:
-inc [RAM+ebx]
+inc byte[ebx]
 jmp hexplore_input_end
 
 current_index_decrement:
-dec [RAM+ebx]
+dec byte[ebx]
 jmp hexplore_input_end
 
 

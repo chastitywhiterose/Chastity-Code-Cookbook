@@ -94,7 +94,7 @@ environment     dd      0h                  ; arguments to pass as environment v
 
 ;key is defined as dword even though only a byte is used
 ;this way, it loads into eax without trouble
-key db 0
+key db 0,0
 
 prefix_k db "k=",0
 
