@@ -257,8 +257,16 @@ jmp hexplore_input_end
 special_keys:
 
 ;mov [RAM],al
-call getchar ;ignore this one
 call getchar
+;mov [RAM+1],al
+call getchar
+;mov [RAM+2],al
+
+cmp al,0x35
+jz key_page_up
+cmp al,0x36
+jz key_page_down
+
 cmp al,0x41
 jz key_up
 cmp al,0x42
@@ -270,6 +278,13 @@ jz key_left
 
 jmp hexplore_input_end
 
+key_page_up:
+sub [RAM_address],0x100
+jmp hexplore_input_end
+
+key_page_down:
+add [RAM_address],0x100
+jmp hexplore_input_end
 
 key_up:
 mov eax,[RAM_y_select]
