@@ -9,17 +9,12 @@ mov [radix],16         ;can choose radix for integer output!
 mov [int_width],1
 mov [int_newline],0
 
-mov eax,main_string
-call putstring
 mov     eax, 2         ; invoke SYS_FORK (kernel opcode 2)
 int     80h
 cmp     eax, 0         ; if eax is zero we are in the child process
 jz      child          ; jump if eax is zero to child label
-parent:
-mov     eax, program0_msg ; inside our parent process move parentMsg into eax
-call putstring
-;jmp loop_read_keyboard
 
+parent:
 
 ;this is the game loop where were get input and process it accordingly
 loop_read_keyboard:    ;this loop keeps reading from the keyboard
@@ -52,11 +47,13 @@ mov al,']'
 call putchar
 ;end of brackets section
 
+
 ;where to move cursor in next function call
 mov [x],1
 mov [y],17
 
 call move_cursor ;move the cursor before displaying debug information
+
 
 mov eax,0              ;zero eax to receive the key value in al
 mov al,[key];          ;move the key pressed last time into al
@@ -93,10 +90,6 @@ child:
     int     80h
 
 ;this is the end of the child process which became the stty command and then terminated naturally
-
-main_string db 'Linux Unbuffered Input Template Program',0Ah,0
-
-program0_msg db 'Parent processed forked',0Ah,0
 
 byte_brackets db '[  ]',0 ;for displaying brackets around selected byte
 
@@ -135,12 +128,10 @@ pop ecx
 pop ebx
 ret
 
-
 RAM db 0x100 dup '?',0
 RAM_address dd 0
-RAM_x_select dd 2
-RAM_y_select dd 2
-
+RAM_x_select dd 0
+RAM_y_select dd 0
 
 RAM_hexdump:
 
