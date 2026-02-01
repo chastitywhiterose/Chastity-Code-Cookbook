@@ -239,6 +239,10 @@ cmp al,'+'
 jz current_index_increment
 cmp al,'-'
 jz current_index_decrement
+
+cmp al,0x1B ;escape character. This is a multi byte key.
+jz special_keys
+
 jmp hexplore_input_end ;jump to end of this function if none of these comparisons were equal
 
 current_index_increment:
@@ -247,6 +251,72 @@ jmp hexplore_input_end
 
 current_index_decrement:
 dec byte[ebx]
+jmp hexplore_input_end
+
+
+special_keys:
+
+;mov [RAM],al
+call getchar ;ignore this one
+call getchar
+cmp al,0x41
+jz key_up
+cmp al,0x42
+jz key_down
+cmp al,0x43
+jz key_right
+cmp al,0x44
+jz key_left
+
+jmp hexplore_input_end
+
+
+key_up:
+mov eax,[RAM_y_select]
+cmp eax,0
+jz reset_y_15
+dec eax
+mov [RAM_y_select],eax
+jmp hexplore_input_end
+reset_y_15:
+mov eax,15
+mov [RAM_y_select],eax
+jmp hexplore_input_end
+
+key_down:
+mov eax,[RAM_y_select]
+cmp eax,15
+jz reset_y_0
+inc eax
+mov [RAM_y_select],eax
+jmp hexplore_input_end
+reset_y_0:
+mov eax,0
+mov [RAM_y_select],eax
+jmp hexplore_input_end
+
+key_right:
+mov eax,[RAM_x_select]
+cmp eax,15
+jz reset_x_0
+inc eax
+mov [RAM_x_select],eax
+jmp hexplore_input_end
+reset_x_0:
+mov eax,0
+mov [RAM_x_select],eax
+jmp hexplore_input_end
+
+key_left:
+mov eax,[RAM_x_select]
+cmp eax,0
+jz reset_x_15
+dec eax
+mov [RAM_x_select],eax
+jmp hexplore_input_end
+reset_x_15:
+mov eax,15
+mov [RAM_x_select],eax
 jmp hexplore_input_end
 
 
