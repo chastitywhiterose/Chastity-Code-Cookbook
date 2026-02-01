@@ -137,6 +137,19 @@ jz key_is_8
 cmp al,'9'
 jz key_is_9
 
+cmp al,'a'
+jz key_is_a
+cmp al,'b'
+jz key_is_b
+cmp al,'c'
+jz key_is_c
+cmp al,'d'
+jz key_is_d
+cmp al,'e'
+jz key_is_e
+cmp al,'f'
+jz key_is_f
+
 jmp check_other_operations
 
 key_is_0:
@@ -188,6 +201,37 @@ key_is_9:
 shl byte[ebx],4    ;left shift the current selection by 4 bits
 add byte[ebx],9        ;or the al value to it
 jmp hexplore_input_end
+
+key_is_a:
+shl byte[ebx],4
+add byte[ebx],0xa
+jmp hexplore_input_end
+
+key_is_b:
+shl byte[ebx],4
+add byte[ebx],0xb
+jmp hexplore_input_end
+
+key_is_c:
+shl byte[ebx],4
+add byte[ebx],0xc
+jmp hexplore_input_end
+
+key_is_d:
+shl byte[ebx],4
+add byte[ebx],0xd
+jmp hexplore_input_end
+
+key_is_e:
+shl byte[ebx],4
+add byte[ebx],0xe
+jmp hexplore_input_end
+
+key_is_f:
+shl byte[ebx],4
+add byte[ebx],0xf
+jmp hexplore_input_end
+
 
 check_other_operations:
 
