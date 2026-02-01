@@ -32,12 +32,31 @@ call putstring
 
 call RAM_hexdump
 
+;this section provides a visual way of knowing which byte is selected
 
+mov eax,[RAM_y_select] ;which row is it on? Y vertical coordinate
+mov [y],eax
 
+mov eax,[RAM_x_select] ;which row is it on? Y vertical coordinate
+mov ebx,3 ;we will multiply by 3 on the next line
+mul ebx
+add eax,8
+mov [x],eax
+
+call move_cursor
+mov al,'['
+call putchar
+add [x],3
+call move_cursor
+mov al,']'
+call putchar
+;end of brackets section
+
+;where to move cursor in next function call
 mov [x],1
 mov [y],17
 
-call move_cursor
+call move_cursor ;move the cursor before displaying debug information
 
 mov eax,0              ;zero eax to receive the key value in al
 mov al,[key];          ;move the key pressed last time into al
@@ -78,6 +97,8 @@ child:
 main_string db 'Linux Unbuffered Input Template Program',0Ah,0
 
 program0_msg db 'Parent processed forked',0Ah,0
+
+byte_brackets db '[  ]',0 ;for displaying brackets around selected byte
 
 
 
@@ -198,31 +219,3 @@ pop ebx
 pop eax
 
 ret
-
-
-putint_brackets: 
-push eax
-mov al,'['
-call putchar
-pop eax
-call putint
-mov al,']'
-call putchar
-ret
-
-;code I don't know if I will use or not
-
-;;;;;;;;;;;
-;cmp ecx,[RAM_x_select]
-;jz check_selected_phase_0
-;jmp normal_print
-;check_selected_phase_0:
-;cmp edx,[RAM_y_select]
-;jz check_selected_phase_1
-;jmp normal_print
-;check_selected_phase_1:
-;call putint_brackets
-;jmp normal_print_skip
-
-
-
