@@ -98,3 +98,38 @@ jmp strcpy
 strcpy_end:
 ret
 
+
+
+
+
+
+
+
+;this function will process the key value and then accordingly operate the editor
+;the getchar function stores the key in the [key] memory location and the al register
+
+hexplore_input:
+
+;obtain selected byte for proper indexing changes
+mov ebx,[RAM_y_select]
+shl ebx,4
+add ebx,[RAM_x_select]
+mov dword[RAM],ebx
+
+cmp al,'+'
+jz current_index_increment
+cmp al,'-'
+jz current_index_decrement
+jmp hexplore_input_end ;jump to end of this function if none of these comparisons were equal
+
+current_index_increment:
+inc [RAM+ebx]
+jmp hexplore_input_end
+
+current_index_decrement:
+dec [RAM+ebx]
+jmp hexplore_input_end
+
+
+hexplore_input_end: ;the end label for this function
+ret

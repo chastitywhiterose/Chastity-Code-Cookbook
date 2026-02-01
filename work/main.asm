@@ -32,11 +32,7 @@ call putstring
 
 call RAM_hexdump
 
-;obtain selected byte for proper indexing changes
-mov ebx,[RAM_y_select]
-shl ebx,4
-add ebx,[RAM_y_select]
-add [RAM+ebx],1;
+
 
 mov [x],1
 mov [y],17
@@ -121,8 +117,8 @@ ret
 
 RAM db 0x100 dup '?',0
 RAM_address dd 0
-RAM_x_select dd 4
-RAM_y_select dd 4
+RAM_x_select dd 2
+RAM_y_select dd 2
 
 
 RAM_hexdump:
