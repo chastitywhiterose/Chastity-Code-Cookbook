@@ -349,7 +349,8 @@ jmp hexplore_input_end
 key_page_up:
 cmp [RAM_address],0
 jz  page_up_illegal    ;if zero address, we can't go to negative addresses!
-sub [RAM_address],0x100
+call file_save_page     ;save this page back to file
+sub [RAM_address],0x100 ;subtract address to get previous page
 
 call file_load_page
 
@@ -357,7 +358,8 @@ page_up_illegal:
 jmp hexplore_input_end
 
 key_page_down:
-add [RAM_address],0x100
+call file_save_page     ;save this page back to file
+add [RAM_address],0x100 ;add address to get next page
 call file_load_page
 jmp hexplore_input_end
 
@@ -452,5 +454,23 @@ inc ebx ;go to next byte that needs filling
 inc eax
 jmp RAM_fill_page
 RAM_page_filled:
+
+ret
+
+;function to save current page back to file before switching to new page or ending program
+
+file_save_page:
+;seek to new address in the file
+mov edx,0             ;whence argument (SEEK_SET)
+mov ecx,[RAM_address] ;move the file cursor to this address
+mov ebx,[RAM_filedesc]    ;move the opened file descriptor into EBX
+mov eax,19            ;invoke SYS_LSEEK (kernel opcode 19)
+int 80h               ;call the kernel
+
+mov eax,4          ;invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
+mov ebx,[RAM_filedesc] ;write to the file (not STDOUT)
+mov ecx,RAM          ;pointer to RAM to be written to file
+mov edx,[bytes_read] ;write the same number of bytes as were loaded to this page before
+int 80h             ;system call to write the message
 
 ret

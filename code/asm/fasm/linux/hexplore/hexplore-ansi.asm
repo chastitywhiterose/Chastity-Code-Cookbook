@@ -37,6 +37,74 @@ prefix_y db "y=",0
 
 ansi_string db 32 dup 0 ;string storage for buildable ansi sequence.
 
+  red dd 0xFF
+green dd 0
+ blue dd 0x85
+
+set_text_rgb:
+
+mov [radix],10    ;set the radix to ten for escape sequences
+mov [int_width],1
+
+mov edi,ansi_string
+mov [edi],byte 0x1B ;all escape sequences start with the escape character.
+inc edi
+
+mov [edi],byte '['
+inc edi
+
+mov [edi],byte '3'
+inc edi
+mov [edi],byte '8'
+inc edi
+mov [edi],byte ';'
+inc edi
+mov [edi],byte '2'
+inc edi
+mov [edi],byte ';'
+inc edi
+
+;copy the red component
+mov eax,[red]
+call intstr ; get the string for y
+mov esi,eax ; set source index to the new integer string
+call strcpy
+mov [edi],byte ';'
+inc edi
+
+;copy the green component
+mov eax,[green]
+call intstr ; get the string for y
+mov esi,eax ; set source index to the new integer string
+call strcpy
+mov [edi],byte ';'
+inc edi
+
+;copy the blue component
+mov eax,[blue]
+call intstr ; get the string for y
+mov esi,eax ; set source index to the new integer string
+call strcpy
+
+mov [edi],byte 'm' ;finish the escape code for setting cursor position
+inc edi
+mov [edi],byte 0 ;terminate the string with zero
+
+mov eax,ansi_string
+call putstring
+
+mov [radix],16
+
+ret
+
+
+
+
+
+
+
+
+
 move_cursor:
 
 mov [radix],10    ;set the radix to ten for escape sequences
@@ -279,11 +347,20 @@ jz key_left
 jmp hexplore_input_end
 
 key_page_up:
-sub [RAM_address],0x100
+cmp [RAM_address],0
+jz  page_up_illegal    ;if zero address, we can't go to negative addresses!
+call file_save_page     ;save this page back to file
+sub [RAM_address],0x100 ;subtract address to get previous page
+
+call file_load_page
+
+page_up_illegal:
 jmp hexplore_input_end
 
 key_page_down:
-add [RAM_address],0x100
+call file_save_page     ;save this page back to file
+add [RAM_address],0x100 ;add address to get next page
+call file_load_page
 jmp hexplore_input_end
 
 key_up:
@@ -336,4 +413,64 @@ jmp hexplore_input_end
 
 
 hexplore_input_end: ;the end label for this function
+ret
+
+
+
+
+
+
+
+
+
+
+
+
+
+file_load_page:
+;seek to new address in the file
+mov edx,0             ;whence argument (SEEK_SET)
+mov ecx,[RAM_address] ;move the file cursor to this address
+mov ebx,[RAM_filedesc]    ;move the opened file descriptor into EBX
+mov eax,19            ;invoke SYS_LSEEK (kernel opcode 19)
+int 80h               ;call the kernel
+
+;now that the address has moved, we must read them into the current page of 256 bytes
+mov edx,0x100          ;number of bytes to read
+mov ecx,RAM            ;address to store the bytes
+mov ebx,[RAM_filedesc] ;move the opened file descriptor into EBX
+mov eax,3              ;invoke SYS_READ (kernel opcode 3)
+int 80h                ;call the kernel
+mov [bytes_read],eax
+
+mov ebx,RAM ;make sure ebx points to location after last byte read
+add ebx,eax
+RAM_fill_page:
+cmp eax,0x100      ;if eax(number of bytes read) is 0x100, then the whole page was filled with data
+jz RAM_page_filled
+;otherwise
+mov [ebx],byte '?' ;fill this byte with placeholder unknown value
+inc ebx ;go to next byte that needs filling
+inc eax
+jmp RAM_fill_page
+RAM_page_filled:
+
+ret
+
+;function to save current page back to file before switching to new page or ending program
+
+file_save_page:
+;seek to new address in the file
+mov edx,0             ;whence argument (SEEK_SET)
+mov ecx,[RAM_address] ;move the file cursor to this address
+mov ebx,[RAM_filedesc]    ;move the opened file descriptor into EBX
+mov eax,19            ;invoke SYS_LSEEK (kernel opcode 19)
+int 80h               ;call the kernel
+
+mov eax,4          ;invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
+mov ebx,[RAM_filedesc] ;write to the file (not STDOUT)
+mov ecx,RAM          ;pointer to RAM to be written to file
+mov edx,[bytes_read] ;write the same number of bytes as were loaded to this page before
+int 80h             ;system call to write the message
+
 ret

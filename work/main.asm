@@ -30,18 +30,10 @@ js main_end ;end program if RAM could not be opened
 
 mov [RAM_filedesc],eax ; save the file descriptor number for later use
 
-
-
 ;before the main loop, we will load up to 256 bytes from the file
-
-mov edx,0x100         ;number of bytes to read
-mov ecx,RAM   ;address to store the bytes
-mov ebx,[RAM_filedesc]   ;move the opened file descriptor into EBX
-mov eax,3            ;invoke SYS_READ (kernel opcode 3)
-int 80h               ;call the kernel
-
-mov [bytes_read],eax
-
+;I already wrote a function to do this in hexplore-ansi.asm
+;and it handles it even when less than 256 bytes are read
+call file_load_page
 
 ;this is the game loop where were get input and process it accordingly
 loop_read_keyboard:    ;this loop keeps reading from the keyboard
@@ -169,9 +161,14 @@ call putline           ;print a line to make it easier to read
 call getchar           ;call my function that reads a single byte from the keyboard
 
 cmp al,'q'             ;test for q key. q stands for quit in this context
-jz main_end            ;jump to end of program if q was pressed
+jz main_shutdown            ;jump to end of program if q was pressed
 call hexplore_input    ;call the function to process the input and operate the editor
 jmp loop_read_keyboard ;continue the game loop
+
+main_shutdown: ;not just end, but save data and close the file properly
+
+;when the program ends, we must first save bytes we changed to the file!
+call file_save_page
 
 mov eax,[RAM_filedesc] ;file number to close
 call close
@@ -184,7 +181,6 @@ int 80h
 title db 'Hexplore : Chastity White Rose',0
 help  db 'Arrows=Select_Byte q=quit page_up/down=navigate_file',0xA
       db '0-f=Enter_Hexadecimal',0
-
 
 ; This is the end of the parent process or main program
 ; The child process below only uses the stty command before returning to the parent proces
