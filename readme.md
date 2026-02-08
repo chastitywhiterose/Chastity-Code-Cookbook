@@ -3190,3 +3190,91 @@ Of course, some people do go on to earn lots of money with their technical skill
 But of course, money is a means to an end, not an end in itself. That is why my highest priority has been to write my books and my software with the highest quality so that people benefit from them after I am dead. If only earning money were the final goal, then I would be on a very different path instead of being a writer who works at Walmart for their only income.
 
 This chapter is only meant to help people understand where my priorities are. It also perfectly explains why I am dedicated to teaching people things like Chess and Computer programming through my books. In a hundred years, it will be more important to remember what I taught you than to agree on who or what I was. I can only imagine how Jesus must feel the same so much more about his teachings.
+
+# Chapter 12: Why are There so Many Programming Languages?
+
+In this book alone, I have briefly touched on C, Bash, JavaScript, HTML, SVG, Markdown, and even Assembly. You might be wondering why there are so many programming languages to choose from. For some people, this sends them into an analysis paralysis. Someone can be so overwhelmed by the variety of languages that they just give up and never learn to code.
+
+But I think this is a mistake. The point of having so many languages is so that each person can choose the language that works best for them. There is no objectively best programming language that works for all people, but there IS a best language for each person. To help someone choose a programming language for getting started, I recommend either C or C++ as a first language. In this chapter not only will I give you some advice for choosing between these two languages, I also will explain why one of these are a good starting choice.
+
+## C and C++
+
+First, C and C++ are separate languages, yet C++ contains all of C and more. C came first and was the foundation for C++. This means that declaring integer and floating point variables will be identical in both languages. However, C++ requires more time to write code because the language and its standard libraries keep getting larger as new standards are ratified. You will need to spend time reading larger books, visit references for specific functions or class names, and generally have to use more English words that are names of those methods, classes, and header files.
+
+C is a fine choice if you want a language that is small and easy to memorize. Even in this book, I have used a tiny subset of the C language, but it is enough for a beginner to get by, C also doesn't limit you from using open source libraries such as SDL, which was included in many examples.
+
+C++ is a better choice than C if you are wanting to work as a professional programmer who works for a company and gets paid. I can promise you though that you will be working for managers and clients who don't understand programming and will make your life hell. Still, because of C++ being used more in the game development world, it is essential for those truly dedicated to learn this beast of a language and the proper use of all its features.
+
+## Why Learn Assembly?
+
+Of course, there are many more languages than those two, but I believe that using one of these two languages is essential for a beginner. If you first learn the fundamentals of programming and want more of a challenge, I recommend learning Assembly language for retro computers. The reason I recommend learning about the 6502(used by the Nintendo Entertainment System) and Z80(used by the Nintendo Game Boy) is because once you have written a game or other program for them, then what you have made can be used on literally any computer because there are so many emulators for these systems even though you cannot buy the original hardware anymore.
+
+But if you prefer to stay with modern developments, I recommend learning about the RISC-V processors and the Intruction Set Architecture that is becoming more popular during the time I am writing this book. I have even had success in writing a few programs in it using an emulator called RARS.
+
+<https://github.com/TheThirdOne/rars>
+
+All of the programming languages I recommend to people are those that support low-level programming. A good programming language should not try to hide that everything is a number. It is still bits of zeros and ones when you look at the way software and hardware actually work.
+
+But more importantly, you must know that programming is an endless pursuit. There is always more to learn and by the time you think you understand one language, twenty more will have been created and your friends will each have their opinion on why you should use the language they like instead of what you just spent 5 years mastering.
+
+## Just Kidding!
+
+Those with experience know that real programmers don't have friends. Nobody can have a social life once they get deeply into the world of computers because most people hate math and can't imagine someone doing it for fun!
+
+I have been programming for 24 years at this point, and never did I receive approval from anyone for my skills, even when I made and published my Tetris game, people all had nothing but criticism and for a while I thought that maybe I should just give it up, but then something reminded me of why I love computers so much.
+
+Unlike in humans, math has no evil. Everything is known to be true or false. Numbers never reject me and they never lie. Despite hardware failure, numbers and electricity themselves never die. I don't know if you can understand, but computers and the math I can do with them has been the emotional support I needed when I had nothing else to live for. That is why I dedicate this book to the future autistic outcasts who can learn something from my code and do greater things than I can.
+
+In fact, I even wrote a poem about how I feel about computers and programming. Perhaps if you read it you will understand what I mean when I say it is the war I can win.
+
+# Chapter 13: The War I can Win
+
+I am a programmer who knows clever tricks
+I convert integers to bases two to thirty six
+By using character arrays as strings
+I can show you amazing math things
+
+While others talk about politics and sports
+I read about computers of all sorts
+Programming languages are all the same
+When you see arithmetic as a game
+
+I don’t write code for a job to be paid
+But to understand the video games I played
+To see what works and find out why
+To create, use, study, share, and modify
+
+I support Free Software and Open Source
+It is a philosophy that I can endorse
+Who can own a number, even a single bit?
+Or tell me what I am allowed to do with it?
+
+I fight for users who love the games of old
+Who rebel and don’t do what we are told
+I made a Tetris game and they said it was no good
+And that I broke copyright like no one should
+
+But who decides which person can play a game
+In math and entertainment there is no shame
+Can anyone own a letter color or a square?
+I will fight and debate you if you even dare
+
+Because integer math is the one war I can win
+I wrote the code myself and committed no sin
+And I can tell you that for every byte array
+There is a game hidden that only a hacker can play
+
+To humans I am nothing but just a transgender freak
+And evil men can kill my body because it is weak
+But the computer has no bias and means me no harm.
+In this digital world I am safe and I feel no alarm
+
+No matter what compiler, language, or tool
+When I code the people see I am not a fool
+If you take my computer, I am still in control
+Because the numbers are part of me deep in my soul
+
+This world is often sad but I still have a great dream
+Where we all work together as part of the same team
+And that every person can experience the ultimate thrill
+Of the binary code that flows where no man can ever kill
