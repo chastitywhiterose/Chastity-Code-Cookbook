@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="7in"
+   height="10in"
+   viewBox="0 0 177.8 254"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   sodipodi:docname="Chastity_Code_Cookbook-cover-front.svg"
+   inkscape:export-filename="Chastity_Code_Cookbook-cover-front.png"
+   inkscape:export-xdpi="300"
+   inkscape:export-ydpi="300"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#000000"
+     bordercolor="#111111"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="1"
+     inkscape:pagecheckerboard="false"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     showborder="true"
+     inkscape:zoom="0.85416667"
+     inkscape:cx="463.60975"
+     inkscape:cy="539.70731"
+     inkscape:window-width="1920"
+     inkscape:window-height="1029"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <text
+       xml:space="preserve"
+       style="font-size:4.9389px;font-family:Hack;-inkscape-font-specification:Hack;direction:ltr;text-orientation:upright;fill:#ffffff;stroke-width:0.264583"
+       x="113.2962"
+       y="111.37844"
+       id="text113"><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.264583;direction:ltr"
+         x="113.2962"
+         y="111.37844"
+         id="tspan392" /></text>
+    <text
+       xml:space="preserve"
+       style="font-size:6.35px;font-family:Hack;-inkscape-font-specification:Hack;text-align:start;direction:ltr;text-orientation:upright;text-anchor:start;fill:#ffffff;stroke-width:0.264583"
+       x="30.102039"
+       y="69.474831"
+       id="text473"><tspan
+         sodipodi:role="line"
+         style="font-size:6.35px;text-align:start;direction:ltr;text-anchor:start;stroke-width:0.264583"
+         x="30.102039"
+         y="69.474831"
+         id="tspan354">char *intstr(unsigned int i)</tspan><tspan
+         sodipodi:role="line"
+         style="font-size:6.35px;text-align:start;direction:ltr;text-anchor:start;stroke-width:0.264583"
+         x="30.102039"
+         y="77.412331"
+         id="tspan586">{</tspan><tspan
+         sodipodi:role="line"
+         style="font-size:6.35px;text-align:start;direction:ltr;text-anchor:start;stroke-width:0.264583"
+         x="30.102039"
+         y="85.349831"
+         id="tspan588"> int width=0;</tspan><tspan
+         sodipodi:role="line"
+         style="font-size:6.35px;text-align:start;direction:ltr;text-anchor:start;stroke-width:0.264583"
+         x="30.102039"
+         y="93.287331"
+         id="tspan590"> char *s=int_string+usl;</tspan><tspan
+         sodipodi:role="line"
+         style="font-size:6.35px;text-align:start;direction:ltr;text-anchor:start;stroke-width:0.264583"
+         x="30.102039"
+         y="101.22483"
+         id="tspan592"> *s=0;</tspan><tspan
+         sodipodi:role="line"
+         style="font-size:6.35px;text-align:start;direction:ltr;text-anchor:start;stroke-width:0.264583"
+         x="30.102039"
+         y="109.16233"
+         id="tspan594"> while(i!=0 || width&lt;int_width)</tspan><tspan
+         sodipodi:role="line"
+         style="font-size:6.35px;text-align:start;direction:ltr;text-anchor:start;stroke-width:0.264583"
+         x="30.102039"
+         y="117.09983"
+         id="tspan596"> {</tspan><tspan
+         sodipodi:role="line"
+         style="font-size:6.35px;text-align:start;direction:ltr;text-anchor:start;stroke-width:0.264583"
+         x="30.102039"
+         y="125.03733"
+         id="tspan598">  s--;</tspan><tspan
+         sodipodi:role="line"
+         style="font-size:6.35px;text-align:start;direction:ltr;text-anchor:start;stroke-width:0.264583"
+         x="30.102039"
+         y="132.97482"
+         id="tspan600">  *s=i%radix;</tspan><tspan
+         sodipodi:role="line"
+         style="font-size:6.35px;text-align:start;direction:ltr;text-anchor:start;stroke-width:0.264583"
+         x="30.102039"
+         y="140.91232"
+         id="tspan602">  i/=radix;</tspan><tspan
+         sodipodi:role="line"
+         style="font-size:6.35px;text-align:start;direction:ltr;text-anchor:start;stroke-width:0.264583"
+         x="30.102039"
+         y="148.84982"
+         id="tspan604">  if(*s&lt;10){*s+='0';}</tspan><tspan
+         sodipodi:role="line"
+         style="font-size:6.35px;text-align:start;direction:ltr;text-anchor:start;stroke-width:0.264583"
+         x="30.102039"
+         y="156.78732"
+         id="tspan606">  else{*s=*s+'A'-10;}</tspan><tspan
+         sodipodi:role="line"
+         style="font-size:6.35px;text-align:start;direction:ltr;text-anchor:start;stroke-width:0.264583"
+         x="30.102039"
+         y="164.72482"
+         id="tspan608">  width++;</tspan><tspan
+         sodipodi:role="line"
+         style="font-size:6.35px;text-align:start;direction:ltr;text-anchor:start;stroke-width:0.264583"
+         x="30.102039"
+         y="172.66232"
+         id="tspan610"> }</tspan><tspan
+         sodipodi:role="line"
+         style="font-size:6.35px;text-align:start;direction:ltr;text-anchor:start;stroke-width:0.264583"
+         x="30.102039"
+         y="180.59982"
+         id="tspan612"> return s;</tspan><tspan
+         sodipodi:role="line"
+         style="font-size:6.35px;text-align:start;direction:ltr;text-anchor:start;stroke-width:0.264583"
+         x="30.102039"
+         y="188.53732"
+         id="tspan614">}</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:9.87778px;font-family:Hack;-inkscape-font-specification:Hack;text-align:end;direction:ltr;text-orientation:upright;text-anchor:end;fill:#ffffff;stroke-width:0.264583"
+       x="160.02675"
+       y="29.982073"
+       id="text605"><tspan
+         sodipodi:role="line"
+         id="tspan603"
+         style="font-size:9.87778px;direction:ltr;stroke-width:0.264583"
+         x="160.02675"
+         y="29.982073">Chastity's Code Cookbook</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:5.64444px;font-family:Hack;-inkscape-font-specification:Hack;text-align:center;direction:ltr;text-orientation:upright;text-anchor:middle;fill:#ffffff;stroke-width:0.264583"
+       x="88.98819"
+       y="44.325989"
+       id="text613"><tspan
+         sodipodi:role="line"
+         id="tspan611"
+         style="text-align:center;direction:ltr;text-anchor:middle;stroke-width:0.264583"
+         x="88.98819"
+         y="44.325989">Computer Programming Recipes</tspan><tspan
+         sodipodi:role="line"
+         style="text-align:center;direction:ltr;text-anchor:middle;stroke-width:0.264583"
+         x="88.98819"
+         y="51.381538"
+         id="tspan384"> for Technical Math Nerds</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:5.64444px;font-family:Hack;-inkscape-font-specification:Hack;text-align:center;text-orientation:upright;text-anchor:middle;fill:#ffffff;stroke-width:0.264583"
+       x="12.553988"
+       y="205.22371"
+       id="text646"><tspan
+         sodipodi:role="line"
+         id="tspan644"
+         style="font-size:5.64444px;text-align:start;text-anchor:start;stroke-width:0.264583"
+         x="12.553988"
+         y="205.22371">All code in this book is released under the</tspan><tspan
+         sodipodi:role="line"
+         style="font-size:5.64444px;text-align:start;text-anchor:start;stroke-width:0.264583"
+         x="12.553988"
+         y="212.27927"
+         id="tspan650">GNU General Public License 3.</tspan><tspan
+         sodipodi:role="line"
+         style="font-size:5.64444px;text-align:start;text-anchor:start;stroke-width:0.264583"
+         x="12.553988"
+         y="219.33482"
+         id="tspan648">This book is meant to educate new programmers</tspan><tspan
+         sodipodi:role="line"
+         style="font-size:5.64444px;text-align:start;text-anchor:start;stroke-width:0.264583"
+         x="12.553988"
+         y="226.39037"
+         id="tspan652">and promote Free Software in the sense of the</tspan><tspan
+         sodipodi:role="line"
+         style="font-size:5.64444px;text-align:start;text-anchor:start;stroke-width:0.264583"
+         x="12.553988"
+         y="233.44592"
+         id="tspan654">Latin word: Libre.</tspan></text>
+  </g>
+</svg>

@@ -1,0 +1,26 @@
+Chastity's Code Cookbook
+
+Computer Programming Recipes
+ for Technical Math Nerds
+
+char *intstr(unsigned int i)
+{
+ int width=0;
+ char *s=int_string+usl;
+ *s=0;
+ while(i!=0 || width<int_width)
+ {
+  s--;
+  *s=i%radix;
+  i/=radix;
+  if(*s<10){*s+='0';}
+  else{*s=*s+'A'-10;}
+  width++;
+ }
+ return s;
+}
+
+All code in this book is released under the GNU General Public License 3.
+This book is meant to educate new programmers and promote Free Software in the sense of the Latin word: Libre.
+
+Chastity White Rose
