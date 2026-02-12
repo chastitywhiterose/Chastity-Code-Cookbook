@@ -3287,6 +3287,28 @@ Where we all work together as part of the same team
 And that every person can experience the ultimate thrill
 Of the binary code that flows where no man can ever kill
 
-# Chapter 14: Zero and One are Eternal
+# Chapter 14: Gratis versus Libre
 
-If you are still reading this
+If you are still reading this, you probably understand that although computers run everything on zeros and ones, through enough combinations and understanding of them, new software is constantly created. Therefore, no programming language is complete. By extension, no book about computer programming is ever complete either.
+
+I have decided to make this book available in its current form completely Free, in both senses of the word: Gratis and Libre.
+
+## Gratis
+
+Gratis means that you can have something without paying money for it. Therefore, I have made this entire book into a website by use of Github pages so that everyone can learn from it without requiring them to pay money. For example, the next 14 year old programmer who doesn't have money and learns computer programming entirely from free online materials. I was that kid and I wan to pass my knowledge to the next generation.
+
+<https://chastitywhiterose.github.io/Chastity-Code-Cookbook/>
+
+## Libre
+
+Libre means freedom as in the sense of liberty. This is about what you are allowed to say or do. Think of Freedom of Speech, or the pursuit of Life, Liberty, and the Pursuit of Happiness. Libre is a much more important kind of "free" than gratis is. The English language does not do justice when it comes to this distinction.
+
+I would also like to take this money to say that while I completely agree with Richard Stallman that Free Software is a better term than merely Open Source, I think that people can and will continue to confuse these two meanings of the English word "free". We should use whichever words people are most likely to understand in the context of what they need. At every opportunity, we need to explain the difference between Gratis and Libre, but more importantly, why Libre is the better latin word to describe what our vision is when it comes to enabling people to write their own software and control their computer.
+
+I also personally prefer the word "libre" because it sounds similar to "libro", the spanish word for book. Books are all about information and were the only means of learning information for most of human history because video and audio recordings had not been invented yet.
+
+## Conclusion
+
+Because this book is freely available, many people will read it and perhaps it will need to be updated for correction or clarification. Therefore, I hope you have enjoyed it but I also hope to hear from you about something I can add or explain better when I update it.
+
+You can always email me at chastitywhiterose@gmail.com
