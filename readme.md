@@ -6,7 +6,7 @@ Chastity White Rose
 
 # Preface
 
-You would not know it by looking at me, but I have been computer programming as a hobby since I was 14 years old. My first programming language was QBASIC. It was a language and a program for interpreting that language that ran on MS-DOS. However, the usage of this language has diminished in use over time because it does not run without an emulator or modern BASIC language dialects meant to mimic it.
+You would not know it by looking at me, but I have been computer programming as a hobby since I was 14 years old. My first programming language was QBASIC. It was a language and a program for interpreting that language that ran on MS-DOS. However, the usage of this language has diminished over time because it does not run without an emulator or modern BASIC language dialects meant to mimic it.
 
 However, I moved to the C Programming Language as my main computer language. I have dabbled in Java, JavaScript, Lua, Perl, Python, and the beast known as C++. However, of all these languages, C remains my native language because of how simple it is to remember. In spite of its quirks, C is what I recommend to a beginner, not in spite of its limitations but because of them! Therefore, most of the recipes in this code cookbook will be in the form of C source code.
 
@@ -69,18 +69,18 @@ tells the compiler to process it and create an executable file. The second part
 
 `main`
 
-Tells it to run the executable file. On Windows, this would run a program named "main.exe". On Linux, the file is likely to be named simply "main". Also, on Linux, you would need to write it as "./main" to execute it. This signals that the file you are trying to run is in the current directory.
+Tells it to run the executable file. On Windows, this would run a program named "main.exe". On Linux, the file is likely to be named simply "main". Also, on Linux, you would need to write it as "./main" to execute it. The dot signals that the file you are trying to run is in the current directory. A single dot usually refers to the current directory, while two dots refer to the directory above the current one you are in.
 
 ## How it works
 
-Now that you have successfully ran the Hello World program, you might be wondering what it all means. Here is the same program with comments included.
+Now that you have successfully run the Hello World program, you might be wondering what it all means. Here is the same program with comments included.
 
 ```
 #include <stdio.h> /*include the standard input and output library*/
 int main() /*beginning of a function named main which returns an integer*/
 { /*opening bracket starting the function block*/
  printf("Hello, World!\n"); /*calling printf, the most useful function in the C Programming Language.*/
- return 0; /*Return the number zero to the operating system. This means no errors occurred.*/
+ return 0; /*Return the number zero to the operating system. A return value of zero means that no errors occurred.*/
 } /*closing bracket ending the function block*/
 
 ```
@@ -2974,7 +2974,7 @@ But one approach that has worked well for me is to write a program in C first to
 
 # Chapter 10: Software Licenses
 
-Perhaps it could be said that once you have written a program, what you do with it is even more important. For most of my life, I never considered the concept of copyright or ownership of the toy programs I wrote. I figured that unless I made a great game or operating system that I would not need to consider writing the terms and conditions about what people can or should do with my work.
+Perhaps it could be said that once you have written a program, what you do with it is even more important. For most of my life, I never considered the concept of copyright or ownership of the toy programs I wrote. I figured that unless I made a great game or operating system, I would not need to consider writing the terms and conditions about what people can or should do with my work.
 
 And even now, I don't think my programs have enough of an impact for anyone to care about software licenses. However, I have found some software licenses that are compatible with my personal philosophy for how software should be shared and distributed.
 
@@ -3007,7 +3007,7 @@ Considering all this, I place all my code in this book under the GPL3 license so
 
 <https://www.gnu.org/licenses/lgpl-3.0.html>
 
-The Lesser GPL is very much like the regular GPL with an important exception. It is to allow proprietary programs to use a library. At first, I didn't see the point of this; however, when I read the following article, I came to understand better.
+The Lesser GPL is very much like the regular GPL, with an important exception. It is to allow proprietary programs to use a library. At first, I didn't see the point of this; however, when I read the following article, I came to understand better.
 
 <https://www.gnu.org/licenses/why-not-lgpl.html>
 
@@ -3031,9 +3031,17 @@ But my personal ideals are different from those of most programmers. My goal is 
 
 Writing computer software isn't just a hobby or a business; it is a ministry. Think about all the software that has been written to create the internet and allow people to write books and share them with the world. Think about the programmers who made video and audio recording, encoding, and formatting possible.
 
-This book is about computer programming, not religion, but I must say, if you had a message that would save the lives or the souls of others, would you really want to be restricted in what manner you use to share that information? Therefore, I propose that Free Software is a necessity in light of Digital Rights Management and companies like Amazon removing ebooks from people's devices that they have already paid for.
+This book is about computer programming, not religion, but I must say, if you had a message that would save the lives or the souls of others, would you really want to be restricted in the manner in which you share that information? Therefore, I propose that Free Software is a necessity in light of Digital Rights Management and companies like Amazon removing ebooks from people's devices that they have already paid for.
 
 Traditional books are dying, and bookstores are closing. If we don't work together to stop digital book burning, then we lose the final method of sharing words of eternal value.
+
+What do I mean by words of eternal value? I believe that it is different for everyone, but that is because we are all different and we understand God in our special gifts. For example, I have come to see God as the life force of mathematics, the electricity that flows in my body, as well as the computer I use to write and format this book. However, I have also come to understand God through non-human animals because of their innocence in comparison to the corruption that humans are often ruined with. God also came to me in the form of a unicorn in a series of dreams I had. Over time, I came to understand that my writing in both English and computer programming languages was a gift from God.
+
+Someone else may see God in music, colors, books, movies, etc. Many people find their faith in the holy books of major world religions. Just like the C and C++ programming languages, not all parts are relevant to their lives, but they generally have only a few books available to them, and are raised in a specific religion and told that a specific book is the only way to understand God or to live their lives based on.
+
+But at the same time, humans also try to claim ownership of words through copyright, patent, and trademark laws. As a Christian, I believe that efforts to make things Copyleft, Open Source, Free/Libre, and generally available to all are in line with what Jesus taught in the New Testament.
+
+Whatever words or numbers speak to you are too valuable for any human, even me, to claim control or ownership over. You will come to understand this philosophy more as I continue to make my books available in many formats in licenses such as the GNU General Public License or Creative Commons, depending on what makes the most sense and communicates to others that they are free to use the information. You will understand this even better after you read the next chapter in this book.
 
 # Chapter 11: The Prayer of Saint Chastity
 
@@ -3193,39 +3201,39 @@ This chapter is only meant to help people understand where my priorities are. It
 
 # Chapter 12: Why are There so Many Programming Languages?
 
-In this book alone, I have briefly touched on C, Bash, JavaScript, HTML, SVG, Markdown, and even Assembly. You might be wondering why there are so many programming languages to choose from. For some people, this sends them into an analysis paralysis. Someone can be so overwhelmed by the variety of languages that they just give up and never learn to code.
+In this book alone, I have briefly touched on C, Bash, JavaScript, HTML, SVG, Markdown, and even Assembly. You might be wondering why there are so many programming languages to choose from. For some people, this sends them into analysis paralysis. Someone can be so overwhelmed by the variety of languages that they just give up and never learn to code.
 
-But I think this is a mistake. The point of having so many languages is so that each person can choose the language that works best for them. There is no objectively best programming language that works for all people, but there IS a best language for each person. To help someone choose a programming language for getting started, I recommend either C or C++ as a first language. In this chapter not only will I give you some advice for choosing between these two languages, I also will explain why one of these are a good starting choice.
+But I think this is a mistake. The point of having so many languages is so that each person can choose the language that works best for them. There is no objectively best programming language that works for all people, but there IS a best language for each person. To help someone choose a programming language for getting started, I recommend either C or C++ as a first language. In this chapter, not only will I give you some advice for choosing between these two languages, but I will also explain why one of these is a good starting choice.
 
 ## C and C++
 
-First, C and C++ are separate languages, yet C++ contains all of C and more. C came first and was the foundation for C++. This means that declaring integer and floating point variables will be identical in both languages. However, C++ requires more time to write code because the language and its standard libraries keep getting larger as new standards are ratified. You will need to spend time reading larger books, visit references for specific functions or class names, and generally have to use more English words that are names of those methods, classes, and header files.
+First, C and C++ are separate languages, yet C++ contains all of C and more. C came first and was the foundation for C++. This history means that declaring integer and floating point variables will be identical in both languages. However, C++ requires more time to write code because the language and its standard libraries keep getting larger as new standards are ratified. You will need to spend time reading larger books, visit references for specific functions or class names, and generally have to use more English words that are names of those methods, classes, and header files.
 
-C is a fine choice if you want a language that is small and easy to memorize. Even in this book, I have used a tiny subset of the C language, but it is enough for a beginner to get by, C also doesn't limit you from using open source libraries such as SDL, which was included in many examples.
+C is a fine choice if you want a language that is small and easy to memorize. Even in this book, I have used a tiny subset of the C language. Still, it is enough for a beginner to get by. C also doesn't limit you from using open source libraries such as SDL, which was included in many examples.
 
-C++ is a better choice than C if you are wanting to work as a professional programmer who works for a company and gets paid. I can promise you though that you will be working for managers and clients who don't understand programming and will make your life hell. Still, because of C++ being used more in the game development world, it is essential for those truly dedicated to learn this beast of a language and the proper use of all its features.
+C++ is a better choice than C if you want to work as a professional programmer who works for a company and gets paid. I can promise you, though, that you will be working for managers and clients who don't understand programming and will make your life hell. Still, because of C++ being used more in the game development world, it is essential for those truly dedicated to learn this beast of a language and the proper use of all its features.
 
 ## Why Learn Assembly?
 
 Of course, there are many more languages than those two, but I believe that using one of these two languages is essential for a beginner. If you first learn the fundamentals of programming and want more of a challenge, I recommend learning Assembly language for retro computers. The reason I recommend learning about the 6502(used by the Nintendo Entertainment System) and Z80(used by the Nintendo Game Boy) is because once you have written a game or other program for them, then what you have made can be used on literally any computer because there are so many emulators for these systems even though you cannot buy the original hardware anymore.
 
-But if you prefer to stay with modern developments, I recommend learning about the RISC-V processors and the Intruction Set Architecture that is becoming more popular during the time I am writing this book. I have even had success in writing a few programs in it using an emulator called RARS.
+But if you prefer to stay with modern developments, I recommend learning about the RISC-V processors and the Instruction Set Architecture that is becoming more popular at the time I am writing this book. I have even had success in writing a few programs in it using an emulator called RARS.
 
 <https://github.com/TheThirdOne/rars>
 
 All of the programming languages I recommend to people are those that support low-level programming. A good programming language should not try to hide that everything is a number. It is still bits of zeros and ones when you look at the way software and hardware actually work.
 
-But more importantly, you must know that programming is an endless pursuit. There is always more to learn and by the time you think you understand one language, twenty more will have been created and your friends will each have their opinion on why you should use the language they like instead of what you just spent 5 years mastering.
+But more importantly, you must know that programming is an endless pursuit. There is always more to learn, and by the time you think you understand one language, twenty more will have been created, and your friends will each have their opinion on why you should use the language they like instead of what you just spent 5 years mastering.
 
 ## Just Kidding!
 
 Those with experience know that real programmers don't have friends. Nobody can have a social life once they get deeply into the world of computers because most people hate math and can't imagine someone doing it for fun!
 
-I have been programming for 24 years at this point, and never did I receive approval from anyone for my skills, even when I made and published my Tetris game, people all had nothing but criticism and for a while I thought that maybe I should just give it up, but then something reminded me of why I love computers so much.
+I have been programming for 24 years at this point, and never did I receive approval from anyone for my skills, even when I made and published my Tetris game; people all had nothing but criticism, and for a while, I thought that maybe I should just give it up, but then something reminded me of why I love computers so much.
 
-Unlike in humans, math has no evil. Everything is known to be true or false. Numbers never reject me and they never lie. Despite hardware failure, numbers and electricity themselves never die. I don't know if you can understand, but computers and the math I can do with them has been the emotional support I needed when I had nothing else to live for. That is why I dedicate this book to the future autistic outcasts who can learn something from my code and do greater things than I can.
+Unlike in humans, math has no evil. Everything is known to be true or false. Numbers never reject me, and they never lie. Despite hardware failure, numbers and electricity themselves never die. I don't know if you can understand, but computers and the math I can do with them have been the emotional support I needed when I had nothing else to live for. That is why I dedicate this book to the future autistic outcasts who can learn something from my code and do greater things than I can.
 
-In fact, I even wrote a poem about how I feel about computers and programming. Perhaps if you read it you will understand what I mean when I say it is the war I can win.
+In fact, I even wrote a poem about how I feel about computers and programming. Perhaps if you read it, you will understand what I mean when I say it is the war I can win.
 
 # Chapter 13: The War I can Win
 
@@ -3278,3 +3286,33 @@ This world is often sad but I still have a great dream
 Where we all work together as part of the same team
 And that every person can experience the ultimate thrill
 Of the binary code that flows where no man can ever kill
+
+# Chapter 14: Gratis versus Libre
+
+If you are still reading this, you probably understand that although computers run everything on zeros and ones, through enough combinations and understanding of them, new software is constantly created. Therefore, no programming language is complete. By extension, no book about computer programming is ever complete, either.
+
+I have decided to make this book available in its current form completely Free, in both senses of the word: Gratis and Libre.
+
+## Gratis
+
+Gratis means that you can have something without paying money for it. Therefore, I have made this entire book into a website by use of Github pages so that everyone can learn from it without requiring them to pay money. For example, the next 14-year-old programmer who doesn't have money and learns computer programming entirely from free online materials. I was that kid, and I want to pass my knowledge to the next generation.
+
+<https://chastitywhiterose.github.io/Chastity-Code-Cookbook/>
+
+## Libre
+
+Libre means freedom, as in the sense of liberty. This word is about what you are allowed to say or do. Think of Freedom of Speech, or the pursuit of Life, Liberty, and the Pursuit of Happiness. Libre is a much more important kind of "free" than gratis is. The English language does not do justice when it comes to this distinction.
+
+I would also like to take this money to say that while I completely agree with Richard Stallman that Free Software is a better term than merely Open Source, I think that people can and will continue to confuse these two meanings of the English word "free". We should use whichever words people are most likely to understand in the context of what they need. At every opportunity, we need to explain the difference between Gratis and Libre, but more importantly, why Libre is the better Latin word to describe what our vision is when it comes to enabling people to write their own software and control their computer.
+
+I also personally prefer the word "libre" because it sounds similar to "libro", the Spanish word for book. Books are all about information and were the only means of learning information for most of human history because video and audio recordings had not been invented yet.
+
+## Conclusion
+
+Because this book is freely available, many people will read it, and perhaps it will need to be updated for correction or clarification. Therefore, I hope you have enjoyed it, but I also hope to hear from you about something I can add or explain better when I update it.
+
+You can always email me at the following address.
+
+[chastitywhiterose@gmail.com](mailto:chastitywhiterose@gmail.com)
+
+If I have not replied to your email, keep in mind that I am not being rude, but that I get hundreds of emails each week, and most of them are spam that I can't get rid of. These scammers have especially been problematic since I tried to start my Chess teaching business, which nobody cared about, and only scammers call and email me about how I can **pay them** to promote my business or my books. I am not interested in their scams, nor do I need their help, because people have ways of accessing my books and videos scattered all over the internet.
