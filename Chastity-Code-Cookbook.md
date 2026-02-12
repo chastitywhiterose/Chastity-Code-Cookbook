@@ -6,7 +6,7 @@ Chastity White Rose
 
 # Preface
 
-You would not know it by looking at me, but I have been computer programming as a hobby since I was 14 years old. My first programming language was QBASIC. It was a language and a program for interpreting that language that ran on MS-DOS. However, the usage of this language has diminished in use over time because it does not run without an emulator or modern BASIC language dialects meant to mimic it.
+You would not know it by looking at me, but I have been computer programming as a hobby since I was 14 years old. My first programming language was QBASIC. It was a language and a program for interpreting that language that ran on MS-DOS. However, the usage of this language has diminished over time because it does not run without an emulator or modern BASIC language dialects meant to mimic it.
 
 However, I moved to the C Programming Language as my main computer language. I have dabbled in Java, JavaScript, Lua, Perl, Python, and the beast known as C++. However, of all these languages, C remains my native language because of how simple it is to remember. In spite of its quirks, C is what I recommend to a beginner, not in spite of its limitations but because of them! Therefore, most of the recipes in this code cookbook will be in the form of C source code.
 
@@ -69,18 +69,18 @@ tells the compiler to process it and create an executable file. The second part
 
 `main`
 
-Tells it to run the executable file. On Windows, this would run a program named "main.exe". On Linux, the file is likely to be named simply "main". Also, on Linux, you would need to write it as "./main" to execute it. This signals that the file you are trying to run is in the current directory.
+Tells it to run the executable file. On Windows, this would run a program named "main.exe". On Linux, the file is likely to be named simply "main". Also, on Linux, you would need to write it as "./main" to execute it. The dot signals that the file you are trying to run is in the current directory. A single dot usually refers to the current directory, while two dots refer to the directory above the current one you are in.
 
 ## How it works
 
-Now that you have successfully ran the Hello World program, you might be wondering what it all means. Here is the same program with comments included.
+Now that you have successfully run the Hello World program, you might be wondering what it all means. Here is the same program with comments included.
 
 ```
 #include <stdio.h> /*include the standard input and output library*/
 int main() /*beginning of a function named main which returns an integer*/
 { /*opening bracket starting the function block*/
  printf("Hello, World!\n"); /*calling printf, the most useful function in the C Programming Language.*/
- return 0; /*Return the number zero to the operating system. This means no errors occurred.*/
+ return 0; /*Return the number zero to the operating system. A return value of zero means that no errors occurred.*/
 } /*closing bracket ending the function block*/
 
 ```
@@ -2974,7 +2974,7 @@ But one approach that has worked well for me is to write a program in C first to
 
 # Chapter 10: Software Licenses
 
-Perhaps it could be said that once you have written a program, what you do with it is even more important. For most of my life, I never considered the concept of copyright or ownership of the toy programs I wrote. I figured that unless I made a great game or operating system that I would not need to consider writing the terms and conditions about what people can or should do with my work.
+Perhaps it could be said that once you have written a program, what you do with it is even more important. For most of my life, I never considered the concept of copyright or ownership of the toy programs I wrote. I figured that unless I made a great game or operating system, I would not need to consider writing the terms and conditions about what people can or should do with my work.
 
 And even now, I don't think my programs have enough of an impact for anyone to care about software licenses. However, I have found some software licenses that are compatible with my personal philosophy for how software should be shared and distributed.
 
@@ -3007,7 +3007,7 @@ Considering all this, I place all my code in this book under the GPL3 license so
 
 <https://www.gnu.org/licenses/lgpl-3.0.html>
 
-The Lesser GPL is very much like the regular GPL with an important exception. It is to allow proprietary programs to use a library. At first, I didn't see the point of this; however, when I read the following article, I came to understand better.
+The Lesser GPL is very much like the regular GPL, with an important exception. It is to allow proprietary programs to use a library. At first, I didn't see the point of this; however, when I read the following article, I came to understand better.
 
 <https://www.gnu.org/licenses/why-not-lgpl.html>
 
@@ -3031,9 +3031,17 @@ But my personal ideals are different from those of most programmers. My goal is 
 
 Writing computer software isn't just a hobby or a business; it is a ministry. Think about all the software that has been written to create the internet and allow people to write books and share them with the world. Think about the programmers who made video and audio recording, encoding, and formatting possible.
 
-This book is about computer programming, not religion, but I must say, if you had a message that would save the lives or the souls of others, would you really want to be restricted in what manner you use to share that information? Therefore, I propose that Free Software is a necessity in light of Digital Rights Management and companies like Amazon removing ebooks from people's devices that they have already paid for.
+This book is about computer programming, not religion, but I must say, if you had a message that would save the lives or the souls of others, would you really want to be restricted in the manner in which you share that information? Therefore, I propose that Free Software is a necessity in light of Digital Rights Management and companies like Amazon removing ebooks from people's devices that they have already paid for.
 
 Traditional books are dying, and bookstores are closing. If we don't work together to stop digital book burning, then we lose the final method of sharing words of eternal value.
+
+What do I mean by words of eternal value? I believe that it is different for everyone, but that is because we are all different and we understand God in our special gifts. For example, I have come to see God as the life force of mathematics, the electricity that flows in my body, as well as the computer I use to write and format this book. However, I have also come to understand God through non-human animals because of their innocence in comparison to the corruption that humans are often ruined with. God also came to me in the form of a unicorn in a series of dreams I had. Over time, I came to understand that my writing in both English and computer programming languages was a gift from God.
+
+Someone else may see God in music, colors, books, movies, etc. Many people find their faith in the holy books of major world religions. Just like the C and C++ programming languages, not all parts are relevant to their lives, but they generally have only a few books available to them, and are raised in a specific religion and told that a specific book is the only way to understand God or to live their lives based on.
+
+But at the same time, humans also try to claim ownership of words through copyright, patent, and trademark laws. As a Christian, I believe that efforts to make things Copyleft, Open Source, Free/Libre, and generally available to all are in line with what Jesus taught in the New Testament.
+
+Whatever words or numbers speak to you are too valuable for any human, even me, to claim control or ownership over. You will come to understand this philosophy more as I continue to make my books available in many formats in licenses such as the GNU General Public License or Creative Commons, depending on what makes the most sense and communicates to others that they are free to use the information. You will understand this even better after you read the next chapter in this book.
 
 # Chapter 11: The Prayer of Saint Chastity
 
@@ -3278,3 +3286,7 @@ This world is often sad but I still have a great dream
 Where we all work together as part of the same team
 And that every person can experience the ultimate thrill
 Of the binary code that flows where no man can ever kill
+
+# Chapter 14: Zero and One are Eternal
+
+If you are still reading this
