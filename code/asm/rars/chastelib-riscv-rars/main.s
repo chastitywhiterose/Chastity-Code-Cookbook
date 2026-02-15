@@ -107,7 +107,7 @@ jal putline
 addi s0,s0,1
 blt s0,s1,loop
 
-li a0, 10 # ecall code for exit program
+li   a7, 10     # exit syscall
 ecall
 
 #################################################################################
@@ -276,8 +276,8 @@ jr ra
 
 #############################################################################
 # Important notice! The next four functions print things to standard output #
-# These functions only work in the Jupiter simulator but not rars           #
-# This is because simulators use different registers for the ecalls         #
+# These functions only work in the rars simulator but not Jupiter           #
+# This is because simulators use  different registers for the ecalls        #
 # ecalls are environment calls for a specific operating system              #
 #############################################################################
 
@@ -286,8 +286,8 @@ jr ra
 # Obviously the string will be terminated with a zero byte and stored in memory somewhere.
 
 putstring:
-li a0, 4  # ecall code for print zero terminated string
-mv a1,s0  # load address of string to print into a0
+li a7,4      # load immediate, v0 = 4 (4 is print string system call)
+mv a0,s0  # load address of string to print into a0
 ecall
 jr ra
 
@@ -295,23 +295,23 @@ jr ra
 #prints the lowest byte of the s0 register as a byte or character to standard output
 
 putchar:
-li a0, 11  # ecall code for print character
-mv a1, s0  # character to print (in this case, 0x0A for newline)
+li a7, 11  # ecall code for print character
+mv a0, s0  # character to print (in this case, 0x0A for newline)
 ecall
 jr ra
 
 #the putspace function prints a space to standard output
 
 putspace:
-li a0, 11  # ecall code for print character
-li a1, 0x20 # character to print (in this case, 0x20 for a space)
+li a7, 11  # ecall code for print character
+li a0, 0x20 # character to print (in this case, 0x20 for a space)
 ecall
 jr ra
 
 #the putspace function prints a newline to standard output
 
 putline:
-li a0, 11  # ecall code for print character
-li a1, 0x0A # character to print (in this case, 0x0A for newline)
+li a7, 11  # ecall code for print character
+li a0, 0x0A # character to print (in this case, 0x0A for newline)
 ecall
 jr ra
