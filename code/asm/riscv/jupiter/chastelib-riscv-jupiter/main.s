@@ -13,30 +13,30 @@ int_width: .byte 1 #by default
 # These variables are for outputting specific messages
 # or to simulate user input as integers in the strint function
 
-msg: .asciz "Hello World!\n"
+msg: .asciiz "Hello World!\n"
 
-input_int_0: .asciz "0"
-input_int_1: .asciz "100"
+input_int_0: .asciiz "0"
+input_int_1: .asciiz "100"
 
 .text
 
 __start:
 
-#at the beginning of a program, it is usually good to get user input
-#this program doesn't use real user input but simulates it with global strings we will interpret
-#as if they are hexadecimal integers
+# at the beginning of a program, it is usually good to get user input
+# this program doesn't use real user input but simulates it with global strings we will interpret
+# as if they are hexadecimal integers
 
-#change radix to decimal
+# change radix to decimal
 li t0,16     #load t0 register with the new radix
 la t1,radix #load t1 register with the address the radix will go to
 sb t0,0(t1) #save t0 register (byte) to address t1
 
-#load s0 with address of first integer string, convert it with strint, and save in another register
+# load s0 with address of first integer string, convert it with strint, and save in another register
 la s0,input_int_0
 jal strint
 mv s2,s0
 
-#load s0 with address of second integer string, convert it with strint, and save in another register
+# load s0 with address of second integer string, convert it with strint, and save in another register
 la s0,input_int_1
 jal strint
 mv s3,s0
@@ -44,22 +44,22 @@ mv s3,s0
 la s0,msg
 jal putstring
 
-#this is how we would load the loop controller variables directly
-#these are commented out for this example
-#li s0,0
-#li s1,0x100
+# this is how we would load the loop controller variables directly
+# these are commented out for this example
+# li s0,0
+# li s1,0x100
 
 mv s0,s2
 mv s1,s3
 
 loop:
 
-#change radix to binary
+# change radix to binary
 li t0,2     #load t0 register with the new radix
 la t1,radix #load t1 register with the address the radix will go to
 sb t0,0(t1) #save t0 register (byte) to address t1
 
-#change width to 8 to represent an 8 bit binary value
+# change width to 8 to represent an 8 bit binary value
 li t0,8     #load t0 register with the new width
 la t1,int_width #load t1 register with the address the width will go to
 sb t0,0(t1) #save t0 register (byte) to address t1
@@ -67,12 +67,12 @@ sb t0,0(t1) #save t0 register (byte) to address t1
 jal putint
 jal putspace
 
-#change radix to hexadecimal
+# change radix to hexadecimal
 li t0,16     #load t0 register with the new radix
 la t1,radix #load t1 register with the address the radix will go to
 sb t0,0(t1) #save t0 register (byte) to address t1
 
-#change width to 2 to represent an 8 bit binary value as a two digit hex value
+# change width to 2 to represent an 8 bit binary value as a two digit hex value
 li t0,2     #load t0 register with the new width
 la t1,int_width #load t1 register with the address the width will go to
 sb t0,0(t1) #save t0 register (byte) to address t1
@@ -80,12 +80,12 @@ sb t0,0(t1) #save t0 register (byte) to address t1
 jal putint
 jal putspace
 
-#change radix to decimal
+# change radix to decimal
 li t0,10     #load t0 register with the new radix
 la t1,radix #load t1 register with the address the radix will go to
 sb t0,0(t1) #save t0 register (byte) to address t1
 
-#change width to 3 to represent an 8 bit binary value decimal value of up to 3 digits
+# change width to 3 to represent an 8 bit binary value decimal value of up to 3 digits
 li t0,3       #load t0 register with the new width
 la t1,int_width #load t1 register with the address the width will go to
 sb t0,0(t1) #save t0 register (byte) to address t1
@@ -100,14 +100,14 @@ bgt s0,t1,not_char
 jal putspace
 jal putchar
 
-not_char:                #jump here if character is outside range to print
+not_char:                # jump here if character is outside range to print
 
 jal putline
 
 addi s0,s0,1
 blt s0,s1,loop
 
-li   a7, 10     # exit syscall
+li a0, 10 # ecall code for exit program
 ecall
 
 #################################################################################
@@ -194,22 +194,22 @@ lb t0,0(t1)
 addi t1,t1,1
 beq t0,zero,strint_end
 
-#if char is below '0' or above '9', it is outside the range of these and is not a digit
+# if char is below '0' or above '9', it is outside the range of these and is not a digit
 li t5,'0'
 blt t0,t5,not_digit
 li t5,'9'
 bgt t0,t5,not_digit
 
-#but if it is a digit, then correct and process the character
+# but if it is a digit, then correct and process the character
 is_digit:
 andi t0,t0,0xF
 j process_char
 
 not_digit:
-#it isn't a digit, but it could be perhaps and alphabet character
-#which is a digit in a higher base
+# it isn't a digit, but it could be perhaps and alphabet character
+# which is a digit in a higher base
 
-#if char is below 'A' or above 'Z', it is outside the range of these and is not capital letter
+# if char is below 'A' or above 'Z', it is outside the range of these and is not capital letter
 li t5,'A'
 blt t0,t5,not_upper
 li t5,'Z'
@@ -223,7 +223,7 @@ j process_char
 
 not_upper:
 
-#if char is below 'a' or above 'z', it is outside the range of these and is not lowercase letter
+# if char is below 'a' or above 'z', it is outside the range of these and is not lowercase letter
 li t5,'a'
 blt t0,t5,not_lower
 li t5,'z'
@@ -237,8 +237,8 @@ j process_char
 
 not_lower:
 
-#if we have reached this point, result invalid and end function
-#this is only reached if the byte was not a valid digit or alphabet character
+# if we have reached this point, result invalid and end function
+# this is only reached if the byte was not a valid digit or alphabet character
 j strint_end
 
 process_char:
@@ -247,7 +247,7 @@ bgt t0,t2 strint_end #;if this value is above or equal to radix, it is too high 
 
 
 mul s0,s0,t2 # multiply s0 by the radix
-add s0,s0,t0     # add the correct value of this digit
+add s0,s0,t0 # add the correct value of this digit
 
 j read_strint # jump back and continue the loop if nothing has exited it
 
@@ -255,11 +255,11 @@ strint_end:
 
 jr ra
 
-#this function calls intstr to convert the s0 register into a string
-#then it uses the system specific call to print the string
-#it also uses the stack to save the value of s0 and ra (return address)
-#this way, s0 is restored to the value it had before this function
-#restoring ra is restored because it is modified during calls to other functions
+# this function calls intstr to convert the s0 register into a string
+# then it uses the system specific call to print the string
+# it also uses the stack to save the value of s0 and ra (return address)
+# this way, s0 is restored to the value it had before this function
+# restoring ra is restored because it is modified during calls to other functions
 
 putint:
 addi sp,sp,-8
@@ -276,8 +276,8 @@ jr ra
 
 #############################################################################
 # Important notice! The next four functions print things to standard output #
-# These functions only work in the rars simulator but not Jupiter           #
-# This is because simulators use  different registers for the ecalls        #
+# These functions only work in the Jupiter simulator but not rars           #
+# This is because simulators use different registers for the ecalls         #
 # ecalls are environment calls for a specific operating system              #
 #############################################################################
 
@@ -286,8 +286,8 @@ jr ra
 # Obviously the string will be terminated with a zero byte and stored in memory somewhere.
 
 putstring:
-li a7,4      # load immediate, v0 = 4 (4 is print string system call)
-mv a0,s0  # load address of string to print into a0
+li a0, 4  # ecall code for print zero terminated string
+mv a1,s0  # load address of string to print into a0
 ecall
 jr ra
 
@@ -295,23 +295,23 @@ jr ra
 #prints the lowest byte of the s0 register as a byte or character to standard output
 
 putchar:
-li a7, 11  # ecall code for print character
-mv a0, s0  # character to print (in this case, 0x0A for newline)
+li a0, 11  # ecall code for print character
+mv a1, s0  # character to print (in this case, 0x0A for newline)
 ecall
 jr ra
 
 #the putspace function prints a space to standard output
 
 putspace:
-li a7, 11  # ecall code for print character
-li a0, 0x20 # character to print (in this case, 0x20 for a space)
+li a0, 11  # ecall code for print character
+li a1, 0x20 # character to print (in this case, 0x20 for a space)
 ecall
 jr ra
 
 #the putspace function prints a newline to standard output
 
 putline:
-li a7, 11  # ecall code for print character
-li a0, 0x0A # character to print (in this case, 0x0A for newline)
+li a0, 11  # ecall code for print character
+li a1, 0x0A # character to print (in this case, 0x0A for newline)
 ecall
 jr ra
