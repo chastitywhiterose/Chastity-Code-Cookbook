@@ -36,10 +36,10 @@ char *intstr(unsigned int i)
   s--;
   *s=i%radix;
   i/=radix;
-  if(*s<10){*s+='0';}else{*s=*s+'A'-10;}
+  if(*s<10){*s+='0';}
+  else{*s=*s+'A'-10;}
   width++;
  }
-
  return s;
 }
 
