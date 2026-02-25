@@ -1,16 +1,22 @@
 /* chastlib_input.h */
 
-const int input_string_length=256; /*the length that I expect will be enough for*/
+#define input_string_length 256; /*the length that I expect will be enough for*/
 char main_string[usl+1]; /*global string which will be used to store string of integers. Size is usl+1 for terminating zero*/
 
 /*variable to store how many characters were read into the string last time*/
 int read_count=0;
 
 /*
- This function prints a string using fwrite.
- This algorithm is the best C representation of how my Assembly programs also work.
- Its true purpose is to be used in the putint function for conveniently printing integers, 
- but it can print any valid string.
+this is my basic function for recieving input from the keyboard
+it uses a global variable to store the string into
+However, it returns a pointer to this string which makes it really convenient if I need
+to read something and then immediately print it or copy it to another variable
+
+It reads characters into the string and stops at the first whitespace character.
+This can be a regular space, tab, or newline.
+My reasoning for this is because I plan for multiple strings to exist on one line.
+This is similar to how a command and its arguments are entered on the command line.
+By stopping every time a separating whitespace character is found, the tokens can be processed manually.
 */
 
 char *getstring()
@@ -27,3 +33,4 @@ char *getstring()
  return s;
 }
 
+/*More functions are planned, but so far I am off to a great start with this function!*/
