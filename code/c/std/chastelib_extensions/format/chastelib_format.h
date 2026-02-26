@@ -30,11 +30,21 @@ char *intfmt(unsigned int i,int radix,int int_width)
  return s;
 }
 
+
+
+
+
+
+
+
 /*
  This genius function prints exactly 3 strings! You may wonder what use this might be.
- Usually someone doesn't just print an integer but they have information printed before or after it on the same line.
+ Usually someone doesn't just print an integer but they have information printed
+ before or after it on the same line.
+
  A function that prints 3 strings means that the host program can call just this function to
- print strings of any kind that exist in the program, including conversions made with intstr or intfmt
+ print strings of any kind that exist in the program.
+ I use these mostly for conversions made with intstr or intfmt
 */
 
 void putfmt(const char *a,const char *b,const char *c)
@@ -43,3 +53,6 @@ void putfmt(const char *a,const char *b,const char *c)
  putstring(b);
  putstring(c);
 }
+
+
+
