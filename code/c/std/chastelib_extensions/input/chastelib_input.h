@@ -22,14 +22,14 @@ By stopping every time a separating whitespace character is found, the tokens ca
 char *getstring()
 {
  char *s=main_string,*p=s,c=0;
- while( c!=' ' && c!='\n' && c!='\t' )
+ while( c!=' ' && c!='\n' && c!='\t')
  {
   fread(p,1,1,stdin); /*read exactly 1 byte*/
   c=*p; /*character equals the last character read*/
   p++; /*increment the pointer to the next byte*/
  }
  *--p=0; /*go back to last character (space,newline,tab) and replace with zero*/
- read_count=s-p;
+ read_count=p-s;
  return s;
 }
 

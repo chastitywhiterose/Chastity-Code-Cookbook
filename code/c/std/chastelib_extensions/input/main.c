@@ -21,6 +21,10 @@ int main(int argc, char *argv[])
  putstring(s);
  putstring("\n");
  
+ putstring("Length of the string : ");
+ putint(read_count);
+ putstring("\n");
+
  putstring("Test 1: The next loop will keep reading strings you until you enter \"return\".\n");
  
  while(1)
