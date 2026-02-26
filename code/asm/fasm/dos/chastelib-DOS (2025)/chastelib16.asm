@@ -18,7 +18,7 @@ mov bx,ax                  ;copy ax to bx for use as index register
 
 putstring_strlen_start:    ;this loop finds the length of the string as part of the putstring function
 
-cmp byte[bx],0             ;compare this byte with 0
+cmp [bx], byte 0           ;compare this byte with 0
 jz putstring_strlen_end    ;if comparison was zero, jump to loop end because we have found the length
 inc bx                     ;increment bx (add 1)
 jmp putstring_strlen_start ;jump to the start of the loop and keep trying until we find a zero
@@ -43,12 +43,9 @@ ret
 
 
 ;this is the location in memory where digits are written to by the intstr function
-
 int_string db 16 dup '?' ;enough bytes to hold maximum size 16-bit binary integer
-
 ;this is the end of the integer string optional line feed and terminating zero
 ;clever use of this label can change the ending to be a different character when needed 
-
 int_newline db 0Dh,0Ah,0 ;the proper way to end a line in DOS/Windows
 
 radix dw 2 ;radix or base for integer output. 2=binary, 8=octal, 10=decimal, 16=hexadecimal
@@ -90,7 +87,7 @@ prefix_zeros:
 cmp cx,[int_width]
 jnb end_zeros
 dec bx
-mov byte[bx], '0'
+mov [bx],byte '0'
 inc cx
 jmp prefix_zeros
 end_zeros:
@@ -238,18 +235,6 @@ ret
 putline:
 push ax
 mov ax,line
-call putstring
-pop ax
-ret
-
-;a function for printing a single character that is the value of al
-
-char: db 0,0
-
-putchar:
-push ax
-mov [char],al
-mov ax,char
 call putstring
 pop ax
 ret
