@@ -7,17 +7,16 @@ int main(int argc, char *argv[])
 {
  float a=1,b=16,f;
 
-radix=10;
+ radix=10;
+ int_width=1;
  
- while(a<b)
+ while(a<=b)
  {
   f=256/a;
-  printf("%f",f);
-  putstring(" ");
-  putstring(fltstr(f));
+  printf("printf %f",f);
+  putstring(" putfloat ");
+  putflt(f);
   putstring("\n");
-
-
   a+=1;
  }
   
