@@ -28,17 +28,19 @@ int main()
   putstring("Official test suite for the C version of chastelib.\n");
   putstring("This edition uses ncurses\n");
  
- 
-
- if(key == KEY_F(1))		/* Check for F1 key. Usually this would display a help message. */
- printw("F1 Key pressed");
- else
- {
   if(key!=0)
   {
    printw("char: %c code: %X\n\n", key,key);
   }
+
+  if(key==KEY_DOWN){b++;}
+
+ 
+ if(key == KEY_F(1)) /* Check for F1 key. Usually this would display a help message. */
+ {
+  printw("F1 Key pressed");
  }
+
  
  a=b-0x10;
  while(a<b)
