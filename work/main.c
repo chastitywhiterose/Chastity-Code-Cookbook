@@ -1,25 +1,34 @@
 #include <ncurses.h>
+#include "chastelib_ncurses.h"
 
 int main()
 {
- int ch;
+ int key=0;
  initscr();			/* Start curses mode 		*/
  raw();				/* Line buffering disabled	*/
  keypad(stdscr, TRUE);		/* We get F1, F2 etc..		*/
  noecho();			/* Don't echo() while we do getch */
- printw("Type any character to see it in bold\n");
- ch = getch();			/* If raw() hadn't been called we have to press enter before it gets to the program */
- if(ch == KEY_F(1))		/* Without keypad enabled this will */
- printw("F1 Key pressed");/*  not get to us either	*/
+ 
+ putstring("Official test suite for the C version of chastelib.\n");
+ putstring("This edition uses ncurses\n");
+
+ while(key!='q')
+ {
+ 
+ if(key == KEY_F(1))		/* Check for F1 key. Usually this would display a help message. */
+ printw("F1 Key pressed");
  else
  {
-  printw("The pressed key is ");
-  attron(A_BOLD);
-  printw("%c", ch);
-  attroff(A_BOLD);
+  if(key!=0)
+  {
+   printw("char: %c code: %X\n", key,key);
+  }
  }
- refresh();			/* Print it on to the real screen */
- getch();			/* Wait for user input */
+
+  refresh();			/* Print it on to the real screen */
+  key = getch();		/* Wait for user input */
+ }
+ 
  endwin();			/* End curses mode		  */
  return 0;
 }
