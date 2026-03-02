@@ -2,22 +2,28 @@
  C++ string extension to the chastelib library
 
  An extension library for chastelib that uses std::string that exists in C++
-
  There are only two functions in this library but they are powerful if you know how to use them
- 
+ These were designed with the idea that they will be useful in C++ programs
+ where strings are objects of a class rather than a pointer to
+ an array of characters.
 */
 
 /*
  This version of intstr has the same name as the libc version.
  For the compiler to know which of the two functions is being called,
  I had to give it a different number of arguments. 
+ My solution was to pass the desired radix and integer width as arguments!
+ This means that I can generate perfect strings from any integer
+ and send them to cout for perfectly formatted integers in my style!
+ Because C++ allows strings to be returned from a function
+ and since all data is passed as arguments. No global variables are needed.
+ Th intstr function can be called in any context at any time!
 */
 
 string intstr(unsigned int i,int radix,int int_width)
 {
  int width=0;
- //char *s=int_string+usl;
- string s;
+ string s; //create new empty string
  char c; //character used to store value of digit each loop
  while(i!=0 || width<int_width)
  {
@@ -25,6 +31,7 @@ string intstr(unsigned int i,int radix,int int_width)
   i/=radix;
   if(c<10){c+='0';}
   else{c=c+'A'-10;}
+  s=c+s;
   width++;
  }
  return s;
@@ -36,6 +43,8 @@ string intstr(unsigned int i,int radix,int int_width)
  Just like the other strint function it converts an string to an integer
  But it works with the std::string class, it allows compatibility with modern C++ programs that use this type.
  The characters of the string class can be indexed with [] just like C strings
+ The compiler is smart enough to know when this function is being called
+ because a string object is not the same as a char pointer
 */
 
 int strint(string s)
@@ -59,5 +68,4 @@ int strint(string s)
  }
  return i;
 }
-
 
