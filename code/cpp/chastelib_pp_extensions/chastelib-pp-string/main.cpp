@@ -13,14 +13,14 @@ int main(int argc, char *argv[])
 
  putstring("Official test suite for the C++ version of chastelib.\n");
 
- string s="60"; //create C++ string for input integer
+ string s="20"; //create C++ string for input integer
  //pass s force the usage of the overloaded strint function from chastelib_string.hpp
  b=strint(s);
  while(a<b)
  {
   radix=2;
   int_width=8;
-  putint(a);
+  cout << intstr(a,2,8);
   putstring(" ");
   radix=16;
   int_width=2;

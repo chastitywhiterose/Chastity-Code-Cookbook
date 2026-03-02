@@ -2,7 +2,33 @@
  C++ string extension to the chastelib library
 
  An extension library for chastelib that uses std::string that exists in C++
+
+ There are only two functions in this library but they are powerful if you know how to use them
+ 
 */
+
+/*
+ This version of intstr has the same name as the libc version.
+ For the compiler to know which of the two functions is being called,
+ I had to give it a different number of arguments. 
+*/
+
+string intstr(unsigned int i,int radix,int int_width)
+{
+ int width=0;
+ //char *s=int_string+usl;
+ string s;
+ char c; //character used to store value of digit each loop
+ while(i!=0 || width<int_width)
+ {
+  c=i%radix;
+  i/=radix;
+  if(c<10){c+='0';}
+  else{c=c+'A'-10;}
+  width++;
+ }
+ return s;
+}
 
 
 /*
