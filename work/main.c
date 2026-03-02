@@ -79,6 +79,7 @@ void RAM_hexdump()
 
 }
 
+/*every change during the program is processed based on this key*/
 int key=0;
 
 void input_operate()
@@ -88,12 +89,13 @@ void input_operate()
  int y=byte_selected_y;
  int c; /*character used for some operations*/
 
- if(key2=='A'){y--;if(y<0){y=15;}}
- if(key2=='B'){y++;if(y>=height){y=0;}}
- if(key2=='C'){x++;if(x>=width){x=0;}}
- if(key2=='D'){x--;if(x<0){x=15;}}
+ if(key==KEY_UP){y--;if(y<0){y=15;}}
+ if(key==KEY_DOWN){y++;if(y>=height){y=0;}}
+ if(key==KEY_LEFT){x--;if(x<0){x=15;}}
+ if(key==KEY_RIGHT){x++;if(x>=width){x=0;}}
+ 
 
- if(key2==0x35)
+ if(key==KEY_PPAGE)
  {
   if(file_address!=0)
   {
@@ -109,7 +111,7 @@ void input_operate()
  }
 
  
- if(key2==0x36)
+ if(key==KEY_NPAGE)
  {
   /*before changing page, save the modified bytes from this page back to the file*/
   fseek(fp,file_address,SEEK_SET);
@@ -121,8 +123,8 @@ void input_operate()
   c=count;while(c<0x100){RAM[c]=eof_char;c++;}
  }
 
- if(key=='+'){RAM[x+y*width]++;}
- if(key=='-'){RAM[x+y*width]--;}
+ if(key=='+'||key==0x243){RAM[x+y*width]++;}
+ if(key=='-'||key==0x248){RAM[x+y*width]--;}
  
  /*handle hexadecimal number input*/
  if( key >= '0' && key <= '9' ){c=key-'0';   RAM[x+y*width]<<=4;RAM[x+y*width]|=c;}
@@ -196,14 +198,10 @@ int main(int argc, char *argv[])
   int_width=2;
   putint(key);
   putstring(" ");
-  putint(key1);
-  putstring(" ");
-  putint(key2);
   
   /*display a character based representation of key pressed*/
   move(0,9); /*ncurses yx order corrected*/
-  putchar(key);
-
+  addch(key);
   
   move(0,16); /*ncurses yx order corrected*/
   putstring("Hexplore : Chastity White Rose");  ;
@@ -227,8 +225,14 @@ int main(int argc, char *argv[])
   move(RAM_view_y,RAM_view_x); /*ncurses yx order corrected*/
 
   RAM_hexdump();
+
+  /*move to correct location to put brackets and show selection*/
+  move(byte_selected_y+2,byte_selected_x*3+8);
+  addch('['); /*put left bracket*/
+  move(byte_selected_y+2,byte_selected_x*3+11);
+  addch(']'); /*put left bracket*/
  
-  move(0,0);
+  move(0,7); /*put the cursor where it won't cover other text*/
   
   refresh();			/* Print it on to the real screen */
   key = getch();		/* Wait for user input */
