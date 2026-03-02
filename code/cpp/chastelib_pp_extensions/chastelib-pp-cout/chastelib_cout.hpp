@@ -57,7 +57,7 @@ int strint(const char *s)
 {
  int i=0;
  char c;
- if( radix<2 || radix>36 ){printf("Error: radix %i is out of range!\n",radix);}
+ if( radix<2 || radix>36 ){ cout << "Error: radix " << i << " is out of range!\n";}
  while( *s == ' ' || *s == '\n' || *s == '\t' ){s++;} /*skip whitespace at beginning*/
  while(*s!=0)
  {
@@ -66,14 +66,15 @@ int strint(const char *s)
   else if( c >= 'A' && c <= 'Z' ){c-='A';c+=10;}
   else if( c >= 'a' && c <= 'z' ){c-='a';c+=10;}
   else if( c == ' ' || c == '\n' || c == '\t' ){break;}
-  else{printf("Error: %c is not an alphanumeric character!\n",c);break;}
-  if(c>=radix){printf("Error: %c is not a valid character for radix %i\n",*s,radix);break;}
+  else{ cout << "Error: " << c << " is not an alphanumeric character!\n";break;}
+  if(c>=radix){ cout << "Error: " << *s << " is not a valid character for radix " << radix << "\n"; break;}
   i*=radix;
   i+=c;
   s++;
  }
  return i;
 }
+
 
 /*
  This function prints a string using cout instead of fwrite.
@@ -102,7 +103,7 @@ void putstring(const char *s)
 }
 
 /*
- This function uses both intstr and putstring to print an integer in the currently selected radix and width
+ This function uses both intstr and putstring to print an integer in the currently selected radix and width.
 */
 void putint(unsigned int i)
 {
