@@ -1,10 +1,12 @@
 /*
- This file is a library of functions written by Chastity White Rose. The functions are for converting strings into integers and integers into strings.
+ This file is a C library of functions written by Chastity White Rose. The functions are for converting strings into integers and integers into strings.
  I did it partly for future programming plans and also because it helped me learn a lot in the process about how pointers work
  as well as which features the standard library provides, and which things I need to write my own functions for.
 
  As it turns out, the integer output routines for C are too limited for my tastes. This library corrects this problem.
- Using the global variables and functions in this file, integers can be output in bases/radixes 2 to 36
+ Using the global variables and functions in this file, integers can be output in bases/radixes 2 to 36.
+ 
+ Although this code is commented, I have also written a readme.md file designed to explain the usage of these functions and the philosophy behind them.
 */
 
 /*
@@ -16,7 +18,7 @@
 #define usl 32 /*usl stands for Unsigned String Length*/
 char int_string[usl+1]; /*global string which will be used to store string of integers. Size is usl+1 for terminating zero*/
 
- /*radix or base for integer output. 2=binary, 8=octal, 10=decimal, 16=hexadecimal*/
+/*radix or base for integer output. 2=binary, 8=octal, 10=decimal, 16=hexadecimal*/
 int radix=2;
 /*default minimum digits for printing integers*/
 int int_width=1;
@@ -42,30 +44,6 @@ char *intstr(unsigned int i)
   width++;
  }
  return s;
-}
-
-/*
- This function prints a string using fwrite.
- This algorithm is the best C representation of how my Assembly programs also work.
- Its true purpose is to be used in the putint function for conveniently printing integers, 
- but it can print any valid string.
-*/
-
-void putstring(const char *s)
-{
- int c=0;
- const char *p=s;
- while(*p++){c++;} 
- fwrite(s,1,c,stdout);
-}
-
-/*
- This function uses both intstr and putstring to print an integer in the currently selected radix and width.
-*/
-
-void putint(unsigned int i)
-{
- putstring(intstr(i));
 }
 
 /*
@@ -98,6 +76,31 @@ int strint(const char *s)
 }
 
 /*
+ This function prints a string using fwrite.
+ This algorithm is the best C representation of how my Assembly programs also work.
+ Its true purpose is to be used in the putint function for conveniently printing integers, 
+ but it can print any valid string.
+*/
+
+void putstring(const char *s)
+{
+ int c=0;
+ const char *p=s;
+ while(*p++){c++;} 
+ fwrite(s,1,c,stdout);
+}
+
+/*
+ This function uses both intstr and putstring to print an integer in the currently selected radix and width.
+*/
+
+void putint(unsigned int i)
+{
+ putstring(intstr(i));
+}
+
+
+/*
  Those four functions above are the core of chastelib.
  While there may be extensions written for specific programs, these functions are essential for absolutely every program I write.
  
@@ -106,3 +109,4 @@ int strint(const char *s)
  
  The core functions are primarily concerned with standard output and the conversion of strings and integers. They do not deal with input from the keyboard or files. A separate extension will be written for my programs that need these features.
 */
+
