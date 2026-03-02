@@ -1,5 +1,7 @@
 /*
  C++ string extension to the chastelib library
+
+ An extension library for chastelib that uses std::string that exists in C++
 */
 
 

@@ -1,6 +1,8 @@
 #include <iostream>
+#include <string>
 using namespace std;
 #include "chastelib_cout.hpp"
+#include "chastelib_string.hpp"
 
 int main(int argc, char *argv[])
 {
@@ -11,7 +13,9 @@ int main(int argc, char *argv[])
 
  putstring("Official test suite for the C++ version of chastelib.\n");
 
- b=strint("100");
+ string s="60"; //create C++ string for input integer
+ //pass s force the usage of the overloaded strint function from chastelib_string.hpp
+ b=strint(s);
  while(a<b)
  {
   radix=2;
