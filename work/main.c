@@ -55,19 +55,8 @@ void RAM_hexdump()
   x=0;
   while(x<width)
   {
-  
-   if(x==byte_selected_x&&y==byte_selected_y)
-   {
-    putint(RAM[x+y*width]&0xFF); /*print this byte in the new color*/
-   }
-   else
-   {
-    putint(RAM[x+y*width]&0xFF);
-   }
- 
+   putint(RAM[x+y*width]&0xFF);
    putstring(" ");
-
-
    x++;
   }
   RAM_textdump(y,width);
@@ -180,6 +169,26 @@ int main(int argc, char *argv[])
  raw();				/* Line buffering disabled	*/
  keypad(stdscr, TRUE);		/* We get F1, F2 etc..		*/
  noecho();			/* Don't echo() while we do getch */
+ 
+ if(has_colors() == FALSE)
+ {
+  printf("Your terminal does not support color\n");
+ }
+ else
+ {
+  start_color();
+  /*colors are specified in range 0 to 1000 in ncurses*/
+  init_color(COLOR_RED,1000,0, 0);
+  init_color(COLOR_GREEN,0,1000,0);
+  init_color(COLOR_YELLOW,1000,1000,0);
+  init_color(COLOR_BLUE,0,1000,0);
+  init_color(COLOR_MAGENTA,1000,0,1000);
+  init_color(COLOR_CYAN,0,1000,1000);
+  init_color(COLOR_WHITE,1000,1000,1000);
+
+  init_pair(1, COLOR_MAGENTA, COLOR_BLACK); /*this pair is for the brackets around selected byte*/
+  init_pair(2, COLOR_GREEN, COLOR_BLACK); /*this pair is for the brackets around selected byte*/
+ }
 
   /*attempt to read 256 bytes for the first page*/
  count=fread(RAM,1,0x100,fp);
@@ -225,12 +234,23 @@ int main(int argc, char *argv[])
   move(RAM_view_y,RAM_view_x); /*ncurses yx order corrected*/
 
   RAM_hexdump();
+  
+  attron(COLOR_PAIR(1));
 
   /*move to correct location to put brackets and show selection*/
   move(byte_selected_y+2,byte_selected_x*3+8);
   addch('['); /*put left bracket*/
   move(byte_selected_y+2,byte_selected_x*3+11);
   addch(']'); /*put left bracket*/
+  
+  attroff(COLOR_PAIR(1));
+
+  attron(COLOR_PAIR(2));
+  move(byte_selected_y+2,byte_selected_x*3+9);
+  putint(RAM[byte_selected_x+byte_selected_y*0x10]&0xFF);
+  attroff(COLOR_PAIR(2));
+
+
  
   move(0,7); /*put the cursor where it won't cover other text*/
   
