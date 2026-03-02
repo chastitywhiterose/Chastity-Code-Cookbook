@@ -78,7 +78,7 @@ void input_operate()
  int y=byte_selected_y;
  int c; /*character used for some operations*/
 
- if(key==KEY_UP){y--;if(y<0){y=15;}}
+  if(key==KEY_UP){y--;if(y<0){y=15;}}
  if(key==KEY_DOWN){y++;if(y>=height){y=0;}}
  if(key==KEY_LEFT){x--;if(x<0){x=15;}}
  if(key==KEY_RIGHT){x++;if(x>=width){x=0;}}
@@ -236,13 +236,11 @@ int main(int argc, char *argv[])
   RAM_hexdump();
   
   attron(COLOR_PAIR(1));
-
   /*move to correct location to put brackets and show selection*/
   move(byte_selected_y+2,byte_selected_x*3+8);
   addch('['); /*put left bracket*/
   move(byte_selected_y+2,byte_selected_x*3+11);
   addch(']'); /*put left bracket*/
-  
   attroff(COLOR_PAIR(1));
 
   attron(COLOR_PAIR(2));
@@ -256,6 +254,31 @@ int main(int argc, char *argv[])
   
   refresh();			/* Print it on to the real screen */
   key = getch();		/* Wait for user input */
+
+ if(key == KEY_F(1)) /* Check for F1 key. Usually this would display a help message. */
+ {
+  clear();	/*clear the screen before showing help*/
+  printw("F1 Key pressed: Showing help screen for hexplore\n\n");
+
+  putstring("This program uses the ncurses and chastelib libraries.\n\n");
+  putstring("chastelib is library for converting between integers and strings in multiple radices\n\n");
+  putstring("ncurses is library for controlling keyboard input and printing text at specific locations in a terminal.\n\n");
+   
+  putstring("This program (hexplore) is a hexadecimal editor\n");
+  putstring("It is designed to be easy to use.\n\n");
+  putstring("The arrow keys let you select different bytes\n");
+  putstring("The q key exits the program\n");
+  putstring("The page up/down keys change 256 byte pages\n");
+  putstring("The plus/minus keys add subtract the byte by 1\n");
+
+
+  refresh();			/* Print it on to the real screen */
+ 
+  key = getch();		/* Wait for user input */
+  clear();	/*clear the screen before ending help*/
+  continue; /*continue to the next phase of the main loop*/
+ }
+
   input_operate();
 
   clear();	
