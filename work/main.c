@@ -32,7 +32,7 @@ void RAM_textdump(int y,int width)
  {
   a=RAM[RAM_address+x+y*width];
   if( a < 0x20 || a > 0x7E ){a='.';}
-  putchar(a);
+  addch(a);
   x++;
  }
 
@@ -74,12 +74,12 @@ void RAM_hexdump()
   
   putstring("\n");
   y++;
-  move(RAM_view_x,RAM_view_y+y); radix=16;
+  move(RAM_view_y+y,RAM_view_x); radix=16; /*ncurses yx order corrected*/
  }
 
 }
 
-int key=0,key1,key2;
+int key=0;
 
 void input_operate()
 {
@@ -88,32 +88,10 @@ void input_operate()
  int y=byte_selected_y;
  int c; /*character used for some operations*/
 
- /*these secondary keys are used for control characters such as arrow keys*/
- key1=0;
- key2=0;
-
- /*
-  when a special key such as an arrow key is pressed, it actually sends an escape sequence which is really hard to debug by conventional means
-  We have to use getchar immediately to get these characters and branch according to what they are
-  so that we can process them and they won't be mistaken as other characters
- */ 
- if(key==0x1B)
- {
-  key1=getchar();
-  key2=getchar();
-  
-  
-  /*RAM[0x80]=key;
-  RAM[0x81]=key1;
-  RAM[0x82]=key2;*/
-  
- }
- 
  if(key2=='A'){y--;if(y<0){y=15;}}
  if(key2=='B'){y++;if(y>=height){y=0;}}
  if(key2=='C'){x++;if(x>=width){x=0;}}
  if(key2=='D'){x--;if(x<0){x=15;}}
-
 
  if(key2==0x35)
  {
@@ -205,7 +183,7 @@ int main(int argc, char *argv[])
  count=fread(RAM,1,0x100,fp);
  c=count;while(c<0x100){RAM[c]=eof_char;c++;}
 
- key = getch();
+
 
  while(key!='q')
  {
@@ -223,30 +201,30 @@ int main(int argc, char *argv[])
   putint(key2);
   
   /*display a character based representation of key pressed*/
-  move(9,0);
+  move(0,9); /*ncurses yx order corrected*/
   putchar(key);
 
   
-  move(16,0);
+  move(0,16); /*ncurses yx order corrected*/
   putstring("Hexplore : Chastity White Rose");  ;
 
-  move(0,19);
+  move(19,0); /*ncurses yx order corrected*/
   putstring("Arrows: Select Byte");
-  move(0,20);
+  move(20,0); /*ncurses yx order corrected*/
   putstring("0 to f: Enter Hexadecimal");
-  move(60,19);
+  move(19,60); /*ncurses yx order corrected*/
   putstring("q: quit");
-  move(27,20);
+  move(20,27); /*ncurses yx order corrected*/
   putstring("page up/down: navigate file");
 
   /*display x and y of selection*/
-  move(57,0);
+  move(0,57); /*ncurses yx order corrected*/
   putstring("X=");
   putint(byte_selected_x);
   putstring(" Y=");
   putint(byte_selected_y);
    
-  move(RAM_view_x,RAM_view_y);
+  move(RAM_view_y,RAM_view_x); /*ncurses yx order corrected*/
 
   RAM_hexdump();
  
@@ -254,7 +232,7 @@ int main(int argc, char *argv[])
   
   refresh();			/* Print it on to the real screen */
   key = getch();		/* Wait for user input */
-  /*input_operate();*/
+  input_operate();
 
   clear();	
 
