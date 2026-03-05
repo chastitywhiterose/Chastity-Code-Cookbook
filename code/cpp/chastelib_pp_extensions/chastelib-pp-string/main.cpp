@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
  b=strint(s);
  while(a<b)
  {
-  cout << intstr(a,2,8) << " ";
+  cout << intstr(a, 2,8) << " ";
   cout << intstr(a,16,2) << " ";
   cout << intstr(a,10,3);
   if(a>=0x20 && a<=0x7E)

@@ -37,11 +37,12 @@ string intstr(unsigned int i,int radix,int int_width)
  return s;
 }
 
+
+
 /*
  This function is an overloaded function for C++ style strings.
  Just like the other strint function it converts an string to an integer
  But it works with the std::string class, it allows compatibility with modern C++ programs that use this type.
- The characters of the string class can be indexed with [] just like C strings
  The compiler is smart enough to know when this function is being called
  because a string object is not the same as a char pointer
 */
