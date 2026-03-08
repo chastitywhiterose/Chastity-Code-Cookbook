@@ -9,7 +9,7 @@
 #define fsl 0x100 /*fsl stands for Float String Length*/
 char float_string[fsl+1]; /*global string which will be used to store string of float conversion. Size is usl+1 for terminating zero*/
 
-/*default minimum digits after the dot for printing floats*/
+/*exact number of digits after the dot for printing floats using fltstr function*/
 int float_width=1;
 
 /*
@@ -42,13 +42,18 @@ char *fltstr(float f)
   else{*s=*s+'A'-10;}
   width++;
  }
+ 
+ if(f==0)
+ {
+  return s; /* if fractional part is zero, return only the int part of string*/
+ }
 
 *sf='.'; /*replace that zero from earlier with our "point"*/
 sf++; /* go to the right one place from the point*/
 width=0; /*the width variable is now repurposed for the float loop*/
 
  /*while the float part is not zero, we multiply by the base and extract the digits one at a time*/
- while(width<float_width /*|| f!=0*/)
+ while(width<float_width)
  {
   f*=radix; /*multiply the float by radix*/
   i=f; /*cast the float to an int again*/
