@@ -9,33 +9,35 @@ int main(int argc, char *argv[])
  char *s; /*character pointer local to this function for testing*/
  int i=0;
  
- radix=2;
- int_width=8;
+ radix=10;
+ int_width=1;
 
  putstring("This program is the official test suite for the input extension of chastelib.\n");
  
- putstring("Test 0: Enter a string of some kind. Anything you like!\n");
- s=getstring();
- 
- putstring("The string you entered is: ");
- putstring(s);
- putstring("\n");
- 
- putstring("Length of the string : ");
- putint(read_count);
- putstring("\n");
+ read_count=1;
 
- putstring("Test 1: The next loop will keep reading strings you until you enter \"return\".\n");
+ putstring("Input Test: The loop will keep reading strings you until you enter \"return\".\n");
+ putstring("Or just enter a string containing only white space\n\n");
  
- while(1)
+ while(read_count)
  {
   s=getstring();
-  putstring("token ");
+  putstring("string ");
   putint(i);
-  putstring(": ");
+  putstring(": \"");
   putstring(s);
+  
+  putstring("\" string_length: ");
+  putint(read_count);
   putstring("\n");
+  
   if(strcmp(s,"return")==0){break;}
+  
+  if(read_count==0)
+  {
+   putstring("End of input!\n");
+  }
+  
   i++;
  }
   
