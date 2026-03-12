@@ -1,41 +1,74 @@
 #include <iostream>
-using namespace std;
-#include "chastelib_cout.hpp"
+#include "Helper.h"
 
-int main(int argc, char *argv[])
+int main()
 {
- int a=0,b;
+    int x;
+    char input[0x100]; //an array to store user input
+    std::cout << "This program tests the required functions:\n";
 
- radix=16;
- int_width=1;
+    std::cout << "IsInteger (tested with user input loop)\n";
 
- putstring("Official test suite for the C++ version of chastelib.\n");
+    std::cout << "Enter a number (in decimal) and I can tell you about it.\n";
 
- b=strint("100");
- while(a<b)
- {
-  radix=2;
-  int_width=8;
-  putint(a);
-  putstring(" ");
-  radix=16;
-  int_width=2;
-  putint(a);
-  putstring(" ");
-  radix=10;
-  int_width=3;
-  putint(a);
+    bool loop_input = true;
+    while (loop_input)
+    {
+        std::cin >> input;
+        std::cin.clear();
+        std::cin.ignore(INT_MAX, '\n');
 
-  if(a>=0x20 && a<=0x7E)
-  {
-   putstring(" ");
-   cout.put(a);
-  }
+        if (Helper::IsInteger(input))
+        {
+            std::cout << "Yes! That is a good integer!\n";
+            x = Helper::strint(input);
+            loop_input = false;
+        }
+        else
+        {
+            std::cout << "No! That is not an integer! Please try again!\n";
+        }
 
-  putstring("\n");
-  a+=1;
- }
-  
- return 0;
+    }
+
+    std::cout << "x==" << x << "\n";
+
+    std::cout << "PrintIntegerBinary\n";
+    Helper::PrintIntegerBinary(&x);
+    std::cout << "\n";
+
+    std::cout << "PrintIntegerHex\n";
+    Helper::PrintIntegerHex(&x);
+    std::cout << "\n";
+
+    std::cout << "PrintIntegerOct\n";
+    Helper::PrintIntegerOct(&x);
+    std::cout << "\n";
+
+    std::cout << "\nBubbleSort\n";
+
+    //declare an array of numbers in the wrong order
+    int a[] = { 61, 11, 13, 17, 19, 31, 37, 2 ,3 ,5 ,7 ,41 ,43 ,47 ,53 ,59 };
+    int size = sizeof(a) / 4; //obtain the size of this array
+
+    std::cout << "\nScrambled Array:\n";
+    x = 0;
+    while (x < size)
+    {
+        std::cout << a[x] << " ";
+        x++;
+    }
+    std::cout << "\n";
+
+    Helper::BubbleSort(a, size);
+
+    std::cout << "\nSorted Array:\n";
+    x = 0;
+    while (x < size)
+    {
+        std::cout << a[x] << " ";
+        x++;
+    }
+    std::cout << "\n";
 }
 
