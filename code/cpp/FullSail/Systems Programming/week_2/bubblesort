@@ -1,0 +1,18 @@
+void Sorter::BubbleSort(std::vector<Card>& A)
+{
+	bool swapped; //declare the bool so that it exists later
+	int n = A.size();
+	do
+	{
+		swapped = false;
+		for (int i = 1; i <= n - 1; i++)
+		{
+			if(A[i - 1].Value() > A[i].Value())
+			{
+				std::swap(A[i - 1], A[i]);
+				swapped = true;
+			}
+		}
+		n--;
+	} while(swapped);
+}
