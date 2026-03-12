@@ -3,9 +3,14 @@
 
 int main()
 {
+    //required Visual Studio  debug boilerplate for assignments
+    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+    _CrtSetBreakAlloc(-1);
+    _CrtDumpMemoryLeaks();
+
     int x;
     char input[0x100]; //an array to store user input
-    std::cout << "This program tests the required functions:\n";
+    std::cout << "This program tests the required functions:\n\n";
 
     std::cout << "IsInteger (tested with user input loop)\n";
 
@@ -48,7 +53,7 @@ int main()
     std::cout << "\nBubbleSort\n";
 
     //declare an array of numbers in the wrong order
-    int a[] = { 61, 11, 13, 17, 19, 31, 37, 2 ,3 ,5 ,7 ,41 ,43 ,47 ,53 ,59 };
+    int a[] = { 61, 11, 13, 17, 19, 31, 37, 2 ,3 ,5 ,7 ,41 ,43 ,47 ,23,29,53 ,59 };
     int size = sizeof(a) / 4; //obtain the size of this array
 
     std::cout << "\nScrambled Array:\n";
@@ -71,4 +76,3 @@ int main()
     }
     std::cout << "\n";
 }
-
