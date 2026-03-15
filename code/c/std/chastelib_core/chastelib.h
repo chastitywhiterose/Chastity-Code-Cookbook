@@ -106,6 +106,14 @@ void putstring(const char *s)
 }
 
 /*
+ A function pointer named putstr which is a shorter name for calling putstring
+ But this doesn't exist just to save bytes of source files. Otherwise I wouldn't have these huge comments!
+ This exists so that all strings can be redirected to another function for output.
+ For example, if the strings were written to a log file during a game which didn't use a terminal.
+*/
+void (*putstr)(const char *)=putstring;
+
+/*
  This function uses both intstr and putstring to print an integer in the currently selected radix and width.
 */
 
