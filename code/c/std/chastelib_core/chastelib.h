@@ -97,12 +97,14 @@ int strint(const char *s)
  but it can print any valid string.
 */
 
-void putstring(const char *s)
+int putstring(const char *s)
 {
- int c=0;
- const char *p=s;
- while(*p++){c++;} 
- fwrite(s,1,c,stdout);
+ int count=0;              /*used to calcular how many bytes will be written*/
+ const char *p=s;          /*pointer used to find terminating zero of string*/
+ while(*++p){}             /*loop until zero found and immediately exit*/
+ count=p-s;                /*count is the difference of pointers p and s*/
+ fwrite(s,1,count,stdout); /*https://cppreference.com/w/c/io/fwrite.html*/
+ return count;             /*return how many bytes were written*/
 }
 
 /*
@@ -111,7 +113,7 @@ void putstring(const char *s)
  This exists so that all strings can be redirected to another function for output.
  For example, if the strings were written to a log file during a game which didn't use a terminal.
 */
-void (*putstr)(const char *)=putstring;
+int (*putstr)(const char *)=putstring;
 
 /*
  This function uses both intstr and putstring to print an integer in the currently selected radix and width.
@@ -119,9 +121,8 @@ void (*putstr)(const char *)=putstring;
 
 void putint(unsigned int i)
 {
- putstring(intstr(i));
+ putstr(intstr(i));
 }
-
 
 /*
  Those four functions above are the core of chastelib.

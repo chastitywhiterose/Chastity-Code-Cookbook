@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
  radix=16;
  int_width=1;
 
- putstring("Official test suite for the C version of chastelib.\n");
+ putstr("Official test suite for the C version of chastelib.\n");
 
  b=strint("100"); /*convert string to an integer*/
  if(strint_errors) /*if there are errors, print some messages and exit the program*/
@@ -24,25 +24,25 @@ int main(int argc, char *argv[])
   radix=2;
   int_width=8;
   putint(a);
-  putstring(" ");
+  putstr(" ");
   radix=16;
   int_width=2;
   putint(a);
-  putstring(" ");
+  putstr(" ");
   radix=10;
   int_width=3;
   putint(a);
 
   if(a>=0x20 && a<=0x7E)
   {
-   putstring(" ");
+   putstr(" ");
    putchar(a);
   }
 
-  putstring("\n");
+  putstr("\n");
   a+=1;
  }
-  
+   
  return 0;
 }
 
