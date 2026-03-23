@@ -17,28 +17,28 @@ mov ax,0
 loop1:
 
 mov word[radix],2            ;set radix to binary
-mov word[int_width],8        ;width of 8 for maximum 8 bits
+mov word[int_width],8        ;width of 8 bits
 call putint
 call putspace
 mov word[radix],16           ;set radix to hexadecimal
-mov word[int_width],2        ;width of 8 for maximum 8 bits
+mov word[int_width],2        ;width of 2 hex digits
 call putint
 call putspace
 mov word[radix],10           ;set radix to decimal (what humans read)
-mov word[int_width],3        ;width of 8 for maximum 8 bits
+mov word[int_width],3        ;width of 3 decimal digits
 call putint
 
-cmp al,0x20
-jb not_char
-cmp al,0x7E
+cmp al,0x20 ;check if al is in printable range
+jb not_char ;if not then jump to not_char label
+cmp al,0x7E 
 ja not_char
 
 call putspace
-call putchar
+call putchar ;print the character if it is in the range 0x20 to 0x7E
 
-not_char:                ;jump here if character is outside range to print
+not_char:    ;jump here if character is outside range to print
 
-call putline
+call putline ;print newline before the next loop
 
 inc ax
 cmp ax,bx;
@@ -48,7 +48,7 @@ mov ax,4C00h ;DOS system call number ah=0x4C to exit program with ah=0x00 as ret
 int 21h      ;DOS interrupt to exit the program with numbers on previous line
 
 ;A string to test if output works
-main_string db 'This program is the official test suite for the DOS Assembly version of chastelib.',0Ah,0
+main_string db 'Official test suite for the DOS Assembly version of chastelib.',0Ah,0
 
 ;test string of integer for input
 input_string_int db '100',0
