@@ -1,4 +1,4 @@
-main-fasm:
-	fasm main.asm
-	chmod +x main
+main-gas:
+	gcc main.s -o main
 	./main
+
