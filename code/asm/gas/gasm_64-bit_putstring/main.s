@@ -37,6 +37,7 @@ mov    %rax,%rsi # address of string to output
 mov    $0x1,%edi # file handler 1 is stdout
 mov    $0x1,%rax # system call 1 is write
 syscall
+
 pop    %rdx
 pop    %rcx
 pop    %rbx
