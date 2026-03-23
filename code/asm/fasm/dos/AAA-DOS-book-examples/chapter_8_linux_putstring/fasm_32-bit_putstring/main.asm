@@ -11,7 +11,7 @@ mov ebx, 0  ; return 0 status on exit - 'No Errors'
 int 80h
 
 ;A string to test if output works
-main_string db 'This program is runs in Linux!',0Ah,0
+main_string db 'This program runs in Linux!',0Ah,0
 
 putstring:
 
