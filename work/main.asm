@@ -1,52 +1,77 @@
-format ELF executable
+format ELF64 executable
 entry main
 
-main:
+main: ; the main function of our assembly function, just as if I were writing C.
 
-mov eax,main_string
+; I can load any string address into rax and print it!
+
+mov rax,msg
+call putstring
+mov rax,main_string ; move the address of main_string into rax register
 call putstring
 
-mov eax, 1  ; invoke SYS_EXIT (kernel opcode 1)
-mov ebx, 0  ; return 0 status on exit - 'No Errors'
-int 80h
+mov [radix],2 ; can choose radix for integer output!
+mov [int_width],8
+
+mov rax,0
+
+loop1:
+call putint
+inc rax
+cmp rax,10h;
+jnz loop1
+
+mov rax,test_int
+call strint
+
+mov [radix],10 ; Choose radix 10 for integer output!
+mov [int_width],8
+call putint
+
+mov rax, 60 ; invoke SYS_EXIT (kernel opcode 60 on 64 bit systems)
+mov rdi,0   ; return 0 status on exit - 'No Errors'
+syscall
 
 ;A string to test if output works
-main_string db 'This program is runs in Linux!',0Ah,0
+main_string db 'This program runs in Linux!',0Ah,0
 
 putstring:
 
-push eax
-push ebx
-push ecx
-push edx
+push rax
+push rbx
+push rcx
+push rdx
 
-mov ebx,eax ; copy eax to ebx. ebx will be used as index to the string
+mov rbx,rax ; copy rax to rbx as well. Now both registers have the address of the main_string
 
-putstring_strlen_start: ; this loop finds the length of the string as part of the putstring function
+putstring_strlen_start: ; this loop finds the lenge of the string as part of the putstring function
 
-cmp [ebx],byte 0 ; compare byte at address ebx with 0
+cmp [rbx],byte 0 ; compare byte at address rdx with 0
 jz putstring_strlen_end ; if comparison was zero, jump to loop end because we have found the length
-inc ebx
+inc rbx
 jmp putstring_strlen_start
 
 putstring_strlen_end:
-sub ebx,eax ;By subtracting the start of the string with the current address, we have the length of the string.
+sub rbx,rax ;rbx will now have correct number of bytes
 
-; Write string using Linux Write system call. Reference for 32 bit x86 syscalls is below.
-; https://www.chromium.org/chromium-os/developer-library/reference/linux-constants/syscalls/#x86-32-bit
+;write string using Linux Write system call
+;https://www.chromium.org/chromium-os/developer-library/reference/linux-constants/syscalls/#x86_64-64-bit
 
-mov edx,ebx      ;number of bytes to write
-mov ecx,eax      ;pointer/address of string to write
-mov ebx,1        ;write to the STDOUT file
-mov eax,4        ;invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
-int 80h          ;system call to write the message
 
-pop edx
-pop ecx
-pop ebx
-pop eax
+mov rdx,rbx      ;number of bytes to write
+mov rsi,rax      ;pointer/address of string to write
+mov rdi,[stdout] ;write to the STDOUT file
+mov rax,1        ;invoke SYS_WRITE (kernel opcode 1 on 64 bit systems)
+syscall          ;system call to write the message
+
+
+pop rdx
+pop rcx
+pop rbx
+pop rax
 
 ret ; this is the end of the putstring function return to calling location
+
 
 ; This Assembly source file has been formatted for the FASM assembler.
 ; The following 3 commands assemble, give executable permissions, and run the program
@@ -54,3 +79,4 @@ ret ; this is the end of the putstring function return to calling location
 ;	fasm main.asm
 ;	chmod +x main
 ;	./main
+
