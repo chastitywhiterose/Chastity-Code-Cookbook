@@ -1,22 +1,22 @@
-format ELF executable
+format ELF64 executable
 entry main
 
-include 'chastelib32.asm'
+include 'chastelib64.asm'
 
 main: ; the main function of the assembly program
 
-mov eax,main_string
+mov rax,main_string
 call putstring
 
 mov [radix],16           ; can choose radix for integer output!
 mov [int_width],1
 mov [int_newline],0
 
-mov eax,input_string_int ;address of input string to convert to integer
+mov rax,input_string_int ;address of input string to convert to integer
 call strint              ;call strint to return the string in eax register
-mov ebx,eax              ;ebx=eax (copy the converted value returned in eax to ebx)
+mov rbx,rax              ;rbx=rax (copy the converted value returned in rax to rbx)
 
-mov eax,0
+mov rax,0
 loop1:
 
 mov [radix],2            ;set radix to binary
@@ -43,13 +43,13 @@ not_char:                ;jump here if character is outside range to print
 
 call putline             ;print newline before the next loop
 
-inc eax
-cmp eax,ebx;
+inc rax
+cmp rax,rbx;
 jnz loop1
 
-mov eax, 1  ; invoke SYS_EXIT (kernel opcode 1)
-mov ebx, 0  ; return 0 status on exit - 'No Errors'
-int 80h
+mov rax, 60 ; invoke SYS_EXIT (kernel opcode 60 on 64 bit systems)
+mov rdi,0   ; return 0 status on exit - 'No Errors'
+syscall
 
 ;A string to test if output works
 main_string db 'This program is the official test suite for the Linux Assembly version of chastelib.',0Ah,0

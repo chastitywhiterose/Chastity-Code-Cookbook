@@ -1,14 +1,18 @@
+; chastelib assembly header file for 32 bit Linux
 ; This file is where I keep the source of my most important Assembly functions
-; These are my string and integer output routines.
+; These are my string and integer output and conversion routines.
 
-; putstring; Prints a zero terminated string from the address pointer to by eax register.
-; intstr;    Converts the number in eax into a zero terminated string and points eax to that address
-; putint;    Prints the integer in eax by calling intstr and then putstring.
-; strint;    Converts the zero terminated string into an integer and sets eax to that value
+; To simplify documentation. The Accumulator/Arithmetic register
+; (ax,ebx,rax) depending on bit size shall be referred to as register A
+; for the description of these core functions because the A register
+; is treated special both by the Intel company and my code;
+
+; putstring; Prints a zero terminated string from the address pointer to by A register.
+; intstr;    Converts the number in A into a zero terminated string and points A to that address
+; putint;    Prints the integer in A by calling intstr and then putstring.
+; strint;    Converts the zero terminated string into an integer and sets A to that value
    
 ; Now, the source of the functions begins, with comments included for parts that I felt needed explanation.
-
-; function to print zero terminated string pointed to by register eax
 
 stdout dd 1 ; variable for standard output so that it can theoretically be redirected
 
@@ -29,10 +33,11 @@ inc ebx
 jmp putstring_strlen_start
 
 putstring_strlen_end:
-sub ebx,eax ;By subtracting the start of the string with the current address, we have the length of the string.
+sub ebx,eax ;subtract start pointer from current pointer to get length of string
 
-; Write string using Linux Write system call. Reference for 32 bit x86 syscalls is below.
-; https://www.chromium.org/chromium-os/developer-library/reference/linux-constants/syscalls/#x86-32-bit
+;Write string using Linux Write system call.
+;Reference for 32 bit x86 syscalls is below.
+;https://www.chromium.org/chromium-os/developer-library/reference/linux-constants/syscalls/#x86-32-bit
 
 mov edx,ebx      ;number of bytes to write
 mov ecx,eax      ;pointer/address of string to write
