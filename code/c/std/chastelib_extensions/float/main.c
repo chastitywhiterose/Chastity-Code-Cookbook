@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include "chastelib.h"
 #include "chastelib_float.h"
 
@@ -16,7 +17,7 @@ int main(int argc, char *argv[])
 
  putstring("Multiplying by 2\n");
  
- a=0,b=30;
+ a=0,b=32;
  f=1;
  while(a<=b)
  {
@@ -25,9 +26,11 @@ int main(int argc, char *argv[])
   f*=2;
   a+=1;
  }
+
+ return 0;
  
  putstring("\nDividing by 2\n");
-
+ 
  a=0,b=21;
  f=1;
  while(a<b)
@@ -37,6 +40,7 @@ int main(int argc, char *argv[])
   f/=2;
   a+=1;
  }
+ 
 
   
  return 0;
