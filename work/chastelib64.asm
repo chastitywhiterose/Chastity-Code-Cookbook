@@ -1,7 +1,18 @@
-; This file is where I keep my function definitions.
-; These are usually my string and integer output routines.
+; chastelib assembly header file for 64 bit Linux
+; This file is where I keep the source of my most important Assembly functions
+; These are my string and integer output and conversion routines.
 
-; function to print zero terminated string pointed to by register rax
+To simplify documentation. The Accumulator/Arithmetic register
+(ax,ebx,rax) depending on bit size shall be referred to as register A
+for the description of these core functions because the A register
+is treated special both by the Intel company and my code;
+
+; putstring; Prints a zero terminated string from the address pointer to by A register.
+; intstr;    Converts the number in A into a zero terminated string and points A to that address
+; putint;    Prints the integer in A by calling intstr and then putstring.
+; strint;    Converts the zero terminated string into an integer and sets A to that value
+   
+; Now, the source of the functions begins, with comments included for parts that I felt needed explanation.
 
 stdout dq 1 ; variable for standard output so that it can theoretically be redirected
 
@@ -22,18 +33,17 @@ inc rbx
 jmp putstring_strlen_start
 
 putstring_strlen_end:
-sub rbx,rax ;rbx will now have correct number of bytes
+sub rbx,rax ;subtract start pointer from current pointer to get length of string
 
-;write string using Linux Write system call
+;Write string using Linux Write system call
+;Reference for 32 bit x86 syscalls is below.
 ;https://www.chromium.org/chromium-os/developer-library/reference/linux-constants/syscalls/#x86_64-64-bit
-
 
 mov rdx,rbx      ;number of bytes to write
 mov rsi,rax      ;pointer/address of string to write
 mov rdi,[stdout] ;write to the STDOUT file
 mov rax,1        ;invoke SYS_WRITE (kernel opcode 1 on 64 bit systems)
 syscall          ;system call to write the message
-
 
 pop rdx
 pop rcx
@@ -42,10 +52,14 @@ pop rax
 
 ret ; this is the end of the putstring function return to calling location
 
-;this is the location in memory where digits are written to by the putint function
+; This is the location in memory where digits are written to by the intstr function
+; The string of bytes and settings such as the radix and width are global variables defined below.
+
 int_string     db 64 dup '?' ;enough bytes to hold maximum size 64-bit binary integer
+
 ; this is the end of the integer string optional line feed and terminating zero
-; clever use of this label can change the ending to be a different character when needed 
+; clever use of this label can change the ending to be a different character when needed
+
 int_newline db 0Ah,0
 
 radix dq 2 ;radix or base for integer output. 2=binary, 8=octal, 10=decimal, 16=hexadecimal
