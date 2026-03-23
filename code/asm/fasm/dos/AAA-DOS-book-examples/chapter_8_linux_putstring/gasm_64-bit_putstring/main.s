@@ -1,5 +1,5 @@
 # Using Linux System calls for 64-bit
-# Tested with Gnu Assembler on Debian 12 (bookworm)
+# Tested with GNU Assembler on Debian 12 (bookworm)
 # It uses Chastity's putstring function for output
 
 .global _start
@@ -15,7 +15,7 @@ mov    $0x0,%edi      # we want to return code 0
 syscall               # end program with system call
 
 main_string:
-	.string	"This program runs in Linux!\n"
+.string	"This program runs in Linux!\n"
 
 putstring:            # the start of the putstring function
 push   %rax
@@ -45,6 +45,7 @@ ret
 
 # This Assembly source file has been formatted for the GNU assembler.
 # The following makefile rule has commands to assemble, link, and run the program
+#
 #main-gas:
 #	gcc -nostdlib -nostartfiles -nodefaultlibs -static main.s -o main
 #	strip main
