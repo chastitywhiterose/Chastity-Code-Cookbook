@@ -1,10 +1,12 @@
 #include <ncurses.h>
-#include "chastelib_ncurses.h"
+#include "chastelib.h"
 
 int main()
 {
  int key=0; /*default key to 0 which in the context of my program means nothing has been pressed yet.*/
  int a=0,b,c,d; /*variables for this test program*/
+ 
+ putstr=addstr; /*switch putstr to the ncurses string printing function*/
 
  /*set the default radix and width for integers at the beginning of the program*/ 
  radix=16;
@@ -25,14 +27,14 @@ int main()
  
  while(key!='q')
  {
-  putstring("Official test suite for the C version of chastelib.\n");
-  putstring("This edition uses ncurses\n");
+  putstr("Official test suite for the C version of chastelib.\n");
+  putstr("This edition uses ncurses\n");
  
   if(key!=0)
   {
    printw("char: %c code: %X\n\n", key,key);
   }
-  else{putstring("\n\n");}
+  else{putstr("\n\n");}
 
   if(key==KEY_UP){if(b>c){b--;}}
   if(key==KEY_DOWN){if(b<d){b++;}}
@@ -44,12 +46,12 @@ int main()
    clear();	/*clear the screen before showing help*/
    printw("F1 Key pressed: Showing help screen\n\n");
 
-   putstring("This program is an ncurses program which also interacts with chastelib.\n\n");
-   putstring("chastelib is library for converting between integers and strings in multiple radices\n\n");
-   putstring("ncurses is library for controlling keyboard input and printing text at specific locations in a terminal.\n\n");
+   putstr("This program is an ncurses program which also interacts with chastelib.\n\n");
+   putstr("chastelib is library for converting between integers and strings in multiple radices\n\n");
+   putstr("ncurses is library for controlling keyboard input and printing text at specific locations in a terminal.\n\n");
    
-   putstring("This program allows you to view the binary, hexadecimal, and decimal numbers of 8-bit value\n");
-   putstring("The arrow keys let you scroll through the list. The q key exits the program\n");
+   putstr("This program allows you to view the binary, hexadecimal, and decimal numbers of 8-bit value\n");
+   putstr("The arrow keys let you scroll through the list. The q key exits the program\n");
 
    refresh();			/* Print it on to the real screen */
  
@@ -65,22 +67,22 @@ int main()
   radix=2;
   int_width=8;
   putint(a);
-  putstring(" ");
+  putstr(" ");
   radix=16;
   int_width=2;
   putint(a);
-  putstring(" ");
+  putstr(" ");
   radix=10;
   int_width=3;
   putint(a);
 
   if(a>=0x20 && a<=0x7E)
   {
-   putstring(" ");
+   putstr(" ");
    addch(a);
   }
 
-  putstring("\n");
+  putstr("\n");
   a+=1;
  }
 

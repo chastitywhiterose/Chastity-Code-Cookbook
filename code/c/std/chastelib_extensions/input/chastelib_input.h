@@ -1,7 +1,7 @@
 /* chastlib_input.h */
 
-#define input_string_length 256; /*the length that I expect will be enough for user input from keyboard*/
-char main_string[usl+1]; /*global string which will be used to store user input Size is usl+1 for terminating zero*/
+#define input_string_length 0x100 /*the length that I expect will be enough for user input from keyboard*/
+char main_string[input_string_length+1]; /*global string which will be used to store user input Size is usl+1 for terminating zero*/
 
 /*variable to store how many characters were read into the string last time*/
 int read_count=0;

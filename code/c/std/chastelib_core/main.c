@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
   putstr("\n");
   a+=1;
  }
-   
+    
  return 0;
 }
 
