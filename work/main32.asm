@@ -3,7 +3,7 @@ entry main
 
 include 'chastelib32.asm'
 
-main:
+main: ; the main function of the assembly program
 
 mov eax,main_string
 call putstring
@@ -20,28 +20,28 @@ mov eax,0
 loop1:
 
 mov [radix],2            ;set radix to binary
-mov [int_width],8        ;width of 8 for maximum 8 bits
+mov [int_width],8        ;width of 8 bits
 call putint
 call putspace
 mov [radix],16           ;set radix to hexadecimal
-mov [int_width],2        ;width of 8 for maximum 8 bits
+mov [int_width],2        ;width of 2 hex digits
 call putint
 call putspace
 mov [radix],10           ;set radix to decimal (what humans read)
-mov [int_width],3        ;width of 8 for maximum 8 bits
+mov [int_width],3        ;width of 3 decimal digits
 call putint
 
-cmp al,0x20
-jb not_char
+cmp al,0x20 ;check if al is in printable range
+jb not_char ;if not then jump to not_char label
 cmp al,0x7E
 ja not_char
 
 call putspace
-call putchar
+call putchar             ;print the character if it is in the range 0x20 to 0x7E
 
 not_char:                ;jump here if character is outside range to print
 
-call putline
+call putline             ;print newline before the next loop
 
 inc eax
 cmp eax,ebx;

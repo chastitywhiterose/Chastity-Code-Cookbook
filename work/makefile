@@ -13,4 +13,6 @@ diffuse:
 	diffuse main32.asm main64.asm
 diffuse-lib:
 	diffuse chastelib32.asm chastelib64.asm
+geany:
+	geany main32.asm main64.asm
 	

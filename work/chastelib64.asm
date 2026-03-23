@@ -2,10 +2,10 @@
 ; This file is where I keep the source of my most important Assembly functions
 ; These are my string and integer output and conversion routines.
 
-To simplify documentation. The Accumulator/Arithmetic register
-(ax,ebx,rax) depending on bit size shall be referred to as register A
-for the description of these core functions because the A register
-is treated special both by the Intel company and my code;
+; To simplify documentation. The Accumulator/Arithmetic register
+; (ax,ebx,rax) depending on bit size shall be referred to as register A
+; for the description of these core functions because the A register
+; is treated special both by the Intel company and my code;
 
 ; putstring; Prints a zero terminated string from the address pointer to by A register.
 ; intstr;    Converts the number in A into a zero terminated string and points A to that address
