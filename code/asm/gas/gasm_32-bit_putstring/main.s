@@ -10,7 +10,8 @@ _start:
 
 mov $main_string,%eax # move address of string into eax register
 call   putstring      # call the putstring function Chastity wrote
-mov    $0x1,%eax      # system call 60 is exit
+
+mov    $0x1,%eax      # system call 1 is exit
 mov    $0x0,%ebx      # we want to return code 0
 int    $0x80          # end program with system call
 
