@@ -12,16 +12,18 @@ mov $main_string,%eax # move address of string into eax register
 call   putstring      # call the putstring function Chastity wrote
 
 movl $10,radix # set the radix to decimal AKA base ten so humans can understand this code
+movl $1,int_width # set the minimum integer width
 
 mov $666,%eax   # load the number in eax that we want to print
 call putint
+call putline
 
 mov    $0x1,%eax      # system call 1 is exit
 mov    $0x0,%ebx      # we want to return code 0
 int    $0x80          # end program with system call
 
 main_string:
-.string	"This program runs in Linux!\n"
+.string	"This program runs in Linux!\nThe putint function prints whatever number is in eax register!\n"
 
 putstring:            # the start of the putstring function
 push   %eax
@@ -114,6 +116,33 @@ call   putstring
 pop    %edx
 pop    %ecx
 pop    %ebx
+pop    %eax
+ret
+
+space: .byte ' ',0
+line: .byte 0x0A,0
+
+putspace:
+push   %eax
+mov    $space,%eax
+call   putstring
+pop    %eax
+ret
+
+putline:
+push   %eax
+mov    $line,%eax
+call   putstring
+pop    %eax
+ret
+
+char: .byte 0,0 # where char data is temporarily stored by the putchar function
+
+putchar:
+push   %eax
+mov    %al,0x12b
+mov    $char,%eax
+call   putstring
 pop    %eax
 ret
 
