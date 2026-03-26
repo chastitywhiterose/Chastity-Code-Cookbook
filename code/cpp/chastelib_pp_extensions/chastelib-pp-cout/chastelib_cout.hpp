@@ -24,27 +24,42 @@ int radix=2;
 int int_width=1;
 
 /*
-This function is one that I wrote because the standard library can display integers as decimal, octal, or hexadecimal, but not any other bases(including binary, which is my favorite).
+The intstr function is one that I wrote because the standard library can display integers as decimal, octal, or hexadecimal, but not any other bases(including binary, which is my favorite).
+
 My function corrects this, and in my opinion, such a function should have been part of the standard library, but I'm not complaining because now I have my own, which I can use forever!
-More importantly, it can be adapted for any programming language in the world if I learn the basics of that language.
+More importantly, it can be adapted for any programming language in the world if I learn the basics of that language. That being said, C is the best language and I will use it forever.
 */
 
-char *intstr(unsigned int i)
+char *intstr(unsigned int i)    /*Chastity's supreme integer to string conversion function*/
 {
- int width=0;
- char *s=int_string+usl;
- *s=0;
- while(i!=0 || width<int_width)
+ int width=0;                   /*the width or how many digits including prefixed zeros are printed*/
+ char *s=int_string+usl;        /*a pointer starting to the place where we will end the string with zero*/
+ *s=0;                          /*set the zero that terminates the string in the C language*/
+ while(i!=0 || width<int_width) /*loop to fill the string with every required digit plus prefixed zeros*/
  {
-  s--;
-  *s=i%radix;
-  i/=radix;
-  if(*s<10){*s+='0';}
-  else{*s=*s+'A'-10;}
-  width++;
+  s--;                          /*decrement the pointer to go left for corrent digit placing*/
+  *s=i%radix;                   /*get the remainder of division by the radix or base*/
+  i/=radix;                     /*divide the input by radix*/
+  if(*s<10){*s+='0';}           /*fconvert digits 0 to 9 to the ASCII character for that digit*/
+  else{*s=*s+'A'-10;}           /*for digits higher than 9, convert to letters starting at A*/
+  width++;                      /*increment the width so we know when enough digits are saved*/
  }
- return s;
+ return s;                      /*return this string to be used by putstr,printf,std::cout or whatever*/
 }
+
+/*
+The strint_errors variable is used to keep track of how many errors happened in the strint function.
+The following errors can occur:
+
+Radix is not in range 2 to 36
+Character is not a number 0 to 9 or alphabet A to Z (in either case)
+Character is alphanumeric but is not valid for current radix
+
+If any of these errors happen, error messages are printed to let the programmer or user know what went wrong in the string that was passed to the function.
+If getting input from the keyboard, the strint_errors variable can be used in a conditional statement to tell them to try again and recall the code that grabs user input.
+*/
+
+int strint_errors = 0; 
 
 /*
  This function is my own replacement for the strtol function from the C standard library.
@@ -57,7 +72,8 @@ int strint(const char *s)
 {
  int i=0;
  char c;
- if( radix<2 || radix>36 ){ cout << "Error: radix " << i << " is out of range!\n";}
+ strint_errors = 0; /*set zero errors before we parse the string*/
+ if( radix<2 || radix>36 ){ strint_errors++; cout << "Error: radix " << i << " is out of range!\n";}
  while( *s == ' ' || *s == '\n' || *s == '\t' ){s++;} /*skip whitespace at beginning*/
  while(*s!=0)
  {
@@ -66,8 +82,8 @@ int strint(const char *s)
   else if( c >= 'A' && c <= 'Z' ){c-='A';c+=10;}
   else if( c >= 'a' && c <= 'z' ){c-='a';c+=10;}
   else if( c == ' ' || c == '\n' || c == '\t' ){break;}
-  else{ cout << "Error: " << c << " is not an alphanumeric character!\n";break;}
-  if(c>=radix){ cout << "Error: " << *s << " is not a valid character for radix " << radix << "\n"; break;}
+  else{ strint_errors++; cout << "Error: " << c << " is not an alphanumeric character!\n";break;}
+  if(c>=radix){ strint_errors++; cout << "Error: " << *s << " is not a valid character for radix " << radix << "\n"; break;}
   i*=radix;
   i+=c;
   s++;
@@ -84,7 +100,7 @@ int strint(const char *s)
 
  In the original C version, the putstring function was implemented with some pointer math to
  get the length of the string and then fwrite was used:
-    fwrite(s,1,c,stdout);
+	fwrite(s,1,count,stdout);
 
  Technically this entire function could have been summed up in one statement:
     cout<<s;
@@ -94,12 +110,14 @@ int strint(const char *s)
  Therefore, I wrote the function the following way to rebel against this common practice.
 */
 
-void putstring(const char *s)
+int putstring(const char *s)
 {
- int c=0;
- const char *p=s;
- while(*p++){c++;} 
- cout.write(s,c);
+ int count=0;              /*used to calcular how many bytes will be written*/
+ const char *p=s;          /*pointer used to find terminating zero of string*/
+ while(*p){p++;}           /*loop until zero found and immediately exit*/
+ count=p-s;                /*count is the difference of pointers p and s*/
+ cout.write(s,count);      /*https://en.cppreference.com/w/cpp/io/basic_ostream/write.html*/
+ return count;             /*return how many bytes were written*/
 }
 
 /*
