@@ -16,12 +16,21 @@ mov $666,%eax   # load the number in eax that we want to print
 call putint
 call putline
 
+mov $input_string,%eax
+call strint
+call putint
+call putline
+
+
 mov    $0x1,%eax      # system call 1 is exit
 mov    $0x0,%ebx      # we want to return code 0
 int    $0x80          # end program with system call
 
 main_string:
 .string	"This program runs in Linux!\nThe putint function prints whatever number is in eax register!\n"
+
+input_string:
+.string	"1987"
 
 putstring:            # the start of the putstring function
 push   %eax
@@ -113,6 +122,66 @@ pop    %edx
 pop    %ecx
 pop    %ebx
 pop    %eax
+ret
+
+# the strint function is arguably the most complicated assembly function I have ever written
+# it can convert any string into a number based on the current radix
+# as soon as it finds a zero byte or a charact that is not a valid digit in that radix
+# it will return the value in the eax register so it can be printed or used elsewhere
+
+strint:
+mov    %eax,%ebx # copy string address from eax to ebx because eax will be replaced soon!
+mov    $0x0,%eax # eax set to zero before digits multiplied in
+
+read_strint:
+mov    $0x0,%ecx
+mov    (%ebx),%cl
+inc    %ebx
+cmp    $0x0,%cl
+je     strint_end
+cmp    $0x30,%cl
+jb     not_digit
+cmp    $0x39,%cl
+ja     not_digit
+
+is_digit:
+sub    $0x30,%cl
+jmp    process_char
+
+not_digit:
+cmp    $0x41,%cl
+jb     not_upper
+cmp    $0x5a,%cl
+ja     not_upper
+
+is_upper:
+sub    $0x41,%cl
+add    $0xa,%cl
+jmp    process_char
+
+not_upper:
+cmp    $0x61,%cl
+jb     not_lower
+cmp    $0x7a,%cl
+ja     not_lower
+
+is_lower:
+sub    $0x61,%cl
+add    $0xa,%cl
+jmp    process_char
+
+not_lower:
+jmp    strint_end
+
+process_char:
+cmp    0x4c,%ecx
+jae    strint_end
+mov    $0x0,%edx
+mull   radix
+add    %ecx,%eax
+jmp    read_strint
+
+strint_end:
 ret
 
 space: .byte ' ',0
