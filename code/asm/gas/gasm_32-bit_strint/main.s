@@ -6,61 +6,45 @@
 
 _start:
 
-
 mov $main_string,%eax # move address of string into eax register
 call   putstring      # call the putstring function Chastity wrote
 
-movl $0x10,radix # set the radix to sixteen or hexadecimal
+movl $10,radix # set the radix to decimal AKA base ten so humans can understand this code
 movl $1,int_width # set the minimum integer width
+
+mov $string_putint,%eax
+call putstring
+
+mov $666,%eax   # load the number in eax that we want to print
+call putint
+call putline
+
+mov $string_strint,%eax
+call putstring
 
 mov $input_string,%eax
 call strint
-
-mov %eax,%ebx # copy eax to ebx before we use it in a loop1
-
-movl $0,%eax # zero eax
-
-loop1:
-
-movl $2,radix # set radix to binary
-movl $8,int_width # width of 8 bits
 call putint
-call putspace
-
-movl $0x10,radix # set radix to hexadecimal
-movl $1,int_width # width of 2 hex digits
-call putint
-call putspace
-
-movl $10,radix # set radix to decimal (what humans read)
-movl $3,int_width # width of 3 decimal digits
-call putint
-call putspace
-
-cmp    $0x20,%al
-jb     not_char
-cmp    $0x7e,%al
-ja     not_char
-
-call putspace
-call putchar  # print the character if it is in the range 0x20 to 0x7E
-
-not_char:
-
 call putline
-inc    %eax
-cmp    %ebx,%eax
-jne    loop1
+
+mov $end_string,%eax
+call putstring
 
 mov    $0x1,%eax      # system call 1 is exit
 mov    $0x0,%ebx      # we want to return code 0
 int    $0x80          # end program with system call
 
 main_string:
-.string	"This program is the official test suite for the Linux Assembly version of chastelib.\n"
+.string	"The putstring function performs all text output\n"
+string_putint:
+.string "The putint function prints whatever number is in eax register!\n"
+string_strint:
+.string "The strint function converts a strint into a number for the eax register\n"
+end_string:
+.string "The reason the year I was born was printed was because it was defined as a string and then converted to a number\n"
 
 input_string:
-.string	"100"
+.string	"1987"
 
 putstring:            # the start of the putstring function
 push   %eax
@@ -236,7 +220,7 @@ char: .byte 0,0 # where char data is temporarily stored by the putchar function
 
 putchar:
 push   %eax
-mov    %al,char
+mov    %al,0x12b
 mov    $char,%eax
 call   putstring
 pop    %eax
