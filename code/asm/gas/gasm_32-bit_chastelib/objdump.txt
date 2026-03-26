@@ -1,0 +1,110 @@
+
+main:     file format elf32-i386
+
+
+Disassembly of section .note.gnu.build-id:
+
+08048094 <.note.gnu.build-id>:
+ 8048094:	04 00                	add    $0x0,%al
+ 8048096:	00 00                	add    %al,(%eax)
+ 8048098:	14 00                	adc    $0x0,%al
+ 804809a:	00 00                	add    %al,(%eax)
+ 804809c:	03 00                	add    (%eax),%eax
+ 804809e:	00 00                	add    %al,(%eax)
+ 80480a0:	47                   	inc    %edi
+ 80480a1:	4e                   	dec    %esi
+ 80480a2:	55                   	push   %ebp
+ 80480a3:	00 7e a2             	add    %bh,-0x5e(%esi)
+ 80480a6:	8b 08                	mov    (%eax),%ecx
+ 80480a8:	23 d0                	and    %eax,%edx
+ 80480aa:	34 41                	xor    $0x41,%al
+ 80480ac:	0f df e4             	pandn  %mm4,%mm4
+ 80480af:	9b                   	fwait
+ 80480b0:	9d                   	popf
+ 80480b1:	77 7a                	ja     804812d <_start-0xed3>
+ 80480b3:	4b                   	dec    %ebx
+ 80480b4:	2a 4f 9e             	sub    -0x62(%edi),%cl
+ 80480b7:	85                   	.byte 0x85
+
+Disassembly of section .text:
+
+08049000 <_start>:
+ 8049000:	b8 16 90 04 08       	mov    $0x8049016,%eax
+ 8049005:	e8 29 00 00 00       	call   8049033 <putstring>
+ 804900a:	b8 01 00 00 00       	mov    $0x1,%eax
+ 804900f:	bb 00 00 00 00       	mov    $0x0,%ebx
+ 8049014:	cd 80                	int    $0x80
+
+08049016 <main_string>:
+ 8049016:	54                   	push   %esp
+ 8049017:	68 69 73 20 70       	push   $0x70207369
+ 804901c:	72 6f                	jb     804908d <int_string+0x35>
+ 804901e:	67 72 61             	addr16 jb 8049082 <int_string+0x2a>
+ 8049021:	6d                   	insl   (%dx),%es:(%edi)
+ 8049022:	20 72 75             	and    %dh,0x75(%edx)
+ 8049025:	6e                   	outsb  %ds:(%esi),(%dx)
+ 8049026:	73 20                	jae    8049048 <putstring_strlen_end+0x7>
+ 8049028:	69 6e 20 4c 69 6e 75 	imul   $0x756e694c,0x20(%esi),%ebp
+ 804902f:	78 21                	js     8049052 <putstring_strlen_end+0x11>
+ 8049031:	0a 00                	or     (%eax),%al
+
+08049033 <putstring>:
+ 8049033:	50                   	push   %eax
+ 8049034:	53                   	push   %ebx
+ 8049035:	51                   	push   %ecx
+ 8049036:	52                   	push   %edx
+ 8049037:	89 c3                	mov    %eax,%ebx
+
+08049039 <putstring_strlen_start>:
+ 8049039:	80 3b 00             	cmpb   $0x0,(%ebx)
+ 804903c:	74 03                	je     8049041 <putstring_strlen_end>
+ 804903e:	43                   	inc    %ebx
+ 804903f:	eb f8                	jmp    8049039 <putstring_strlen_start>
+
+08049041 <putstring_strlen_end>:
+ 8049041:	29 c3                	sub    %eax,%ebx
+ 8049043:	89 da                	mov    %ebx,%edx
+ 8049045:	89 c1                	mov    %eax,%ecx
+ 8049047:	bb 01 00 00 00       	mov    $0x1,%ebx
+ 804904c:	b8 04 00 00 00       	mov    $0x4,%eax
+ 8049051:	cd 80                	int    $0x80
+ 8049053:	5a                   	pop    %edx
+ 8049054:	59                   	pop    %ecx
+ 8049055:	5b                   	pop    %ebx
+ 8049056:	58                   	pop    %eax
+ 8049057:	c3                   	ret
+
+08049058 <int_string>:
+ 8049058:	3f                   	aas
+ 8049059:	3f                   	aas
+ 804905a:	3f                   	aas
+ 804905b:	3f                   	aas
+ 804905c:	3f                   	aas
+ 804905d:	3f                   	aas
+ 804905e:	3f                   	aas
+ 804905f:	3f                   	aas
+ 8049060:	3f                   	aas
+ 8049061:	3f                   	aas
+ 8049062:	3f                   	aas
+ 8049063:	3f                   	aas
+ 8049064:	3f                   	aas
+ 8049065:	3f                   	aas
+ 8049066:	3f                   	aas
+ 8049067:	3f                   	aas
+ 8049068:	3f                   	aas
+ 8049069:	3f                   	aas
+ 804906a:	3f                   	aas
+ 804906b:	3f                   	aas
+ 804906c:	3f                   	aas
+ 804906d:	3f                   	aas
+ 804906e:	3f                   	aas
+ 804906f:	3f                   	aas
+ 8049070:	3f                   	aas
+ 8049071:	3f                   	aas
+ 8049072:	3f                   	aas
+ 8049073:	3f                   	aas
+ 8049074:	3f                   	aas
+ 8049075:	3f                   	aas
+ 8049076:	3f                   	aas
+ 8049077:	3f                   	aas
+	...
