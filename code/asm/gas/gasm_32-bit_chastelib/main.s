@@ -12,22 +12,36 @@ call   putstring      # call the putstring function Chastity wrote
 movl $10,radix # set the radix to decimal AKA base ten so humans can understand this code
 movl $1,int_width # set the minimum integer width
 
+mov $string_putint,%eax
+call putstring
+
 mov $666,%eax   # load the number in eax that we want to print
 call putint
 call putline
+
+mov $string_strint,%eax
+call putstring
 
 mov $input_string,%eax
 call strint
 call putint
 call putline
 
+mov $end_string,%eax
+call putstring
 
 mov    $0x1,%eax      # system call 1 is exit
 mov    $0x0,%ebx      # we want to return code 0
 int    $0x80          # end program with system call
 
 main_string:
-.string	"This program runs in Linux!\nThe putint function prints whatever number is in eax register!\n"
+.string	"The putstring function performs all text output\n"
+string_putint:
+.string "The putint function prints whatever number is in eax register!\n"
+string_strint:
+.string "The strint function converts a strint into a number for the eax register\n"
+end_string:
+.string "The reason the year I was born was printed was because it was defined as a string and then converted to a number\n"
 
 input_string:
 .string	"1987"
@@ -133,6 +147,7 @@ strint:
 mov    %eax,%ebx # copy string address from eax to ebx because eax will be replaced soon!
 mov    $0x0,%eax # eax set to zero before digits multiplied in
 
+
 read_strint:
 mov    $0x0,%ecx
 mov    (%ebx),%cl
@@ -174,7 +189,7 @@ not_lower:
 jmp    strint_end
 
 process_char:
-cmp    0x4c,%ecx
+cmp    radix,%ecx
 jae    strint_end
 mov    $0x0,%edx
 mull   radix
