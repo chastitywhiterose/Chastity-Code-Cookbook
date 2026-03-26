@@ -10,7 +10,13 @@ _start:
 
 mov $main_string,%eax # move address of string into eax register
 call   putstring      # call the putstring function Chastity wrote
-mov    $0x1,%eax      # system call 60 is exit
+
+movl $10,radix # set the radix to decimal AKA base ten so humans can understand this code
+
+mov $666,%eax   # load the number in eax that we want to print
+call putint
+
+mov    $0x1,%eax      # system call 1 is exit
 mov    $0x0,%ebx      # we want to return code 0
 int    $0x80          # end program with system call
 
@@ -44,10 +50,72 @@ pop    %ebx
 pop    %eax
 ret
 
-int_string:
-.skip 32,'?'
-.byte 0
+.data
 
+int_string:  # storage for the bytes of an integer
+.skip 32,'?' # unknown bytes represented with question marks
+.byte 0      # terminating zero of this string
+
+int_newline: # optional newline to print after a number
+.byte 0xA,0
+
+radix: .long 2
+int_width: .long 8
+
+.text
+
+intstr: # start of the intstr function
+mov    $int_string+31,%ebx
+mov    $0x1,%ecx
+
+digits_start:
+mov    $0x0,%edx
+divl   radix            # divide by number at address radix
+cmp    $0xa,%edx
+jb     decimal_digit
+jae    hexadecimal_digit
+
+decimal_digit:
+add    $0x30,%edx
+jmp    save_digit
+
+hexadecimal_digit:
+sub    $0xa,%edx
+add    $0x41,%edx
+
+save_digit:
+mov    %dl,(%ebx)
+cmp    $0x0,%eax
+je     intstr_end
+dec    %ebx
+inc    %ecx
+jmp    digits_start
+
+intstr_end:
+cmp    int_width,%ecx # see if ecx is above or equal to the integer width we want
+jae    end_zeros
+dec    %ebx
+movb   $0x30,(%ebx)
+inc    %ecx
+jmp    intstr_end
+
+end_zeros:
+mov    %ebx,%eax
+ret
+
+putint: # the putint function calls intstr and then putstring to display any number
+
+push   %eax
+push   %ebx
+push   %ecx
+push   %edx
+call   intstr
+call   putstring
+pop    %edx
+pop    %ecx
+pop    %ebx
+pop    %eax
+ret
 
 # This Assembly source file has been formatted for the GNU assembler.
 # The following makefile rule has commands to assemble, link, and run the program
