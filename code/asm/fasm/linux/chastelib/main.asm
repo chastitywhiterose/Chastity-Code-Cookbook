@@ -8,9 +8,9 @@ main: ; the main function of the assembly program
 mov eax,main_string
 call putstring
 
-mov [radix],16           ; can choose radix for integer output!
-mov [int_width],1
-mov [int_newline],0
+mov dword[radix],16           ; can choose radix for integer output!
+mov dword[int_width],1
+mov byte[int_newline],0
 
 mov eax,input_string_int ;address of input string to convert to integer
 call strint              ;call strint to return the string in eax register
@@ -19,16 +19,16 @@ mov ebx,eax              ;ebx=eax (copy the converted value returned in eax to e
 mov eax,0
 loop1:
 
-mov [radix],2            ;set radix to binary
-mov [int_width],8        ;width of 8 bits
+mov dword[radix],2            ;set radix to binary
+mov dword[int_width],8        ;width of 8 bits
 call putint
 call putspace
-mov [radix],16           ;set radix to hexadecimal
-mov [int_width],2        ;width of 2 hex digits
+mov dword[radix],16           ;set radix to hexadecimal
+mov dword[int_width],2        ;width of 2 hex digits
 call putint
 call putspace
-mov [radix],10           ;set radix to decimal (what humans read)
-mov [int_width],3        ;width of 3 decimal digits
+mov dword[radix],10           ;set radix to decimal (what humans read)
+mov dword[int_width],3        ;width of 3 decimal digits
 call putint
 
 cmp al,0x20 ;check if al is in printable range
