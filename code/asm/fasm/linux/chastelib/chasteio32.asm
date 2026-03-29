@@ -1,12 +1,30 @@
 ;this file is for managing the advanced Input and Output situations that occur when opening and closing files.
-;I use the following references when using system calls.
-
+;I use the following online references when using system calls.
 
 ;https://www.chromium.org/chromium-os/developer-library/reference/linux-constants/syscalls/#x86-32-bit
+;https://www.chromium.org/chromium-os/developer-library/reference/linux-constants/syscalls/#x86_64-64-bit
 ;https://www.chromium.org/chromium-os/developer-library/reference/linux-constants/errnos/
 
+;Linux distros vary on the location of files, but on my system, the syscall numbers can also be found here.
+;The numbers are different for 32 and 64 bit
 
-;before calling this function, make sure the eax register points to an address containing the filename as a zero terminated string
+;/usr/include/x86_64-linux-gnu/asm/unistd_32.h
+;/usr/include/x86_64-linux-gnu/asm/unistd_64.h
+
+;In addition to those resources for Assembly file IO, the following file contains the access modes for opening a file
+
+;/usr/include/asm-generic/fcntl.h
+
+;0 open file in read only mode
+;1 open file in write only mode
+;2 open file in read and write mode
+
+;For the most part, mode 2 will allow reading a writing of any file as long as that file already exists.
+;See https://asmtutor.com/#lesson22 for an example of creating a new file
+
+;Notes on Chastity's open function
+
+;before calling the open function, make sure the eax register points to an address containing the filename as a zero terminated string
 ;this function opens a file for both reading and writing handle is returned in eax
 ;this function design is consistent with my other functions by using only eax as the input and output
 ;because it opens files for reading and writing, I do not need to be concerned with passing another argument for access mode
