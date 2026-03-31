@@ -36,6 +36,14 @@ int main(int argc, char **argv)
  
  main_font=chaste_font_load("./font/FreeBASIC Font 8.bmp");
  
+ main_font.char_scale=16; /*change the scale of each character*/
+ 
+ sdl_putchar('2');
+ sdl_putchar('\n');
+ sdl_putchar('C');
+ 
+ 
+  SDL_UpdateWindowSurface(window); /*update window to show the results*/
  
  while(loop)
  {

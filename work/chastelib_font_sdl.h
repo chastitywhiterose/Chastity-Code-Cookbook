@@ -68,7 +68,8 @@ This function is designed to print a single character to the current surface of 
 
 int sdl_putchar(char c)
 {
- int x,y;
+ int x,y; /*used as coordinates for source image to blit from*/
+ int error=0; /*used only for error checking*/
  SDL_Rect rect_source,rect_dest;
 
   /*
@@ -92,7 +93,15 @@ int sdl_putchar(char c)
    rect_dest.w=main_font.char_width*main_font.char_scale;
    rect_dest.h=main_font.char_height*main_font.char_scale;
 
-   if(SDL_BlitScaled(main_font.surface,&rect_source,surface,&rect_dest)){printf("Error: %s\n",SDL_GetError());}
+   /*copy the character to the screen (including scale of character)*/
+   error=SDL_BlitScaled(main_font.surface,&rect_source,surface,&rect_dest);
+   if(error){printf("Error: %s\n",SDL_GetError());}
+   
+   /*copy the character directly but ignore scale*/
+   error=SDL_BlitSurface(main_font.surface,&rect_source,surface,&rect_dest);
+   if(error){printf("Error: %s\n",SDL_GetError());}
+
+   
    cursor_x+=main_font.char_width*main_font.char_scale;
   }
 
