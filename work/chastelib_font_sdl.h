@@ -1,4 +1,8 @@
-/*chastity font SDL version*/
+/*
+chastity font SDL2 surface version
+
+SDL surfaces are easy to work with and this was the original way I implemented my own text writing library. There is an incomplete version that uses an SDL renderer but offers no advantages over this one.
+*/
 
 
 /*
@@ -97,11 +101,14 @@ int sdl_putchar(char c)
    error=SDL_BlitScaled(main_font.surface,&rect_source,surface,&rect_dest);
    if(error){printf("Error: %s\n",SDL_GetError());}
    
-   /*copy the character directly but ignore scale*/
-   error=SDL_BlitSurface(main_font.surface,&rect_source,surface,&rect_dest);
-   if(error){printf("Error: %s\n",SDL_GetError());}
+   /*
+   copy the character directly but ignore scale
+   this will result in the tiny character from the source font
+   and is only intended as a joke
+   */
+   /*error=SDL_BlitSurface(main_font.surface,&rect_source,surface,&rect_dest);
+   if(error){printf("Error: %s\n",SDL_GetError());}*/
 
-   
    cursor_x+=main_font.char_width*main_font.char_scale;
   }
 
@@ -109,194 +116,25 @@ int sdl_putchar(char c)
 }
 
 
-/*
- this function successfully draws a string of characters from the loaded font
- arguments are: character pointer, character x pos, character y pos
-*/
-void chaste_font_draw_string(char *s,int cx,int cy)
+int sdl_putstring(const char *s)
 {
- int x,y,i,c,cx_start=cx;
- SDL_Rect rect_source,rect_dest;
- i=0;
- while(s[i]!=0)
- {
-  c=s[i];
-  if(c=='\n'){ cx=cx_start; cy+=main_font.char_height;}
-  else
-  {
-   x=(c-' ')*main_font.char_width;
-   y=0*main_font.char_height;
-
-   rect_source.x=x;
-   rect_source.y=y;
-   rect_source.w=main_font.char_width;
-   rect_source.h=main_font.char_height;
-
-   rect_dest=rect_source;
-   rect_dest.x=cx;
-   rect_dest.y=cy;
-
-   SDL_BlitSurface(main_font.surface,&rect_source,surface,&rect_dest);
-   cx+=main_font.char_width;
-  }
-  i++;
- }
+ int count=0;              /*used to calcular how many bytes will be written*/
+ const char *p=s;          /*pointer used to find terminating zero of string*/
+ while(*p){sdl_putchar(*p);p++;}           /*loop until zero found and immediately exit*/
+ count=p-s;                /*count is the difference of pointers p and s*/
+ fwrite(s,1,count,stdout); /*https://cppreference.com/w/c/io/fwrite.html*/
+ return count;             /*return how many bytes were written*/
 }
 
-
-
-
-
 /*
- This function successfully draws a string of characters from the current loaded main font 
- arguments are: character pointer, character x pos, character y pos, integer scale
- 
- It makes use of SDL_BlitScaled which is a function capable of scaling images.
- The scaling abilities of this function mean that it can multiply the font size by whatever you give it.
- Therefore, an 8x8 character font such as the smallest one I have created can literally be scaled to any multiple of 8. So a scale of 3 would result in each character being 24x24.
- 
- HOWEVER: it is important that the source bitmap must be 32 bit RGB mode and not indexed or grayscale.
- Otherwise the SDL_GetError() result is:
- "Error: Blit combination not supported"
- 
-*/
-void chaste_font_draw_string_scaled(char *s,int cx,int cy,int scale)
-{
- int x,y,i,c,cx_start=cx;
- SDL_Rect rect_source,rect_dest;
- i=0;
- while(s[i]!=0)
- {
-  c=s[i];
-  if(c=='\n'){ cx=cx_start; cy+=main_font.char_height*scale;}
-  else
-  {
-   x=(c-' ')*main_font.char_width;
-   y=0*main_font.char_height;
-
-   rect_source.x=x;
-   rect_source.y=y;
-   rect_source.w=main_font.char_width;
-   rect_source.h=main_font.char_height;
-
-   rect_dest=rect_source;
-   rect_dest.x=cx;
-   rect_dest.y=cy;
-   rect_dest.w=main_font.char_width*scale;
-   rect_dest.h=main_font.char_height*scale;
-
-   if(SDL_BlitScaled(main_font.surface,&rect_source,surface,&rect_dest)){printf("Error: %s\n",SDL_GetError());}
-   cx+=main_font.char_width*scale;
-  }
-  i++;
- }
-}
-
-
-
-
-
-
-/*
- The scaled version of my font drawing function that uses direct pixel access
- For the sake of efficiency, it does not check to see if the source(main_font.surface) and destination(screen)
- are of the same type. My font library has been updated to make sure they are when loading the font from the file.
- This makes SDL_GetRGB and SDL_MapRGB useless and they have been removed to speed up things by removing function calls.
- 
- You may wonder why I wrote such an odd function.
- This is because it can draw text at any color instead of only blitting the source to the destination.
- It accepts a color argument after the scale and does not actually use SDL_BlitSurface or SDL_BlitScaled to do any of the work.
- This is entirely my code because I understand how to access the pixels directly.
- This allows for portability to any graphics/media library.
- But SDL is rather superior to other libraries because it allows me to access the pixels the way I want.
+A function to clear the screen and reset the cursor to the top left
+This makes sense because the Linux clear command does the same thing
 */
 
-void chaste_font_draw_string_scaled_color(char *s,int cx,int cy,int scale,int color)
+void sdl_clear()
 {
- int x,y,i,c,cx_start=cx;
- Uint32 *ssp; /*ssp is short for Source Surface Pointer*/
- Uint32 *dsp; /*dsp is short for Destination Surface Pointer*/
- int sx,sy,sx2,sy2,dx,dy; /*x,y coordinates for both source and destination*/
- Uint32 pixel; /*pixel that will be read from*/
- int source_surface_width;
- SDL_Rect rect_source,rect_dest;
-
- source_surface_width=main_font.surface->w;
-
- SDL_LockSurface(main_font.surface);
- SDL_LockSurface(surface);
- 
- ssp=(Uint32*)main_font.surface->pixels;
- dsp=(Uint32*)surface->pixels;
-  
- i=0;
- while(s[i]!=0)
- {
-  c=s[i];
-  if(c=='\n'){ cx=cx_start; cy+=main_font.char_height*scale;}
-  else
-  {
-   x=(c-' ')*main_font.char_width;
-   y=0*main_font.char_height;
-
-   /*set up source rectangle where this character will be copied from*/
-   rect_source.x=x;
-   rect_source.y=y;
-   rect_source.w=main_font.char_width;
-   rect_source.h=main_font.char_height;
-
-   /*set up destination rectangle where this character will be drawn to*/
-   rect_dest.x=cx;
-   rect_dest.y=cy;
-   
-   /*Now for the ultra complicated stuff that only Chastity can read and understand!*/
-   sx2=rect_source.x+rect_source.w;
-   sy2=rect_source.y+rect_source.h;
-   
-   dx=rect_dest.x;
-   dy=rect_dest.y;
-   
-   sy=rect_source.y;
-   while(sy<sy2)
-   {
-    dx=rect_dest.x;
-    sx=rect_source.x;
-    while(sx<sx2)
-    {
-     pixel=ssp[sx+sy*source_surface_width];
- 
-     if(pixel!=0) /*only if source pixel is nonzero(not black) draw square to destination*/
-     {
-      int tx,ty,tx2,ty2; /*temp variables only for the square*/
-      ty2=dy+scale;
-      
-      /*draw a square of width/height equal to scale*/      
-      ty=dy;
-      while(ty<ty2)
-      {
-       tx=dx;
-       tx2=dx+scale;
-       while(tx<tx2)
-       {
-        dsp[tx+ty*width]=color;
-        tx++;
-       }
-       ty++;
-      }
-      /*end of rectangle*/
-     }
-     sx++;
-     dx+=scale;
-    }
-    sy++;
-    dy+=scale;
-   }
-   /*End of really complicated section*/
-   cx+=main_font.char_width*scale;
-  }
-  i++;
- }
- SDL_UnlockSurface(main_font.surface);
- SDL_UnlockSurface(surface);
+ cursor_x=0;cursor_y=0;
+ SDL_FillRect(surface,NULL,0x000000);
 }
+
 

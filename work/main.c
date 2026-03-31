@@ -2,10 +2,9 @@
  main.c source file for an SDL2 project by Chastity White Rose
 */
 #include <stdio.h>
+#include <stdlib.h>
 #include <SDL.h>
-
-
-
+#include "chastelib.h"
 
 int width=1280,height=720;
 int loop=1;
@@ -18,7 +17,6 @@ This header file must be included after the above global variables
 because it depends on them.
 */
 #include "chastelib_font_sdl.h"
-
 
 int main(int argc, char **argv)
 {
@@ -33,18 +31,23 @@ int main(int argc, char **argv)
  SDL_UpdateWindowSurface(window);
  printf("SDL Program Compiled Correctly\n");
  
- 
+ /*load the font from a file*/
  main_font=chaste_font_load("./font/FreeBASIC Font 8.bmp");
  
- main_font.char_scale=16; /*change the scale of each character*/
+ /*change the scale of each character*/
+ main_font.char_scale=4; 
  
- sdl_putchar('2');
- sdl_putchar('\n');
- sdl_putchar('C');
+ putstr=sdl_putstring; /*change the putstr function to the SDL version*/
+
+ /*clear the screen before we begin writing*/
+ sdl_clear();
  
+ putstr("This program is an alpha demo of translating my chastelib text functions to use the SDL library.\n");
  
-  SDL_UpdateWindowSurface(window); /*update window to show the results*/
+  /*update window to show the results*/
+  SDL_UpdateWindowSurface(window);
  
+ /*a loop which will only end if we click the X or press escape*/
  while(loop)
  {
   while(SDL_PollEvent(&e))
@@ -56,6 +59,7 @@ int main(int argc, char **argv)
    }
   }
  }
+ 
  SDL_DestroyWindow(window);
  SDL_Quit();
  return 0;
