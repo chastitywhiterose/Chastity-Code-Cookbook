@@ -5,17 +5,17 @@
 chastelib font structure
 
 In is version of my SDL2 font extension, a surface is used as an image which contains the printable characters.
+The data in it will be loaded by another function from an image file.
 */
 struct chaste_font
 {
- int char_width; /*width of a char*/
- int char_height; /*height of a char*/
+ int char_width; /*width of a character*/
+ int char_height; /*height of a character*/
+ int char_scale; /*multiplier of original character size used in relevant functions*/
  SDL_Surface *surface; /*the surface of the image of loaded font*/
 };
 
-
-
-/*global fonts that will be reused many times*/
+/*global font that will be reused many times*/
 struct chaste_font main_font;
 
 /*function to load a font and return a structure with the needed data to draw later*/
@@ -52,9 +52,51 @@ struct chaste_font chaste_font_load(char *s)
  {
   /*printf("Font loaded correctly\n");*/
   printf("Size of each character in loaded font is %d,%d\n",new_font.char_width,new_font.char_height);
+  new_font.char_scale=1;
+  printf("Character scale initialized to %d\n",new_font.char_scale);
  }
 
  return new_font;
+}
+
+/*global variables to control the cursor in the putchar function*/
+int cursor_x=0,cursor_y=0;
+
+/*
+This function is designed to print a single character to the current surface of the main window
+*/
+
+int sdl_putchar(char c)
+{
+ int x,y;
+ SDL_Rect rect_source,rect_dest;
+
+  /*
+  in the special case of a newline, the cursor is updated to the next line
+  but no character is printed.
+  */
+  if(c=='\n'){ cursor_x=0; cursor_y+=main_font.char_height*main_font.char_scale;}
+  else
+  {
+   x=(c-' ')*main_font.char_width; /*the x position of where this char is stored in the font source bitmap*/
+   y=0*main_font.char_height;      /*the y position of where this char is stored in the font source bitmap*/
+
+   rect_source.x=x;
+   rect_source.y=y;
+   rect_source.w=main_font.char_width;
+   rect_source.h=main_font.char_height;
+
+   rect_dest=rect_source;
+   rect_dest.x=cursor_x;
+   rect_dest.y=cursor_y;
+   rect_dest.w=main_font.char_width*main_font.char_scale;
+   rect_dest.h=main_font.char_height*main_font.char_scale;
+
+   if(SDL_BlitScaled(main_font.surface,&rect_source,surface,&rect_dest)){printf("Error: %s\n",SDL_GetError());}
+   cursor_x+=main_font.char_width*main_font.char_scale;
+  }
+
+ return c;
 }
 
 
