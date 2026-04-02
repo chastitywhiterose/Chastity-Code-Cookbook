@@ -65,22 +65,12 @@ int main(int argc, char **argv)
  /*now call a demo function I wrote*/
  sdl_chastelib_test_suite();
 
-sdl_clear();  /*clear the screen before we begin writing*/
-putstr("This program has ended\nPress Esc to close this window.\n");
-SDL_UpdateWindowSurface(window); /*update window to show the results*/
-
-  loop=0;
- /*a loop which will only end if we click the X or press escape*/
- while(loop)
+ if(0)
  {
-  while(SDL_PollEvent(&e))
-  {
-   if(e.type == SDL_QUIT){loop=0;}
-   if(e.type == SDL_KEYUP)
-   {
-    if(e.key.keysym.sym==SDLK_ESCAPE){loop=0;}
-   }
-  }
+  sdl_clear();  /*clear the screen before we begin writing*/
+  putstr("This program has ended\nPress Esc to close this window.\n");
+  SDL_UpdateWindowSurface(window); /*update window to show the results*/
+  sdl_wait_escape(); /*wait till escape key pressed*/
  }
  
  SDL_DestroyWindow(window);
@@ -97,3 +87,4 @@ main-sdl2:
 	gcc -Wall -ansi -pedantic main.c -o main `sdl2-config --cflags --libs` -lm && ./main
 
 */
+

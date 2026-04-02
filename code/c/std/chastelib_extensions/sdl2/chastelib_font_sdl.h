@@ -1,7 +1,8 @@
 /*
 chastity font SDL2 surface version
 
-SDL surfaces are easy to work with and this was the original way I implemented my own text writing library. There is an incomplete version that uses an SDL renderer but offers no advantages over this one.
+SDL surfaces are easy to work with and this was the original way I implemented my own text writing library.
+There is an incomplete version that uses an SDL renderer but offers no advantages over this one.
 */
 
 
@@ -57,7 +58,7 @@ struct chaste_font chaste_font_load(char *s)
   /*printf("Font loaded correctly\n");*/
   printf("Size of each character in loaded font is %d,%d\n",new_font.char_width,new_font.char_height);
   new_font.char_scale=1;
-  printf("Character scale initialized to %d\n",new_font.char_scale);
+  printf("Character scale initialized to %d\n\n",new_font.char_scale);
  }
 
  return new_font;
@@ -65,9 +66,11 @@ struct chaste_font chaste_font_load(char *s)
 
 /*global variables to control the cursor in the putchar function*/
 int cursor_x=0,cursor_y=0;
+int line_spacing_pixels=1; /*optionally space lines of text by this many pixels*/
 
 /*
 This function is designed to print a single character to the current surface of the main window
+This means that it can be called repeatedly to write entire strings of text
 */
 
 int sdl_putchar(char c)
@@ -80,7 +83,12 @@ int sdl_putchar(char c)
   in the special case of a newline, the cursor is updated to the next line
   but no character is printed.
   */
-  if(c=='\n'){ cursor_x=0; cursor_y+=main_font.char_height*main_font.char_scale;}
+  if(c=='\n')
+  {
+   cursor_x=0;
+   cursor_y+=main_font.char_height*main_font.char_scale;
+   cursor_y+=line_spacing_pixels; /*add space between lines for readability*/
+  }
   else
   {
    x=(c-' ')*main_font.char_width; /*the x position of where this char is stored in the font source bitmap*/
@@ -91,7 +99,6 @@ int sdl_putchar(char c)
    rect_source.w=main_font.char_width;
    rect_source.h=main_font.char_height;
 
-   rect_dest=rect_source;
    rect_dest.x=cursor_x;
    rect_dest.y=cursor_y;
    rect_dest.w=main_font.char_width*main_font.char_scale;
@@ -115,6 +122,11 @@ int sdl_putchar(char c)
  return c;
 }
 
+/*
+ This function is the SDL equivalent of my putstring function.
+ Besides writing the text to an SDL window, it still writes it to the terminal
+ This way I can always read it from the terminal and debug if necessary.
+*/
 
 int sdl_putstring(const char *s)
 {
@@ -130,7 +142,9 @@ int sdl_putstring(const char *s)
  return count;                   /*return how many bytes were written*/
 }
 
-
+/*
+ This function writes a string but wraps the text to always fit the screen.
+*/
 
 int sdl_putstring_wrapped(const char *s)
 {
@@ -148,12 +162,18 @@ int sdl_putstring_wrapped(const char *s)
    w++;
   }
   /*if the previous loop goes off the right edge of window, wrap to next line*/
-  if(wx>=width){cursor_x=0; cursor_y+=main_font.char_height*main_font.char_scale;}
+  if(wx>=width)
+  {
+   cursor_x=0;
+   cursor_y+=main_font.char_height*main_font.char_scale;
+   cursor_y+=line_spacing_pixels; /*add space between lines for readability*/
+   putchar('\n'); /*insert newline to terminal*/
+  }
   sdl_putchar(*p); /*print this character to the SDL window using a function I wrote*/
+  putchar(*p);     /*print to stdout with libc putchar*/
   p++;             /*increment the pointer*/
  } 
  count=p-s;                      /*count is the difference of pointers p and s*/
- fwrite(s,1,count,stdout);       /*https://cppreference.com/w/c/io/fwrite.html*/
  return count;                   /*return how many bytes were written*/
 }
 
@@ -166,6 +186,34 @@ void sdl_clear()
 {
  cursor_x=0;cursor_y=0;
  SDL_FillRect(surface,NULL,0x000000);
+ 
+ /*
+ these next lines use escape sequences to also clear the terminal
+ and reset the terminal cursor so it matches the SDL cursor by this library
+*/
+ putstring("\x1B[2J"); /*clear the terminal with an escape sequence*/
+ putstring("\x1B[H"); /*reset terminal cursor to home*/
 }
 
+/*
+ a function with a loop which will only end if we click the X or press escape
+ This function serve as a useful way to keep the SDL Window on the screen
+ so I can see the text of I have drawn to it.
+ It is also something I can copy paste into larger input loops.
+*/
 
+void sdl_wait_escape()
+{
+ int loop=1;
+ while(loop)
+ {
+  while(SDL_PollEvent(&e))
+  {
+   if(e.type == SDL_QUIT){loop=0;}
+   if(e.type == SDL_KEYUP)
+   {
+    if(e.key.keysym.sym==SDLK_ESCAPE){loop=0;}
+   }
+  }
+ }
+}
