@@ -6,7 +6,7 @@ To my knowledge, nobody other than me uses these functions, but they are extreme
 
 ## Core Function List
 
-- **intstr**: Convert an integer to astring in bases 2 to 36
+- **intstr**: Convert an integer to a string in bases 2 to 36
 - **strint**: Convert a string in bases 2 to 36 to an integer
 - **putstring**: Print a zero-terminated string to standard output
 - **putint**: Print an integer using intstr and then putstr
@@ -29,9 +29,13 @@ For example, when using other languages, I can't rely on printf being available.
 
 The putstring function also helped when I was using ncurses because I could just change putstring to call addstr, which does the same thing in the context of terminal programs written with ncurses.
 
+In fact, the reason putstring returns an integer of how many bytes were written was precisely so it would match the same function signature of addstr from ncurses. This was one of those rare moments where I used a decision in a library written by someone else to influence mine.
+
 The other functions don't read or write to any devices and rely on putstring to show results. However, this means they execute very fast. Not only is C fast because it is a compiled language, but I have incrementally improved my algorithm over months to do the work quickly, and also made the code look good at the same time.
 
-Of all the functions used, strint is used the least because most of the time I am the only one providing input to my programs. If other people were using my programs, they would of course provide strings from the keyboard that would be parsed as integers. I have tested the function to ensure that it works correctly. In fact, my program chastehex was why the function was originally written. I could have had a generic hexadecimal converting function, but I made one that was flexible and supported any base from 2 to 36.
+Of all the functions used, strint is used the least because most of the time I am the only one providing input to my programs. If other people were using my programs, they would of course provide strings from the keyboard that would be parsed as integers. I have tested the function to ensure that it works correctly.
+
+In fact, my program chastehex was why the function was originally written. I could have had a generic hexadecimal converting function, but I made one that was flexible and supported any base from 2 to 36.
 
 Technical note: Base 36 is the highest base my functions use because digits 0 to 9 are used for digits less than ten. Letters A through Z are used as 10 to 35, whether they are uppercase or lowercase. The ten digits plus 26 letters of the English Alphabet provide a standard that programmers have used before I was even born. It is a good standard, and so I stuck with it.
 

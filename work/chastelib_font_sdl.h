@@ -1,7 +1,8 @@
 /*
 chastity font SDL2 surface version
 
-SDL surfaces are easy to work with and this was the original way I implemented my own text writing library. There is an incomplete version that uses an SDL renderer but offers no advantages over this one.
+SDL surfaces are easy to work with and this was the original way I implemented my own text writing library.
+There is an incomplete version that uses an SDL renderer but offers no advantages over this one.
 */
 
 

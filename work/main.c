@@ -17,6 +17,7 @@ This header file must be included after the above global variables
 because it depends on them.
 */
 #include "chastelib_font_sdl.h"
+#include "chastelib_demo_sdl.h"
 
 int main(int argc, char **argv)
 {
@@ -45,21 +46,27 @@ int main(int argc, char **argv)
  /*or use the version that automatically wraps words of text*/
  putstr=sdl_putstring_wrapped;
 
- /*clear the screen before we begin writing*/
- sdl_clear();
- 
- putstr("This program is an alpha demo of translating my chastelib text functions to use the SDL library.\n\n");
- 
- putstr("The idea is that my program can print text to an SDL window just as if it was a regular Linux terminal!\n\n");
+ /*
+ below is an eight line test program to check if everything is correct!
+ */
 
- x=putstr("Hello\n World\n");
-
+ sdl_clear();  /*clear the screen before we begin writing*/
+ x=putstr("Hello World\n"); /*draw a string of text to the surface*/
+ putstr("string length = ");
  radix=10;
  putint(x);
- 
-  /*update window to show the results*/
-  SDL_UpdateWindowSurface(window);
- 
+ putstr("\nPress Esc to continue.\n");
+ SDL_UpdateWindowSurface(window); /*update window to show the results*/
+ sdl_wait_escape(); /*wait till escape key pressed*/
+
+ /*now call a demo function I wrote*/
+ sdl_chastelib_test_suite();
+
+sdl_clear();  /*clear the screen before we begin writing*/
+putstr("This program has ended\nPress Esc to close this window.\n");
+SDL_UpdateWindowSurface(window); /*update window to show the results*/
+
+  
  /*a loop which will only end if we click the X or press escape*/
  while(loop)
  {
@@ -79,7 +86,9 @@ int main(int argc, char **argv)
 }
 
 /*
- This source file is an example to be included in the Chastity's Code Cookbook repository. This example follows the SDL version 2 which works differently than the most up to date version (version 3 at this time).
+ This source file is an example to be included in the Chastity's Code Cookbook repository.
+ This example follows the SDL version 2 which works differently than
+ the most up to date version (version 3 at this time).
 
 main-sdl2:
 	gcc -Wall -ansi -pedantic main.c -o main `sdl2-config --cflags --libs` -lm && ./main
