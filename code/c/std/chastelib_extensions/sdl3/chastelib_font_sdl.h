@@ -18,6 +18,7 @@ struct chaste_font
  int char_height; /*height of a character*/
  int char_scale; /*multiplier of original character size used in relevant functions*/
  SDL_Surface *surface; /*the surface of the image of loaded font*/
+ int color; /*color which is used only by certain functions*/
 };
 
 /*global font that will be reused many times*/
@@ -59,6 +60,7 @@ struct chaste_font chaste_font_load(char *s)
   printf("Size of each character in loaded font is %d,%d\n",new_font.char_width,new_font.char_height);
   new_font.char_scale=1;
   printf("Character scale initialized to %d\n\n",new_font.char_scale);
+  new_font.color=0xFFFFFF;
  }
 
  return new_font;
@@ -73,7 +75,7 @@ This function is designed to print a single character to the current surface of 
 This means that it can be called repeatedly to write entire strings of text
 */
 
-int sdl_putchar(char c)
+int sdl_putchar_blit(char c)
 {
  int x,y; /*used as coordinates for source image to blit from*/
  int error=0; /*used only for error checking*/
@@ -132,6 +134,116 @@ SDL_SCALEMODE_LINEAR makes everything look blurry. I don't like it!
 SDL_SCALEMODE_NEAREST makes it look correct like in SDL2
 
 */
+
+/*
+This function is designed to print a single character to the current surface of the main window
+This means that it can be called repeatedly to write entire strings of text
+This uses direct pixel access instead of blitting functions to handle scaling.
+This was originally written for SDL1 because it does not have a function for blitting and scaling.
+
+However, this direct access lets me customize the color of the drawn text.
+It is a slight performance drop for the purpose of making things beautiful.
+*/
+
+int sdl_putchar_pixel(char c) /*direct pixel access edition for SDL2*/
+{
+ int x,y; /*used as coordinates for source image to blit from*/
+
+ Uint32 *ssp; /*ssp is short for Source Surface Pointer*/
+ Uint32 *dsp; /*dsp is short for Destination Surface Pointer*/
+ int source_surface_width;
+ int sx,sy,sx2,sy2,dx,dy; /*x,y coordinates for both source and destination*/
+ Uint32 pixel;
+ /*Uint8 r,g,b;*/
+
+ SDL_Rect rect_source,rect_dest;
+
+ /*set the source surface pointer to the source bitmap font*/
+ ssp=(Uint32*)main_font.surface->pixels;
+ dsp=(Uint32*)surface->pixels;
+
+ /*get the width of the source surface for indexing later*/
+ source_surface_width=main_font.surface->w;
+
+
+  /*
+  in the special case of a newline, the cursor is updated to the next line
+  but no character is printed.
+  */
+  if(c=='\n')
+  {
+   cursor_x=0;
+   cursor_y+=main_font.char_height*main_font.char_scale;
+   cursor_y+=line_spacing_pixels; /*add space between lines for readability*/
+  }
+  else
+  {
+   x=(c-' ')*main_font.char_width; /*the x position of where this char is stored in the font source bitmap*/
+   y=0*main_font.char_height;      /*the y position of where this char is stored in the font source bitmap*/
+
+   rect_source.x=x;
+   rect_source.y=y;
+   rect_source.w=main_font.char_width;
+   rect_source.h=main_font.char_height;
+
+   rect_dest.x=cursor_x;
+   rect_dest.y=cursor_y;
+   rect_dest.w=main_font.char_scale;
+   rect_dest.h=main_font.char_scale;
+
+   /*Now for the ultra complicated stuff that only Chastity can read and understand!*/
+   sx2=rect_source.x+rect_source.w;
+   sy2=rect_source.y+rect_source.h;
+   
+   dx=rect_dest.x;
+   dy=rect_dest.y;
+   
+   sy=rect_source.y;
+   while(sy<sy2)
+   {
+    dx=rect_dest.x;
+    sx=rect_source.x;
+    while(sx<sx2)
+    {
+     pixel=ssp[sx+sy*source_surface_width]; /*get pixel from source image*/
+     /*printf("pixel=%X\n",pixel);*/
+ 
+     if(pixel) /*draw conditionally based on source pixel*/
+     {
+      int tx,ty,tx2,ty2; /*temp variables only for the square*/
+      ty2=dy+main_font.char_scale;
+      
+      /*draw a square of width/height equal to scale*/      
+      ty=dy;
+      while(ty<ty2)
+      {
+       tx=dx;
+       tx2=dx+main_font.char_scale;
+       while(tx<tx2)
+       {
+        dsp[tx+ty*width]=main_font.color;
+        tx++;
+       }
+       ty++;
+      }
+      /*end of rectangle*/
+     }
+     sx++;
+     dx+=main_font.char_scale;
+    }
+    sy++;
+    dy+=main_font.char_scale;
+   }
+   /*End of really complicated section*/
+
+   cursor_x+=main_font.char_width*main_font.char_scale;
+  }
+
+ return c;
+}
+
+int (*sdl_putchar)(char )=sdl_putchar_pixel;
+
 
 /*
  This function is the SDL equivalent of my putstring function.
