@@ -186,6 +186,13 @@ void sdl_clear()
 {
  cursor_x=0;cursor_y=0;
  SDL_FillRect(surface,NULL,0x000000);
+ 
+ /*
+ these next lines use escape sequences to also clear the terminal
+ and reset the terminal cursor so it matches the SDL cursor by this library
+*/
+ putstring("\x1B[2J"); /*clear the terminal with an escape sequence*/
+ putstring("\x1B[H"); /*reset terminal cursor to home*/
 }
 
 /*
