@@ -130,8 +130,11 @@ int sdl_putchar_blit(char c)
 /*
 This function is designed to print a single character to the current surface of the main window
 This means that it can be called repeatedly to write entire strings of text
-This uses direct pixel access instead of blitting functions to handle scaling
-because SDL1 does not have a function for blitting and scaling
+This uses direct pixel access instead of blitting functions to handle scaling.
+This was originally written for SDL1 because it does not have a function for blitting and scaling.
+
+However, this direct access lets me customize the color of the drawn text.
+It is a slight performance drop for the purpose of making things beautiful.
 */
 
 int sdl_putchar_pixel(char c) /*direct pixel access edition for SDL2*/
