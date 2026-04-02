@@ -65,6 +65,7 @@ struct chaste_font chaste_font_load(char *s)
 
 /*global variables to control the cursor in the putchar function*/
 int cursor_x=0,cursor_y=0;
+int line_spacing_pixels=1; /*optionally space lines of text by this many pixels*/
 
 /*
 This function is designed to print a single character to the current surface of the main window
@@ -81,7 +82,12 @@ int sdl_putchar(char c)
   in the special case of a newline, the cursor is updated to the next line
   but no character is printed.
   */
-  if(c=='\n'){ cursor_x=0; cursor_y+=main_font.char_height*main_font.char_scale;}
+  if(c=='\n')
+  {
+   cursor_x=0;
+   cursor_y+=main_font.char_height*main_font.char_scale;
+   cursor_y+=line_spacing_pixels; /*add space between lines for readability*/
+  }
   else
   {
    x=(c-' ')*main_font.char_width; /*the x position of where this char is stored in the font source bitmap*/
@@ -92,7 +98,6 @@ int sdl_putchar(char c)
    rect_source.w=main_font.char_width;
    rect_source.h=main_font.char_height;
 
-   rect_dest=rect_source;
    rect_dest.x=cursor_x;
    rect_dest.y=cursor_y;
    rect_dest.w=main_font.char_width*main_font.char_scale;
@@ -160,6 +165,7 @@ int sdl_putstring_wrapped(const char *s)
   {
    cursor_x=0;
    cursor_y+=main_font.char_height*main_font.char_scale;
+   cursor_y+=line_spacing_pixels; /*add space between lines for readability*/
    putchar('\n'); /*insert newline to terminal*/
   }
   sdl_putchar(*p); /*print this character to the SDL window using a function I wrote*/

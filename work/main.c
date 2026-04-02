@@ -52,7 +52,7 @@ int main(int argc, char **argv)
  
  putstr("The idea is that my program can print text to an SDL window just as if it was a regular Linux terminal!\n\n");
 
- x=putstr("Hello World\n");
+ x=putstr("Hello\n World\n");
 
  radix=10;
  putint(x);
