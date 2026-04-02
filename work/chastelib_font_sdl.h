@@ -128,7 +128,7 @@ int sdl_putchar(char c) /*direct pixel access edition for SDL1*/
    sy2=rect_source.y+rect_source.h;
    
    /*dx=rect_dest.x;*/
-   dy=rect_dest.y;
+/*   dy=rect_dest.y;*/
    
    sy=rect_source.y;
    while(sy<sy2)
