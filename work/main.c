@@ -1,5 +1,6 @@
 /*
- main.c source file for an SDL3 project by Chastity White Rose
+ main.c source file for an SDL1 project by Chastity White Rose
+ SDL1 is the legacy version of SDL and only done for entertainment.
 */
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,7 +9,6 @@
 
 int width=1280,height=720;
 int loop=1;
-SDL_Window *window;
 SDL_Surface *surface;
 SDL_Event e;
 
@@ -23,15 +23,16 @@ int main(int argc, char **argv)
 {
  int x; /*variable to use for whatever I feel like*/
 
- if(!SDL_Init(SDL_INIT_VIDEO))
- {
-  printf( "SDL could not initialize! SDL_Error: %s\n",SDL_GetError());return -1;
- }
- window=SDL_CreateWindow("SDL3 Program",width,height,0);
- if(window==NULL){printf( "Window could not be created! SDL_Error: %s\n", SDL_GetError() );return -1;}
- surface = SDL_GetWindowSurface( window ); /*get surface for this window*/
- SDL_FillSurfaceRect(surface,NULL,0xFF00FF);
- SDL_UpdateWindowSurface(window);
+ if(SDL_Init(SDL_INIT_EVERYTHING)){return 1;}
+
+ SDL_putenv("SDL_VIDEO_WINDOW_POS=center");
+ SDL_WM_SetCaption("SDL1 Program",NULL);
+ surface=SDL_SetVideoMode(width,height,32,SDL_SWSURFACE);
+ if(surface==NULL){return 1;}
+
+ SDL_FillRect(surface,NULL,0xFF00FF);
+
+ SDL_Flip(surface); /*update window to show the results*/
  printf("SDL Program Compiled Correctly\n");
  
  /*load the font from a file*/
@@ -58,7 +59,7 @@ int main(int argc, char **argv)
   radix=10;
   putint(x);
   putstr("\nPress Esc to continue.\n");
-  SDL_UpdateWindowSurface(window); /*update window to show the results*/
+  SDL_Flip(surface); /*update window to show the results*/
   sdl_wait_escape(); /*wait till escape key pressed*/
  }
 
@@ -69,27 +70,22 @@ int main(int argc, char **argv)
  {
   sdl_clear();  /*clear the screen before we begin writing*/
   putstr("This program has ended\nPress Esc to close this window.\n");
-  SDL_UpdateWindowSurface(window); /*update window to show the results*/
+  SDL_Flip(surface); /*update window to show the results*/
   sdl_wait_escape(); /*wait till escape key pressed*/
  }
  
- SDL_DestroyWindow(window);
  SDL_Quit();
  return 0;
 }
 
 /*
  This source file is an example to be included in the Chastity's Code Cookbook repository.
- This example follows the SDL version 2 which works differently than
- the most up to date version (version 3 at this time).
+ This example follows the SDL version 1 which is old and hard to find help on.
 
- This source file is an example to be included in Chastity's Code Cookbook.
- By following the migration guide, I converted the SDL2 program to SDL3.
+ https://www.libsdl.org/release/SDL-1.2.15/docs/
 
- https://wiki.libsdl.org/SDL3/README-migration
-
-main-sdl3:
-	gcc -Wall -ansi -pedantic main.c -o main -I/usr/include/SDL3 -lSDL3 && ./main
+main-sdl2:
+	gcc -Wall -ansi -pedantic main.c -o main `sdl2-config --cflags --libs` -lm && ./main
 
 */
 
