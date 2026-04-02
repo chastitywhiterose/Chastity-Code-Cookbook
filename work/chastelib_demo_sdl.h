@@ -35,9 +35,9 @@ int sdl_chastelib_test_suite()
   sdl_clear();  /*clear the screen before we begin writing*/
 
   main_font.char_scale=3;
-  putstr("Official test suite for the C version of chastelib.\nThis version uses SDL2.\n\n");
+  putstr("Official test suite for the C version of chastelib.\nThis version uses SDL3.\n\n");
 
-  main_font.char_scale=4; 
+  main_font.char_scale=4;
 
   /*the actual loop that shows the data for 16 numbers at a time*/
   a=b-c;
@@ -75,21 +75,21 @@ int sdl_chastelib_test_suite()
   /*loop to capture and process input that happens*/
   while(SDL_PollEvent(&e))
   {
-   if(e.type == SDL_QUIT){loop=0;}
+   if(e.type == SDL_EVENT_QUIT){loop=0;}
 
    /*use Escape as a key that can also end this loop*/
-   if(e.type == SDL_KEYUP)
+   if(e.type == SDL_EVENT_KEY_UP)
    {
-    if(e.key.keysym.sym==SDLK_ESCAPE){loop=0;}
+    if(e.key.key==SDLK_ESCAPE){loop=0;}
    }
 
-   if(e.type == SDL_KEYDOWN /*&& e.key.repeat==0*/)
+   if(e.type == SDL_EVENT_KEY_DOWN /*&& e.key.repeat==0*/)
    {
-    key=e.key.keysym.sym;
+    key=e.key.key;
     switch(key)
     {
      /*use q as a key that can also end this loop*/
-     case SDLK_q:
+     case SDLK_Q:
       loop=0;
      break;
    
