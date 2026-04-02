@@ -17,7 +17,7 @@ struct chaste_font
  int char_height; /*height of a character*/
  int char_scale; /*multiplier of original character size used in relevant functions*/
  SDL_Surface *surface; /*the surface of the image of loaded font*/
- int color; /*color which is used only by certain functions*/
+ int color;
 };
 
 /*global font that will be reused many times*/

@@ -10,8 +10,6 @@ int sdl_chastelib_test_suite()
  int a=0,b,c,d; /*variables for this test program*/
 
  line_spacing_pixels=1; /*empty space in pixels between lines*/
- 
- main_font.color=0x00FF00; /*change text color*/
 
  radix=16;
  int_width=1;
@@ -37,7 +35,7 @@ int sdl_chastelib_test_suite()
   sdl_clear();  /*clear the screen before we begin writing*/
 
   main_font.char_scale=3;
-  putstr("Official test suite for the C version of chastelib.\nThis version uses SDL2.\n\n");
+  putstr("Official test suite for the C version of chastelib.\nThis version uses SDL1.\n\n");
 
   main_font.char_scale=4; 
 
@@ -68,7 +66,7 @@ int sdl_chastelib_test_suite()
    a+=1;
   }
 
-  SDL_UpdateWindowSurface(window); /*update window to show the results*/
+  SDL_Flip(surface); /*update window to show the results*/
  
 } /*end of update on input section*/
 
