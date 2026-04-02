@@ -20,6 +20,8 @@ because it depends on them.
 
 int main(int argc, char **argv)
 {
+ int x; /*variable to use for whatever I feel like*/
+
  if(SDL_Init(SDL_INIT_VIDEO))
  {
   printf( "SDL could not initialize! SDL_Error: %s\n",SDL_GetError());return -1;
@@ -48,7 +50,12 @@ int main(int argc, char **argv)
  
  putstr("This program is an alpha demo of translating my chastelib text functions to use the SDL library.\n\n");
  
- putstr("The idea is that my program can print text to an SDL window just as if it was a regular Linux terminal!\n");
+ putstr("The idea is that my program can print text to an SDL window just as if it was a regular Linux terminal!\n\n");
+
+ x=putstr("Hello World\n");
+
+ radix=10;
+ putint(x);
  
   /*update window to show the results*/
   SDL_UpdateWindowSurface(window);
