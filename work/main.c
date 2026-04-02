@@ -50,14 +50,17 @@ int main(int argc, char **argv)
  below is an eight line test program to check if everything is correct!
  */
 
- sdl_clear();  /*clear the screen before we begin writing*/
- x=putstr("Hello World\n"); /*draw a string of text to the surface*/
- putstr("string length = ");
- radix=10;
- putint(x);
- putstr("\nPress Esc to continue.\n");
- SDL_UpdateWindowSurface(window); /*update window to show the results*/
- sdl_wait_escape(); /*wait till escape key pressed*/
+ if(0)
+ {
+  sdl_clear();  /*clear the screen before we begin writing*/
+  x=putstr("Hello World\n"); /*draw a string of text to the surface*/
+  putstr("string length = ");
+  radix=10;
+  putint(x);
+  putstr("\nPress Esc to continue.\n");
+  SDL_UpdateWindowSurface(window); /*update window to show the results*/
+  sdl_wait_escape(); /*wait till escape key pressed*/
+ }
 
  /*now call a demo function I wrote*/
  sdl_chastelib_test_suite();
@@ -66,7 +69,7 @@ sdl_clear();  /*clear the screen before we begin writing*/
 putstr("This program has ended\nPress Esc to close this window.\n");
 SDL_UpdateWindowSurface(window); /*update window to show the results*/
 
-  
+  loop=0;
  /*a loop which will only end if we click the X or press escape*/
  while(loop)
  {
