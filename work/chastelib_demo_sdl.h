@@ -1,11 +1,16 @@
 /* chastelib_demo_sdl.h */
 
+/*global palette of colors for my demo functions to use*/
+ int palette[]={0xFF0000,0xFFFF00,0x00FF00,0x00FFFF,0x0000FF,0xFF00FF};
+ int colors=sizeof(palette)/sizeof(*palette);
+
 int sdl_chastelib_test_suite()
 {
  /*variables required by SDL*/
  int loop=1;
  int key=1;
  SDL_Event e;
+
 
  int a=0,b,c,d; /*variables for this test program*/
 
@@ -23,7 +28,7 @@ int sdl_chastelib_test_suite()
  b=strint("10"); /*will always be radix*/
  c=b; /*save what the radix was at the beginning. This will be used later.*/
  d=strint("100"); /*will always be radix squared*/
-
+ 
  /*a loop which will only end if we click the X or press escape*/
  while(loop)
  {
@@ -37,6 +42,7 @@ int sdl_chastelib_test_suite()
   sdl_clear();  /*clear the screen before we begin writing*/
 
   main_font.char_scale=3;
+  main_font.color=0xFFFFFF;
   putstr("Official test suite for the C version of chastelib.\nThis version uses SDL2.\n\n");
 
   main_font.char_scale=4; 
@@ -45,6 +51,7 @@ int sdl_chastelib_test_suite()
   a=b-c;
   while(a<b)
   {
+   main_font.color=palette[a%colors];
    radix=2;
    int_width=8;
    putint(a);
@@ -120,6 +127,9 @@ int sdl_chastelib_test_suite()
 
   /*end of game loop*/
  }
+ 
+  /*putint(sizeof(palette)/sizeof(*palette));*/
+
  
  return 0;
 }
