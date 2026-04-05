@@ -73,21 +73,23 @@ jmp arg_loop_end
 
 ;how we use the file depends on the number of arguments given
 ;if no arguments other than the filename exist, we do a regular hex dump
+
 use_file:
 
+mov bp,0 ;set bp to zero because it represents upper 16 bits of file address
 call get_next_arg ;get address of next arg and return into ax register
 cmp ax,[arg_string_end] ;this time, if ax equals end of string, we hex dump and then end the program later
 jz hexdump ;jump to hexdump section
 
-;otherwise, if there are more args, as contains next arg
-;then we use the strint function to transform it into a number
-;call putstring
-;call putline
+;otherwise, if there are more args, ax contains next argument
+;we will next extra the address from this argument for future operations
 
-call strint_32 ;turn string at address ax into a number returned in ax
-;call putint
-;mov ax,[extra_word]
-;call putint
+;first call the strint_32 function to get 32 bit integer from a hex string
+;the lower 16 bits are stored in ax just like regular strint
+;upper 16 bits are stored in the "extra_word" memory location
+;but then I copy them to the bp register to use for the rest of the program
+call strint_32 
+mov bp,[extra_word] ;store the upper 16 bits in the bp register
 
 ;this number will be out new offset to seek to
 mov [file_offset],ax
@@ -95,7 +97,7 @@ mov [file_offset],ax
 mov ah,42h           ;lseek call number
 mov al,0             ;seek origin 00h start of file,01h current file position,02h end of file
 mov bx,[file_handle]
-mov cx,[extra_word]  ;upper word of offset
+mov cx,bp            ;upper word of offset
 mov dx,[file_offset] ;lower word of offset
 int 21h
 
@@ -123,7 +125,7 @@ mov cx,ax ;number of bytes read
 mov [int_newline],0 ;disable auto newline printing
 ;set width to 4 and display extra:offset
 mov [int_width],4
-mov ax,[extra_word]
+mov ax,bp
 call putint
 mov ax,[file_offset]
 call putint
@@ -194,13 +196,13 @@ int 21h
 
 ;set width to 4 and display extra:offset
 mov [int_width],4
-mov ax,[extra_word]
+mov ax,bp
 call putint
 mov ax,[file_offset]
 call putint
 
 add [file_offset],1
-adc [extra_word],0
+adc bp,0
 
 call putspace
 mov [int_width],2
@@ -274,14 +276,14 @@ mov [int_newline],0 ;disable auto newline printing
 
 ;set width to 4 and display extra:offset
 mov [int_width],4
-mov ax,[extra_word]
+mov ax,bp
 call putint
 mov ax,[file_offset]
 call putint
 call putspace
 
 add [file_offset],cx
-adc [extra_word],0
+adc bp,0
 
 mov ah,0 ;zero upper half of ax
 mov bx,byte_array
@@ -349,12 +351,13 @@ call putstring
 
 ret
 
-include 'chastelib16.asm'
-include 'strint32.asm'
-
 help db 'Welcome to chastehex! The tool for reading and writing bytes of a file!',0Ah
 db 'To hexdump an entire file:',0Ah,9,'chastehex file',0Ah
 db 'To read a single byte at an address:',0Ah,9,'chastehex file address',0Ah
 db 'To write a single byte at an address:',0Ah,9,'chastehex file address value',0Ah
 db 'The file must exist before you launch the program.',0Ah
 db 'This design was to prevent accidentally opening a mistyped filename.',0Ah,0
+
+include 'chastelib16.asm'
+include 'strint32.asm'
+
