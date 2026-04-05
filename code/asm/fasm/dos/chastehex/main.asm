@@ -107,7 +107,7 @@ jc arg_loop_end ;end program if seek error (though I can't imagine how it would 
 call get_next_arg
 cmp ax,[arg_string_end]
 jz dump_byte ;jump to dump_byte section and continue with read mode
-
+mov [int_newline],0 ;disable auto newline printing
 jmp arg_loop ;otherwise we jump to the arg loop and write the values as bytes starting at offset
 
 ;this next section is the reading mode that reads one byte. It only executes if we have not provided bytes to write to the new address
@@ -122,6 +122,7 @@ int 21h
 
 mov cx,ax ;number of bytes read
 
+mov [int_newline],0 ;disable auto newline printing
 ;set width to 4 and display extra:offset
 mov [int_width],4
 mov ax,bp
@@ -271,6 +272,8 @@ ret
 print_bytes_row:
 mov cx,[bytes_read] ;number of bytes read
 
+mov [int_newline],0 ;disable auto newline printing
+
 ;set width to 4 and display extra:offset
 mov [int_width],4
 mov ax,bp
@@ -369,6 +372,8 @@ db 'This design was to prevent accidentally opening a mistyped filename.',0Ah,0
 ;this means that it works in a similar way to my Linux Assembly code
 ;the plan is to make both my DOS and Linux functions identical except for the size of registers involved
 
+stdout dw 1 ; variable for standard output so that it can theoretically be redirected
+
 putstring:
 
 push ax
@@ -392,7 +397,7 @@ mov cx,bx                  ; mov bx to cx
 mov dx,ax                  ; dx will have address of string to write
 
 mov ah,40h                 ; select DOS function 40h write 
-mov bx,1                   ; file handle 1=stdout
+mov bx,[stdout]            ; file handle 1=stdout
 int 21h                    ; call the DOS kernel
 
 pop dx
@@ -406,14 +411,16 @@ ret
 
 ;this is the location in memory where digits are written to by the intstr function
 int_string db 16 dup '?' ;enough bytes to hold maximum size 16-bit binary integer
-int_string_end db 0 ;zero byte terminator for the integer string
+;this is the end of the integer string optional line feed and terminating zero
+;clever use of this label can change the ending to be a different character when needed 
+int_newline db 0Dh,0Ah,0 ;the proper way to end a line in DOS/Windows
 
 radix dw 2 ;radix or base for integer output. 2=binary, 8=octal, 10=decimal, 16=hexadecimal
 int_width dw 8
 
 intstr:
 
-mov bx,int_string_end-1 ;find address of lowest digit(just before the newline 0Ah)
+mov bx,int_newline-1 ;find address of lowest digit(just before the newline 0Ah)
 mov cx,1
 
 digits_start:
