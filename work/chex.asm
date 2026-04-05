@@ -121,7 +121,7 @@ int 21h
 mov cx,ax ;number of bytes read
 
 ;set width to 4 and display extra:offset
-mov [int_width],4
+mov word[int_width],4
 mov ax,bp
 call putint
 mov ax,[file_offset]
@@ -137,7 +137,7 @@ not_eof:
 mov ah,0 ;zero upper half of ax
 mov al,[byte_array]
 
-mov [int_width],2
+mov word[int_width],2
 call putint
 call putline
 
@@ -192,17 +192,17 @@ mov dx,byte_array    ;write from this address
 int 21h
 
 ;set width to 4 and display extra:offset
-mov [int_width],4
+mov word[int_width],4
 mov ax,bp
 call putint
 mov ax,[file_offset]
 call putint_and_space
 
-add [file_offset],1
+add word[file_offset],1
 adc bp,0
 
 
-mov [int_width],2
+mov word[int_width],2
 mov ah,0
 mov al,[byte_array]
 call putint
@@ -269,7 +269,7 @@ print_bytes_row:
 mov cx,[bytes_read] ;number of bytes read
 
 ;set width to 4 and display extra:offset
-mov [int_width],4
+mov word[int_width],4
 mov ax,bp
 call putint
 mov ax,[file_offset]
@@ -281,7 +281,7 @@ adc bp,0
 mov ah,0 ;zero upper half of ax
 mov bx,byte_array
 
-mov [int_width],2
+mov word[int_width],2
 
 print_byte:
 mov al,[bx]
@@ -537,7 +537,7 @@ extra_word dw 0 ;define an extra word(16 bits). The initial value doesn't matter
 strint_32:
 
 ;initialize new variables added to this function
-mov [extra_word],0
+mov word[extra_word],0
 
 mov bx,ax ;copy string address from ax to bx because eax will be replaced soon!
 mov ax,0
@@ -601,7 +601,7 @@ jae strint_end_32 ;if this value is above or equal to radix, it is too high desp
 ;before we process the character, to avoid data loss, we shift bits into the [extra_word]
 push ax
 shr ax,12 ;shift exactly 12 bits to keep the lowest hex digit of ax
-shl [extra_word],4 ;shift the [extra_word] 4 bits to make room for the hex digit 
+shl word[extra_word],4 ;shift the [extra_word] 4 bits to make room for the hex digit 
 add [extra_word],ax
 pop ax
 
