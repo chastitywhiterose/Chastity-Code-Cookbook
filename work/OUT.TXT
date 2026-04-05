@@ -1,8 +1,0 @@
-chastehex:
-hexdump a file:
-	chex file
-read a byte:
-	chex file address
-write a byte:
-	chex file address value
-The file must exist
