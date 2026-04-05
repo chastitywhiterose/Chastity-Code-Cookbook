@@ -124,8 +124,7 @@ mov [int_width],4
 mov ax,bp
 call putint
 mov ax,[file_offset]
-call putint
-call putspace
+call putint_and_space
 
 cmp cx,1
 jz not_eof ;skip past here as long as one byte was read otherwise show EOF
@@ -139,7 +138,8 @@ mov al,[byte_array]
 
 mov [int_width],2
 call putint
-;call putline
+call putline
+
 
 jmp arg_loop_end ;we are done so we end the program
 
@@ -195,8 +195,7 @@ mov [int_width],4
 mov ax,bp
 call putint
 mov ax,[file_offset]
-call putint
-call putspace
+call putint_and_space
 
 add [file_offset],1
 adc bp,0
@@ -273,8 +272,7 @@ mov [int_width],4
 mov ax,bp
 call putint
 mov ax,[file_offset]
-call putint
-call putspace
+call putint_and_space
 
 add [file_offset],cx
 adc bp,0
@@ -286,8 +284,7 @@ mov [int_width],2
 
 print_byte:
 mov al,[bx]
-call putint
-call putspace
+call putint_and_space
 inc bx
 dec cx
 cmp cx,0
@@ -345,17 +342,17 @@ call putstring
 
 ret
 
-help db 'Welcome to chastehex! The tool for reading and writing bytes of a file!',0Ah
-db 'To hexdump an entire file:',0Ah,9,'chastehex file',0Ah
-db 'To read a single byte at an address:',0Ah,9,'chastehex file address',0Ah
-db 'To write a single byte at an address:',0Ah,9,'chastehex file address value',0Ah
-db 'The file must exist before you launch the program.',0Ah
-db 'This design was to prevent accidentally opening a mistyped filename.',0Ah,0
+help db 'chastehex:',0Ah
+db 'hexdump a file:',0Ah,9,'chex file',0Ah
+db 'read a byte:',0Ah,9,'chex file address',0Ah
+db 'write a byte:',0Ah,9,'chex file address value',0Ah
+db 'The file must exist',0Ah,0
 
 ; About the chastelib variant
 
 ;instead of including chastelib16.asm as a header file
 ;I copied it except that I excluded functions that were not used.
+;Notably, the strint function is excluded because strint_32 is used instead
 
 ;start of chastelib
 
@@ -497,6 +494,15 @@ push ax
 mov ax,line
 call putstring
 pop ax
+ret
+
+;a small function just for the common operation
+;printing an integer followed by a space
+;this saves a few bytes in the assembled code
+
+putint_and_space:
+call putint
+call putspace
 ret
 
 ;end of chastelib
