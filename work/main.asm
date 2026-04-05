@@ -51,14 +51,11 @@ mov [file_handle],ax
 jc file_error ;if carry flag is set, we have an error, otherwise, file is open
 
 file_opened:
+
 mov ax,dx
 call putstring
 call putline
-;mov ax,file_opened_message
-;call putstring
-;mov ax,[file_handle]
-;call putint
-jmp use_file
+jmp use_file ;skip past error message and start using the file
 
 ;this section prints error message and then ends the program if file error found
 file_error: ;prints error code2=file not found
@@ -199,11 +196,12 @@ mov ax,bp
 call putint
 mov ax,[file_offset]
 call putint
+call putspace
 
 add [file_offset],1
 adc bp,0
 
-call putspace
+
 mov [int_width],2
 mov ah,0
 mov al,[byte_array]
@@ -230,7 +228,6 @@ int 21h
 arg_string_end dw 0
 arg_index dw 0
 file_error_message db 'Could not open the file! Error number: ',0
-file_opened_message db 'The file is open with handle: ',0
 file_handle dw 0
 read_error_message db 'Failure during reading of file. Error number: ',0
 end_of_file db 'EOF',0
