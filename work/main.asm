@@ -3,19 +3,19 @@ org 100h     ;DOS programs start at this address
 mov word [radix],16 ; can choose radix for integer output!
 
 mov ch,0     ;zero ch (upper half of cx)
-mov cl,[80h] ;load length of the command string
+mov cl,[80h] ;load length in bytes of the command string
 cmp cx,0
 jnz args_exist
 
-mov ax,help
+mov ax,help    ;if not arguments were given, show a help message
 call putstring
-
-jmp ending
+jmp ending     ;and end the program because there is nothing to do
 
 args_exist:
-mov dx,81h   ;Point dx to the beginning of string
-inc dx       ;go to next char
-dec cx       ;but subtract 1 from count
+
+mov dx,81h         ;Point dx to the beginning of string
+inc dx             ;go to next char
+dec cx             ;but subtract 1 from count
 mov [arg_index],dx ;save index to variable so dx is free to change as needed
 
 ;find the end of the string based on length
@@ -41,12 +41,12 @@ mov byte [bx],0 ;terminate the ending with a zero for safety
 
 ;now that the argument string is prepared, we will try to use the first argument as a filename to open
 
-mov ah,3Dh ;call number for DOS open existing file
-mov al,2   ;file access: 0=read,1=write,2=read+write
+mov ah,3Dh         ;call number for DOS open existing file
+mov al,2           ;file access: 0=read,1=write,2=read+write
 mov dx,[arg_index] ;string address to interpret as filename
-int 21h ;DOS call to finalize open function
+int 21h            ;DOS call to finalize open function
 
-mov [file_handle],ax
+mov [file_handle],ax ;save the file handle
 
 jc file_error ;if carry flag is set, we have an error, otherwise, file is open
 
@@ -58,6 +58,7 @@ call putline
 jmp use_file ;skip past error message and start using the file
 
 ;this section prints error message and then ends the program if file error found
+
 file_error: ;prints error code2=file not found
 mov ax,dx
 call putstring
@@ -351,7 +352,7 @@ db 'The file must exist',0Ah,0
 ; About the chastelib variant
 
 ;instead of including chastelib16.asm as a header file
-;I copied it except that I excluded functions that were not used.
+;I copy pasted it except that I excluded functions that were not used.
 ;Notably, the strint function is excluded because strint_32 is used instead
 
 ;start of chastelib
@@ -395,8 +396,6 @@ pop bx
 pop ax
 
 ret
-
-
 
 ;this is the location in memory where digits are written to by the intstr function
 int_string db 16 dup '?' ;enough bytes to hold maximum size 16-bit binary integer
@@ -449,8 +448,6 @@ end_zeros:
 mov ax,bx ; store string in ax for display later
 
 ret
-
-
 
 ;function to print string form of whatever integer is in ax
 ;The radix determines which number base the string form takes.
@@ -524,7 +521,7 @@ ret
 
 ;However, it uses an extra word variable in memory which is designed to store the upper 16 bits of
 ;a 32 bit offset for file seeking. Apparently the DOS system calls support this based on Ralf Browns interrupt list.
-;I confirmed that it works.
+;I confirmed that it works by writing to higher addresses and reading them
 
 ;You might wonder why I made a 32 bit variant of this function rather than replacing the original. These are my reasons
 
@@ -617,4 +614,3 @@ jmp read_strint_32 ;jump back and continue the loop if nothing has exited it
 strint_end_32:
 
 ret
-
