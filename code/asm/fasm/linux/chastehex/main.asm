@@ -3,15 +3,14 @@
 format ELF executable
 entry main
 
+start:
+
 include 'chastelib32.asm'
-include "chasteio32.asm"
 
 main:
 
 ;radix will be 16 because this whole program is about hexadecimal
 mov dword [radix],16 ; can choose radix for integer input/output!
-mov byte [int_newline],0 ;disable automatic printing of newlines after putint
-;we will be manually printing spaces or newlines depending on context
 
 pop eax
 mov [argc],eax ;save the argument count for later
@@ -34,13 +33,28 @@ arg_open_file:
 pop eax
 dec dword [argc]
 mov [filename],eax ; save the name of the file we will open to read
-call putstring
-call putline
+call putstr_and_line
 
-call open
+;Linux system call to open a file
+
+mov ecx,2   ;open file in read and write mode 
+mov ebx,eax ;filename should be in eax before this function was called
+mov eax,5   ;invoke SYS_OPEN (kernel opcode 5)
+int 80h     ;call the kernel
 
 cmp eax,0
-js main_end
+jns file_open_no_errors ;if eax is not negative/signed there was no error
+
+;Otherwise, if it was signed, then this code will display an error message.
+
+neg eax
+call putint_and_space
+mov eax,open_error_message
+call putstr_and_line
+
+jmp main_end ;end the program because we failed at opening the file
+
+file_open_no_errors:
 
 mov [filedesc],eax ; save the file descriptor number for later use
 mov dword [file_offset],0 ;assume the offset is 0,beginning of file
@@ -55,34 +69,23 @@ mov edx,0x10         ;number of bytes to read
 mov ecx,byte_array   ;address to store the bytes
 mov ebx,[filedesc]   ;move the opened file descriptor into EBX
 mov eax,3            ;invoke SYS_READ (kernel opcode 3)
-int 80h               ;call the kernel
+int 80h              ;call the kernel
 
 mov [bytes_read],eax
-
-; call putint
 
 cmp eax,0
 jnz file_success ;if more than zero bytes read, proceed to display
 
-;if the offset is zero, display EOF to indicate empty file
-;otherwise, end without displaying this because there should already be bytes printed to the display
-cmp dword [file_offset],0
-jnz main_end
+;display EOF to indicate we have reached the end of file
 
-call show_eof
+mov eax,end_of_file_string
+call putstr_and_line
 
 jmp main_end
 
 ; this point is reached if file was read from successfully
 
 file_success:
-;mov eax,[filename]
-;call putstring
-;mov eax,file_opened_string
-;call putstring
-
-mov eax,byte_array
-;call putstring
 
 call print_bytes_row
 
@@ -145,7 +148,7 @@ mov [byte_array],al
 
 mov eax,4          ;invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
 mov ebx,[filedesc] ;write to the file (not STDOUT)
-mov ecx,byte_array  ;pointer to temporary byte address
+mov ecx,byte_array ;pointer to temporary byte address
 mov edx,1          ;write 1 byte
 int 80h            ;system call to write the message
 
@@ -159,8 +162,11 @@ main_end:
 ;this is the end of the program
 ;we close the open file and then use the exit call
 
-mov eax,[filedesc] ;file number to close
-call close
+;Linux system call to close a file
+
+mov ebx,[filedesc] ;file number to close
+mov eax,6          ;invoke SYS_CLOSE (kernel opcode 6)
+int 80h            ;call the kernel
 
 mov eax, 1  ; invoke SYS_EXIT (kernel opcode 1)
 mov ebx, 0  ; return 0 status on exit - 'No Errors'
@@ -172,8 +178,7 @@ int 80h
 print_bytes_row:
 mov eax,[file_offset]
 mov dword [int_width],8
-call putint
-call putspace
+call putint_and_space
 
 mov ebx,byte_array
 mov ecx,[bytes_read]
@@ -182,8 +187,7 @@ next_byte:
 mov eax,0
 mov al,[ebx]
 mov dword [int_width],2
-call putint
-call putspace
+call putint_and_space
 
 inc ebx
 dec ecx
@@ -222,7 +226,7 @@ cmp al,0x7E
 ja not_printable
 
 printable:
-;if char is in printable range,copy as is and proceed to next index
+;if char is in printable range,keep as is and proceed to next index
 jmp next_index
 
 not_printable:
@@ -247,11 +251,9 @@ show_eof:
 
 mov eax,[file_offset]
 mov dword [int_width],8
-call putint
-call putspace
+call putint_and_space
 mov eax,end_of_file_string
-call putstring
-call putline
+call putstr_and_line
 
 ret
 
@@ -259,29 +261,29 @@ ret
 print_byte_info:
 mov eax,[file_offset]
 mov dword [int_width],8
-call putint
-call putspace
+call putint_and_space
 mov eax,0
 mov al,[byte_array]
 mov dword [int_width],2
-call putint
-call putline
+call putint_and_line
 
 ret
 
 end_of_file_string db 'EOF',0
 
-help_message db 'Welcome to chastehex! The tool for reading and writing bytes of a file!',0Ah,0Ah
-db 'To hexdump an entire file:',0Ah,0Ah,9,'chastehex file',0Ah,0Ah
-db 'To read a single byte at an address:',0Ah,0Ah,9,'chastehex file address',0Ah,0Ah
-db 'To write a single byte at an address:',0Ah,0Ah,9,'chastehex file address value',0Ah,0Ah,0
+help_message db 'chastehex by Chastity White Rose',0Ah,0Ah
+db 'hexdump a file:',0Ah,0Ah,9,'chastehex file',0Ah,0Ah
+db 'read a byte:',0Ah,0Ah,9,'chastehex file address',0Ah,0Ah
+db 'write a byte:',0Ah,0Ah,9,'chastehex file address value',0Ah,0Ah
+db 'The file must exist',0Ah,0
 
-;variables for managing arguments
+;variables for managing arguments and files
 argc dd 0
 filename dd 0 ; name of the file to be opened
 filedesc dd 0 ; file descriptor
 bytes_read dd 0
 file_offset dd 0
+open_error_message db 'error while opening file',0
 
 ;where we will store data from the file
 byte_array db 17 dup '?'
