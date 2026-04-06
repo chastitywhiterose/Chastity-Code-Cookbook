@@ -36,8 +36,7 @@ push eax
 mov eax,open_error_message
 call putstring
 pop eax
-call putint
-call putline
+call putint_and_line
 neg eax ;return eax to original sign
 
 open_end:

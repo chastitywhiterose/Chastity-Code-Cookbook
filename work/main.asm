@@ -145,7 +145,7 @@ mov [byte_array],al
 
 mov eax,4          ;invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
 mov ebx,[filedesc] ;write to the file (not STDOUT)
-mov ecx,byte_array  ;pointer to temporary byte address
+mov ecx,byte_array ;pointer to temporary byte address
 mov edx,1          ;write 1 byte
 int 80h            ;system call to write the message
 

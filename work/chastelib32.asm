@@ -56,6 +56,7 @@ ret ; this is the end of the putstring function return to calling location
 ; The string of bytes and settings such as the radix and width are global variables defined below.
 
 int_string db 32 dup '?' ;enough bytes to hold maximum size 32-bit binary integer
+
 int_string_end db 0 ;zero byte terminator for the integer string
 
 radix dd 2 ;radix or base for integer output. 2=binary, 8=octal, 10=decimal, 16=hexadecimal
@@ -126,6 +127,7 @@ push ecx
 push edx
 
 call intstr
+
 call putstring
 
 pop edx
@@ -260,6 +262,5 @@ ret
 
 putint_and_line:
 call putint
-call putspace
+call putline
 ret
-
