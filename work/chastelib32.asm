@@ -250,6 +250,7 @@ ret
 ;a small function just for the common operation
 ;printing an integer followed by a space
 ;this saves a few bytes in the assembled code
+;by reducing the number of function calls in the main program
 
 putint_and_space:
 call putint
@@ -259,8 +260,20 @@ ret
 ;a small function just for the common operation
 ;printing an integer followed by a line feed
 ;this saves a few bytes in the assembled code
+;by reducing the number of function calls in the main program
 
 putint_and_line:
 call putint
+call putline
+ret
+
+;a small function just for the common operation
+;printing a string followed by a line feed
+;this saves a few bytes in the assembled code
+;by reducing the number of function calls in the main program
+;it also means we don't need to include a newline in every string!
+
+putstr_and_line:
+call putstring
 call putline
 ret

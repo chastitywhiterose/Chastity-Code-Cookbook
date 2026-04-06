@@ -6,7 +6,6 @@ entry main
 start:
 
 include 'chastelib32.asm'
-include "chasteio32.asm"
 
 main:
 
@@ -34,13 +33,28 @@ arg_open_file:
 pop eax
 dec dword [argc]
 mov [filename],eax ; save the name of the file we will open to read
-call putstring
-call putline
+call putstr_and_line
 
-call open
+;Linux system call to open a file
+
+mov ecx,2   ;open file in read and write mode 
+mov ebx,eax ;filename should be in eax before this function was called
+mov eax,5   ;invoke SYS_OPEN (kernel opcode 5)
+int 80h     ;call the kernel
 
 cmp eax,0
-js main_end
+jns file_open_no_errors ;if eax is not negative/signed there was no error
+
+;Otherwise, if it was signed, then this code will display an error message.
+
+neg eax
+call putint_and_space
+mov eax,open_error_message
+call putstr_and_line
+
+jmp main_end ;end the program because we failed at opening the file
+
+file_open_no_errors:
 
 mov [filedesc],eax ; save the file descriptor number for later use
 mov dword [file_offset],0 ;assume the offset is 0,beginning of file
@@ -159,8 +173,11 @@ main_end:
 ;this is the end of the program
 ;we close the open file and then use the exit call
 
-mov eax,[filedesc] ;file number to close
-call close
+;Linux system call to close a file
+
+mov ebx,[filedesc] ;file number to close
+mov eax,6          ;invoke SYS_CLOSE (kernel opcode 6)
+int 80h            ;call the kernel
 
 mov eax, 1  ; invoke SYS_EXIT (kernel opcode 1)
 mov ebx, 0  ; return 0 status on exit - 'No Errors'
@@ -247,8 +264,7 @@ mov eax,[file_offset]
 mov dword [int_width],8
 call putint_and_space
 mov eax,end_of_file_string
-call putstring
-call putline
+call putstr_and_line
 
 ret
 
@@ -266,18 +282,19 @@ ret
 
 end_of_file_string db 'EOF',0
 
-help_message db 'chastehex:',0Ah
+help_message db 'chastehex:',0Ah,0Ah
 db 'hexdump a file:',0Ah,0Ah,9,'chastehex file',0Ah,0Ah
 db 'read a byte:',0Ah,0Ah,9,'chastehex file address',0Ah,0Ah
 db 'write a byte:',0Ah,0Ah,9,'chastehex file address value',0Ah,0Ah
 db 'The file must exist',0Ah,0
 
-;variables for managing arguments
+;variables for managing arguments and files
 argc dd 0
 filename dd 0 ; name of the file to be opened
 filedesc dd 0 ; file descriptor
 bytes_read dd 0
 file_offset dd 0
+open_error_message db 'error while opening file',0
 
 ;where we will store data from the file
 byte_array db 17 dup '?'
