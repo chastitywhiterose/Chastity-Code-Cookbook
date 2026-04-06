@@ -12,11 +12,6 @@ main:
 
 ;radix will be 16 because this whole program is about hexadecimal
 mov dword [radix],16 ; can choose radix for integer input/output!
-mov byte [int_newline],0 ;disable automatic printing of newlines after putint
-;we will be manually printing spaces or newlines depending on context
-
-mov eax,start
-call putint
 
 pop eax
 mov [argc],eax ;save the argument count for later
@@ -177,8 +172,7 @@ int 80h
 print_bytes_row:
 mov eax,[file_offset]
 mov dword [int_width],8
-call putint
-call putspace
+call putint_and_space
 
 mov ebx,byte_array
 mov ecx,[bytes_read]
@@ -187,8 +181,7 @@ next_byte:
 mov eax,0
 mov al,[ebx]
 mov dword [int_width],2
-call putint
-call putspace
+call putint_and_space
 
 inc ebx
 dec ecx
@@ -252,8 +245,7 @@ show_eof:
 
 mov eax,[file_offset]
 mov dword [int_width],8
-call putint
-call putspace
+call putint_and_space
 mov eax,end_of_file_string
 call putstring
 call putline
@@ -264,13 +256,11 @@ ret
 print_byte_info:
 mov eax,[file_offset]
 mov dword [int_width],8
-call putint
-call putspace
+call putint_and_space
 mov eax,0
 mov al,[byte_array]
 mov dword [int_width],2
-call putint
-call putline
+call putint_and_line
 
 ret
 
