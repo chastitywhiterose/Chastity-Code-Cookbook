@@ -69,34 +69,23 @@ mov edx,0x10         ;number of bytes to read
 mov ecx,byte_array   ;address to store the bytes
 mov ebx,[filedesc]   ;move the opened file descriptor into EBX
 mov eax,3            ;invoke SYS_READ (kernel opcode 3)
-int 80h               ;call the kernel
+int 80h              ;call the kernel
 
 mov [bytes_read],eax
-
-; call putint
 
 cmp eax,0
 jnz file_success ;if more than zero bytes read, proceed to display
 
-;if the offset is zero, display EOF to indicate empty file
-;otherwise, end without displaying this because there should already be bytes printed to the display
-cmp dword [file_offset],0
-jnz main_end
+;display EOF to indicate we have reached the end of file
 
-call show_eof
+mov eax,end_of_file_string
+call putstr_and_line
 
 jmp main_end
 
 ; this point is reached if file was read from successfully
 
 file_success:
-;mov eax,[filename]
-;call putstring
-;mov eax,file_opened_string
-;call putstring
-
-mov eax,byte_array
-;call putstring
 
 call print_bytes_row
 
@@ -237,7 +226,7 @@ cmp al,0x7E
 ja not_printable
 
 printable:
-;if char is in printable range,copy as is and proceed to next index
+;if char is in printable range,keep as is and proceed to next index
 jmp next_index
 
 not_printable:
@@ -282,7 +271,7 @@ ret
 
 end_of_file_string db 'EOF',0
 
-help_message db 'chastehex:',0Ah,0Ah
+help_message db 'chastehex by Chastity White Rose',0Ah,0Ah
 db 'hexdump a file:',0Ah,0Ah,9,'chastehex file',0Ah,0Ah
 db 'read a byte:',0Ah,0Ah,9,'chastehex file address',0Ah,0Ah
 db 'write a byte:',0Ah,0Ah,9,'chastehex file address value',0Ah,0Ah
