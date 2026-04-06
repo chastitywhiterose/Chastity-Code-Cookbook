@@ -1,13 +1,18 @@
 ;this file is for managing the advanced Input and Output situations that occur when opening and closing files.
 ;I use the following references when using system calls.
 
-
 ;https://www.chromium.org/chromium-os/developer-library/reference/linux-constants/syscalls/#x86-32-bit
 ;https://www.chromium.org/chromium-os/developer-library/reference/linux-constants/errnos/
 
+;These are the values for the possible modes of opening a file in Linux.
+
+;O_RDONLY	open file in read only mode	0
+;O_WRONLY	open file in write only mode	1
+;O_RDWR	open file in read and write mode	2
+
 
 ;before calling this function, make sure the eax register points to an address containing the filename as a zero terminated string
-;this function opens a file for both reading and writing handle is returned in eax
+;this function opens a file for both reading and writing. handle is returned in eax
 ;this function design is consistent with my other functions by using only eax as the input and output
 ;because it opens files for reading and writing, I do not need to be concerned with passing another argument for access mode
 

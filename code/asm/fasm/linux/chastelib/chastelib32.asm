@@ -262,5 +262,5 @@ ret
 
 putint_and_line:
 call putint
-call putspace
+call putline
 ret
