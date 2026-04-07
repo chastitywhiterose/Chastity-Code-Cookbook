@@ -8,17 +8,17 @@ include 'chastelib64.asm'
 main:
 
 ;radix will be 16 because this whole program is about hexadecimal
-mov [radix],16 ; can choose radix for integer input/output!
+mov qword [radix],16 ; can choose radix for integer input/output!
 
 pop rax
 mov [argc],rax ;save the argument count for later
 
 ;first arg is the name of the program. we skip past it
 pop rax
-dec [argc]
+dec qword [argc]
 
 ;before we try to get the first argument as a filename, we must check if it exists
-cmp [argc],0
+cmp qword [argc],0
 jnz arg_open_file
 
 help:
@@ -29,7 +29,7 @@ jmp main_end
 arg_open_file:
 
 pop rax
-dec [argc]
+dec qword [argc]
 mov [filename],rax ; save the name of the file we will open to read
 call putstr_and_line
 
@@ -55,10 +55,10 @@ jmp main_end ;end the program because we failed at opening the file
 file_open_no_errors:
 
 mov [filedesc],rax ; save the file descriptor number for later use
-mov [file_offset],0 ;assume the offset is 0,beginning of file
+mov qword [file_offset],0 ;assume the offset is 0,beginning of file
 
 ;check next arg
-cmp [argc],0 ;if there are no more args after filename, just hexdump it
+cmp qword [argc],0 ;if there are no more args after filename, just hexdump it
 jnz next_arg_address ;but if there are more, jump to the next argument to process it as address
 
 hexdump:
@@ -87,7 +87,7 @@ file_success:
 
 call print_bytes_row
 
-cmp [bytes_read],1 
+cmp qword [bytes_read],1 
 jl main_end ;if less than one bytes read, there is an error
 jmp hexdump
 
@@ -96,7 +96,7 @@ next_arg_address:
 
 ;if there is at least one more arg
 pop rax ;pop the argument into rax and process it as a hex number
-dec [argc]
+dec qword [argc]
 call strint
 
 ;use the hex number as an address to seek to in the file
@@ -110,7 +110,7 @@ syscall            ;call the kernel
 mov [file_offset],rax ;move the new offset
 
 ;check the number of args still remaining
-cmp [argc],0
+cmp qword [argc],0
 jnz next_arg_write ; if there are still arguments, skip this read section and enter writing mode
 
 read_one_byte:
@@ -134,11 +134,11 @@ call print_byte_info
 
 ;this section interprets the rest of the args as bytes to write
 next_arg_write:
-cmp [argc],0
+cmp qword [argc],0
 jz main_end
 
 pop rax
-dec [argc]
+dec qword [argc]
 call strint ;try to convert string to a hex number
 
 ;write that number as a byte value to the file
@@ -152,7 +152,7 @@ mov rax,1          ;invoke SYS_WRITE (kernel opcode 1 on 64 bit systems)
 syscall            ;system call to write the message
 
 call print_byte_info
-inc [file_offset]
+inc qword [file_offset]
 
 jmp next_arg_write
 
@@ -175,7 +175,7 @@ syscall
 ;each row is 16 bytes
 print_bytes_row:
 mov rax,[file_offset]
-mov [int_width],8
+mov qword [int_width],8
 call putint_and_space
 
 mov rbx,byte_array
@@ -184,7 +184,7 @@ add [file_offset],rcx
 next_byte:
 mov rax,0
 mov al,[rbx]
-mov [int_width],2
+mov qword [int_width],2
 call putint_and_space
 
 inc rbx
@@ -247,7 +247,7 @@ ret
 show_eof:
 
 mov rax,[file_offset]
-mov [int_width],8
+mov qword [int_width],8
 call putint_and_space
 mov rax,end_of_file_string
 call putstr_and_line
@@ -257,11 +257,11 @@ ret
 ;print the address and the byte at that address
 print_byte_info:
 mov rax,[file_offset]
-mov [int_width],8
+mov qword [int_width],8
 call putint_and_space
 mov rax,0
 mov al,[byte_array]
-mov [int_width],2
+mov qword [int_width],2
 call putint_and_line
 
 ret
