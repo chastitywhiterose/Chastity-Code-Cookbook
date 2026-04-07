@@ -31,17 +31,28 @@ arg_open_file:
 pop rax
 dec [argc]
 mov [filename],rax ; save the name of the file we will open to read
-call putstring
-call putline
+call putstr_and_line
 
 ;Linux system call to open a file
+
 mov rsi,2   ;open file in read and write mode 
 mov rdi,rax ;filename should be in rax before this function was called
 mov rax,2   ;invoke SYS_OPEN (kernel opcode 2 on 64 bit systems)
 syscall     ;call the kernel
 
 cmp rax,0
-js main_end
+jns file_open_no_errors ;if eax is not negative/signed there was no error
+
+;Otherwise, if it was signed, then this code will display an error message.
+
+neg rax
+call putint_and_space
+mov rax,open_error_message
+call putstr_and_line
+
+jmp main_end ;end the program because we failed at opening the file
+
+file_open_no_errors:
 
 mov [filedesc],rax ; save the file descriptor number for later use
 mov [file_offset],0 ;assume the offset is 0,beginning of file
@@ -60,17 +71,13 @@ syscall              ;call the kernel
 
 mov [bytes_read],rax
 
-; call putint
-
 cmp rax,0
 jnz file_success ;if more than zero bytes read, proceed to display
 
-;if the offset is zero, display EOF to indicate empty file
-;otherwise, end without displaying this because there should already be bytes printed to the display
-cmp [file_offset],0
-jnz main_end
+;display EOF to indicate we have reached the end of file
 
-call show_eof
+mov eax,end_of_file_string
+call putstr_and_line
 
 jmp main_end
 
@@ -263,30 +270,28 @@ ret
 print_byte_info:
 mov rax,[file_offset]
 mov [int_width],8
-call putint
-call putspace
+call putint_and_space
 mov rax,0
 mov al,[byte_array]
 mov [int_width],2
-call putint
-call putline
+call putint_and_line
 
 ret
 
 end_of_file_string db 'EOF',0
 
-help_message db 'Welcome to chastehex! The tool for reading and writing bytes of a file!',0Ah,0Ah
-db 'To hexdump an entire file:',0Ah,0Ah,9,'chastehex file',0Ah,0Ah
-db 'To read a single byte at an address:',0Ah,0Ah,9,'chastehex file address',0Ah,0Ah
-db 'To write a single byte at an address:',0Ah,0Ah,9,'chastehex file address value',0Ah,0Ah,0
-
+help_message db 'chastehex by Chastity White Rose',0Ah,0Ah
+db 'hexdump a file:',0Ah,0Ah,9,'chastehex file',0Ah,0Ah
+db 'read a byte:',0Ah,0Ah,9,'chastehex file address',0Ah,0Ah
+db 'write a byte:',0Ah,0Ah,9,'chastehex file address value',0Ah,0Ah
+db 'The file must exist',0Ah,0
 ;variables for managing arguments
 argc dq 0
 filename dq 0 ; name of the file to be opened
 filedesc dq 0 ; file descriptor
 bytes_read dq 0
 file_offset dq 0
-
+open_error_message db 'error while opening file',0
 
 
 
