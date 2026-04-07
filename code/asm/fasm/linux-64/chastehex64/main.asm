@@ -41,7 +41,7 @@ mov rax,2   ;invoke SYS_OPEN (kernel opcode 2 on 64 bit systems)
 syscall     ;call the kernel
 
 cmp rax,0
-jns file_open_no_errors ;if eax is not negative/signed there was no error
+jns file_open_no_errors ;if rax is not negative/signed there was no error
 
 ;Otherwise, if it was signed, then this code will display an error message.
 
@@ -76,7 +76,7 @@ jnz file_success ;if more than zero bytes read, proceed to display
 
 ;display EOF to indicate we have reached the end of file
 
-mov eax,end_of_file_string
+mov rax,end_of_file_string
 call putstr_and_line
 
 jmp main_end
