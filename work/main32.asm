@@ -171,7 +171,6 @@ mov eax, 1  ; invoke SYS_EXIT (kernel opcode 1)
 mov ebx, 0  ; return 0 status on exit - 'No Errors'
 int 80h
 
-
 ;this function prints a row of hex bytes
 ;each row is 16 bytes
 print_bytes_row:

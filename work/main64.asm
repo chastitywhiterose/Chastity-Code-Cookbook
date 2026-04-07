@@ -171,7 +171,6 @@ mov rax, 0x3C ; invoke SYS_EXIT (kernel opcode 0x3C (60 decimal) on 64 bit syste
 mov rdi,0   ; return 0 status on exit - 'No Errors'
 syscall
 
-
 ;this function prints a row of hex bytes
 ;each row is 16 bytes
 print_bytes_row:
@@ -274,6 +273,7 @@ db 'hexdump a file:',0Ah,0Ah,9,'chastehex file',0Ah,0Ah
 db 'read a byte:',0Ah,0Ah,9,'chastehex file address',0Ah,0Ah
 db 'write a byte:',0Ah,0Ah,9,'chastehex file address value',0Ah,0Ah
 db 'The file must exist',0Ah,0
+
 ;variables for managing arguments
 argc dq 0
 filename dq 0 ; name of the file to be opened
@@ -281,8 +281,6 @@ filedesc dq 0 ; file descriptor
 bytes_read dq 0
 file_offset dq 0
 open_error_message db 'error while opening file',0
-
-
 
 ;where we will store data from the file
 byte_array db 17 dup ?
