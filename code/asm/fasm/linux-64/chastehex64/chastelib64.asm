@@ -57,10 +57,7 @@ ret ; this is the end of the putstring function return to calling location
 
 int_string     db 64 dup '?' ;enough bytes to hold maximum size 64-bit binary integer
 
-; this is the end of the integer string optional line feed and terminating zero
-; clever use of this label can change the ending to be a different character when needed
-
-int_newline db 0Ah,0
+int_string_end db 0 ;zero byte terminator for the integer string
 
 radix dq 2 ;radix or base for integer output. 2=binary, 8=octal, 10=decimal, 16=hexadecimal
 int_width dq 8
@@ -72,7 +69,7 @@ int_width dq 8
 
 intstr:
 
-mov rbx,int_newline-1 ;find address of lowest digit(just before the newline 0Ah)
+mov rbx,int_string_end-1 ;find address of lowest digit(just before the newline 0Ah)
 mov rcx,1
 
 digits_start:
@@ -114,7 +111,6 @@ end_zeros:
 mov rax,rbx ; now that the digits have been written to the string, display it!
 
 ret
-
 
 ; function to print string form of whatever integer is in rax
 ; The radix determines which number base the string form takes.
@@ -173,8 +169,7 @@ sub cl,'0'
 jmp process_char
 
 not_digit:
-;it isn't a digit, but it could be perhaps and alphabet character
-;which is a digit in a higher base
+;it isn't a digit, but it could an alphabet character which is a digit in a higher base
 
 ;if char is below 'A' or above 'Z', it is outside the range of these and is not capital letter
 cmp cl,'A'
@@ -220,8 +215,8 @@ strint_end:
 
 ret
 
-;the next utility functions simply print a space or a newline
-;these help me save code when printing lots of things for debugging
+;The utility functions below simply print a space or a newline.
+;these help me save code when printing lots of strings and integers.
 
 space db ' ',0
 line db 0Dh,0Ah,0
@@ -252,3 +247,33 @@ call putstring
 pop rax
 ret
 
+;a small function just for the common operation
+;printing an integer followed by a space
+;this saves a few bytes in the assembled code
+;by reducing the number of function calls in the main program
+
+putint_and_space:
+call putint
+call putspace
+ret
+
+;a small function just for the common operation
+;printing an integer followed by a line feed
+;this saves a few bytes in the assembled code
+;by reducing the number of function calls in the main program
+
+putint_and_line:
+call putint
+call putline
+ret
+
+;a small function just for the common operation
+;printing a string followed by a line feed
+;this saves a few bytes in the assembled code
+;by reducing the number of function calls in the main program
+;it also means we don't need to include a newline in every string!
+
+putstr_and_line:
+call putstring
+call putline
+ret

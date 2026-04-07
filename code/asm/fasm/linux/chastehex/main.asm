@@ -3,8 +3,6 @@
 format ELF executable
 entry main
 
-start:
-
 include 'chastelib32.asm'
 
 main:
@@ -102,6 +100,7 @@ dec dword [argc]
 call strint
 
 ;use the hex number as an address to seek to in the file
+
 mov edx,0          ;whence argument (SEEK_SET)
 mov ecx,eax        ;move the file cursor to this address
 mov ebx,[filedesc] ;move the opened file descriptor into EBX
@@ -146,10 +145,10 @@ call strint ;try to convert string to a hex number
 
 mov [byte_array],al
 
-mov eax,4          ;invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
-mov ebx,[filedesc] ;write to the file (not STDOUT)
-mov ecx,byte_array ;pointer to temporary byte address
 mov edx,1          ;write 1 byte
+mov ecx,byte_array ;pointer/address of byte to write
+mov ebx,[filedesc] ;write to this file descriptor
+mov eax,4          ;invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
 int 80h            ;system call to write the message
 
 call print_byte_info
@@ -171,7 +170,6 @@ int 80h            ;call the kernel
 mov eax, 1  ; invoke SYS_EXIT (kernel opcode 1)
 mov ebx, 0  ; return 0 status on exit - 'No Errors'
 int 80h
-
 
 ;this function prints a row of hex bytes
 ;each row is 16 bytes
@@ -244,7 +242,6 @@ mov eax,byte_array
 call putstring
 
 ret
-
 
 ;function to display EOF with address
 show_eof:

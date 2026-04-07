@@ -112,7 +112,6 @@ mov rax,rbx ; now that the digits have been written to the string, display it!
 
 ret
 
-
 ; function to print string form of whatever integer is in rax
 ; The radix determines which number base the string form takes.
 ; Anything from 2 to 36 is a valid radix
@@ -170,8 +169,7 @@ sub cl,'0'
 jmp process_char
 
 not_digit:
-;it isn't a digit, but it could be perhaps and alphabet character
-;which is a digit in a higher base
+;it isn't a digit, but it could an alphabet character which is a digit in a higher base
 
 ;if char is below 'A' or above 'Z', it is outside the range of these and is not capital letter
 cmp cl,'A'
@@ -217,8 +215,8 @@ strint_end:
 
 ret
 
-;the next utility functions simply print a space or a newline
-;these help me save code when printing lots of things for debugging
+;The utility functions below simply print a space or a newline.
+;these help me save code when printing lots of strings and integers.
 
 space db ' ',0
 line db 0Dh,0Ah,0

@@ -84,13 +84,6 @@ jmp main_end
 ; this point is reached if file was read from successfully
 
 file_success:
-;mov rax,[filename]
-;call putstring
-;mov rax,file_opened_string
-;call putstring
-
-mov rax,byte_array
-;call putstring
 
 call print_bytes_row
 
@@ -105,6 +98,8 @@ next_arg_address:
 pop rax ;pop the argument into rax and process it as a hex number
 dec [argc]
 call strint
+
+;use the hex number as an address to seek to in the file
 
 mov rdx,0          ;whence argument (SEEK_SET)
 mov rsi,rax        ;move the file cursor to this address
@@ -124,7 +119,6 @@ mov rsi,byte_array   ;address to store the bytes
 mov rdi,[filedesc]   ;move the opened file descriptor into rdi
 mov rax,0            ;invoke SYS_READ (kernel opcode 0 on 64 bit Intel)
 syscall              ;call the kernel
-
 
 ;rax will have the number of bytes read after system call
 cmp rax,1
@@ -177,14 +171,12 @@ mov rax, 0x3C ; invoke SYS_EXIT (kernel opcode 0x3C (60 decimal) on 64 bit syste
 mov rdi,0   ; return 0 status on exit - 'No Errors'
 syscall
 
-
 ;this function prints a row of hex bytes
 ;each row is 16 bytes
 print_bytes_row:
 mov rax,[file_offset]
 mov [int_width],8
-call putint
-call putspace
+call putint_and_space
 
 mov rbx,byte_array
 mov rcx,[bytes_read]
@@ -193,8 +185,7 @@ next_byte:
 mov rax,0
 mov al,[rbx]
 mov [int_width],2
-call putint
-call putspace
+call putint_and_space
 
 inc rbx
 dec rcx
@@ -252,17 +243,14 @@ call putstring
 
 ret
 
-
 ;function to display EOF with address
 show_eof:
 
 mov rax,[file_offset]
 mov [int_width],8
-call putint
-call putspace
+call putint_and_space
 mov rax,end_of_file_string
-call putstring
-call putline
+call putstr_and_line
 
 ret
 
@@ -285,6 +273,7 @@ db 'hexdump a file:',0Ah,0Ah,9,'chastehex file',0Ah,0Ah
 db 'read a byte:',0Ah,0Ah,9,'chastehex file address',0Ah,0Ah
 db 'write a byte:',0Ah,0Ah,9,'chastehex file address value',0Ah,0Ah
 db 'The file must exist',0Ah,0
+
 ;variables for managing arguments
 argc dq 0
 filename dq 0 ; name of the file to be opened
@@ -292,8 +281,6 @@ filedesc dq 0 ; file descriptor
 bytes_read dq 0
 file_offset dq 0
 open_error_message db 'error while opening file',0
-
-
 
 ;where we will store data from the file
 byte_array db 17 dup ?
