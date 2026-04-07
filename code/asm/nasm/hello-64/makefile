@@ -1,8 +1,9 @@
 main-nasm:
 	nasm -f elf64 main.asm
-	ld main.o -o main
+	ld -m elf_x86_64 main.o -o main
 	./main
 main-yasm:
 	yasm -f elf64 main.asm
-	ld main.o -o main
+	ld -m elf_x86_64 main.o -o main
 	./main
+
