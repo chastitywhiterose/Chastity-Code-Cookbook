@@ -1,4 +1,9 @@
-/*You can change black and white to other colors.*/
+/*
+This is a global array that defines the values for black and white.
+You can change black and white to other colors if you wish.
+These colors will be used when a PBM file is loaded with
+the SDL_LoadPBM function.
+*/
 uint32_t u32bw[]={0x000000,0xFFFFFF};
 
 /*
@@ -13,11 +18,11 @@ to know which pixels are black or white.
 
 SDL_Surface* SDL_LoadPBM(const char* filename)
 {
- char s[0x10];
- unsigned char c;
- uint32_t x,y,bit;
- uint32_t width,height;
- uint32_t *p;
+ char s[0x10]; /*temp string used to read the header*/
+ unsigned char c; /*character used for reading chars from file*/
+ uint32_t x,y,bit; /*used for indexing pixels and storing a bit*/
+ uint32_t width,height; /*variables to hold the width and height of new surface*/
+ uint32_t *p; /*will be set to the pixel data pointer of the new surface*/
  SDL_Surface *new_surface;
  FILE* fp;
  printf("This function loads a PBM file into memory.\n");
@@ -37,24 +42,19 @@ SDL_Surface* SDL_LoadPBM(const char* filename)
 
  /*
  Create an SDL surface to store width*height pixels
- SDL_CreateRGBSurface
+ https://wiki.libsdl.org/SDL2/SDL_CreateRGBSurface
  */
-
  new_surface=SDL_CreateRGBSurface(0,width,height,32,0,0,0,0);
-
-/*SDL_CreateRGBSurfaceWithFormat(0, width, height, 32, *surface->format);*/
-
-
  p=new_surface->pixels;
 
  fgetc(fp);
 
  y=0;
- while(y< (height) )
+ while(y<height)
  {
   int bitcount=0;
   x=0;
-  while(x<(width))
+  while(x<width)
   {
    int pixel;
    if(bitcount==0)

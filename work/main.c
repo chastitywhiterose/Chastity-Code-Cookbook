@@ -55,9 +55,9 @@ int main(int argc, char **argv)
  below is an eight line test program to check if everything is correct!
  */
 
- if(1)
+ if(0)
  {
-  sdl_clear();  /*clear the screen before we begin writing*/
+    /*clear the screen before we begin writing*/
   x=putstr("Hello World\n"); /*draw a string of text to the surface*/
   putstr("string length = ");
   radix=10;
@@ -68,7 +68,7 @@ int main(int argc, char **argv)
  }
 
  /*now call a demo function I wrote*/
- /*sdl_chastelib_test_suite();*/
+ sdl_chastelib_test_suite();
 
  if(0)
  {

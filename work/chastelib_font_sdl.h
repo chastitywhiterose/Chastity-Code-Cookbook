@@ -110,8 +110,9 @@ struct chaste_font chaste_font_load_pbm(char *s)
   /*printf("Font loaded correctly\n");*/
   printf("Size of each character in loaded font is %d,%d\n",new_font.char_width,new_font.char_height);
   new_font.char_scale=1;
-  printf("Character scale initialized to %d\n\n",new_font.char_scale);
+  printf("Character scale initialized to %d\n",new_font.char_scale);
   new_font.color=0xFFFFFF;
+  printf("Default text color is %06X\n\n",new_font.color);
  }
 
  return new_font;
