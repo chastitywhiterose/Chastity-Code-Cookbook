@@ -1,20 +1,79 @@
-; chastelib assembly header file for 64 bit Linux
-; This file is where I keep the source of my most important Assembly functions
-; These are my string and integer output and conversion routines.
+global  _start
 
-; To simplify documentation. The Accumulator/Arithmetic register
-; (ax,ebx,rax) depending on bit size shall be referred to as register A
-; for the description of these core functions because the A register
-; is treated special both by the Intel company and my code;
+section .data ; Data used by the program goes in the data section
 
-; putstring; Prints a zero terminated string from the address pointer to by A register.
-; intstr;    Converts the number in A into a zero terminated string and points A to that address
-; putint;    Prints the integer in A by calling intstr and then putstring.
-; strint;    Converts the zero terminated string into an integer and sets A to that value
-   
-; Now, the source of the functions begins, with comments included for parts that I felt needed explanation.
+main_string db 'This program is the official test suite for the Linux Assembly version of chastelib.',0Ah,0
+input_string_int db '100',0
 
-stdout dq 1 ; variable for standard output so that it can theoretically be redirected
+; This is the location in memory where digits are written to by the intstr function
+; The string of bytes and settings such as the radix and width are global variables defined below.
+
+int_string db 64 dup '?' ;enough bytes to hold maximum size 64-bit binary integer
+int_string_end db 0 ;zero byte terminator for the integer string
+
+radix dq 2 ;radix or base for integer output. 2=binary, 8=octal, 10=decimal, 16=hexadecimal
+int_width dq 8
+
+;the address below is where the putchar function temporarily stores the byte in the al register
+;before it calls putstring to print it because it is literally a 1 byte long string
+;because it is written to, it place here in the data section
+
+char: db 0,0
+
+;These are predefined strings for a space or newline
+; because these are common things I need to print.
+
+space db ' ',0
+line db 0Ah,0
+
+section .text ;The executable code goes in the text section.
+
+_start: ;The linker expects this label to exist and to begin running here.
+
+mov rax,main_string
+call putstring
+
+mov qword[radix],16           ; can choose radix for integer output!
+mov qword[int_width],1
+
+mov rax,input_string_int ;address of input string to convert to integer
+call strint              ;call strint to return the string in eax register
+mov rbx,rax              ;rbx=rax (copy the converted value returned in rax to rbx)
+
+mov rax,0
+loop1:
+
+mov qword[radix],2            ;set radix to binary
+mov qword[int_width],8        ;width of 8 bits
+call putint
+call putspace
+mov qword[radix],16           ;set radix to hexadecimal
+mov qword[int_width],2        ;width of 2 hex digits
+call putint
+call putspace
+mov qword[radix],10           ;set radix to decimal (what humans read)
+mov qword[int_width],3        ;width of 3 decimal digits
+call putint
+
+cmp al,0x20 ;check if al is in printable range
+jb not_char ;if not then jump to not_char label
+cmp al,0x7E
+ja not_char
+
+call putspace
+call putchar             ;print the character if it is in the range 0x20 to 0x7E
+
+not_char:                ;jump here if character is outside range to print
+
+call putline             ;print newline before the next loop
+
+inc rax
+cmp rax,rbx;
+jnz loop1
+
+mov rax, 60 ; invoke SYS_EXIT (kernel opcode 60 on 64 bit systems)
+mov rdi,0   ; return 0 status on exit - 'No Errors'
+syscall
 
 putstring:
 
@@ -41,7 +100,7 @@ sub rbx,rax ;subtract start pointer from current pointer to get length of string
 
 mov rdx,rbx      ;number of bytes to write
 mov rsi,rax      ;pointer/address of string to write
-mov rdi,[stdout] ;write to the STDOUT file
+mov rdi,1        ;write to the STDOUT file
 mov rax,1        ;invoke SYS_WRITE (kernel opcode 1 on 64 bit systems)
 syscall          ;system call to write the message
 
@@ -52,15 +111,6 @@ pop rax
 
 ret ; this is the end of the putstring function return to calling location
 
-; This is the location in memory where digits are written to by the intstr function
-; The string of bytes and settings such as the radix and width are global variables defined below.
-
-int_string     db 64 dup '?' ;enough bytes to hold maximum size 64-bit binary integer
-
-int_string_end db 0 ;zero byte terminator for the integer string
-
-radix dq 2 ;radix or base for integer output. 2=binary, 8=octal, 10=decimal, 16=hexadecimal
-int_width dq 8
 
 ;this function creates a string of the integer in rax
 ;it uses the above radix variable to determine base from 2 to 36
@@ -111,6 +161,7 @@ end_zeros:
 mov rax,rbx ; now that the digits have been written to the string, display it!
 
 ret
+
 
 ; function to print string form of whatever integer is in rax
 ; The radix determines which number base the string form takes.
@@ -218,9 +269,6 @@ ret
 ;The utility functions below simply print a space or a newline.
 ;these help me save code when printing lots of strings and integers.
 
-space db ' ',0
-line db 0Dh,0Ah,0
-
 putspace:
 push rax
 mov rax,space
@@ -236,8 +284,6 @@ pop rax
 ret
 
 ;a function for printing a single character that is the value of al
-
-char: db 0,0
 
 putchar:
 push rax
@@ -277,3 +323,12 @@ putstr_and_line:
 call putstring
 call putline
 ret
+
+; This Assembly source file has been formatted for the NASM assembler.
+; The is the 64-bit code version of the program.
+; The following 3 commands assemble, link, and run the program
+;
+;main-nasm:
+;	nasm -f elf64 main.asm
+;	ld -m elf_x86_64 main.o -o main
+;	./main
