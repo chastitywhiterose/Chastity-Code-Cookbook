@@ -36,7 +36,7 @@ putstring_strlen_end:
 sub rbx,rax ;subtract start pointer from current pointer to get length of string
 
 ;Write string using Linux Write system call
-;Reference for 32 bit x86 syscalls is below.
+;Reference for 64 bit x86 syscalls is below.
 ;https://www.chromium.org/chromium-os/developer-library/reference/linux-constants/syscalls/#x86_64-64-bit
 
 mov rdx,rbx      ;number of bytes to write
