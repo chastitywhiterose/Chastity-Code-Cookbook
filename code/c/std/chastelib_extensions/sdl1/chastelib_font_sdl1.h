@@ -65,6 +65,63 @@ struct chaste_font chaste_font_load(char *s)
  return new_font;
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+A function to load a font and return a structure with the needed data to draw later.
+This version loads the image data from a PBM file using the SDL_LoadPBM function.
+I wrote the SDL_LoadPBM function precisely because I wanted to use an open file format
+that was not associated with Microsoft.
+*/
+struct chaste_font chaste_font_load_pbm(char *s)
+{
+ struct chaste_font new_font;
+ printf("Loading font: %s\n",s);
+
+ /*load bitmap from a Portable Bitmap file*/
+ new_font.surface=SDL_LoadPBM(s);
+
+ if(new_font.surface==NULL){printf( "SDL could not load image! SDL_Error: %s\n",SDL_GetError());return new_font;}
+
+ /*
+  by default,font height is detected by original image height
+  but the font width is the width of the image divided by 95
+  because there are exactly 95 characters in the font format that I created.
+ */
+ new_font.char_width=new_font.surface->w/95; /*there are 95 characters in my font files*/
+ new_font.char_height=new_font.surface->h;
+
+ if(new_font.char_height==0)
+ {
+  printf("Something went horribly wrong loading the font from file:\n%s\n",s);
+ }
+ else
+ {
+  /*printf("Font loaded correctly\n");*/
+  printf("Size of each character in loaded font is %d,%d\n",new_font.char_width,new_font.char_height);
+  new_font.char_scale=1;
+  printf("Character scale initialized to %d\n",new_font.char_scale);
+  new_font.color=0xFFFFFF;
+  printf("Default text color is %06X\n\n",new_font.color);
+ }
+
+ return new_font;
+}
+
+
+
+
+
 /*global variables to control the cursor in the putchar function*/
 int cursor_x=0,cursor_y=0;
 int line_spacing_pixels=1; /*optionally space lines of text by this many pixels*/
@@ -139,7 +196,7 @@ int sdl_putchar(char c) /*direct pixel access edition for SDL1*/
      pixel=ssp[sx+sy*source_surface_width]; /*get pixel from source image*/
      /*printf("pixel=%X\n",pixel);*/
  
-     if(!pixel) /*draw conditionally based on source pixel*/
+     if(pixel) /*draw conditionally based on source pixel*/
      {
       int tx,ty,tx2,ty2; /*temp variables only for the square*/
       ty2=dy+main_font.char_scale;

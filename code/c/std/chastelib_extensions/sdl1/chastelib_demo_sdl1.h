@@ -1,5 +1,9 @@
 /* chastelib_demo_sdl.h */
 
+/*global palette of colors for my demo functions to use*/
+ int palette[]={0xFF0000,0xFFFF00,0x00FF00,0x00FFFF,0x0000FF,0xFF00FF};
+ int colors=sizeof(palette)/sizeof(*palette);
+
 int sdl_chastelib_test_suite()
 {
  /*variables required by SDL*/
@@ -10,6 +14,8 @@ int sdl_chastelib_test_suite()
  int a=0,b,c,d; /*variables for this test program*/
 
  line_spacing_pixels=1; /*empty space in pixels between lines*/
+
+ main_font.color=0x00FF00; /*change text color*/
 
  radix=16;
  int_width=1;
@@ -35,6 +41,7 @@ int sdl_chastelib_test_suite()
   sdl_clear();  /*clear the screen before we begin writing*/
 
   main_font.char_scale=3;
+  main_font.color=0xFFFFFF;
   putstr("Official test suite for the C version of chastelib.\nThis version uses SDL1.\n\n");
 
   main_font.char_scale=4; 
@@ -43,6 +50,7 @@ int sdl_chastelib_test_suite()
   a=b-c;
   while(a<b)
   {
+   main_font.color=palette[a%colors];
    radix=2;
    int_width=8;
    putint(a);
