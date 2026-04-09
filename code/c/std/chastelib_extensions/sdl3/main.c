@@ -19,7 +19,7 @@ because it depends on them.
 
 #include "chastelib_format_pbm_sdl3.h"
 #include "chastelib_font_sdl3.h"
-#include "chastelib_demo_sdl.h"
+#include "chastelib_demo_sdl3.h"
 
 int main(int argc, char **argv)
 {
