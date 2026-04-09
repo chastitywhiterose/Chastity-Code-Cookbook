@@ -91,6 +91,7 @@ struct chaste_font chaste_font_load_pbm(char *s)
  temp_surface=SDL_LoadBMP(s);
 
  /*convert to same surface as screen for faster blitting*/
+ 
  new_font.surface=SDL_ConvertSurface(temp_surface, surface->format, 0);
  
  /*free the temp surface*/

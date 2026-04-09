@@ -16,6 +16,8 @@ SDL_Event e;
 This header file must be included after the above global variables
 because it depends on them.
 */
+
+#include "chastelib_format_pbm.h"
 #include "chastelib_font_sdl.h"
 #include "chastelib_demo_sdl.h"
 
