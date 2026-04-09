@@ -1,6 +1,16 @@
 global  _start
 
+section .data ; Data read or written by the program goes in the data section
+
+;A string to test if output works
+
+main_string db 'This program runs in Linux!',0Ah,0
+
+section .text
+
 _start:
+
+mov byte[main_string], '?' ;optionally modify a byte of the string
 
 mov rax,main_string ; move the address of main_string into rax register
 call putstring
@@ -9,8 +19,6 @@ mov rax, 60 ; invoke SYS_EXIT (kernel opcode 60 on 64 bit systems)
 mov rdi,0   ; return 0 status on exit - 'No Errors'
 syscall
 
-;A string to test if output works
-main_string db 'This program runs in Linux!',0Ah,0
 
 putstring:
 
