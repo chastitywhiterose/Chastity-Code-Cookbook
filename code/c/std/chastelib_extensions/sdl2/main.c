@@ -67,11 +67,13 @@ int main(int argc, char **argv)
   SDL_UpdateWindowSurface(window); /*update window to show the results*/
   sdl_wait_escape(); /*wait till escape key pressed*/
  }
+ 
+  demo_galatians();
 
  /*now call a demo function I wrote*/
- /*sdl_chastelib_test_suite();*/
+ sdl_chastelib_test_suite();
  
- demo_galatians();
+
 
  if(0)
  {
