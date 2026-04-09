@@ -30,7 +30,7 @@ mov rax,main_string ; move the address of main_string into rax register
 call putstring
 
 mov rax,5
-call putint
+call putint_and_space
 
 mov rax, 60 ; invoke SYS_EXIT (kernel opcode 60 on 64 bit systems)
 mov rdi,0   ; return 0 status on exit - 'No Errors'
