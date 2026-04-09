@@ -126,6 +126,7 @@ struct chaste_font chaste_font_load_pbm(char *s)
 /*global variables to control the cursor in the putchar function*/
 int cursor_x=0,cursor_y=0;
 int line_spacing_pixels=1; /*optionally space lines of text by this many pixels*/
+int cursor_left=0;
 
 /*
 This function is designed to print a single character to the current surface of the main window
@@ -147,7 +148,7 @@ int sdl_putchar_blit(char c)
   */
   if(c=='\n')
   {
-   cursor_x=0;
+   cursor_x=cursor_left;
    cursor_y+=main_font.char_height*main_font.char_scale;
    cursor_y+=line_spacing_pixels; /*add space between lines for readability*/
   }
@@ -221,7 +222,7 @@ int sdl_putchar_pixel(char c) /*direct pixel access edition for SDL2*/
   */
   if(c=='\n')
   {
-   cursor_x=0;
+   cursor_x=cursor_left;
    cursor_y+=main_font.char_height*main_font.char_scale;
    cursor_y+=line_spacing_pixels; /*add space between lines for readability*/
   }
@@ -335,7 +336,7 @@ int sdl_putstring_wrapped(const char *s)
   /*if the previous loop goes off the right edge of window, wrap to next line*/
   if(wx>=width)
   {
-   cursor_x=0;
+   cursor_x=cursor_left;
    cursor_y+=main_font.char_height*main_font.char_scale;
    cursor_y+=line_spacing_pixels; /*add space between lines for readability*/
    putchar('\n'); /*insert newline to terminal*/
