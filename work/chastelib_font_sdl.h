@@ -79,23 +79,17 @@ struct chaste_font chaste_font_load(char *s)
 
 /*
 A function to load a font and return a structure with the needed data to draw later.
-This version loads the image data from a BMP file using the SDL_LoadBMP function native to SDL.
+This version loads the image data from a PBM file using the SDL_LoadPBM function.
+I wrote the SDL_LoadPBM function precisely because I wanted to use an open file format
+that was not associated with Microsoft.
 */
 struct chaste_font chaste_font_load_pbm(char *s)
 {
  struct chaste_font new_font;
- SDL_Surface *temp_surface;
  printf("Loading font: %s\n",s);
 
- /*load bitmap to temporary surface*/
- temp_surface=SDL_LoadBMP(s);
-
- /*convert to same surface as screen for faster blitting*/
- 
- new_font.surface=SDL_ConvertSurface(temp_surface, surface->format, 0);
- 
- /*free the temp surface*/
- SDL_FreeSurface(temp_surface); 
+ /*load bitmap from a Portable Bitmap file*/
+ new_font.surface=SDL_LoadPBM(s);
 
  if(new_font.surface==NULL){printf( "SDL could not load image! SDL_Error: %s\n",SDL_GetError());return new_font;}
 
