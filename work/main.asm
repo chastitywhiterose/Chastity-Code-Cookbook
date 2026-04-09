@@ -1,41 +1,79 @@
 global  _start
 
-section .data ; Data read or written by the program goes in the data section
+section .data ; Data used by the program goes in the data section
 
-;A string to test if output works
-
-main_string db 'This program runs in Linux!',0Ah,0
+main_string db 'This program is the official test suite for the Linux Assembly version of chastelib.',0Ah,0
+input_string_int db '100',0
 
 ; This is the location in memory where digits are written to by the intstr function
 ; The string of bytes and settings such as the radix and width are global variables defined below.
 
-int_string     db 64 dup '?' ;enough bytes to hold maximum size 64-bit binary integer
-
+int_string db 64 dup '?' ;enough bytes to hold maximum size 64-bit binary integer
 int_string_end db 0 ;zero byte terminator for the integer string
 
 radix dq 2 ;radix or base for integer output. 2=binary, 8=octal, 10=decimal, 16=hexadecimal
 int_width dq 8
 
+;the address below is where the putchar function temporarily stores the byte in the al register
+;before it calls putstring to print it because it is literally a 1 byte long string
+;because it is written to, it place here in the data section
 
+char: db 0,0
 
-section .text
+;These are predefined strings for a space or newline
+; because these are common things I need to print.
 
+space db ' ',0
+line db 0Ah,0
 
+section .text ;The executable code goes in the text section.
 
-_start:
+_start: ;The linker expects this label to exist and to begin running here.
 
-mov byte[main_string], '?' ;optionally modify a byte of the string
-
-mov rax,main_string ; move the address of main_string into rax register
+mov rax,main_string
 call putstring
 
-mov rax,5
-call putint_and_space
+mov qword[radix],16           ; can choose radix for integer output!
+mov qword[int_width],1
+
+mov rax,input_string_int ;address of input string to convert to integer
+call strint              ;call strint to return the string in eax register
+mov rbx,rax              ;rbx=rax (copy the converted value returned in rax to rbx)
+
+mov rax,0
+loop1:
+
+mov qword[radix],2            ;set radix to binary
+mov qword[int_width],8        ;width of 8 bits
+call putint
+call putspace
+mov qword[radix],16           ;set radix to hexadecimal
+mov qword[int_width],2        ;width of 2 hex digits
+call putint
+call putspace
+mov qword[radix],10           ;set radix to decimal (what humans read)
+mov qword[int_width],3        ;width of 3 decimal digits
+call putint
+
+cmp al,0x20 ;check if al is in printable range
+jb not_char ;if not then jump to not_char label
+cmp al,0x7E
+ja not_char
+
+call putspace
+call putchar             ;print the character if it is in the range 0x20 to 0x7E
+
+not_char:                ;jump here if character is outside range to print
+
+call putline             ;print newline before the next loop
+
+inc rax
+cmp rax,rbx;
+jnz loop1
 
 mov rax, 60 ; invoke SYS_EXIT (kernel opcode 60 on 64 bit systems)
 mov rdi,0   ; return 0 status on exit - 'No Errors'
 syscall
-
 
 putstring:
 
@@ -231,9 +269,6 @@ ret
 ;The utility functions below simply print a space or a newline.
 ;these help me save code when printing lots of strings and integers.
 
-space db ' ',0
-line db 0Dh,0Ah,0
-
 putspace:
 push rax
 mov rax,space
@@ -249,8 +284,6 @@ pop rax
 ret
 
 ;a function for printing a single character that is the value of al
-
-char: db 0,0
 
 putchar:
 push rax
