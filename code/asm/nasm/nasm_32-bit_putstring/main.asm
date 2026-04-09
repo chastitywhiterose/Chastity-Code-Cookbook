@@ -1,6 +1,16 @@
 global  _start
 
+section .data ; Data read or written by the program goes in the data section
+
+;A string to test if output works
+
+main_string db 'This program runs in Linux!',0Ah,0
+
+section .text
+
 _start:
+
+mov byte[main_string], '?' ;optionally modify a byte of the string
 
 mov eax,main_string
 call putstring
@@ -8,9 +18,6 @@ call putstring
 mov eax, 1  ; invoke SYS_EXIT (kernel opcode 1)
 mov ebx, 0  ; return 0 status on exit - 'No Errors'
 int 80h
-
-;A string to test if output works
-main_string db 'This program runs in Linux!',0Ah,0
 
 putstring:
 
@@ -50,6 +57,7 @@ ret ; this is the end of the putstring function return to calling location
 ; This Assembly source file has been formatted for the NASM assembler.
 ; The following 3 commands assemble, link, and run the program
 ;
+;main-nasm:
 ;	nasm -f elf main.asm
-;	ld -s -m elf_i386 main.o -o main
+;	ld -m elf_i386 main.o -o main
 ;	./main
