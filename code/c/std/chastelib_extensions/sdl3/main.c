@@ -16,6 +16,8 @@ SDL_Event e;
 This header file must be included after the above global variables
 because it depends on them.
 */
+
+#include "chastelib_format_pbm.h"
 #include "chastelib_font_sdl.h"
 #include "chastelib_demo_sdl.h"
 
@@ -34,9 +36,12 @@ int main(int argc, char **argv)
  SDL_UpdateWindowSurface(window);
  printf("SDL Program Compiled Correctly\n");
  
- /*load the font from a file*/
- main_font=chaste_font_load("./font/FreeBASIC Font 8.bmp");
- 
+ /*load the font from a BMP file using the old method*/
+ /*main_font=chaste_font_load("./font/FreeBASIC Font 8.bmp");*/
+
+ /*load the font from the PBM file with my custom function in chastelib_format_pbm.h*/
+ main_font=chaste_font_load_pbm("./font/font8.pbm");
+  
  /*change the scale of each character*/
  main_font.char_scale=4; 
  
