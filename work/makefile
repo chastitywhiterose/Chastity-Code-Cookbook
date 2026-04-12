@@ -11,6 +11,6 @@ fasm:
 main-strict:
 	gcc -Wall -ansi -pedantic main.c -o main && ./main
 ndisasm:
-	ndisasm -b 64 -o 0x400078 -e 0x78 fasmelf64
+	ndisasm -b 64 -o 0x400078 -e 0x78 casmelf64
 compare:
 	chastecmp fasmelf64 casmelf64

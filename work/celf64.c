@@ -209,40 +209,40 @@ in learning to generate it with this C program.
 
 ---
 
-format ELF executable
+format ELF64 executable
 
-mov eax,4   ; invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
-mov ebx,1   ; write to the STDOUT file
-mov ecx,msg ; pointer/address of string to write
-mov edx,13  ; number of bytes to write
-int 80h
+mov rax,1   ; invoke SYS_WRITE (kernel opcode 1 on 64 bit systems)
+mov rdi,1   ; write to the STDOUT file
+mov rsi,msg ; pointer/address of string to write
+mov rdx,13  ; number of bytes to write
+syscall
 
-mov eax,1 ;function SYS_EXIT (kernel opcode 1 on 32 bit systems)
-mov ebx,0 ;return 0 status on exit - 'No Errors'
-int 80h   ;call Linux kernel with interrupt
+mov rax,60  ; function SYS_EXIT (kernel opcode 60 on 64 bit systems)
+mov rdi,0   ; return 0 status on exit - 'No Errors'
+syscall
 
-msg db 'Hello World!',0Ah
+msg db 'Hello World!',0Ah,0
 
 ---
 
 The following is the output of:
-"ndisasm -b 32 -o 0x8048054 -e 0x54 casmelf32"
+"ndisasm -b 64 -o 0x400078 -e 0x78 casmelf64"
 
 ---
 
-08048054  B804000000        mov eax,0x4
-08048059  BB01000000        mov ebx,0x1
-0804805E  B976800408        mov ecx,0x8048076
-08048063  BA0D000000        mov edx,0xd
-08048068  CD80              int 0x80
-0804806A  B801000000        mov eax,0x1
-0804806F  BB00000000        mov ebx,0x0
-08048074  CD80              int 0x80
+00400078  48C7C001000000    mov rax,0x1
+0040007F  48C7C701000000    mov rdi,0x1
+00400086  48C7C6A6004000    mov rsi,0x4000a6
+0040008D  48C7C20D000000    mov rdx,0xd
+00400094  0F05              syscall
+00400096  48C7C03C000000    mov rax,0x3c
+0040009D  48C7C700000000    mov rdi,0x0
+004000A4  0F05              syscall
 
 ---
 
 Because that command skips the header and tells it that it contains 32 bit code.
-After the second int 0x80, ndisasm will start printing junk data
+After the second syscall, ndisasm will start printing junk data
 because it thinks the text string is code.
 */
 
