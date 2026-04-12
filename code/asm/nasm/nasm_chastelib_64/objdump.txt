@@ -1,0 +1,231 @@
+
+main.o:     file format elf64-x86-64
+
+
+Disassembly of section .text:
+
+0000000000000000 <_start>:
+   0:	48 b8 00 00 00 00 00 	movabs $0x0,%rax
+   7:	00 00 00 
+   a:	e8 bb 00 00 00       	call   ca <putstring>
+   f:	48 c7 04 25 00 00 00 	movq   $0x10,0x0
+  16:	00 10 00 00 00 
+  1b:	48 c7 04 25 00 00 00 	movq   $0x1,0x0
+  22:	00 01 00 00 00 
+  27:	48 b8 00 00 00 00 00 	movabs $0x0,%rax
+  2e:	00 00 00 
+  31:	e8 2d 01 00 00       	call   163 <strint>
+  36:	48 89 c3             	mov    %rax,%rbx
+  39:	b8 00 00 00 00       	mov    $0x0,%eax
+
+000000000000003e <loop1>:
+  3e:	48 c7 04 25 00 00 00 	movq   $0x2,0x0
+  45:	00 02 00 00 00 
+  4a:	48 c7 04 25 00 00 00 	movq   $0x8,0x0
+  51:	00 08 00 00 00 
+  56:	e8 f5 00 00 00       	call   150 <putint>
+  5b:	e8 6c 01 00 00       	call   1cc <putspace>
+  60:	48 c7 04 25 00 00 00 	movq   $0x10,0x0
+  67:	00 10 00 00 00 
+  6c:	48 c7 04 25 00 00 00 	movq   $0x2,0x0
+  73:	00 02 00 00 00 
+  78:	e8 d3 00 00 00       	call   150 <putint>
+  7d:	e8 4a 01 00 00       	call   1cc <putspace>
+  82:	48 c7 04 25 00 00 00 	movq   $0xa,0x0
+  89:	00 0a 00 00 00 
+  8e:	48 c7 04 25 00 00 00 	movq   $0x3,0x0
+  95:	00 03 00 00 00 
+  9a:	e8 b1 00 00 00       	call   150 <putint>
+  9f:	3c 20                	cmp    $0x20,%al
+  a1:	72 0e                	jb     b1 <not_char>
+  a3:	3c 7e                	cmp    $0x7e,%al
+  a5:	77 0a                	ja     b1 <not_char>
+  a7:	e8 20 01 00 00       	call   1cc <putspace>
+  ac:	e8 3f 01 00 00       	call   1f0 <putchar>
+
+00000000000000b1 <not_char>:
+  b1:	e8 28 01 00 00       	call   1de <putline>
+  b6:	48 ff c0             	inc    %rax
+  b9:	48 39 d8             	cmp    %rbx,%rax
+  bc:	75 80                	jne    3e <loop1>
+  be:	b8 3c 00 00 00       	mov    $0x3c,%eax
+  c3:	bf 00 00 00 00       	mov    $0x0,%edi
+  c8:	0f 05                	syscall
+
+00000000000000ca <putstring>:
+  ca:	50                   	push   %rax
+  cb:	53                   	push   %rbx
+  cc:	51                   	push   %rcx
+  cd:	52                   	push   %rdx
+  ce:	48 89 c3             	mov    %rax,%rbx
+
+00000000000000d1 <putstring_strlen_start>:
+  d1:	80 3b 00             	cmpb   $0x0,(%rbx)
+  d4:	74 05                	je     db <putstring_strlen_end>
+  d6:	48 ff c3             	inc    %rbx
+  d9:	eb f6                	jmp    d1 <putstring_strlen_start>
+
+00000000000000db <putstring_strlen_end>:
+  db:	48 29 c3             	sub    %rax,%rbx
+  de:	48 89 da             	mov    %rbx,%rdx
+  e1:	48 89 c6             	mov    %rax,%rsi
+  e4:	bf 01 00 00 00       	mov    $0x1,%edi
+  e9:	b8 01 00 00 00       	mov    $0x1,%eax
+  ee:	0f 05                	syscall
+  f0:	5a                   	pop    %rdx
+  f1:	59                   	pop    %rcx
+  f2:	5b                   	pop    %rbx
+  f3:	58                   	pop    %rax
+  f4:	c3                   	ret
+
+00000000000000f5 <intstr>:
+  f5:	48 bb 00 00 00 00 00 	movabs $0x0,%rbx
+  fc:	00 00 00 
+  ff:	b9 01 00 00 00       	mov    $0x1,%ecx
+
+0000000000000104 <digits_start>:
+ 104:	ba 00 00 00 00       	mov    $0x0,%edx
+ 109:	48 f7 34 25 00 00 00 	divq   0x0
+ 110:	00 
+ 111:	48 83 fa 0a          	cmp    $0xa,%rdx
+ 115:	72 02                	jb     119 <decimal_digit>
+ 117:	7d 06                	jge    11f <hexadecimal_digit>
+
+0000000000000119 <decimal_digit>:
+ 119:	48 83 c2 30          	add    $0x30,%rdx
+ 11d:	eb 08                	jmp    127 <save_digit>
+
+000000000000011f <hexadecimal_digit>:
+ 11f:	48 83 ea 0a          	sub    $0xa,%rdx
+ 123:	48 83 c2 41          	add    $0x41,%rdx
+
+0000000000000127 <save_digit>:
+ 127:	88 13                	mov    %dl,(%rbx)
+ 129:	48 83 f8 00          	cmp    $0x0,%rax
+ 12d:	74 08                	je     137 <intstr_end>
+ 12f:	48 ff cb             	dec    %rbx
+ 132:	48 ff c1             	inc    %rcx
+ 135:	eb cd                	jmp    104 <digits_start>
+
+0000000000000137 <intstr_end>:
+ 137:	48 3b 0c 25 00 00 00 	cmp    0x0,%rcx
+ 13e:	00 
+ 13f:	73 0b                	jae    14c <end_zeros>
+ 141:	48 ff cb             	dec    %rbx
+ 144:	c6 03 30             	movb   $0x30,(%rbx)
+ 147:	48 ff c1             	inc    %rcx
+ 14a:	eb eb                	jmp    137 <intstr_end>
+
+000000000000014c <end_zeros>:
+ 14c:	48 89 d8             	mov    %rbx,%rax
+ 14f:	c3                   	ret
+
+0000000000000150 <putint>:
+ 150:	50                   	push   %rax
+ 151:	53                   	push   %rbx
+ 152:	51                   	push   %rcx
+ 153:	52                   	push   %rdx
+ 154:	e8 9c ff ff ff       	call   f5 <intstr>
+ 159:	e8 6c ff ff ff       	call   ca <putstring>
+ 15e:	5a                   	pop    %rdx
+ 15f:	59                   	pop    %rcx
+ 160:	5b                   	pop    %rbx
+ 161:	58                   	pop    %rax
+ 162:	c3                   	ret
+
+0000000000000163 <strint>:
+ 163:	48 89 c3             	mov    %rax,%rbx
+ 166:	b8 00 00 00 00       	mov    $0x0,%eax
+
+000000000000016b <read_strint>:
+ 16b:	b9 00 00 00 00       	mov    $0x0,%ecx
+ 170:	8a 0b                	mov    (%rbx),%cl
+ 172:	48 ff c3             	inc    %rbx
+ 175:	80 f9 00             	cmp    $0x0,%cl
+ 178:	74 51                	je     1cb <strint_end>
+ 17a:	80 f9 30             	cmp    $0x30,%cl
+ 17d:	72 0a                	jb     189 <not_digit>
+ 17f:	80 f9 39             	cmp    $0x39,%cl
+ 182:	77 05                	ja     189 <not_digit>
+
+0000000000000184 <is_digit>:
+ 184:	80 e9 30             	sub    $0x30,%cl
+ 187:	eb 26                	jmp    1af <process_char>
+
+0000000000000189 <not_digit>:
+ 189:	80 f9 41             	cmp    $0x41,%cl
+ 18c:	72 0d                	jb     19b <not_upper>
+ 18e:	80 f9 5a             	cmp    $0x5a,%cl
+ 191:	77 08                	ja     19b <not_upper>
+
+0000000000000193 <is_upper>:
+ 193:	80 e9 41             	sub    $0x41,%cl
+ 196:	80 c1 0a             	add    $0xa,%cl
+ 199:	eb 14                	jmp    1af <process_char>
+
+000000000000019b <not_upper>:
+ 19b:	80 f9 61             	cmp    $0x61,%cl
+ 19e:	72 0d                	jb     1ad <not_lower>
+ 1a0:	80 f9 7a             	cmp    $0x7a,%cl
+ 1a3:	77 08                	ja     1ad <not_lower>
+
+00000000000001a5 <is_lower>:
+ 1a5:	80 e9 61             	sub    $0x61,%cl
+ 1a8:	80 c1 0a             	add    $0xa,%cl
+ 1ab:	eb 02                	jmp    1af <process_char>
+
+00000000000001ad <not_lower>:
+ 1ad:	eb 1c                	jmp    1cb <strint_end>
+
+00000000000001af <process_char>:
+ 1af:	48 3b 0c 25 00 00 00 	cmp    0x0,%rcx
+ 1b6:	00 
+ 1b7:	73 12                	jae    1cb <strint_end>
+ 1b9:	ba 00 00 00 00       	mov    $0x0,%edx
+ 1be:	48 f7 24 25 00 00 00 	mulq   0x0
+ 1c5:	00 
+ 1c6:	48 01 c8             	add    %rcx,%rax
+ 1c9:	eb a0                	jmp    16b <read_strint>
+
+00000000000001cb <strint_end>:
+ 1cb:	c3                   	ret
+
+00000000000001cc <putspace>:
+ 1cc:	50                   	push   %rax
+ 1cd:	48 b8 00 00 00 00 00 	movabs $0x0,%rax
+ 1d4:	00 00 00 
+ 1d7:	e8 ee fe ff ff       	call   ca <putstring>
+ 1dc:	58                   	pop    %rax
+ 1dd:	c3                   	ret
+
+00000000000001de <putline>:
+ 1de:	50                   	push   %rax
+ 1df:	48 b8 00 00 00 00 00 	movabs $0x0,%rax
+ 1e6:	00 00 00 
+ 1e9:	e8 dc fe ff ff       	call   ca <putstring>
+ 1ee:	58                   	pop    %rax
+ 1ef:	c3                   	ret
+
+00000000000001f0 <putchar>:
+ 1f0:	50                   	push   %rax
+ 1f1:	88 04 25 00 00 00 00 	mov    %al,0x0
+ 1f8:	48 b8 00 00 00 00 00 	movabs $0x0,%rax
+ 1ff:	00 00 00 
+ 202:	e8 c3 fe ff ff       	call   ca <putstring>
+ 207:	58                   	pop    %rax
+ 208:	c3                   	ret
+
+0000000000000209 <putint_and_space>:
+ 209:	e8 42 ff ff ff       	call   150 <putint>
+ 20e:	e8 b9 ff ff ff       	call   1cc <putspace>
+ 213:	c3                   	ret
+
+0000000000000214 <putint_and_line>:
+ 214:	e8 37 ff ff ff       	call   150 <putint>
+ 219:	e8 c0 ff ff ff       	call   1de <putline>
+ 21e:	c3                   	ret
+
+000000000000021f <putstr_and_line>:
+ 21f:	e8 a6 fe ff ff       	call   ca <putstring>
+ 224:	e8 b5 ff ff ff       	call   1de <putline>
+ 229:	c3                   	ret

@@ -2,51 +2,55 @@
 main.o:     file format elf64-x86-64
 
 
+Disassembly of section .data:
+
+0000000000000000 <main_string>:
+   0:	54                   	push   %rsp
+   1:	68 69 73 20 70       	push   $0x70207369
+   6:	72 6f                	jb     77 <putstring_strlen_end+0x43>
+   8:	67 72 61             	addr32 jb 6c <putstring_strlen_end+0x38>
+   b:	6d                   	insl   (%dx),%es:(%rdi)
+   c:	20 72 75             	and    %dh,0x75(%rdx)
+   f:	6e                   	outsb  %ds:(%rsi),(%dx)
+  10:	73 20                	jae    32 <putstring_strlen_start+0x8>
+  12:	69 6e 20 4c 69 6e 75 	imul   $0x756e694c,0x20(%rsi),%ebp
+  19:	78 21                	js     3c <putstring_strlen_end+0x8>
+  1b:	0a 00                	or     (%rax),%al
+
 Disassembly of section .text:
 
 0000000000000000 <_start>:
-   0:	48 b8 00 00 00 00 00 	movabs $0x0,%rax
-   7:	00 00 00 
-   a:	e8 29 00 00 00       	call   38 <putstring>
-   f:	b8 3c 00 00 00       	mov    $0x3c,%eax
-  14:	bf 00 00 00 00       	mov    $0x0,%edi
-  19:	0f 05                	syscall
+   0:	c6 04 25 00 00 00 00 	movb   $0x3f,0x0
+   7:	3f 
+   8:	48 b8 00 00 00 00 00 	movabs $0x0,%rax
+   f:	00 00 00 
+  12:	e8 0c 00 00 00       	call   23 <putstring>
+  17:	b8 3c 00 00 00       	mov    $0x3c,%eax
+  1c:	bf 00 00 00 00       	mov    $0x0,%edi
+  21:	0f 05                	syscall
 
-000000000000001b <main_string>:
-  1b:	54                   	push   %rsp
-  1c:	68 69 73 20 70       	push   $0x70207369
-  21:	72 6f                	jb     92 <putstring_strlen_end+0x49>
-  23:	67 72 61             	addr32 jb 87 <putstring_strlen_end+0x3e>
-  26:	6d                   	insl   (%dx),%es:(%rdi)
-  27:	20 72 75             	and    %dh,0x75(%rdx)
-  2a:	6e                   	outsb  %ds:(%rsi),(%dx)
-  2b:	73 20                	jae    4d <putstring_strlen_end+0x4>
-  2d:	69 6e 20 4c 69 6e 75 	imul   $0x756e694c,0x20(%rsi),%ebp
-  34:	78 21                	js     57 <putstring_strlen_end+0xe>
-  36:	0a 00                	or     (%rax),%al
+0000000000000023 <putstring>:
+  23:	50                   	push   %rax
+  24:	53                   	push   %rbx
+  25:	51                   	push   %rcx
+  26:	52                   	push   %rdx
+  27:	48 89 c3             	mov    %rax,%rbx
 
-0000000000000038 <putstring>:
-  38:	50                   	push   %rax
-  39:	53                   	push   %rbx
-  3a:	51                   	push   %rcx
-  3b:	52                   	push   %rdx
-  3c:	48 89 c3             	mov    %rax,%rbx
+000000000000002a <putstring_strlen_start>:
+  2a:	80 3b 00             	cmpb   $0x0,(%rbx)
+  2d:	74 05                	je     34 <putstring_strlen_end>
+  2f:	48 ff c3             	inc    %rbx
+  32:	eb f6                	jmp    2a <putstring_strlen_start>
 
-000000000000003f <putstring_strlen_start>:
-  3f:	80 3b 00             	cmpb   $0x0,(%rbx)
-  42:	74 05                	je     49 <putstring_strlen_end>
-  44:	48 ff c3             	inc    %rbx
-  47:	eb f6                	jmp    3f <putstring_strlen_start>
-
-0000000000000049 <putstring_strlen_end>:
-  49:	48 29 c3             	sub    %rax,%rbx
-  4c:	48 89 da             	mov    %rbx,%rdx
-  4f:	48 89 c6             	mov    %rax,%rsi
-  52:	bf 01 00 00 00       	mov    $0x1,%edi
-  57:	b8 01 00 00 00       	mov    $0x1,%eax
-  5c:	0f 05                	syscall
-  5e:	5a                   	pop    %rdx
-  5f:	59                   	pop    %rcx
-  60:	5b                   	pop    %rbx
-  61:	58                   	pop    %rax
-  62:	c3                   	ret
+0000000000000034 <putstring_strlen_end>:
+  34:	48 29 c3             	sub    %rax,%rbx
+  37:	48 89 da             	mov    %rbx,%rdx
+  3a:	48 89 c6             	mov    %rax,%rsi
+  3d:	bf 01 00 00 00       	mov    $0x1,%edi
+  42:	b8 01 00 00 00       	mov    $0x1,%eax
+  47:	0f 05                	syscall
+  49:	5a                   	pop    %rdx
+  4a:	59                   	pop    %rcx
+  4b:	5b                   	pop    %rbx
+  4c:	58                   	pop    %rax
+  4d:	c3                   	ret

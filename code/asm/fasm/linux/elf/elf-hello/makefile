@@ -12,3 +12,6 @@ reserve:
 	./elf-hello-reserve
 compare:
 	chastecmp elf-hello elf-hello-reserve
+ndisasm:
+	ndisasm -b 32 -o 0x8048054 -e 0x54 elf-hello
+
