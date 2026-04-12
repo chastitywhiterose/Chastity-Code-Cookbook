@@ -1,6 +1,6 @@
 /*
  This C program creates an ELF executable file identical to one that
- would be assembled by FASM. The purpose was to learn the ELF32 format.
+ would be assembled by FASM. The purpose was to learn the ELF64 format.
  
  The Github repository with the spec I used is here.
  <https://github.com/xinuos/gabi>
