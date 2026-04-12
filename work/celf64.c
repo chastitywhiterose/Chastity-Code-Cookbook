@@ -169,7 +169,7 @@ int main(int argc, char *argv[])
  */
  program.p_align=0x1000; 
 
- fp=fopen("casmelf32","wb");
+ fp=fopen("casmelf64","wb");
  if(fp==NULL)
  {
   printf("File \"%s\" cannot be opened.\n",argv[1]);
@@ -195,7 +195,7 @@ int main(int argc, char *argv[])
  /*write the string which is meant to be printed by the final executable*/
  fwrite(&data,sizeof(data),1,fp);
 
- printf("Linux 32-bit Intel 80386 executable created of size %lX\n",ftell(fp));
+ printf("Linux 64-bit AMD x86-64 executable created of size %lX\n",ftell(fp));
 
  fclose(fp);
      
