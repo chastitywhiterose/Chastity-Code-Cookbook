@@ -1,8 +1,18 @@
+/*
+ This C program creates an ELF executable file identical to one that
+ would be assembled by FASM. The purpose was to learn the ELF32 format.
+ 
+ The Github repository with the spec I used is here.
+ <https://github.com/xinuos/gabi>
+
+ And this is the wikipedia article which linked me to the specification document
+ <https://en.wikipedia.org/wiki/Executable_and_Linkable_Format>
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 
-#include "chastelib.h"
 #include "elf.h"
 
 int main(int argc, char *argv[])
@@ -166,26 +176,31 @@ int main(int argc, char *argv[])
   return 1;
  }
 
+ printf("Writing ELF header at address %lX\n",ftell(fp));
  /*write the header structure with one fwrite command*/
  fwrite(&header,sizeof(header),1,fp);
  
+ printf("Writing program header at address %lX\n",ftell(fp));
  /*write the program header structure with one fwrite command*/
  fwrite(&program,sizeof(program),1,fp);
  
+ printf("Writing machine code at address %lX\n",ftell(fp));
  /*
   now that both headers are complete,
   write the code section right after them
  */
- fwrite(&code,sizeof(code),1,fp);
- 
+  fwrite(&code,sizeof(code),1,fp);
+
+ printf("Writing printable string at address %lX\n",ftell(fp));
  /*write the string which is meant to be printed by the final executable*/
  fwrite(&data,sizeof(data),1,fp);
- 
+
+ printf("Linux 32-bit Intel 80386 executable created of size %lX\n",ftell(fp));
+
  fclose(fp);
-    
+     
  return 0;
 }
-
 
 /*
 The following is the original reference program written in FASM.
@@ -213,6 +228,8 @@ msg db 'Hello World!',0Ah
 The following is the output of:
 "ndisasm -b 32 -o 0x8048054 -e 0x54 casmelf32"
 
+---
+
 08048054  B804000000        mov eax,0x4
 08048059  BB01000000        mov ebx,0x1
 0804805E  B976800408        mov ecx,0x8048076
@@ -221,6 +238,8 @@ The following is the output of:
 0804806A  B801000000        mov eax,0x1
 0804806F  BB00000000        mov ebx,0x0
 08048074  CD80              int 0x80
+
+---
 
 Because that command skips the header and tells it that it contains 32 bit code.
 After the second int 0x80, ndisasm will start printing junk data
