@@ -1,4 +1,3 @@
-
 /*
 type definitions that create the types described in the
 ELF Object File Format Version 4.2 by Xinuos, Inc.
