@@ -26,23 +26,23 @@ int main(int argc, char *argv[])
  /*
  This is the actual machine code originally assembled by FASM.
  In the comments, I show the original assembly source code.
- The number loaded in the edx register is the number of bytes to write.
+ The number loaded in the rdx register is the number of bytes to write.
  In this example, it is hex D or 13 decimal (try changing it for fun)
  starting at the address loaded in ecx
- ebx is set to 1 because it is the standard output
- eax is set to 4 because that is the number to call the write function in the 32 bit Linux kernel
- interrupt 0x80 is how the Linux kernel is called.
+ rdi is set to 1 because it is the standard output
+ rax is set to 1 because that is the number to call the write function in the 64 bit Linux kernel
+ syscall is a new instruction for how the Linux kernel is called.
  */
  unsigned char code[]=
  {
-  0xB8,0x04,0x00,0x00,0x00, /* mov eax,0x4       */
-  0xBB,0x01,0x00,0x00,0x00, /* mov ebx,0x1       */
-  0xB9,0x76,0x80,0x04,0x08, /* mov ecx,0x8048076 */
-  0xBA,0x0D,0x00,0x00,0x00, /* mov edx,0xd       */
-  0xCD,0x80,                /* int 0x80          */
-  0xB8,0x01,0x00,0x00,0x00, /* mov eax,0x1       */
-  0xBB,0x00,0x00,0x00,0x00, /* mov ebx,0x0       */
-  0xCD,0x80                 /* int 0x80          */
+  0x48,0xC7,0xC0,0x01,0x00,0x00,0x00, /* mov rax,0x1       */
+  0x48,0xC7,0xC7,0x01,0x00,0x00,0x00, /* mov rdi,0x1       */
+  0x48,0xC7,0xC6,0xA6,0x00,0x40,0x00, /* mov rsi,0x4000a6  */
+  0x48,0xC7,0xC2,0x0D,0x00,0x00,0x00, /* mov rdx,0xd       */
+  0x0F,0x05,                          /* syscall           */
+  0x48,0xC7,0xC0,0x3C,0x00,0x00,0x00, /* mov rax,0x3c      */
+  0x48,0xC7,0xC7,0x00,0x00,0x00,0x00, /* mov rdi,0x0       */
+  0x0F,0x05,                          /* syscall           */
  };
 
  char data[]="Hello World!\n"; 
@@ -109,25 +109,25 @@ int main(int argc, char *argv[])
  /*
   the file offset where the program header begins
   this is a separate header from the ELF header.
-  We place it at hex 0x34 because that is directly after this ELF header
+  We place it at hex 0x40 because that is directly after this ELF header
  */
- header.e_phoff=0x34;
+ header.e_phoff=0x40;
 
  /*the size of the ELF header*/
- header.e_ehsize=0x34;
+ header.e_ehsize=0x40;
 
  /*size that the program header will be*/
- header.e_phentsize=0x20;
+ header.e_phentsize=0x38;
 
  /*there is only 1 program header in this file*/
  header.e_phnum=1;
 
  /*
   section header size
-  I set this value to 0x28 to be consistent with what FASM produces,
+  I set this value to 0x40 to be consistent with what FASM produces,
   but I don't believe it is actually used in this example
  */
- header.e_shentsize=0x28;
+ header.e_shentsize=0x40;
  
  /*next we set the values for the program header*/
  
@@ -135,7 +135,7 @@ int main(int argc, char *argv[])
  program.p_type=1;
  
  program.p_offset=0;
- program.p_vaddr=header.e_entry-0x54;
+ program.p_vaddr=header.e_entry-0x78;
  program.p_paddr=program.p_vaddr;
  
  /*
