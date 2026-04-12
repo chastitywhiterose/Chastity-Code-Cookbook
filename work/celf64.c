@@ -20,8 +20,8 @@ int main(int argc, char *argv[])
  int x;
  char *p;
  FILE* fp; /*file pointer*/
- Elf32_Ehdr header; /*elf header structure*/
- Elf32_Phdr program; /*program header that follows the regular elf header*/
+ Elf64_Ehdr header; /*elf header structure*/
+ Elf64_Phdr program; /*program header that follows the regular elf header*/
  
  /*
  This is the actual machine code originally assembled by FASM.
@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
   1=32 bits
   2=64 bits
  */
- header.e_ident[4]=1;
+ header.e_ident[4]=2;
 
  /*
   The next byte defines whether the encoding byte order is little or big endian.
@@ -98,13 +98,13 @@ int main(int argc, char *argv[])
   62 AMD x86-64 architecture (modern Intel based machines)
   243 RISC-V (the popular open source specification for RISC machines)
  */
- header.e_machine=3;
+ header.e_machine=0x3E;
 
  /*version 1 of the elf header*/
  header.e_version=1;
 
  /*address where the program will begin executing code*/
- header.e_entry=0x08048054;
+ header.e_entry=0x400078;
 
  /*
   the file offset where the program header begins
