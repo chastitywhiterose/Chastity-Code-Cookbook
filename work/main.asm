@@ -2,7 +2,7 @@
 format ELF executable
 entry main
 
-include 'chasteio32.asm'
+;include 'chasteio32.asm'
 
 main:
 
@@ -31,18 +31,36 @@ jmp main_end
 arg_open_file_1:
 pop eax
 mov [filename1],eax ; save the name of the file we will open to read
-call open
+
+call putstring ;print the name of the file we will try opening
+
+mov ecx,0   ;open file in read mode 
+mov ebx,eax ;filename should be in eax before this function was called
+mov eax,5   ;invoke SYS_OPEN (kernel opcode 5)
+int 80h     ;call the kernel
+
 cmp eax,0
 js main_end ;end program if the file can't be opened
 mov [filedesc1],eax ; save the file descriptor number for later use
+mov eax,file_open
+call putstr_and_line
 
 arg_open_file_2:
 pop eax
 mov [filename2],eax ; save the name of the file we will open to read
-call open
+
+call putstring ;print the name of the file we will try opening
+
+mov ecx,0   ;open file in read mode 
+mov ebx,eax ;filename should be in eax before this function was called
+mov eax,5   ;invoke SYS_OPEN (kernel opcode 5)
+int 80h     ;call the kernel
+
 cmp eax,0
 js main_end ;end program if the file can't be opened
 mov [filedesc2],eax ; save the file descriptor number for later use
+mov eax,file_open
+call putstr_and_line
 
 files_compare:
 
@@ -103,11 +121,13 @@ main_end:
 ;this is the end of the program
 ;we close the open files and then use the exit call
 
-mov eax,[filedesc1] ;file number to close
-call close
-mov eax,[filedesc2] ;file number to close
-call close
+mov ebx,[filedesc1] ;file number to close
+mov eax,6   ;invoke SYS_CLOSE (kernel opcode 6)
+int 80h     ;call the kernel
 
+mov ebx,[filedesc2] ;file number to close
+mov eax,6   ;invoke SYS_CLOSE (kernel opcode 6)
+int 80h     ;call the kernel
 
 mov eax, 1  ; invoke SYS_EXIT (kernel opcode 1)
 mov ebx, 0  ; return 0 status on exit - 'No Errors'
@@ -132,7 +152,10 @@ help_message db 'chastecmp: compares two files in hexadecimal',0Ah
 db 9,'chastecmp file1 file2',0Ah
 db 'The bytes of the files are compared until EOF of either is reached.',0Ah,0
 
+file_open db ' opened',0
+file_error db ' error',0
 end_of_file_string db ' has reached EOF',0Ah,0
+
 
 ;in this section, only the relevant functions from chastelib32.asm were copied over
 
