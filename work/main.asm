@@ -93,8 +93,9 @@ mov eax,3          ;invoke SYS_READ (kernel opcode 3)
 int 80h            ;call the kernel
 
 ;eax will have the number of bytes read after system call
+mov [file_2_bytes_read],eax ;we save the number of bytes read for later
 cmp eax,0
-jnz compare_bytes ;unless zero bytes were read, proceed to compare bytes from both files
+jnz check_both_bytes ;unless zero bytes were read, proceed to compare bytes from both files
 
 mov eax,[filename2]
 call putstring
@@ -102,6 +103,14 @@ mov eax,end_of_file_string
 call putstring
 
 jmp main_end ;we have reach end of one file and should end program
+
+check_both_bytes:
+
+;we add the number of bytes read from both files
+mov eax,[file_1_bytes_read]
+add eax,[file_2_bytes_read]
+cmp eax,2
+jnz main_end
 
 compare_bytes:
 
