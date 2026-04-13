@@ -1,7 +1,11 @@
 # chastecmp
 
-chastecmp: compares two files in hexadecimal
+chastecmp by Chastity White Rose
+
 	chastecmp file1 file2
+
+Bytes that differ between files are shown in hexadecimal
+until the EOF has been reached.
 
 Files must be same size for best results. As soon as the end of either files is reached, the program ends. This is based on the assumption that it is used on files of a fixed format or size.
 
