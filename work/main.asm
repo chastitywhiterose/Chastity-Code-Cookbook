@@ -2,8 +2,6 @@
 format ELF executable
 entry main
 
-;include 'chasteio32.asm'
-
 main:
 
 ;radix will be 16 because this whole program is about hexadecimal
@@ -72,6 +70,7 @@ mov eax,3          ;invoke SYS_READ (kernel opcode 3)
 int 80h            ;call the kernel
 
 ;eax will have the number of bytes read after system call
+mov [file_1_bytes_read],eax ;we save the number of bytes read for later
 cmp eax,0
 jnz file_2_read_one_byte ;unless zero bytes were read, proceed to read from next file
 
@@ -80,7 +79,11 @@ call putstring
 mov eax,end_of_file_string
 call putstring
 
-jmp main_end ;we have reach end of one file and should end program
+;jmp main_end ;we have reach end of one file and should end program
+
+;Even if we have reached the end of the first file,
+;we still proceed to read a byte from the second file
+;to see if it also ends at the same address
 
 file_2_read_one_byte:
 mov edx,1          ;number of bytes to read
@@ -99,7 +102,6 @@ mov eax,end_of_file_string
 call putstring
 
 jmp main_end ;we have reach end of one file and should end program
-
 
 compare_bytes:
 
@@ -365,6 +367,7 @@ filedesc1 dd ? ; file descriptor
 filedesc2 dd ? ; file descriptor
 byte1 db ?
 byte2 db ?
-bytes_read dd ?
+file_1_bytes_read dd ?
+file_2_bytes_read dd ?
 file_offset dd ?
 
