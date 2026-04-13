@@ -40,7 +40,7 @@ mov eax,5   ;invoke SYS_OPEN (kernel opcode 5)
 int 80h     ;call the kernel
 
 cmp eax,0
-js main_end ;end program if the file can't be opened
+js file_error_display ;end program if the file can't be opened
 mov [filedesc1],eax ; save the file descriptor number for later use
 mov eax,file_open
 call putstr_and_line
@@ -57,7 +57,7 @@ mov eax,5   ;invoke SYS_OPEN (kernel opcode 5)
 int 80h     ;call the kernel
 
 cmp eax,0
-js main_end ;end program if the file can't be opened
+js file_error_display ;end program if the file can't be opened
 mov [filedesc2],eax ; save the file descriptor number for later use
 mov eax,file_open
 call putstr_and_line
@@ -116,6 +116,11 @@ inc [file_offset]
 
 jmp files_compare
 
+file_error_display:
+
+mov eax,file_error
+call putstr_and_line
+
 main_end:
 
 ;this is the end of the program
@@ -154,7 +159,7 @@ db 'The bytes of the files are compared until EOF of either is reached.',0Ah,0
 
 file_open db ' opened',0
 file_error db ' error',0
-end_of_file_string db ' has reached EOF',0Ah,0
+end_of_file_string db ' EOF',0Ah,0
 
 
 ;in this section, only the relevant functions from chastelib32.asm were copied over
