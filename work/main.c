@@ -7,8 +7,8 @@ int main(int argc, char *argv[])
  FILE* fp; /*file pointer*/
  unsigned int x,y,i=0;
  int address=0;
- unsigned char int_bytes[8];
- int int_bytes_length,count=1,int_bytes_index;
+ unsigned char int_bytes[8],tmp_bytes[8];
+ int int_bytes_index,int_bytes_length,count=1;
  
  radix=10;
  
@@ -60,14 +60,44 @@ int main(int argc, char *argv[])
    int_bytes_index++; /*go to next index*/
    y>>=8; /*shift right 8 bytes*/
   }
-  
+  putstring("\n");
+  int_bytes_length=int_bytes_index;
+  putstring("length of this byte array = ");
+  putint(int_bytes_length);
   putstring("\n");
   
+ while(1)
+ {
+
+  /*read the required length of bytes into a temporary byte array*/
+  count=fread(tmp_bytes,1,int_bytes_length,fp);
+
+  if(count<int_bytes_length){putstring("EOF\n");break;}
+
+  putstring("searching address ");
+  int_width=8;
+  putint(address);
   
-  
-  /*fread(bytes,1,16,fp)*/
-  
-  
+  x=0;
+  while(x<int_bytes_length)
+  {
+   if(int_bytes[x]!=tmp_bytes[x])
+   {
+    putstring(" no match\n");
+    break;
+   }
+   x++;
+  }
+
+  if(x==int_bytes_length)
+  {
+   putstring(" match found!\n");
+  }
+ 
+  address++; /*add 1 to address*/ 
+
+  fseek(fp,address,SEEK_SET); /*move file position to next address*/
+ }
   
   
   
