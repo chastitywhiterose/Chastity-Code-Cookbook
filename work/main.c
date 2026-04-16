@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
  unsigned int x,y,i=0;
  int address=0;
  unsigned char int_bytes[8],tmp_bytes[8];
- int int_bytes_index,int_bytes_length,count=1;
+ int int_bytes_index,int_bytes_length,count=1,matches=0;
  
  radix=10;
  
@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
  {
   i=strint(argv[2]);
   printf("integer \"%i\" entered as argument to search for\n",i);
-  putstring("Converting decimal integer to series of hexadecimal bytes in little endian\n");
+  putstring("Converting decimal integer to series of hexadecimal bytes in little endian\n\n");
   
   int_bytes_index=0;
   x=0;
@@ -60,14 +60,14 @@ int main(int argc, char *argv[])
    int_bytes_index++; /*go to next index*/
    y>>=8; /*shift right 8 bytes*/
   }
-  putstring("\n");
+  putstring("\n\n");
   int_bytes_length=int_bytes_index;
   putstring("length of this byte array = ");
   putint(int_bytes_length);
   putstring("\n");
 
-  putstring("searching for matches in file\n");
-
+  putstring("Searching for matches in file\n");
+  putstring("Addresses are in hexadecimal\n");
   
  while(1)
  {
@@ -94,6 +94,7 @@ int main(int argc, char *argv[])
    int_width=8;
    putint(address);
    putstring(" match found!\n");
+   matches++;
   }
  
   address++; /*add 1 to address*/ 
@@ -101,7 +102,11 @@ int main(int argc, char *argv[])
   fseek(fp,address,SEEK_SET); /*move file position to next address*/
  }
   
-  
+  radix=10;
+  int_width=1;
+  putstring("total matches found = ");
+  putint(matches);
+  putstring("\n");
   
  }
 
