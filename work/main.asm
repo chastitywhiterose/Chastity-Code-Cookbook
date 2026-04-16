@@ -1,4 +1,8 @@
-format ELF executable
+global  _start
+
+_start:
+
+section .text
 
 mov eax,4   ; invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
 mov ebx,1   ; write to the STDOUT file
@@ -9,5 +13,7 @@ int 80h
 mov eax,1   ; function SYS_EXIT (kernel opcode 1 on 32 bit systems)
 mov ebx,0   ; return 0 status on exit - 'No Errors'
 int 80h
+
+section .data
 
 msg db 'Hello World!',0Ah,0
