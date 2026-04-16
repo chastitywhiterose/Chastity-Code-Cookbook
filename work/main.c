@@ -5,7 +5,10 @@
 int main(int argc, char *argv[])
 {
  FILE* fp; /*file pointer*/
- int i=0;
+ unsigned int x,y,i=0;
+ int address=0;
+ unsigned char int_bytes[8];
+ int int_bytes_length,count=1,int_bytes_index;
  
  radix=10;
  
@@ -41,6 +44,33 @@ int main(int argc, char *argv[])
  {
   i=strint(argv[2]);
   printf("integer \"%i\" entered as argument to search for\n",i);
+  putstring("Converting decimal integer to series of hexadecimal bytes in little endian\n");
+  
+  int_bytes_index=0;
+  x=0;
+  y=i;
+  while(y>0)
+  {
+   x=y&0xFF; /*get lowest byte of integer*/
+   radix=16;
+   int_width=2;
+   putint(x);
+   putstring(" ");
+   int_bytes[int_bytes_index]=x; /*set this index to the byte value (0 to 255) that x contains*/
+   int_bytes_index++; /*go to next index*/
+   y>>=8; /*shift right 8 bytes*/
+  }
+  
+  putstring("\n");
+  
+  
+  
+  /*fread(bytes,1,16,fp)*/
+  
+  
+  
+  
+  
  }
 
  return 0;
