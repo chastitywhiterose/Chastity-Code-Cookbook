@@ -3,6 +3,7 @@
 ;All data as defined in this file is based off of the specification of the ELF file format.
 ;I first looked at the type of file created by FASM's "format ELF executable" directive.
 ;It is great that FASM can create an executable file automatically. (Thanks Tomasz Grysztar, you are a true warrior!)
+
 ;However, I wanted to understand the format for theoretical use in other assemblers like NASM.
 
 ;The Github repository with the spec I used is here.

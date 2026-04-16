@@ -55,8 +55,8 @@ dd 7           ;p_flags: permission flags: 7=4(Read)+2(Write)+1(Execute)
 dd 0           ;p_align; Alignment (none)
 
 ;important Assembler directives
-org p_vaddr    ;origin of new code begins here
 use32          ;tell assembler that 32 bit code is being used
+org p_vaddr    ;origin of new code begins here
 
 ;now, the actual hello world program
 mov eax,4      ;invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
