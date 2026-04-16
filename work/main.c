@@ -65,6 +65,9 @@ int main(int argc, char *argv[])
   putstring("length of this byte array = ");
   putint(int_bytes_length);
   putstring("\n");
+
+  putstring("searching for matches in file\n");
+
   
  while(1)
  {
@@ -74,16 +77,13 @@ int main(int argc, char *argv[])
 
   if(count<int_bytes_length){putstring("EOF\n");break;}
 
-  putstring("searching address ");
-  int_width=8;
-  putint(address);
   
   x=0;
   while(x<int_bytes_length)
   {
    if(int_bytes[x]!=tmp_bytes[x])
    {
-    putstring(" no match\n");
+    /*putstring(" no match\n");*/
     break;
    }
    x++;
@@ -91,6 +91,8 @@ int main(int argc, char *argv[])
 
   if(x==int_bytes_length)
   {
+   int_width=8;
+   putint(address);
    putstring(" match found!\n");
   }
  
