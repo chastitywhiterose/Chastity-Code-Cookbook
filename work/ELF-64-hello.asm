@@ -11,7 +11,7 @@
 ;And this is the wikipedia article which linked me to the specification document
 ;<https://en.wikipedia.org/wiki/Executable_and_Linkable_Format>
 
-;This rest of this file contains a raw binary ELF64 header created using db,dw,dd,dq commands.
+;This file contains a raw binary ELF64 header created using db,dw,dd,dq commands.
 ;After that, it proceeds to assemble a real "Hello World!" program
 
 ;Header for 64 bit ELF executable (with comments based on specification)
@@ -25,8 +25,8 @@ dw 2          ;e_type: 2=ET_EXEC (executable instead of object file)
 dw 0x3E       ;e_machine : 3=EM_386 (Intel 80386) 0x3E (AMD x86-64 architecture)
 dd 1          ;e_version: 1=EV_CURRENT (ELF object file version.)
 
-p_vaddr equ 0x400000
-e_entry equ 0x400078 ;we will be reusing this constant later 
+p_vaddr equ 0x400000 ;the absolute base address where the file is loaded into memory
+e_entry equ 0x400078 ;program start running at this address (right after header)
 
 dq e_entry    ;e_entry: the virtual address at which the program starts
 dq 0x40       ;e_phoff: where in the file the program header offset is
@@ -46,34 +46,41 @@ dq 0           ;p_offset: Base address from file (zero)
 dq p_vaddr     ;p_vaddr: Virtual address in memory where the file will be.
 dq p_vaddr     ;p_paddr: Physical address. Same as previous
 
-image_size equ 0x1000 ;Chosen size for file and memory size. At minimum this must be as big as the actual binary file (code after header included)
-                  ;By choosing a default size of 0x1000, I am assuming all assembly programs I write will be less than 4 kilobytes
+;The file_size variable I have defined uses some trickery to get the size of the file.
+;An EOF constant (End Of File) is defined at the end of the program code
+;By subtracting the program virtual address from that address,
+;I get the actual number of bytes of this entire program
 
-dq image_size  ;p_filesz: Size of file image of the segment. Must be equal to the file size or greater
-dq image_size  ;p_memsz: Size of memory image of the segment, which may be equal to or greater than file image.
+file_size equ EOF-p_vaddr ;Place the actual size of the file using NASM address constants
 
-dq 0           ;p_align; Alignment (none)
+dq file_size  ;p_filesz: Size of file image of the segment. Must be equal to the file size or greater
+dq file_size  ;p_memsz: Size of memory image of the segment, which may be equal to or greater than file image.
+
+dq 0x1000     ;p_align; Alignment (same page alignment that FASM uses of 4096 bytes)
 
 ;important Assembler directives
-org p_vaddr    ;origin of new code begins here
+
 use64          ;tell assembler that 64 bit code is being used
+org p_vaddr    ;origin of new code begins here
 
 ;Now, the actual hello world program can begin!
 
-main:
 mov rax,1   ; invoke SYS_WRITE (kernel opcode 1 on 64 bit systems)
 mov rdi,1   ; write to the STDOUT file
 mov rsi,msg ; pointer/address of string to write
 mov rdx,13  ; number of bytes to write
 syscall
 
-mov rax,0x3C ; invoke SYS_EXIT (kernel opcode 0x3C on 64 bit systems)
-mov rdi,0    ; return 0 status on exit - 'No Errors'
+mov rax,60  ; function SYS_EXIT (kernel opcode 60 on 64 bit systems)
+mov rdi,0   ; return 0 status on exit - 'No Errors'
 syscall
 
-msg db 'Hello World!',0Ah
+msg db 'Hello World!',0Ah,0
 
-;To Assemble and run this program on Linux, you can use the following makefile which has rules to Assemble and disassemble it!
+EOF equ $ ; define a label for the end of file. This is used in the ELF header
+
+;To Assemble and run this program on Linux, you can use the following makefile.
+;You can also disassemble it with ndisasm because the exact address of code is known
 
 ;main-nasm:
 ;	nasm ELF-64-hello.asm
@@ -81,4 +88,3 @@ msg db 'Hello World!',0Ah
 ;	./ELF-64-hello
 ;ndisasm:
 ;	ndisasm -b 64 -o 0x400078 -e 0x78 ELF-64-hello
-

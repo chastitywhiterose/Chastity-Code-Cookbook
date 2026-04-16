@@ -1,6 +1,6 @@
 main-nasm:
-	nasm ELF-32-hello.asm
-	chmod +x ELF-32-hello
-	./ELF-32-hello
+	nasm ELF-64-hello.asm
+	chmod +x ELF-64-hello
+	./ELF-64-hello
 ndisasm:
-	ndisasm -b 32 -o 0x8048054 -e 0x54 ELF-32-hello
+	ndisasm -b 64 -o 0x400078 -e 0x78 ELF-64-hello

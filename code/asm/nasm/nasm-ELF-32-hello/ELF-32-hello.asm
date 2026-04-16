@@ -22,7 +22,7 @@ db 1          ;EI_DATA: The endianness of the data. 1=ELFDATA2LSB 2=ELFDATA2MSB 
 db 1          ;EI_VERSION: 1=EV_CURRENT (ELF identity version 1) (which is current at time of specification Version 4.2 I was using)
 db 9 dup 0    ;padding zeros to bring us to address 0x10
 dw 2          ;e_type: 2=ET_EXEC (executable instead of object file)
-dw 3          ;e_machine : 3=EM_386 (Intel 80386)
+dw 3          ;e_machine : 3=EM_386 (Intel 80386) 0x3E (AMD x86-64 architecture)
 dd 1          ;e_version: 1=EV_CURRENT (ELF object file version.)
 
 p_vaddr equ 0x8048000 ;the absolute base address where the file is loaded into memory
@@ -50,7 +50,7 @@ dd p_vaddr    ;p_paddr: Physical address. Same as previous
 ;By subtracting the program virtual address from that address,
 ;I get the actual number of bytes of this entire program
 
-file_size equ EOF-p_vaddr ;Place the actual size of the file using NASM's 
+file_size equ EOF-p_vaddr ;Place the actual size of the file using NASM address constants
 
 dd file_size  ;p_filesz: Size of file image of the segment. Must be equal to the file size or greater
 dd file_size  ;p_memsz: Size of memory image of the segment, which may be equal to or greater than file image.
@@ -63,7 +63,7 @@ dd 0x1000      ;p_align; Alignment (same page alignment that FASM uses of 4096 b
 use32          ;tell assembler that 32 bit code is being used
 org p_vaddr    ;origin of new code begins here
 
-;now, the actual hello world program
+;Now, the actual hello world program
 
 mov eax,4   ; invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
 mov ebx,1   ; write to the STDOUT file
@@ -79,9 +79,12 @@ msg db 'Hello World!',0Ah,0
 
 EOF equ $ ; define a label for the end of file. This is used in the ELF header
 
-;This is the makefile I use when assembling and running this program
+;To Assemble and run this program on Linux, you can use the following makefile.
+;You can also disassemble it with ndisasm because the exact address of code is known
 
-;main-fasm:
-;	fasm ELF-32-hello.asm
-;	chmod +x ELF-32-hello.bin
-;	./ELF-32-hello.bin
+;main-nasm:
+;	nasm ELF-32-hello.asm
+;	chmod +x ELF-32-hello
+;	./ELF-32-hello
+;ndisasm:
+;	ndisasm -b 32 -o 0x8048054 -e 0x54 ELF-32-hello
