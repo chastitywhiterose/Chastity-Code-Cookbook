@@ -98,6 +98,7 @@ int sdl_chastelib_hexram(int argc, char **argv)
   RAM_hexdump();
   
   putstr("\nUnlike chastehex and hexplore, the bytes cannot be modified in this demo\n");
+  putstr("You can also segfault if you scroll too far!\n");
 
 
   SDL_UpdateWindowSurface(window); /*update window to show the results*/
