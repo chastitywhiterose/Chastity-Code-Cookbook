@@ -7,27 +7,23 @@ int RAM_address_current=0;
 /*outputs the ASCII text to the right of the hex field*/
 void RAM_textdump()
 {
- int a,x=0;
-
-/*
- x=count;
- while(x<0x10)
- {
-  putstring("   ");
-  x++;
- }
- */
+ int a,x=0,count=16;
 
  x=0;
  while(x<count)
  {
   a=RAM[RAM_address_current+x];
-  if( a < 0x20 || a > 0x7E ){a='.';bytes[x]=a;}
+  if( a < 0x20 || a > 0x7E )
+  {
+   sdl_putchar('J');
+  }
+  else
+  {
+   sdl_putchar(a);
+  }
   x++;
  }
- bytes[x]=0;
 
- putstring(bytes);
 }
 
 
@@ -42,7 +38,7 @@ void RAM_hexdump()
  while(y<count)
  {
   int_width=8;
-  putint(address);
+  putint(RAM_address_current);
   putstr(" ");
 
   int_width=2;
@@ -56,7 +52,7 @@ void RAM_hexdump()
   RAM_textdump();
   putstr("\n");
 
-  address+=count;
+  RAM_address_current+=count;
   y++;
  }
  
