@@ -21,6 +21,7 @@ because it depends on them.
 #include "chastelib_font_sdl2.h"
 #include "chastelib_demo_sdl2.h"
 #include "chastelib_demo_sdl2_extra.h"
+#include "chastelib_demo_sdl2_hextools.h"
 
 int main(int argc, char **argv)
 {
@@ -68,11 +69,12 @@ int main(int argc, char **argv)
   sdl_wait_escape(); /*wait till escape key pressed*/
  }
  
-  demo_galatians();
+  /*demo_galatians();*/
 
  /*now call a demo function I wrote*/
- sdl_chastelib_test_suite();
+ /*sdl_chastelib_test_suite();*/
  
+ sdl_chastelib_hexram(argc,argv); /*call this function and pass the command args to it*/
 
 
  if(0)
