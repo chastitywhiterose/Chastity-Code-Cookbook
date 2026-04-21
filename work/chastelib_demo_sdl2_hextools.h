@@ -15,7 +15,7 @@ void RAM_textdump()
   a=RAM[RAM_address_current+x];
   if( a < 0x20 || a > 0x7E )
   {
-   sdl_putchar('J');
+   sdl_putchar('.');
   }
   else
   {
@@ -45,7 +45,7 @@ void RAM_hexdump()
   x=0;
   while(x<count)
   {
-   putint(RAM[RAM_address_current+x]);
+   putint(RAM[RAM_address_current+x]&0xFF);
    putstr(" ");
    x++;
   }
@@ -65,7 +65,7 @@ int sdl_chastelib_hexram(int argc, char **argv)
  int key=1;
  SDL_Event e;
 
- int a=0,b,c,d; /*variables for this test program*/
+ int x,y; /*variables for this test program*/
 
  line_spacing_pixels=1; /*empty space in pixels between lines*/
  
@@ -75,8 +75,14 @@ int sdl_chastelib_hexram(int argc, char **argv)
  radix=16;
  int_width=1;
  
- RAM[0]=5;
-
+ /*to make for a good test, fill the first page of RAM with all values*/
+ x=0;
+ y=0x100;
+ while(x<y)
+ {
+  RAM[x]=x;
+  x++;
+ }
   /*a loop which will only end if we click the X or press escape*/
  while(loop)
  {
@@ -87,11 +93,12 @@ int sdl_chastelib_hexram(int argc, char **argv)
   
   sdl_clear();  /*clear the screen before we begin writing*/
 
-  putstr("Official test suite for the C version of chastelib.\nThis version uses SDL2.\n\n");
-
- 
+  putstr("This is the HexRAM demo\nIt displays bytes at a predefined location in RAM\n\n");
 
   RAM_hexdump();
+  
+  putstr("\nUnlike chastehex and hexplore, the bytes cannot be modified in this demo\n");
+
 
   SDL_UpdateWindowSurface(window); /*update window to show the results*/
  
@@ -122,22 +129,27 @@ int sdl_chastelib_hexram(int argc, char **argv)
    
      /*the main 4 directions*/
      case SDLK_UP:
-      if(b>c){b--;}
+      RAM_address_base-=0x10;
      break;
      case SDLK_DOWN:
-      if(b<d){b++;}
+      RAM_address_base+=0x10;
      break;
      case SDLK_LEFT:
-      if(b>=c+c){b-=c;}
+      RAM_address_base--;
      break;
      case SDLK_RIGHT:
-      if(b<=d-c){b+=c;}
+      RAM_address_base++;
      break;
+     
+     case SDLK_PAGEUP:
+      RAM_address_base-=0x100;
+     break;
+     case SDLK_PAGEDOWN:
+      RAM_address_base+=0x100;
+     break;
+     
     }
 
-
-
-    
    } /*end of SDL_KEYDOWN section*/
 
 
