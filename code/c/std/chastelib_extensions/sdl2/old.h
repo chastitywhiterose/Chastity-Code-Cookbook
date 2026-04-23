@@ -1,4 +1,10 @@
-int sdl_chastelib_hexram(int argc, char **argv)
+  /*end of game loop*/
+ }
+ 
+
+ 
+ return 0;
+}rgv)
 {
  /*variables required by SDL*/
  int loop=1;
