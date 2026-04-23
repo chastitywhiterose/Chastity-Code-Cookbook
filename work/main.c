@@ -21,6 +21,7 @@ because it depends on them.
 #include "chastelib_font_sdl3.h"
 #include "chastelib_demo_sdl3.h"
 #include "chastelib_demo_sdl3_extra.h"
+#include "chastelib_demo_sdl3_hextools.h"
 
 int main(int argc, char **argv)
 {
