@@ -102,10 +102,11 @@ int sdl_chastelib_hexram_edit(int argc, char **argv)
   
   sdl_clear();  /*clear the screen before we begin writing*/
 
-  putstr("This is the HexRAM demo\nIt displays bytes at a predefined location in RAM\n\n");
+
 
   RAM_hexdump();
   
+  putstr("This is the HexRAM demo\nIt displays bytes at a predefined location in RAM\n\n");
   putstr("\nUnlike chastehex and hexplore, the bytes cannot be modified in this demo\n");
   putstr("You can also segfault if you scroll too far!\n\n");
   
@@ -116,6 +117,20 @@ int sdl_chastelib_hexram_edit(int argc, char **argv)
   putint(RAM_y);
   putstr("\n");
 
+/*
+ update the cursor position (in pixels) so that we can print brackets around the byte that is selected
+ the math is done in two steps for each coordinate for simplification
+*/
+
+cursor_x=8*main_font.char_width*main_font.char_scale; /*navigate past the address field*/
+cursor_x+=RAM_x*3*main_font.char_width*main_font.char_scale; /*find the right byte to bracket*/
+
+cursor_y=RAM_y*main_font.char_height*main_font.char_scale; /*find the right row*/
+cursor_y+=RAM_y*line_spacing_pixels; /*adjust for the line spacing used by my library*/
+
+sdl_putchar('[');
+cursor_x+=2*main_font.char_width*main_font.char_scale; /*go forward 3 characters*/
+sdl_putchar(']');
 
   SDL_UpdateWindowSurface(window); /*update window to show the results*/
  
