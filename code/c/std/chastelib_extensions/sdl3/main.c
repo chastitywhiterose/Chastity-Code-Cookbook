@@ -20,6 +20,8 @@ because it depends on them.
 #include "chastelib_format_pbm_sdl3.h"
 #include "chastelib_font_sdl3.h"
 #include "chastelib_demo_sdl3.h"
+#include "chastelib_demo_sdl3_extra.h"
+#include "chastelib_demo_sdl3_hextools.h"
 
 int main(int argc, char **argv)
 {
@@ -68,7 +70,13 @@ int main(int argc, char **argv)
  }
 
  /*now call a demo function I wrote*/
- sdl_chastelib_test_suite();
+ /*sdl_chastelib_test_suite();*/
+ 
+ /*demo_galatians();*/
+ 
+ /*demo_lucifer();*/
+ 
+ sdl_chastelib_hexplore(argc,argv); /*call this function and pass the command args to it*/
 
  if(0)
  {
