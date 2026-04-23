@@ -4,6 +4,9 @@ char RAM[0x10000];
 int RAM_address_base=0;
 int RAM_address_current=0;
 
+int RAM_x=0;
+int RAM_y=0;
+
 /*outputs the ASCII text to the right of the hex field*/
 void RAM_textdump()
 {
@@ -61,8 +64,6 @@ void RAM_hexdump()
 
 
 
-int RAM_x=0;
-int RAM_y=0;
 
 
 
@@ -106,7 +107,14 @@ int sdl_chastelib_hexram_edit(int argc, char **argv)
   RAM_hexdump();
   
   putstr("\nUnlike chastehex and hexplore, the bytes cannot be modified in this demo\n");
-  putstr("You can also segfault if you scroll too far!\n");
+  putstr("You can also segfault if you scroll too far!\n\n");
+  
+  /*this section displays the index variables for indexing the RAM of the current page*/
+  putstr("X=");
+  putint(RAM_x);
+  putstr(" Y=");
+  putint(RAM_y);
+  putstr("\n");
 
 
   SDL_UpdateWindowSurface(window); /*update window to show the results*/
@@ -149,13 +157,13 @@ int sdl_chastelib_hexram_edit(int argc, char **argv)
      y--;if(y<0){y=15;}
     break;
     case SDLK_DOWN:
-     y++;if(y>=height){y=0;}
+     y++;if(y>=16){y=0;}
     break;
     case SDLK_LEFT:
      x--;if(x<0){x=15;}
     break;
     case SDLK_RIGHT:
-     x++;if(x>=width){x=0;}
+     x++;if(x>=16){x=0;}
     break;
      
      case SDLK_PAGEUP:
