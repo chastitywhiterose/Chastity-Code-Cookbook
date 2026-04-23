@@ -74,11 +74,9 @@ int main(int argc, char **argv)
  /*now call a demo function I wrote*/
  /*sdl_chastelib_test_suite();*/
 
- sdl_chastelib_hexram_edit();
+ /*sdl_chastelib_hexram();*/
  
- /*sdl_chastelib_hexplore(argc,argv);*/ /*call this function and pass the command args to it*/
-
-
+ sdl_chastelib_hexplore(argc,argv); /*call this function and pass the command args to it*/
 
  if(0)
  {
