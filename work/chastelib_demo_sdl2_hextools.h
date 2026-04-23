@@ -42,6 +42,7 @@ void RAM_hexdump()
  {
   int_width=8;
   putint(RAM_address_current);
+  /*putint(&RAM[RAM_address_current]);*/ /*this can show the actual address but is not reliable*/
   putstr(" ");
 
   int_width=2;
@@ -99,14 +100,11 @@ int sdl_chastelib_hexram_edit(int argc, char **argv)
 
  if(key) /*start of update on input section*/
  {
-  
   sdl_clear();  /*clear the screen before we begin writing*/
-
-
 
   RAM_hexdump();
   
-  putstr("This is the HexRAM demo\nIt displays bytes at a predefined location in RAM\n\n");
+  putstr("\nThis is the HexRAM demo\nIt displays bytes at a predefined location in RAM\n\n");
   putstr("\nUnlike chastehex and hexplore, the bytes cannot be modified in this demo\n");
   putstr("You can also segfault if you scroll too far!\n\n");
   
@@ -115,7 +113,10 @@ int sdl_chastelib_hexram_edit(int argc, char **argv)
   putint(RAM_x);
   putstr(" Y=");
   putint(RAM_y);
+  putstr("\nK=");
+  putint(key);
   putstr("\n");
+
 
 /*
  update the cursor position (in pixels) so that we can print brackets around the byte that is selected
@@ -158,6 +159,13 @@ sdl_putchar(']');
     */
     int x=RAM_x;
     int y=RAM_y;
+    
+    /*by setting an index correctly once, I can reuse it for several input functions*/
+    int RAM_index=RAM_address_base+RAM_x+RAM_y*0x10;
+    
+    /*an integer which is used when adding hexadecimal digits to the current byte indexed by x and y*/
+    int i;
+
    
     key=e.key.keysym.sym;
     switch(key)
@@ -183,12 +191,34 @@ sdl_putchar(']');
      
      case SDLK_PAGEUP:
       RAM_address_base-=0x100;
-     break;
+     if(RAM_address_base<0)
+      {
+       RAM_address_base+=sizeof(RAM);
+      }
+      break;
      case SDLK_PAGEDOWN:
       RAM_address_base+=0x100;
+      if(RAM_address_base>=sizeof(RAM))
+      {
+       RAM_address_base=0;
+      }
      break;
      
+     
+    case SDLK_MINUS:
+    case SDLK_KP_MINUS:
+     RAM[RAM_index]--;
+    break;
+    case SDLK_PLUS:
+    case SDLK_KP_PLUS:
+     RAM[RAM_index]++;
+    break;
+     
     }
+    
+    /*handle hexadecimal number input with these range of characters*/
+    if( key >= '0' && key <= '9' ){i=key-'0';   RAM[RAM_index]<<=4;RAM[RAM_index]|=i;}
+    if( key >= 'a' && key <= 'f' ){i=key-'a'+10;RAM[RAM_index]<<=4;RAM[RAM_index]|=i;}
 
     /*set the global x and y index variables from the local copies*/
     RAM_x=x;
