@@ -14,8 +14,6 @@ int sdl_chastelib_test_suite()
  int a=0,b,c,d; /*variables for this test program*/
 
  line_spacing_pixels=1; /*empty space in pixels between lines*/
- 
- main_font.color=0x00FF00; /*change text color*/
 
  radix=16;
  int_width=1;
@@ -27,7 +25,7 @@ int sdl_chastelib_test_suite()
  b=strint("10"); /*will always be radix*/
  c=b; /*save what the radix was at the beginning. This will be used later.*/
  d=strint("100"); /*will always be radix squared*/
- 
+
  /*a loop which will only end if we click the X or press escape*/
  while(loop)
  {
@@ -42,7 +40,7 @@ int sdl_chastelib_test_suite()
 
   main_font.char_scale=3;
   main_font.color=0xFFFFFF;
-  putstr("Official test suite for the C version of chastelib.\nThis version uses SDL2.\n\n");
+  putstr("Official test suite for the C version of chastelib.\nThis version uses SDL3.\n\n");
 
   main_font.char_scale=4; 
 
@@ -83,21 +81,21 @@ int sdl_chastelib_test_suite()
   /*loop to capture and process input that happens*/
   while(SDL_PollEvent(&e))
   {
-   if(e.type == SDL_QUIT){loop=0;}
+   if(e.type == SDL_EVENT_QUIT){loop=0;}
 
    /*use Escape as a key that can also end this loop*/
-   if(e.type == SDL_KEYUP)
+   if(e.type == SDL_EVENT_KEY_UP)
    {
-    if(e.key.keysym.sym==SDLK_ESCAPE){loop=0;}
+    if(e.key.key==SDLK_ESCAPE){loop=0;}
    }
 
-   if(e.type == SDL_KEYDOWN /*&& e.key.repeat==0*/)
+   if(e.type == SDL_EVENT_KEY_DOWN /*&& e.key.repeat==0*/)
    {
-    key=e.key.keysym.sym;
+    key=e.key.key;
     switch(key)
     {
      /*use q as a key that can also end this loop*/
-     case SDLK_q:
+     case SDLK_Q:
       loop=0;
      break;
    
@@ -126,9 +124,6 @@ int sdl_chastelib_test_suite()
 
   /*end of game loop*/
  }
- 
-  /*putint(sizeof(palette)/sizeof(*palette));*/
-
  
  return 0;
 }

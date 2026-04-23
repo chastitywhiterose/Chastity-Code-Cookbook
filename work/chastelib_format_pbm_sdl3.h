@@ -42,9 +42,10 @@ SDL_Surface* SDL_LoadPBM(const char* filename)
 
  /*
  Create an SDL surface to store width*height pixels
- https://wiki.libsdl.org/SDL2/SDL_CreateRGBSurface
+ https://wiki.libsdl.org/SDL3/SDL_CreateSurface
  */
- new_surface=SDL_CreateRGBSurface(0,width,height,32,0,0,0,0);
+ /*new_surface=SDL_CreateRGBSurface(0,width,height,32,0,0,0,0);*/
+ new_surface=SDL_CreateSurface(width,height,surface->format);
  p=new_surface->pixels;
 
  fgetc(fp);
