@@ -74,7 +74,9 @@ int main(int argc, char **argv)
  
  /*demo_galatians();*/
  
- demo_lucifer();
+ /*demo_lucifer();*/
+ 
+ sdl_chastelib_hexplore(argc,argv); /*call this function and pass the command args to it*/
 
  if(0)
  {
