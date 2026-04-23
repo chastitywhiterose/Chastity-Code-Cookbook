@@ -1,72 +1,4 @@
-/* chastelib_demo_sdl2_hextools.h */
-
-char RAM[0x10000];
-int RAM_address_base=0;
-int RAM_address_current=0;
-
-/*outputs the ASCII text to the right of the hex field*/
-void RAM_textdump()
-{
- int a,x=0,count=16;
-
- x=0;
- while(x<count)
- {
-  a=RAM[RAM_address_current+x];
-  if( a < 0x20 || a > 0x7E )
-  {
-   sdl_putchar('.');
-  }
-  else
-  {
-   sdl_putchar(a);
-  }
-  x++;
- }
-
-}
-
-
-/*outputs up 16 bytes on each row in hexadecimal at the RAM location*/
-void RAM_hexdump()
-{
- int x,y,count=16;
- 
- RAM_address_current=RAM_address_base;
- 
- y=0;
- while(y<count)
- {
-  int_width=8;
-  putint(RAM_address_current);
-  putstr(" ");
-
-  int_width=2;
-  x=0;
-  while(x<count)
-  {
-   putint(RAM[RAM_address_current+x]&0xFF);
-   putstr(" ");
-   x++;
-  }
-  RAM_textdump();
-  putstr("\n");
-
-  RAM_address_current+=count;
-  y++;
- }
- 
-}
-
-
-
-
-int RAM_x=0;
-int RAM_y=0;
-
-
-
-int sdl_chastelib_hexram_edit(int argc, char **argv)
+int sdl_chastelib_hexram(int argc, char **argv)
 {
  /*variables required by SDL*/
  int loop=1;
@@ -128,14 +60,6 @@ int sdl_chastelib_hexram_edit(int argc, char **argv)
 
    if(e.type == SDL_KEYDOWN /*&& e.key.repeat==0*/)
    {
-    /*
-     if a key has been pressed, we copy the global variables of the RAM selected
-     into these temporary variables mostly just to save code space by referring to variables
-     of a single letter name
-    */
-    int x=RAM_x;
-    int y=RAM_y;
-   
     key=e.key.keysym.sym;
     switch(key)
     {
@@ -144,19 +68,19 @@ int sdl_chastelib_hexram_edit(int argc, char **argv)
       loop=0;
      break;
    
-    /*the main 4 directions*/
-    case SDLK_UP:
-     y--;if(y<0){y=15;}
-    break;
-    case SDLK_DOWN:
-     y++;if(y>=height){y=0;}
-    break;
-    case SDLK_LEFT:
-     x--;if(x<0){x=15;}
-    break;
-    case SDLK_RIGHT:
-     x++;if(x>=width){x=0;}
-    break;
+     /*the main 4 directions*/
+     case SDLK_UP:
+      RAM_address_base-=0x10;
+     break;
+     case SDLK_DOWN:
+      RAM_address_base+=0x10;
+     break;
+     case SDLK_LEFT:
+      RAM_address_base--;
+     break;
+     case SDLK_RIGHT:
+      RAM_address_base++;
+     break;
      
      case SDLK_PAGEUP:
       RAM_address_base-=0x100;
@@ -167,9 +91,6 @@ int sdl_chastelib_hexram_edit(int argc, char **argv)
      
     }
 
-    /*set the global x and y index variables from the local copies*/
-    RAM_x=x;
-    RAM_y=y;
    } /*end of SDL_KEYDOWN section*/
 
 
