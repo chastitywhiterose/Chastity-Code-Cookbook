@@ -7,62 +7,6 @@ int RAM_address_current=0;
 int RAM_x=0;
 int RAM_y=0;
 
-/*outputs the ASCII text to the right of the hex field*/
-void RAM_textdump()
-{
- int a,x=0,count=16;
-
- x=0;
- while(x<count)
- {
-  a=RAM[RAM_address_current+x];
-  if( a < 0x20 || a > 0x7E )
-  {
-   sdl_putchar('.');
-   putchar('.');
-  }
-  else
-  {
-   sdl_putchar(a);
-   putchar(a);
-  }
-  x++;
- }
-
-}
-
-
-/*outputs up 16 bytes on each row in hexadecimal at the RAM location*/
-void RAM_hexdump()
-{
- int x,y,count=16;
- 
- RAM_address_current=RAM_address_base;
- 
- y=0;
- while(y<count)
- {
-  int_width=8;
-  putint(RAM_address_current);
-  /*putint(&RAM[RAM_address_current]);*/ /*this can show the actual address but is not reliable*/
-  putstr(" ");
-
-  int_width=2;
-  x=0;
-  while(x<count)
-  {
-   putint(RAM[RAM_address_current+x]&0xFF);
-   putstr(" ");
-   x++;
-  }
-  RAM_textdump();
-  putstr("\n");
-
-  RAM_address_current+=count;
-  y++;
- }
- 
-}
 
 
 /*
@@ -343,12 +287,73 @@ int sdl_chastelib_hexplore(int argc, char **argv)
 
 
 
+/*outputs the ASCII text to the right of the hex field*/
+void RAM_textdump()
+{
+ int a,x=0,count=16;
+
+ x=0;
+ while(x<count)
+ {
+  a=RAM[RAM_address_current+x];
+  if( a < 0x20 || a > 0x7E )
+  {
+   sdl_putchar('.');
+   putchar('.');
+  }
+  else
+  {
+   sdl_putchar(a);
+   putchar(a);
+  }
+  x++;
+ }
+
+}
+
+
+/*outputs up 16 bytes on each row in hexadecimal at the RAM location*/
+void RAM_hexdump()
+{
+ int x,y,count=16;
+ 
+ RAM_address_current=RAM_address_base;
+ 
+ y=0;
+ while(y<count)
+ {
+  int_width=8;
+  putint(RAM_address_current);
+  /*putint(&RAM[RAM_address_current]);*/ /*this can show the actual address but is not reliable*/
+  putstr(" ");
+
+  int_width=2;
+  x=0;
+  while(x<count)
+  {
+   putint(RAM[RAM_address_current+x]&0xFF);
+   putstr(" ");
+   x++;
+  }
+  RAM_textdump();
+  putstr("\n");
+
+  RAM_address_current+=count;
+  y++;
+ }
+ 
+}
+
+
+
+
+
 /*
 This function is an entire hex editor that allows editing a 64kb array of bytes in RAM
 It was easier to make this because it doesn't use file I/O which is slightly complicated.
 */
 
-int sdl_chastelib_hexram_edit(int argc, char **argv)
+int sdl_chastelib_hexram_edit()
 {
  /*variables required by SDL*/
  int loop=1;
