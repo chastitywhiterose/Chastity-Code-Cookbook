@@ -1,11 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "chastelib.h"
  
 int main(int argc, char *argv[])
 {
  FILE *fp; /*file pointer*/
- char *fs; /*pointer to a char array to be created*/ 
+ char *fs; /*pointer to a char array to be created*/
+ char *s;
  int flength,count;
    
  if(argc==1)
@@ -41,15 +43,36 @@ int main(int argc, char *argv[])
  fs=malloc(flength+1); /*allocate enough bytes for the whole file plus zero terminator*/
   
  count=fread(fs,1,flength,fp); /*read all the bytes*/
+ 
+ /*if only the filename was given but nothing else, we will just display all characters to stdout*/
+ 
+ if(argc==2)
+ {
+  fwrite(fs,1,count,stdout); /*write all the bytes*/
+ }
 
- fwrite(fs,1,count,stdout); /*write all the bytes*/
+ if(argc>2)
+ {
+  s=strstr(fs,argv[2]);
+  if(s==NULL)
+  {
+   putstr("NULL\n\"");
+   putstr(argv[2]);
+   putstr("\"\ncould not be found in this file");
+  }
+  else
+  {
+   count-=s-fs; /*get difference between start of file string and where the substr was found*/
+   fwrite(s,1,count,stdout); /*write all the bytes starting from the substr to the end of file*/
+  }
 
+ }
+ 
  putstr("\n---\nEOF\n");
 
- radix=10; 
- putstr("\nfile length==");
- putint(flength);
- putstr("\n");
+ radix=10;
+ putint(count);
+ putstr(" bytes read\n");
 
  free(fs);
 
