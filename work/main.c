@@ -4,12 +4,9 @@
  
 int main(int argc, char *argv[])
 {
- /*int x;*/
  FILE* fp; /*file pointers*/
- int c0=0;
+ int c=0;
    
- /*printf("argc=%i\n",argc);*/
-
  if(argc==1)
  {
   putstr("chastecat usage:\n\n");
@@ -34,17 +31,13 @@ int main(int argc, char *argv[])
   }
  }
 
-
- while(c0!=EOF)
+ while((c=fgetc(fp))!=EOF)
  {
-  c0 = fgetc(fp);
-
-  if(c0==EOF){putstr("---\nEOF\n");break;}
-  
-  fputc(c0,stdout);
+  fputc(c,stdout);
  
-
  }
+ putstr("\n---\nEOF\n");
 
  return 0;
 }
+
