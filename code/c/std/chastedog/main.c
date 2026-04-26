@@ -14,7 +14,14 @@ int main(int argc, char *argv[])
  {
   putstr("chastedog usage:\n\n");
   putstr(argv[0]);
-  putstr(" filename.txt\n");
+  putstr(" filename.txt\n\n");
+  
+  putstr(argv[0]);
+  putstr(" filename.txt string_start\n\n");
+
+  putstr(argv[0]);
+  putstr(" filename.txt string_start string_end\n\n");
+  
   return 0;
  }
 
@@ -27,11 +34,13 @@ int main(int argc, char *argv[])
    putstr("\nFailed to open file\n");
    return 1;
   }
+  
   else
   {
    putstr(argv[1]);
    putstr("\n---\n");
   }
+ 
  }
  
  /*get length of the entire file by seeking to end and then back*/
@@ -72,28 +81,59 @@ int main(int argc, char *argv[])
  /*next argument as end of substr*/
  if(argc>3)
  {
-  s1=strstr(s,argv[3]);
-  if(s1==NULL)
+ 
+  /*
+   Special case of closing bracket as argument for end string
+   We use a bracket_index variable to keep track of the blocks. The idea is that we will keep searching for
+   the proper end of a block according to the C programming language.
+   This might be the end of a loop or even a function if applicable.
+  */
+  if(strcmp(argv[3],"}")==0)
   {
-   putstr("NULL\n\"");
-   putstr(argv[3]);
-   putstr("\"\ncould not be found\n---\n");
-   return 1;
+   int bracket_index=0;
+   s1=s; /*begin search at beginning string from previous arg*/
+   while(1)
+   {
+    if(*s1=='{'){bracket_index++;}
+    if(*s1=='}')
+    {
+     bracket_index--;
+     if(bracket_index==0){break;}
+    }
+    s1++;
+   }
+   
+   count=(s1-s)+strlen(argv[3]); /*get difference between start of file string and where the substr was found*/
   }
+  
+  /*otherwise, just do inclusive end string*/
   else
   {
-   count=(s1-s)+strlen(argv[3]); /*get difference between start of file string and where the substr was found*/
-   /*fwrite(s,1,count,stdout);*/ /*write all the bytes starting from the substr to the end of file*/
+   s1=strstr(s,argv[3]);
+   if(s1==NULL)
+   {
+    putstr("NULL\n\"");
+    putstr(argv[3]);
+    putstr("\"\ncould not be found\n---\n");
+    return 1;
+   }
+   else
+   {
+    count=(s1-s)+strlen(argv[3]); /*get difference between start of file string and where the substr was found*/
+   }
   }
+  
  }
 
  fwrite(s,1,count,stdout); /*write all the bytes starting from the substr to the end of file*/
- 
+
+  
  putstr("\n---\nEOF\n");
 
  radix=10;
  putint(count);
  putstr(" bytes read\n");
+ 
 
  free(fs);
 
