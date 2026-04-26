@@ -72,19 +72,41 @@ int main(int argc, char *argv[])
  /*next argument as end of substr*/
  if(argc>3)
  {
-  s1=strstr(s,argv[3]);
-  if(s1==NULL)
+ 
+  /*Special case of closing bracket!*/
+  if(strcmp(argv[3],"}")==0)
   {
-   putstr("NULL\n\"");
-   putstr(argv[3]);
-   putstr("\"\ncould not be found\n---\n");
-   return 1;
+   int bracket_index=0;
+   putstr("Special case of closing bracket!\n");
+   s1=s; /*begin search at beginning string from previous arg*/
+   while(*s1!='}' || bracket_index!=0)
+   {
+    if(*s1=='{'){bracket_index++;}
+    if(*s1=='}'){bracket_index--;}
+    printf("brack==%d ,%c\n",bracket_index,*s1);
+    s1++;
+   }
+   
+   count=(s1-s)+strlen(argv[3]); /*get difference between start of file string and where the substr was found*/
   }
+  
+  /*otherwise, just do inclusive end string*/
   else
   {
-   count=(s1-s)+strlen(argv[3]); /*get difference between start of file string and where the substr was found*/
-   /*fwrite(s,1,count,stdout);*/ /*write all the bytes starting from the substr to the end of file*/
+   s1=strstr(s,argv[3]);
+   if(s1==NULL)
+   {
+    putstr("NULL\n\"");
+    putstr(argv[3]);
+    putstr("\"\ncould not be found\n---\n");
+    return 1;
+   }
+   else
+   {
+    count=(s1-s)+strlen(argv[3]); /*get difference between start of file string and where the substr was found*/
+   }
   }
+  
  }
 
  fwrite(s,1,count,stdout); /*write all the bytes starting from the substr to the end of file*/
