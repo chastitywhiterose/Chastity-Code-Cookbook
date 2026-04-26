@@ -7,7 +7,7 @@ int main(int argc, char *argv[])
 {
  FILE *fp; /*file pointer*/
  char *fs; /*pointer to a char array to be created*/
- char *s;
+ char *s,*s1;
  int flength,count;
    
  if(argc==1)
@@ -49,8 +49,10 @@ int main(int argc, char *argv[])
  if(argc==2)
  {
   fwrite(fs,1,count,stdout); /*write all the bytes*/
+  return 0; /*return with no errors*/
  }
 
+ /*next argument as start of substr*/
  if(argc>2)
  {
   s=strstr(fs,argv[2]);
@@ -58,15 +60,34 @@ int main(int argc, char *argv[])
   {
    putstr("NULL\n\"");
    putstr(argv[2]);
-   putstr("\"\ncould not be found in this file");
+   putstr("\"\ncould not be found\n---\n");
+   return 1;
   }
   else
   {
    count-=s-fs; /*get difference between start of file string and where the substr was found*/
-   fwrite(s,1,count,stdout); /*write all the bytes starting from the substr to the end of file*/
   }
-
  }
+ 
+ /*next argument as end of substr*/
+ if(argc>3)
+ {
+  s1=strstr(s,argv[3]);
+  if(s1==NULL)
+  {
+   putstr("NULL\n\"");
+   putstr(argv[3]);
+   putstr("\"\ncould not be found\n---\n");
+   return 1;
+  }
+  else
+  {
+   count=(s1-s)+strlen(argv[3]); /*get difference between start of file string and where the substr was found*/
+   /*fwrite(s,1,count,stdout);*/ /*write all the bytes starting from the substr to the end of file*/
+  }
+ }
+
+ fwrite(s,1,count,stdout); /*write all the bytes starting from the substr to the end of file*/
  
  putstr("\n---\nEOF\n");
 
