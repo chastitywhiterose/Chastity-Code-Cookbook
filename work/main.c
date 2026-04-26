@@ -14,7 +14,14 @@ int main(int argc, char *argv[])
  {
   putstr("chastedog usage:\n\n");
   putstr(argv[0]);
-  putstr(" filename.txt\n");
+  putstr(" filename.txt\n\n");
+  
+  putstr(argv[0]);
+  putstr(" filename.txt string_start\n\n");
+
+  putstr(argv[0]);
+  putstr(" filename.txt string_start string_end\n\n");
+  
   return 0;
  }
 
@@ -27,11 +34,13 @@ int main(int argc, char *argv[])
    putstr("\nFailed to open file\n");
    return 1;
   }
+  
   else
   {
    putstr(argv[1]);
    putstr("\n---\n");
   }
+ 
  }
  
  /*get length of the entire file by seeking to end and then back*/
@@ -117,12 +126,14 @@ int main(int argc, char *argv[])
  }
 
  fwrite(s,1,count,stdout); /*write all the bytes starting from the substr to the end of file*/
- 
+
+  
  putstr("\n---\nEOF\n");
 
  radix=10;
  putint(count);
  putstr(" bytes read\n");
+ 
 
  free(fs);
 
