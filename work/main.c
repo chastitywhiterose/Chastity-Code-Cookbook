@@ -4,9 +4,9 @@
  
 int main(int argc, char *argv[])
 {
- FILE* fp; /*file pointer*/
- long flength;
- int c=0;
+ FILE *fp; /*file pointer*/
+ char *fs; /*pointer to a char array to be created*/ 
+ int flength,count;
    
  if(argc==1)
  {
@@ -32,22 +32,26 @@ int main(int argc, char *argv[])
   }
  }
  
-  /*get length of the entire file by seeking to end and then back*/
-  fseek(fp,0,SEEK_END); /*go to end of file*/
-  flength=ftell(fp); /*get position of the file*/
-  fseek(fp,0,SEEK_SET); /*go back to the beginning*/
+ /*get length of the entire file by seeking to end and then back*/
+ fseek(fp,0,SEEK_END); /*go to end of file*/
+ flength=ftell(fp); /*get position of the file*/
+ fseek(fp,0,SEEK_SET); /*go back to the beginning*/
+  
+ /*now we know the length of the file, we will load the whole thing*/
+ fs=malloc(flength+1); /*allocate enough bytes for the whole file plus zero terminator*/
+  
+ count=fread(fs,1,flength,fp); /*read all the bytes*/
 
- while((c=fgetc(fp))!=EOF)
- {
-  fputc(c,stdout);
- 
- }
+ fwrite(fs,1,count,stdout); /*write all the bytes*/
+
  putstr("\n---\nEOF\n");
 
  radix=10; 
  putstr("\nfile length==");
  putint(flength);
  putstr("\n");
+
+ free(fs);
 
  return 0;
 }
