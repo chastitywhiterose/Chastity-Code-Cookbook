@@ -4,12 +4,13 @@
  
 int main(int argc, char *argv[])
 {
- FILE* fp; /*file pointers*/
+ FILE* fp; /*file pointer*/
+ long flength;
  int c=0;
    
  if(argc==1)
  {
-  putstr("chastecat usage:\n\n");
+  putstr("chastedog usage:\n\n");
   putstr(argv[0]);
   putstr(" filename.txt\n");
   return 0;
@@ -30,6 +31,11 @@ int main(int argc, char *argv[])
    putstr("\n---\n");
   }
  }
+ 
+  /*get length of the entire file by seeking to end and then back*/
+  fseek(fp,0,SEEK_END); /*go to end of file*/
+  flength=ftell(fp); /*get position of the file*/
+  fseek(fp,0,SEEK_SET); /*go back to the beginning*/
 
  while((c=fgetc(fp))!=EOF)
  {
@@ -37,6 +43,11 @@ int main(int argc, char *argv[])
  
  }
  putstr("\n---\nEOF\n");
+
+ radix=10; 
+ putstr("\nfile length==");
+ putint(flength);
+ putstr("\n");
 
  return 0;
 }
