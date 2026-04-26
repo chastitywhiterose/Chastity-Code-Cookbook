@@ -14,7 +14,7 @@ void textdump()
  x=count;
  while(x<0x10)
  {
-  putstring("   ");
+  putstr("   ");
   x++;
  }
 
@@ -27,10 +27,11 @@ void textdump()
  }
  bytes[x]=0;
 
- putstring(bytes);
+ putstr(bytes);
 }
 
 /*outputs up to 16 bytes on each row in hexadecimal*/
+
 void hexdump()
 {
  int x,address=0;
@@ -39,21 +40,22 @@ void hexdump()
  {
   int_width=8;
   putint(address);
-  putstring(" ");
+  putstr(" ");
 
   int_width=2;
   x=0;
   while(x<count)
   {
-   putint(bytes[x]);
-   printf(" ");
+   putint(bytes[x]&0xFF);
+   putstr(" ");
    x++;
   }
   textdump();
-  putstring("\n");
+  putstr("\n");
 
   address+=count;
  }
+ putstr("EOF\n");
 }
 
 int main(int argc, char *argv[])
@@ -65,7 +67,7 @@ int main(int argc, char *argv[])
 
  if(argc==1)
  {
-  putstring
+  putstr
   (
    "Welcome to chastehex! The tool for reading and writing bytes of a file!\n\n"
    "To hexdump an entire file:\n\n\tchastehex file\n\n"
@@ -80,13 +82,14 @@ int main(int argc, char *argv[])
   fp=fopen(argv[1],"rb+");
   if(fp==NULL)
   {
-   printf("File \"%s\" cannot be opened.\n",argv[1]);
+   putstr(argv[1]);
+   putstr("\nFailed to open file\n");
    return 1;
   }
   else
   {
-   putstring(argv[1]);
-   putstring("\n");
+   putstr(argv[1]);
+   putstr("\n");
   }
  }
 
@@ -97,26 +100,24 @@ int main(int argc, char *argv[])
 
  if(argc>2)
  {
-  x=strint(argv[2]);
-  fseek(fp,x,SEEK_SET);
+  x=strint(argv[2]); /*extract a number from the argument string after the filename*/
+  fseek(fp,x,SEEK_SET); /*seek to the address given in argument*/
  }
-
-
 
  /*read a byte at address of second arg*/
  if(argc==3)
  {
   c=fgetc(fp);
   int_width=8;
-  putstring(intstr(x));
-  putstring(" ");
-  if(c==EOF){putstring("EOF");}
+  putstr(intstr(x));
+  putstr(" ");
+  if(c==EOF){putstr("EOF");}
   else
   {
    int_width=2;
-   putstring(intstr(c));
+   putstr(intstr(c));
   }
-  putstring("\n");
+  putstr("\n");
  }
 
  /*any arguments past the address are hex bytes to be written*/
@@ -127,11 +128,11 @@ int main(int argc, char *argv[])
   {
    c=strint(argv[argx]);
    int_width=8;
-   putstring(intstr(x));
-   putstring(" ");
+   putstr(intstr(x));
+   putstr(" ");
    int_width=2;
-   putstring(intstr(c));
-   putstring("\n");
+   putstr(intstr(c));
+   putstr("\n");
    fputc(c,fp);
    x++;
    argx++;
@@ -143,3 +144,4 @@ int main(int argc, char *argv[])
 }
 
 /* gcc -Wall -ansi -pedantic main.c -o chastehex */
+
