@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
    int bracket_index=0;
    putstr("Special case of closing bracket!\n");
    s1=s; /*begin search at beginning string from previous arg*/
-   while(*s1!='}' || bracket_index!=0)
+   while(*s1!='}')
    {
     if(*s1=='{'){bracket_index++;}
     if(*s1=='}'){bracket_index--;}
