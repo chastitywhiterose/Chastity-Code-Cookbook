@@ -73,17 +73,24 @@ int main(int argc, char *argv[])
  if(argc>3)
  {
  
-  /*Special case of closing bracket!*/
+  /*
+   Special case of closing bracket as argument for end string
+   We use a bracket_index variable to keep track of the blocks. The idea is that we will keep searching for
+   the proper end of a block according to the C programming language.
+   This might be the end of a loop or even a function if applicable.
+  */
   if(strcmp(argv[3],"}")==0)
   {
    int bracket_index=0;
-   putstr("Special case of closing bracket!\n");
    s1=s; /*begin search at beginning string from previous arg*/
-   while(*s1!='}')
+   while(1)
    {
     if(*s1=='{'){bracket_index++;}
-    if(*s1=='}'){bracket_index--;}
-    printf("brack==%d ,%c\n",bracket_index,*s1);
+    if(*s1=='}')
+    {
+     bracket_index--;
+     if(bracket_index==0){break;}
+    }
     s1++;
    }
    
