@@ -3,5 +3,5 @@ main-fasm-windows:
 	main
 chastehex:
 	fasm main.asm
-	main testfile.bin
+	main testfile
 

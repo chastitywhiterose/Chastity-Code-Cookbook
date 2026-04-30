@@ -9,7 +9,6 @@ call putstring
 
 mov [radix],16 ; can choose radix for integer output!
 mov [int_width],1
-mov [int_newline],0
 
 mov eax,input_string_int ;address of input string to convert to integer
 call strint              ;call strint to return the string in eax register

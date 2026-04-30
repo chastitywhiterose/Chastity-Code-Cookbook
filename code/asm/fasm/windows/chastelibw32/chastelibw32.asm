@@ -3,8 +3,6 @@
 
 ; function to print zero terminated string pointed to by register eax
 
-stdout dd 1 ; variable for standard output so that it can theoretically be redirected
-
 putstring:
 
 push eax
@@ -24,11 +22,10 @@ jmp putstring_strlen_start
 putstring_strlen_end:
 sub ebx,eax ;ebx will now have correct number of bytes
 
-;write string using Win32 WriteFile system call.
-;https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-writefile
+;Write String using Win32 WriteFile system call.
 push 0              ;Optional Overlapped Structure 
 push 0              ;Optionally Store Number of Bytes Written
-push ebx            ;number of bytes to write
+push ebx            ;Number of bytes to write
 push eax            ;address of string to print
 push -11            ;STD_OUTPUT_HANDLE = Negative Eleven
 call [GetStdHandle] ;use the above handle
@@ -42,11 +39,12 @@ pop eax
 
 ret ; this is the end of the putstring function return to calling location
 
-;this is the location in memory where digits are written to by the putint function
-int_string     db 32 dup '?' ;enough bytes to hold maximum size 32-bit binary integer
-; this is the end of the integer string optional line feed and terminating zero
-; clever use of this label can change the ending to be a different character when needed 
-int_newline db 0Ah,0
+; This is the location in memory where digits are written to by the intstr function
+; The string of bytes and settings such as the radix and width are global variables defined below.
+
+int_string db 32 dup '?' ;enough bytes to hold maximum size 32-bit binary integer
+
+int_string_end db 0 ;zero byte terminator for the integer string
 
 radix dd 2 ;radix or base for integer output. 2=binary, 8=octal, 10=decimal, 16=hexadecimal
 int_width dd 8
@@ -58,7 +56,7 @@ int_width dd 8
 
 intstr:
 
-mov ebx,int_newline-1 ;find address of lowest digit(just before the newline 0Ah)
+mov ebx,int_string_end-1 ;find address of lowest digit
 mov ecx,1
 
 digits_start:
@@ -100,6 +98,7 @@ end_zeros:
 mov eax,ebx ; now that the digits have been written to the string, display it!
 
 ret
+
 
 ; function to print string form of whatever integer is in eax
 ; The radix determines which number base the string form takes.
@@ -205,6 +204,8 @@ strint_end:
 
 ret
 
+
+
 ;the next utility functions simply print a space or a newline
 ;these help me save code when printing lots of things for debugging
 
@@ -237,3 +238,33 @@ call putstring
 pop eax
 ret
 
+;a small function just for the common operation
+;printing an integer followed by a space
+;this saves a few bytes in the assembled code
+;by reducing the number of function calls in the main program
+
+putint_and_space:
+call putint
+call putspace
+ret
+
+;a small function just for the common operation
+;printing an integer followed by a line feed
+;this saves a few bytes in the assembled code
+;by reducing the number of function calls in the main program
+
+putint_and_line:
+call putint
+call putline
+ret
+
+;a small function just for the common operation
+;printing a string followed by a line feed
+;this saves a few bytes in the assembled code
+;by reducing the number of function calls in the main program
+;it also means we don't need to include a newline in every string!
+
+putstr_and_line:
+call putstring
+call putline
+ret

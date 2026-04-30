@@ -1,7 +1,6 @@
 main-fasm-windows:
 	fasm main.asm
 	main
-chastehex:
+chastecmp:
 	fasm main.asm
-	main testfile.bin
-
+	main file1.txt file2.txt
