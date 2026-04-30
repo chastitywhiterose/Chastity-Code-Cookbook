@@ -160,7 +160,13 @@ call [ReadFile]
 
 cmp [bytes_read],1 
 jz print_byte ;if less than one bytes read, there is an error
-call show_eof
+
+mov eax,[file_offset]
+mov [int_width],8
+call putint_and_space
+mov eax,end_of_file
+call putstr_and_line
+
 jmp main_end
 
 print_byte:
@@ -343,16 +349,7 @@ call putstring
 ret
 
 
-;function to display EOF with address
-show_eof:
 
-mov eax,[file_offset]
-mov [int_width],8
-call putint_and_space
-mov eax,end_of_file
-call putstr_and_line
-
-ret
 
 ;variables for managing arguments
 arg_start  dd ? ;start of arg string
