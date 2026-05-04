@@ -11,7 +11,6 @@ int sdl_chastelib_test_suite()
  int key=1;
  SDL_Event e;
 
-
  int a=0,b,c,d; /*variables for this test program*/
 
  line_spacing_pixels=1; /*empty space in pixels between lines*/

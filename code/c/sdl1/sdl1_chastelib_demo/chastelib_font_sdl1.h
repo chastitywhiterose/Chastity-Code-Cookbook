@@ -5,7 +5,6 @@ SDL surfaces are easy to work with and this was the original way I implemented m
 There is an incomplete version that uses an SDL renderer but offers no advantages over this one.
 */
 
-
 /*
 chastelib font structure
 
@@ -18,6 +17,7 @@ struct chaste_font
  int char_height; /*height of a character*/
  int char_scale; /*multiplier of original character size used in relevant functions*/
  SDL_Surface *surface; /*the surface of the image of loaded font*/
+ int color; /*color which is used only by certain functions*/
 };
 
 /*global font that will be reused many times*/
@@ -34,10 +34,10 @@ struct chaste_font chaste_font_load(char *s)
  temp_surface=SDL_LoadBMP(s);
 
  /*convert to same surface as screen for faster blitting*/
- new_font.surface=SDL_ConvertSurface(temp_surface, surface->format);
+ new_font.surface=SDL_ConvertSurface(temp_surface, surface->format, 0);
  
  /*free the temp surface*/
- SDL_DestroySurface(temp_surface); 
+ SDL_FreeSurface(temp_surface); 
 
  if(new_font.surface==NULL){printf( "SDL could not load image! SDL_Error: %s\n",SDL_GetError());return new_font;}
 
@@ -59,10 +59,68 @@ struct chaste_font chaste_font_load(char *s)
   printf("Size of each character in loaded font is %d,%d\n",new_font.char_width,new_font.char_height);
   new_font.char_scale=1;
   printf("Character scale initialized to %d\n\n",new_font.char_scale);
+  new_font.color=0xFFFFFF;
  }
 
  return new_font;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+A function to load a font and return a structure with the needed data to draw later.
+This version loads the image data from a PBM file using the SDL_LoadPBM function.
+I wrote the SDL_LoadPBM function precisely because I wanted to use an open file format
+that was not associated with Microsoft.
+*/
+struct chaste_font chaste_font_load_pbm(char *s)
+{
+ struct chaste_font new_font;
+ printf("Loading font: %s\n",s);
+
+ /*load bitmap from a Portable Bitmap file*/
+ new_font.surface=SDL_LoadPBM(s);
+
+ if(new_font.surface==NULL){printf( "SDL could not load image! SDL_Error: %s\n",SDL_GetError());return new_font;}
+
+ /*
+  by default,font height is detected by original image height
+  but the font width is the width of the image divided by 95
+  because there are exactly 95 characters in the font format that I created.
+ */
+ new_font.char_width=new_font.surface->w/95; /*there are 95 characters in my font files*/
+ new_font.char_height=new_font.surface->h;
+
+ if(new_font.char_height==0)
+ {
+  printf("Something went horribly wrong loading the font from file:\n%s\n",s);
+ }
+ else
+ {
+  /*printf("Font loaded correctly\n");*/
+  printf("Size of each character in loaded font is %d,%d\n",new_font.char_width,new_font.char_height);
+  new_font.char_scale=1;
+  printf("Character scale initialized to %d\n",new_font.char_scale);
+  new_font.color=0xFFFFFF;
+  printf("Default text color is %06X\n\n",new_font.color);
+ }
+
+ return new_font;
+}
+
+
+
+
 
 /*global variables to control the cursor in the putchar function*/
 int cursor_x=0,cursor_y=0;
@@ -71,13 +129,30 @@ int line_spacing_pixels=1; /*optionally space lines of text by this many pixels*
 /*
 This function is designed to print a single character to the current surface of the main window
 This means that it can be called repeatedly to write entire strings of text
+This uses direct pixel access instead of blitting functions to handle scaling
+because SDL1 does not have a function for blitting and scaling
 */
 
-int sdl_putchar(char c)
+int sdl_putchar(char c) /*direct pixel access edition for SDL1*/
 {
  int x,y; /*used as coordinates for source image to blit from*/
- int error=0; /*used only for error checking*/
+
+ Uint32 *ssp; /*ssp is short for Source Surface Pointer*/
+ Uint32 *dsp; /*dsp is short for Destination Surface Pointer*/
+ int source_surface_width;
+ int sx,sy,sx2,sy2,dx,dy; /*x,y coordinates for both source and destination*/
+ Uint32 pixel;
+ /*Uint8 r,g,b;*/
+
  SDL_Rect rect_source,rect_dest;
+
+ /*set the source surface pointer to the source bitmap font*/
+ ssp=(Uint32*)main_font.surface->pixels;
+ dsp=(Uint32*)surface->pixels;
+
+ /*get the width of the source surface for indexing later*/
+ source_surface_width=main_font.surface->w;
+
 
   /*
   in the special case of a newline, the cursor is updated to the next line
@@ -101,37 +176,59 @@ int sdl_putchar(char c)
 
    rect_dest.x=cursor_x;
    rect_dest.y=cursor_y;
-   rect_dest.w=main_font.char_width*main_font.char_scale;
-   rect_dest.h=main_font.char_height*main_font.char_scale;
+   rect_dest.w=main_font.char_scale;
+   rect_dest.h=main_font.char_scale;
 
-   /*copy the character to the screen (including scale of character)*/
-   error=SDL_BlitSurfaceScaled(main_font.surface,&rect_source,surface,&rect_dest,SDL_SCALEMODE_NEAREST);
-   if(!error){printf("Error: %s\n",SDL_GetError());}
+   /*Now for the ultra complicated stuff that only Chastity can read and understand!*/
+   sx2=rect_source.x+rect_source.w;
+   sy2=rect_source.y+rect_source.h;
    
-   /*
-   copy the character directly but ignore scale
-   this will result in the tiny character from the source font
-   and is only intended as a joke
-   */
-   /*error=SDL_BlitSurface(main_font.surface,&rect_source,surface,&rect_dest);*/
-   if(!error){printf("Error: %s\n",SDL_GetError());}
+   dx=rect_dest.x;
+   dy=rect_dest.y;
+   
+   sy=rect_source.y;
+   while(sy<sy2)
+   {
+    dx=rect_dest.x;
+    sx=rect_source.x;
+    while(sx<sx2)
+    {
+     pixel=ssp[sx+sy*source_surface_width]; /*get pixel from source image*/
+     /*printf("pixel=%X\n",pixel);*/
+ 
+     if(pixel) /*draw conditionally based on source pixel*/
+     {
+      int tx,ty,tx2,ty2; /*temp variables only for the square*/
+      ty2=dy+main_font.char_scale;
+      
+      /*draw a square of width/height equal to scale*/      
+      ty=dy;
+      while(ty<ty2)
+      {
+       tx=dx;
+       tx2=dx+main_font.char_scale;
+       while(tx<tx2)
+       {
+        dsp[tx+ty*width]=main_font.color;
+        tx++;
+       }
+       ty++;
+      }
+      /*end of rectangle*/
+     }
+     sx++;
+     dx+=main_font.char_scale;
+    }
+    sy++;
+    dy+=main_font.char_scale;
+   }
+   /*End of really complicated section*/
 
    cursor_x+=main_font.char_width*main_font.char_scale;
   }
 
  return c;
 }
-
-/*
-SDL3 notes:
-
-In the SDL_BlitSurfaceScaled function, the final argument is what method is used for scaling.
-https://wiki.libsdl.org/SDL3/SDL_ScaleMode
-
-SDL_SCALEMODE_LINEAR makes everything look blurry. I don't like it!
-SDL_SCALEMODE_NEAREST makes it look correct like in SDL2
-
-*/
 
 /*
  This function is the SDL equivalent of my putstring function.
@@ -196,7 +293,7 @@ This makes sense because the Linux clear command does the same thing
 void sdl_clear()
 {
  cursor_x=0;cursor_y=0;
- SDL_FillSurfaceRect(surface,NULL,0x000000);
+ SDL_FillRect(surface,NULL,0x000000);
  
  /*
  these next lines use escape sequences to also clear the terminal
@@ -220,12 +317,11 @@ void sdl_wait_escape()
  {
   while(SDL_PollEvent(&e))
   {
-   if(e.type == SDL_EVENT_QUIT){loop=0;}
-   if(e.type == SDL_EVENT_KEY_UP)
+   if(e.type == SDL_QUIT){loop=0;}
+   if(e.type == SDL_KEYUP)
    {
-    if(e.key.key==SDLK_ESCAPE){loop=0;}
+    if(e.key.keysym.sym==SDLK_ESCAPE){loop=0;}
    }
   }
  }
 }
-

@@ -16,8 +16,12 @@ SDL_Event e;
 This header file must be included after the above global variables
 because it depends on them.
 */
-#include "chastelib_font_sdl.h"
-#include "chastelib_demo_sdl.h"
+
+#include "chastelib_format_pbm_sdl2.h"
+#include "chastelib_font_sdl2.h"
+#include "chastelib_demo_sdl2.h"
+#include "chastelib_demo_sdl2_extra.h"
+#include "chastelib_demo_sdl2_hextools.h"
 
 int main(int argc, char **argv)
 {
@@ -34,8 +38,11 @@ int main(int argc, char **argv)
  SDL_UpdateWindowSurface(window);
  printf("SDL Program Compiled Correctly\n");
  
- /*load the font from a file*/
- main_font=chaste_font_load("./font/FreeBASIC Font 8.bmp");
+ /*load the font from a BMP file using the old method*/
+ /*main_font=chaste_font_load("./font/FreeBASIC Font 8.bmp");*/
+
+ /*load the font from the PBM file with my custom function in chastelib_format_pbm.h*/
+ main_font=chaste_font_load_pbm("./font/font8.pbm");
  
  /*change the scale of each character*/
  main_font.char_scale=4; 
@@ -61,9 +68,15 @@ int main(int argc, char **argv)
   SDL_UpdateWindowSurface(window); /*update window to show the results*/
   sdl_wait_escape(); /*wait till escape key pressed*/
  }
+ 
+  /*demo_galatians();*/
 
  /*now call a demo function I wrote*/
- sdl_chastelib_test_suite();
+ /*sdl_chastelib_test_suite();*/
+
+ /*sdl_chastelib_hexram();*/
+ 
+ sdl_chastelib_hexplore(argc,argv); /*call this function and pass the command args to it*/
 
  if(0)
  {
@@ -73,6 +86,7 @@ int main(int argc, char **argv)
   sdl_wait_escape(); /*wait till escape key pressed*/
  }
  
+ SDL_FreeSurface(main_font.surface); 
  SDL_DestroyWindow(window);
  SDL_Quit();
  return 0;

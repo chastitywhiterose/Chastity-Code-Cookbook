@@ -1,5 +1,9 @@
 /* chastelib_demo_sdl.h */
 
+/*global palette of colors for my demo functions to use*/
+ int palette[]={0xFF0000,0xFFFF00,0x00FF00,0x00FFFF,0x0000FF,0xFF00FF};
+ int colors=sizeof(palette)/sizeof(*palette);
+
 int sdl_chastelib_test_suite()
 {
  /*variables required by SDL*/
@@ -35,7 +39,8 @@ int sdl_chastelib_test_suite()
   sdl_clear();  /*clear the screen before we begin writing*/
 
   main_font.char_scale=3;
-  putstr("Official test suite for the C version of chastelib.\nThis version uses SDL1.\n\n");
+  main_font.color=0xFFFFFF;
+  putstr("Official test suite for the C version of chastelib.\nThis version uses SDL3.\n\n");
 
   main_font.char_scale=4; 
 
@@ -43,6 +48,7 @@ int sdl_chastelib_test_suite()
   a=b-c;
   while(a<b)
   {
+   main_font.color=palette[a%colors];
    radix=2;
    int_width=8;
    putint(a);
@@ -66,7 +72,7 @@ int sdl_chastelib_test_suite()
    a+=1;
   }
 
-  SDL_Flip(surface); /*update window to show the results*/
+  SDL_UpdateWindowSurface(window); /*update window to show the results*/
  
 } /*end of update on input section*/
 
@@ -75,21 +81,21 @@ int sdl_chastelib_test_suite()
   /*loop to capture and process input that happens*/
   while(SDL_PollEvent(&e))
   {
-   if(e.type == SDL_QUIT){loop=0;}
+   if(e.type == SDL_EVENT_QUIT){loop=0;}
 
    /*use Escape as a key that can also end this loop*/
-   if(e.type == SDL_KEYUP)
+   if(e.type == SDL_EVENT_KEY_UP)
    {
-    if(e.key.keysym.sym==SDLK_ESCAPE){loop=0;}
+    if(e.key.key==SDLK_ESCAPE){loop=0;}
    }
 
-   if(e.type == SDL_KEYDOWN /*&& e.key.repeat==0*/)
+   if(e.type == SDL_EVENT_KEY_DOWN /*&& e.key.repeat==0*/)
    {
-    key=e.key.keysym.sym;
+    key=e.key.key;
     switch(key)
     {
      /*use q as a key that can also end this loop*/
-     case SDLK_q:
+     case SDLK_Q:
       loop=0;
      break;
    
