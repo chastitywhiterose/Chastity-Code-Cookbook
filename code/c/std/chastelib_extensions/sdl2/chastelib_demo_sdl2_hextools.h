@@ -505,5 +505,298 @@ int sdl_chastelib_hexplore(int argc, char **argv)
 }
 
 
+/*
+This function does not actually print anything to an SDL surface.
+Instead it merely updates the cursor values like normal so that we can calculate the size of image that will be needed
+ */
+
+int sdl_putchar_dummy(char c) /*direct pixel access edition for SDL2*/
+{
+  /*
+  in the special case of a newline, the cursor is updated to the next line
+  but no character is printed.
+  */
+  if(c=='\n')
+  {
+   cursor_x=cursor_left;
+   cursor_y+=main_font.char_height*main_font.char_scale;
+   cursor_y+=line_spacing_pixels; /*add space between lines for readability*/
+  }
+  else
+  {
+
+   cursor_x+=main_font.char_width*main_font.char_scale;
+  }
+
+ return c;
+}
+
+
+
+
+/*
+This is a complicated function but it is meant to be a standalone tool and eventually have its own executable.
+
+It uses SDL but does not accept user input! Instead it uses command line arguments to control its behavior.
+
+First, it calculates the size of a file.
+
+*/
+
+
+int sdl_chastelib_imagehex(int argc, char **argv)
+{
+ /*variables required by SDL*/
+
+
+ int x,y; /*variables for this test program*/
+ int hexcolumns;
+ 
+ FILE* fp; /*file pointer*/
+ char *file_ram; /*pointer to a char array to be created based on file size*/
+ int file_address=0;
+ int file_address_current;
+ int flength;
+ int count=0; /*keeps track of how many bytes were last read from file*/
+ int i; /*used to index the RAM sometimes*/
+ 
+ uint32_t width,height; /*variables to hold the width and height of new image surface*/
+
+ 
+ /*the first step is to attempt opening a file if it is given as an argument*/
+ if(argc==1)
+ {
+  putstring
+  (
+   "Welcome to imagehex! The tool for turning a file into a hexadecimal image dump.\n\n"
+   "Enter a filename as an argument to this program to read from it.\n"
+  );
+  return 0;
+ }
+
+ if(argc>1)
+ {
+  fp=fopen(argv[1],"rb"); /*if file exists, open for read and write*/
+  if(fp==NULL)
+  {
+   printf("File \"%s\" cannot be opened.\n",argv[1]);
+   return 1;
+  }
+  else
+  {
+   /*the file was opened we will print its name*/
+   putstring(argv[1]);
+   putstring("\n");
+  }
+ }
+ 
+ /*get length of the entire file by seeking to end and then back*/
+ fseek(fp,0,SEEK_END); /*go to end of file*/
+ flength=ftell(fp); /*get position of the file*/
+ fseek(fp,0,SEEK_SET); /*go back to the beginning*/
+ 
+ printf("flength=%d\n",flength);
+  
+ /*now we know the length of the file, we will load the whole thing*/
+ file_ram=malloc(flength); /*allocate exactly enough bytes for the whole file */
+  
+ count=fread(file_ram,1,flength,fp); /*read all the bytes into the allocated RAM*/
+ 
+ printf("count=%d\n",count);
+ 
+ printf("data loaded into RAM\n");
+ 
+ fclose(fp); /*close the file because we have all the data already*/
+
+  /*now the part of the function that actually uses SDL*/
+
+ line_spacing_pixels=1; /*empty space in pixels between lines*/
+ 
+ main_font.color=0xFFFFFF; /*change text color*/
+ main_font.char_scale=2;
+ 
+ /*
+ switch to the dummy function for output
+ we are printing to the console for now but also calculating how many pixels will be needed to draw it all to an image
+ */
+ sdl_putchar=sdl_putchar_dummy;
+ 
+ printf("Pass 1: Print only to terminal\n");
+ 
+ /*hex dump from RAM first pass*/
+ cursor_x=0;
+ cursor_y=0;
+
+ radix=16;
+ int_width=1;
+ 
+   /*print the hex dump of this page of the file*/  
+  file_address_current=file_address;
+  
+  /*print name of file before the hex dump*/
+  putstr(argv[1]);
+  putstr("\n");
+
+  hexcolumns=0x10;
+  y=0;
+  while(count>0)
+  {
+   int_width=8;
+   putint(file_address_current);
+   putstr(" ");
+   
+   /*if less than 16 bytes remaining, hex list will be shorter*/
+   if(count<0x10){hexcolumns=count;}
+
+   int_width=2;
+   x=0;
+   while(x<hexcolumns)
+   {
+    putint(file_ram[x+y*0x10]&0xFF);
+    putstr(" ");
+    x++;
+   }
+   
+   /*pad the hex fielf with spaces if necessary to line up the text field*/
+   x=count;
+   while(x<0x10)
+   {
+    putstr("   ");
+    x++;
+   }
+  
+   /*cycle through this hex row to print valid characters if any*/
+   x=0;
+   while(x<hexcolumns)
+   {
+    i=file_ram[x+y*0x10];
+    if( i < 0x20 || i > 0x7E )
+    {
+     sdl_putchar('.');
+     putchar('.');
+    }
+    else
+    {
+     sdl_putchar(i);
+     putchar(i);
+    }
+    x++;
+   }
+    
+  
+  putstr("\n");
+
+  file_address_current+=0x10;
+  count-=0x10; /*subtract from characters remaining*/
+
+  y++;
+ }
+ 
+ /*print EOF after the hex dump*/
+ putstr("EOF\n");
+
+ 
+ printf("cursor_x=%d cursor_y=%d\n",cursor_x,cursor_y);
+ 
+ /*
+ we need to create an image of size 80 characters width of fontsize*scale
+ and height based on the cursor_y value at the end of the last routine
+ */
+ 
+ width=80*main_font.char_width*main_font.char_scale;
+ height=cursor_y;
+ 
+ surface_image=SDL_CreateRGBSurface(0,width,height,32,0,0,0,0);
+ 
+ surface=surface_image; /*set the target surface to this image we created*/
+ 
+ printf("Pass 2: Print to image\n");
+ 
+ /*now that we have created an image to draw to, set the original text drawing function back to default*/
+ sdl_putchar=sdl_putchar_pixel;
+ 
+  /*hex dump from RAM second pass*/
+ cursor_x=0;
+ cursor_y=0;
+ 
+ count=flength;
+
+ radix=16;
+ int_width=1;
+ 
+   /*print the hex dump of this page of the file*/  
+  file_address_current=file_address;
+  
+  /*print name of file before the hex dump*/
+  putstr(argv[1]);
+  putstr("\n");
+
+  hexcolumns=0x10;  
+  y=0;
+  while(count>0)
+  {
+   int_width=8;
+   putint(file_address_current);
+   putstr(" ");
+   
+   /*if less than 16 bytes remaining, hex list will be shorter*/
+   if(count<0x10){hexcolumns=count;}
+
+   int_width=2;
+   x=0;
+   while(x<hexcolumns)
+   {
+    putint(file_ram[x+y*0x10]&0xFF);
+    putstr(" ");
+    x++;
+   }
+   
+   /*pad the hex fielf with spaces if necessary to line up the text field*/
+   x=count;
+   while(x<0x10)
+   {
+    putstr("   ");
+    x++;
+   }
+  
+   /*cycle through this hex row to print valid characters if any*/
+   x=0;
+   while(x<hexcolumns)
+   {
+    i=file_ram[x+y*0x10];
+    if( i < 0x20 || i > 0x7E )
+    {
+     sdl_putchar('.');
+     putchar('.');
+    }
+    else
+    {
+     sdl_putchar(i);
+     putchar(i);
+    }
+    x++;
+   }
+    
+  
+  putstr("\n");
+
+  file_address_current+=0x10;
+  count-=0x10; /*subtract from characters remaining*/
+
+  y++;
+ }
+ 
+ /*print EOF after the hex dump*/
+ putstr("EOF\n");
+
+
+ /*save the image to a file so we can see it*/
+ SDL_SaveBMP(surface,"output.bmp");
+ 
+ free(file_ram); /*free memory before ending function*/
+  
+ return 0;
+}
+
 
 

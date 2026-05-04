@@ -33,7 +33,8 @@ int main(int argc, char **argv)
  }
  window=SDL_CreateWindow("SDL2 Program",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,width,height,SDL_WINDOW_SHOWN );
  if(window==NULL){printf( "Window could not be created! SDL_Error: %s\n", SDL_GetError() );return -1;}
- surface = SDL_GetWindowSurface( window ); /*get surface for this window*/
+ surface_window = SDL_GetWindowSurface( window ); /*get surface for this window*/
+ surface=surface_window; /*set the target surface to the window's surface*/
  SDL_FillRect(surface,NULL,0xFF00FF);
  SDL_UpdateWindowSurface(window);
  printf("SDL Program Compiled Correctly\n");
@@ -76,7 +77,9 @@ int main(int argc, char **argv)
 
  /*sdl_chastelib_hexram();*/
  
- sdl_chastelib_hexplore(argc,argv); /*call this function and pass the command args to it*/
+ /*sdl_chastelib_hexplore(argc,argv);*/ /*call this function and pass the command args to it*/
+ 
+ sdl_chastelib_imagehex(argc,argv);
 
  if(0)
  {
