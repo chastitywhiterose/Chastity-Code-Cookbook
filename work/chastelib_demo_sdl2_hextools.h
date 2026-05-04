@@ -550,7 +550,7 @@ int sdl_chastelib_imagehex(int argc, char **argv)
 
 
  int x,y; /*variables for this test program*/
- int hexcolumns=0x10;
+ int hexcolumns;
  
  FILE* fp; /*file pointer*/
  char *file_ram; /*pointer to a char array to be created based on file size*/
@@ -621,7 +621,7 @@ int sdl_chastelib_imagehex(int argc, char **argv)
  */
  sdl_putchar=sdl_putchar_dummy;
  
-  printf("Pass 1:\n");
+ printf("Pass 1: Print only to terminal\n");
  
  /*hex dump from RAM first pass*/
  cursor_x=0;
@@ -633,6 +633,11 @@ int sdl_chastelib_imagehex(int argc, char **argv)
    /*print the hex dump of this page of the file*/  
   file_address_current=file_address;
   
+  /*print name of file before the hex dump*/
+  putstr(argv[1]);
+  putstr("\n");
+
+  hexcolumns=0x10;
   y=0;
   while(count>0)
   {
@@ -686,6 +691,10 @@ int sdl_chastelib_imagehex(int argc, char **argv)
 
   y++;
  }
+ 
+ /*print EOF after the hex dump*/
+ putstr("EOF\n");
+
  
  printf("cursor_x=%d cursor_y=%d\n",cursor_x,cursor_y);
  
@@ -701,8 +710,10 @@ int sdl_chastelib_imagehex(int argc, char **argv)
  
  surface=surface_image; /*set the target surface to this image we created*/
  
- printf("Pass 2:\n");
+ printf("Pass 2: Print to image\n");
  
+ /*now that we have created an image to draw to, set the original text drawing function back to default*/
+ sdl_putchar=sdl_putchar_pixel;
  
   /*hex dump from RAM second pass*/
  cursor_x=0;
@@ -716,6 +727,11 @@ int sdl_chastelib_imagehex(int argc, char **argv)
    /*print the hex dump of this page of the file*/  
   file_address_current=file_address;
   
+  /*print name of file before the hex dump*/
+  putstr(argv[1]);
+  putstr("\n");
+
+  hexcolumns=0x10;  
   y=0;
   while(count>0)
   {
@@ -769,8 +785,13 @@ int sdl_chastelib_imagehex(int argc, char **argv)
 
   y++;
  }
-
  
+ /*print EOF after the hex dump*/
+ putstr("EOF\n");
+
+
+ /*save the image to a file so we can see it*/
+ SDL_SaveBMP(surface,"output.bmp");
  
  free(file_ram); /*free memory before ending function*/
   
