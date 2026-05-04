@@ -9,7 +9,7 @@
 int width=1280,height=720;
 int loop=1;
 SDL_Window *window;
-SDL_Surface *surface;
+SDL_Surface *surface,*surface_window,*surface_image;
 SDL_Event e;
 
 /*
