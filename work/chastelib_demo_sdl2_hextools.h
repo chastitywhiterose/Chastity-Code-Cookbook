@@ -505,6 +505,52 @@ int sdl_chastelib_hexplore(int argc, char **argv)
 }
 
 
+/*
+This function does not actually print anything to an SDL surface.
+Instead it merely updates the cursor values like normal so that we can calculate the size of image that will be needed
+ */
+
+int sdl_putchar_dummy(char c) /*direct pixel access edition for SDL2*/
+{
+ int x,y; /*used as coordinates for source image to blit from*/
+
+ Uint32 *ssp; /*ssp is short for Source Surface Pointer*/
+ Uint32 *dsp; /*dsp is short for Destination Surface Pointer*/
+ int source_surface_width;
+ int sx,sy,sx2,sy2,dx,dy; /*x,y coordinates for both source and destination*/
+ Uint32 pixel;
+ /*Uint8 r,g,b;*/
+
+ SDL_Rect rect_source,rect_dest;
+
+ /*set the source surface pointer to the source bitmap font*/
+ ssp=(Uint32*)main_font.surface->pixels;
+ dsp=(Uint32*)surface->pixels;
+
+ /*get the width of the source surface for indexing later*/
+ source_surface_width=main_font.surface->w;
+
+
+  /*
+  in the special case of a newline, the cursor is updated to the next line
+  but no character is printed.
+  */
+  if(c=='\n')
+  {
+   cursor_x=cursor_left;
+   cursor_y+=main_font.char_height*main_font.char_scale;
+   cursor_y+=line_spacing_pixels; /*add space between lines for readability*/
+  }
+  else
+  {
+
+   cursor_x+=main_font.char_width*main_font.char_scale;
+  }
+
+ return c;
+}
+
+
 
 
 /*
@@ -523,6 +569,7 @@ int sdl_chastelib_imagehex(int argc, char **argv)
 
 
  int x,y; /*variables for this test program*/
+ int hexcolumns=16,hexrows;
  
  FILE* fp; /*file pointer*/
  char *file_ram; /*pointer to a char array to be created based on file size*/
@@ -568,7 +615,7 @@ int sdl_chastelib_imagehex(int argc, char **argv)
  printf("flength=%d\n");
   
  /*now we know the length of the file, we will load the whole thing*/
- file_ram=malloc(flength+1); /*allocate enough bytes for the whole file plus zero terminator*/
+ file_ram=malloc(flength); /*allocate exactly enough bytes for the whole file */
   
  count=fread(file_ram,1,flength,fp); /*read all the bytes into the allocated RAM*/
  
@@ -576,17 +623,67 @@ int sdl_chastelib_imagehex(int argc, char **argv)
  
  fclose(fp); /*close the file because we have all the data already*/
 
- 
- /*now the part of the function that actually uses SDL*/
+  /*now the part of the function that actually uses SDL*/
 
  line_spacing_pixels=1; /*empty space in pixels between lines*/
  
  main_font.color=0xFFFFFF; /*change text color*/
  main_font.char_scale=2;
+ 
+ /*
+ switch to the dummy function for output
+ we are printing to the console for now but also calculating how many pixels will be needed to draw it all to an image
+ */
+ sdl_putchar=sdl_putchar_dummy;
 
  radix=16;
  int_width=1;
  
+   /*print the hex dump of this page of the file*/  
+  file_address_current=file_address;
+  
+  hexrows=flength/hexcolumns;
+
+  y=0;
+  while(y<hexrows)
+  {
+   int_width=8;
+   putint(file_address_current);
+   putstr(" ");
+
+   int_width=2;
+   x=0;
+   while(x<0x10)
+   {
+    putint(RAM[x+y*0x10]&0xFF);
+    putstr(" ");
+    x++;
+   }
+  
+   /*cycle through this hex row to print valid characters if any*/
+   x=0;
+   while(x<0x10)
+   {
+    i=RAM[x+y*0x10];
+    if( i < 0x20 || i > 0x7E )
+    {
+     sdl_putchar('.');
+     putchar('.');
+    }
+    else
+    {
+     sdl_putchar(i);
+     putchar(i);
+    }
+    x++;
+   }
+    
+  
+  putstr("\n");
+
+  file_address_current+=0x10;
+  y++;
+ }
  
  
  free(file_ram); /*free memory before ending function*/
