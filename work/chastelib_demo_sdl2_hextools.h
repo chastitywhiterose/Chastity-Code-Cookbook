@@ -512,25 +512,6 @@ Instead it merely updates the cursor values like normal so that we can calculate
 
 int sdl_putchar_dummy(char c) /*direct pixel access edition for SDL2*/
 {
- int x,y; /*used as coordinates for source image to blit from*/
-
- Uint32 *ssp; /*ssp is short for Source Surface Pointer*/
- Uint32 *dsp; /*dsp is short for Destination Surface Pointer*/
- int source_surface_width;
- int sx,sy,sx2,sy2,dx,dy; /*x,y coordinates for both source and destination*/
- Uint32 pixel;
- /*Uint8 r,g,b;*/
-
- SDL_Rect rect_source,rect_dest;
-
- /*set the source surface pointer to the source bitmap font*/
- ssp=(Uint32*)main_font.surface->pixels;
- dsp=(Uint32*)surface->pixels;
-
- /*get the width of the source surface for indexing later*/
- source_surface_width=main_font.surface->w;
-
-
   /*
   in the special case of a newline, the cursor is updated to the next line
   but no character is printed.
@@ -569,7 +550,7 @@ int sdl_chastelib_imagehex(int argc, char **argv)
 
 
  int x,y; /*variables for this test program*/
- int hexcolumns=16,hexrows;
+ int hexcolumns=0x10;
  
  FILE* fp; /*file pointer*/
  char *file_ram; /*pointer to a char array to be created based on file size*/
@@ -578,7 +559,9 @@ int sdl_chastelib_imagehex(int argc, char **argv)
  int flength;
  int count=0; /*keeps track of how many bytes were last read from file*/
  int i; /*used to index the RAM sometimes*/
- int eof_char='?'; /*character used by this program to show user the end of file is reached*/
+ 
+ uint32_t width,height; /*variables to hold the width and height of new image surface*/
+
  
  /*the first step is to attempt opening a file if it is given as an argument*/
  if(argc==1)
@@ -593,7 +576,7 @@ int sdl_chastelib_imagehex(int argc, char **argv)
 
  if(argc>1)
  {
-  fp=fopen(argv[1],"rb+"); /*if file exists, open for read and write*/
+  fp=fopen(argv[1],"rb"); /*if file exists, open for read and write*/
   if(fp==NULL)
   {
    printf("File \"%s\" cannot be opened.\n",argv[1]);
@@ -612,12 +595,14 @@ int sdl_chastelib_imagehex(int argc, char **argv)
  flength=ftell(fp); /*get position of the file*/
  fseek(fp,0,SEEK_SET); /*go back to the beginning*/
  
- printf("flength=%d\n");
+ printf("flength=%d\n",flength);
   
  /*now we know the length of the file, we will load the whole thing*/
  file_ram=malloc(flength); /*allocate exactly enough bytes for the whole file */
   
  count=fread(file_ram,1,flength,fp); /*read all the bytes into the allocated RAM*/
+ 
+ printf("count=%d\n",count);
  
  printf("data loaded into RAM\n");
  
@@ -635,6 +620,12 @@ int sdl_chastelib_imagehex(int argc, char **argv)
  we are printing to the console for now but also calculating how many pixels will be needed to draw it all to an image
  */
  sdl_putchar=sdl_putchar_dummy;
+ 
+  printf("Pass 1:\n");
+ 
+ /*hex dump from RAM first pass*/
+ cursor_x=0;
+ cursor_y=0;
 
  radix=16;
  int_width=1;
@@ -642,29 +633,38 @@ int sdl_chastelib_imagehex(int argc, char **argv)
    /*print the hex dump of this page of the file*/  
   file_address_current=file_address;
   
-  hexrows=flength/hexcolumns;
-
   y=0;
-  while(y<hexrows)
+  while(count>0)
   {
    int_width=8;
    putint(file_address_current);
    putstr(" ");
+   
+   /*if less than 16 bytes remaining, hex list will be shorter*/
+   if(count<0x10){hexcolumns=count;}
 
    int_width=2;
    x=0;
+   while(x<hexcolumns)
+   {
+    putint(file_ram[x+y*0x10]&0xFF);
+    putstr(" ");
+    x++;
+   }
+   
+   /*pad the hex fielf with spaces if necessary to line up the text field*/
+   x=count;
    while(x<0x10)
    {
-    putint(RAM[x+y*0x10]&0xFF);
-    putstr(" ");
+    putstr("   ");
     x++;
    }
   
    /*cycle through this hex row to print valid characters if any*/
    x=0;
-   while(x<0x10)
+   while(x<hexcolumns)
    {
-    i=RAM[x+y*0x10];
+    i=file_ram[x+y*0x10];
     if( i < 0x20 || i > 0x7E )
     {
      sdl_putchar('.');
@@ -682,8 +682,94 @@ int sdl_chastelib_imagehex(int argc, char **argv)
   putstr("\n");
 
   file_address_current+=0x10;
+  count-=0x10; /*subtract from characters remaining*/
+
   y++;
  }
+ 
+ printf("cursor_x=%d cursor_y=%d\n",cursor_x,cursor_y);
+ 
+ /*
+ we need to create an image of size 80 characters width of fontsize*scale
+ and height based on the cursor_y value at the end of the last routine
+ */
+ 
+ width=80*main_font.char_width*main_font.char_scale;
+ height=cursor_y;
+ 
+ surface_image=SDL_CreateRGBSurface(0,width,height,32,0,0,0,0);
+ 
+ surface=surface_image; /*set the target surface to this image we created*/
+ 
+ printf("Pass 2:\n");
+ 
+ 
+  /*hex dump from RAM second pass*/
+ cursor_x=0;
+ cursor_y=0;
+ 
+ count=flength;
+
+ radix=16;
+ int_width=1;
+ 
+   /*print the hex dump of this page of the file*/  
+  file_address_current=file_address;
+  
+  y=0;
+  while(count>0)
+  {
+   int_width=8;
+   putint(file_address_current);
+   putstr(" ");
+   
+   /*if less than 16 bytes remaining, hex list will be shorter*/
+   if(count<0x10){hexcolumns=count;}
+
+   int_width=2;
+   x=0;
+   while(x<hexcolumns)
+   {
+    putint(file_ram[x+y*0x10]&0xFF);
+    putstr(" ");
+    x++;
+   }
+   
+   /*pad the hex fielf with spaces if necessary to line up the text field*/
+   x=count;
+   while(x<0x10)
+   {
+    putstr("   ");
+    x++;
+   }
+  
+   /*cycle through this hex row to print valid characters if any*/
+   x=0;
+   while(x<hexcolumns)
+   {
+    i=file_ram[x+y*0x10];
+    if( i < 0x20 || i > 0x7E )
+    {
+     sdl_putchar('.');
+     putchar('.');
+    }
+    else
+    {
+     sdl_putchar(i);
+     putchar(i);
+    }
+    x++;
+   }
+    
+  
+  putstr("\n");
+
+  file_address_current+=0x10;
+  count-=0x10; /*subtract from characters remaining*/
+
+  y++;
+ }
+
  
  
  free(file_ram); /*free memory before ending function*/
