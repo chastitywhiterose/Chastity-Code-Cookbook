@@ -1,0 +1,4 @@
+This is the test file for chastedog
+The chastedog program is a stupid because
+it is based on the Linux cat utility.
+However, it can search for strings and quote only part of a file to standard output.
