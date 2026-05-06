@@ -221,7 +221,7 @@ mov bl,[edi]
 cmp bl,0
 jz strcmp_end
 mov bh,[esi]
-cmp bl,0
+cmp bh,0
 jz strcmp_end
 
 inc edi
@@ -234,8 +234,6 @@ inc eax ;if they were different, eax will be incremented and the function ends
 
 strcmp_end:
 ret
-
-
 
 help_message db 'chastext by Chastity White Rose',0Ah,0Ah
 db '"cat" a file:',0Ah,0Ah,9,'chastext file',0Ah,0Ah
