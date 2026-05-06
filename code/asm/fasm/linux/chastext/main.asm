@@ -57,7 +57,29 @@ file_open_no_errors:
 mov [filedesc],eax ; save the file descriptor number for later use
 mov dword [file_offset],0 ;assume the offset is 0,beginning of file
 
-hexdump:
+;before we just textdump or "cat" the file, we need to check for the existence of more arguments which will modify the output
+
+cmp [argc],3
+jb search_skip
+
+pop eax ;pop the next arg which is the string we are searching for
+call putstr_and_line
+mov [string_search],eax
+
+search_skip:
+
+cmp [argc],4
+jb replace_skip
+
+pop eax ;pop the next arg which is the string we are searching for
+call putstr_and_line
+mov [string_replace],eax
+
+replace_skip:
+
+;now we begin displaying the file but also searching for the search string if it exists. We will check for these based on the number of arguments like we did earlier
+
+textdump:
 
 mov edx,1         ;number of bytes to read
 mov ecx,byte_array   ;address to store the bytes
@@ -81,7 +103,7 @@ call putchar
 
 cmp dword [bytes_read],1 
 jl main_end ;if less than one bytes read, there is an error
-jmp hexdump
+jmp textdump
 
 main_end:
 
@@ -127,6 +149,10 @@ filedesc dd 0 ; file descriptor
 bytes_read dd 0
 file_offset dd 0
 open_error_message db 'error while opening file',0
+
+string_search dd 0 ; place to hold the search string pointer
+string_replace dd 0 ; place to hold the replacement string pointer
+
 
 ;where we will store data from the file
 byte_array db 17 dup '?'
