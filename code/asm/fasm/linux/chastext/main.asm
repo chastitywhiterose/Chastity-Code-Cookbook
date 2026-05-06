@@ -81,7 +81,7 @@ replace_skip:
 
 textdump:
 
-mov edx,1         ;number of bytes to read
+mov edx,1            ;number of bytes to read
 mov ecx,byte_array   ;address to store the bytes
 mov ebx,[filedesc]   ;move the opened file descriptor into EBX
 mov eax,3            ;invoke SYS_READ (kernel opcode 3)
@@ -98,8 +98,45 @@ jmp main_end
 
 file_success:
 
+
+
+cmp [argc],3
+jb search_text_skip
+
+mov eax,[string_search]
+call strlen ;get the length of the search string
+;call putint_and_line
+
+;attempt to read the length-1 bytes because the first one is already read into the byte array
+
+dec eax
+mov edx,eax            ;number of bytes to read
+mov ecx,byte_array+1   ;address to store the bytes
+mov ebx,[filedesc]     ;move the opened file descriptor into EBX
+mov eax,3              ;invoke SYS_READ (kernel opcode 3)
+int 80h                ;call the kernel
+
+mov ebx,ecx
+add ebx,eax
+mov byte [ebx],0 ;terminate the string with zero
+
+mov eax,byte_array
+;call putstring ;print the string
+
+;mov esi,ecx
+;add esi,edx
+
+;mov eax,esi
+;call putstr_and_line
+
+search_text_skip:
+
+
+;normally, we will print the last read character
 mov al,[byte_array]
-call putchar
+;call putchar
+
+skip_putchar:
 
 cmp dword [bytes_read],1 
 jl main_end ;if less than one bytes read, there is an error
@@ -120,21 +157,27 @@ mov eax, 1  ; invoke SYS_EXIT (kernel opcode 1)
 mov ebx, 0  ; return 0 status on exit - 'No Errors'
 int 80h
 
+;a function to get the length of string in eax and return the integer in eax
 
+strlen:
 
+mov ebx,eax ; copy eax to ebx. ebx will be used as index to the string
 
+strlen_start: ; this loop finds the length of the string as part of the putstring function
 
-;print the address and the byte at that address
-print_byte_info:
-mov eax,[file_offset]
-mov dword [int_width],8
-call putint_and_space
-mov eax,0
-mov al,[byte_array]
-mov dword [int_width],2
-call putint_and_line
+cmp [ebx],byte 0 ; compare byte at address ebx with 0
+jz strlen_end ; if comparison was zero, jump to loop end because we have found the length
+inc ebx
+jmp strlen_start
+
+strlen_end:
+sub ebx,eax ;subtract start pointer from current pointer to get length of string
+
+mov eax,ebx ;copy the string length back to eax
 
 ret
+
+
 
 help_message db 'chastext by Chastity White Rose',0Ah,0Ah
 db 'textdump a file:',0Ah,0Ah,9,'chastext file',0Ah,0Ah
