@@ -156,8 +156,8 @@ mov al,[byte_array]
 
 skip_putchar:
 
-cmp dword [bytes_read],1 
-jl main_end ;if less than one bytes read, there is an error
+;cmp dword [bytes_read],1 
+;jl main_end ;if less than one bytes read, there is an error
 jmp textdump
 
 main_end:
