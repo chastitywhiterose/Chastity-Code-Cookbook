@@ -1,5 +1,5 @@
-;Linux 32-bit Assembly Source for chastehex
-;a special tool originally written in C
+;Linux 32-bit Assembly Source for chastext
+;a basic text search and replace program
 format ELF executable
 entry main
 
