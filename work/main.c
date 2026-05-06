@@ -9,6 +9,7 @@ int main(int argc, char *argv[])
  char *fs; /*pointer to a char array to be created*/
  char *s; /*pointer used to search through the file array*/
  char *ss,*sr; /*string search and replacement pointers*/
+ int sslength;
  int flength,count;
    
  if(argc==1)
@@ -36,11 +37,13 @@ int main(int argc, char *argv[])
    return 1;
   }
   
+  /*
   else
   {
    putstr(argv[1]);
    putstr("\n---\n");
   }
+  */
  
  }
  
@@ -54,6 +57,12 @@ int main(int argc, char *argv[])
   
  count=fread(fs,1,flength,fp); /*read all the bytes*/
  
+ /*
+ now that all the bytes are read into memory, close the file
+ this is important in case we want to redirect the output back to the same file instead of stdout
+ */
+ fclose(fp);
+ 
  /*if only the filename was given but nothing else, we will just display all characters to stdout*/
  
  if(argc==2)
@@ -61,37 +70,52 @@ int main(int argc, char *argv[])
   fwrite(fs,1,count,stdout); /*write all the bytes*/
   return 0; /*return with no errors*/
  }
+ 
+ /*if 4 or more arguments are present, use the 4th arg as the replacement string*/
+ if(argc>3)
+ {
+  sr=argv[3];
+ }
 
- /*next argument as start of substr*/
+ /*
+ if only a search string is given, display the whole file except also quote parts that match the search string
+ this is a good way to prove that the program is correctly finding them
+ 
+ but if a replacement string was provided, then this section will replace the search string with the replacement
+ */
+ 
  if(argc>2)
  {
   ss=argv[2];
-  putstr("search string: \"");
-  putstr(ss);
-  putstr("\"\n");
-
-  radix=16;
-  putint(count);
-
+  sslength=strlen(ss);
   s=fs;
   
   while(count>0)
   {
-   s++;
-   count--;
+   if(!strncmp(s,ss,sslength))
+   {
+    if(argc==3)
+    {
+     putchar('"');
+     putstr(ss);
+     putchar('"');
+    }
+    else
+    {
+     putstr(sr);
+    }
+    s+=sslength;
+    count-=sslength;
+   }
+   else
+   {
+    putchar(*s);
+    s++;
+    count--;
+   }
   }
-
  
  }
- 
- 
-  
- putstr("\n---\nEOF\n");
-
- radix=16;
- putint(count);
- putstr(" bytes read\n");
- 
 
  free(fs);
 

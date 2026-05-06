@@ -37,6 +37,8 @@ int main(int argc, char *argv[])
  
  }
  putstr("\n---\nEOF\n");
+ 
+ fclose(fp);
 
  return 0;
 }

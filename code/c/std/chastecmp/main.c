@@ -53,6 +53,13 @@ int main(int argc, char *argv[])
   }
   x++;  
  }
+ 
+ argx=1;
+ while(argx<3)
+ {
+  fclose(fp[argx]);
+  argx++;
+ }
 
  return 0;
 }
