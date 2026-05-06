@@ -3,7 +3,7 @@
 format ELF executable
 entry main
 
-include 'chastelib32.asm'
+;include 'chastelib32.asm'
 
 main:
 
@@ -146,8 +146,22 @@ mov edi,byte_array
 call strcmp ;compare these two strings
 
 cmp eax,0 ;test if they are the same (if eax returned zero)
-jnz normal_print
+jnz normal_print ;if they are not a match print them unmodified and unquoted
 
+;but if they are a match, then we either quote them
+;or replace them if a replacement string is available
+
+cmp [argc],4 ;if less than 4 args, no replacement exist, so we quote the strings
+jb print_quotes
+
+;otherwise, we will print the replacement string instead of the original!
+
+mov eax,[string_replace]
+call putstring ;print the string
+
+jmp normal_print_skip
+
+print_quotes:
 ;print quotes around matched string
 mov al,'"'
 call putchar
@@ -237,17 +251,17 @@ db 'quote search string:',0Ah,0Ah,9,'chastext file search',0Ah,0Ah
 db 'replace string:',0Ah,0Ah,9,'chastext file search replace',0Ah,0Ah
 db 'The file must exist',0Ah,0
 
-;variables for managing arguments and files
-argc dd 0
-filename dd 0 ; name of the file to be opened
-filedesc dd 0 ; file descriptor
-bytes_read dd 0
-file_offset dd 0
 open_error_message db 'error while opening file',0
 
-string_search dd 0 ; place to hold the search string pointer
-string_replace dd 0 ; place to hold the replacement string pointer
+;variables for managing arguments and files
+argc rd 1
+filename rd 1 ; name of the file to be opened
+filedesc rd 1 ; file descriptor
+bytes_read rd 1
+file_offset rd 1
 
+string_search rd 1 ; place to hold the search string pointer
+string_replace rd 1 ; place to hold the replacement string pointer
 
 ;where we will store data from the file
-byte_array db 17 dup '?'
+byte_array rb 0x100

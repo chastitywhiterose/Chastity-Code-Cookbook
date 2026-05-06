@@ -1,2 +1,1 @@
-this is the test file!
-it is used for testing chastehex
+This is the test file! It is used for testing chastext. It can search for and quote all occurrences of a string or replace it. It reads text files and writes to standard output, which can be redirected by most shells.
