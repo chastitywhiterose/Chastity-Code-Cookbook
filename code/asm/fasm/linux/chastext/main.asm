@@ -98,11 +98,32 @@ jmp main_end
 
 file_success:
 
+cmp [argc],2 ;if only 2 arguments, just putchar and read next one
+jnz putchar_skip
 
+;normally, we will print the last read character
+mov al,[byte_array]
+call putchar
+;jmp textdump
 
-cmp [argc],3
-jb search_text_skip
+putchar_skip:
 
+cmp [argc],3 ;if not enough arguments, skip the search string section
+jb textdump
+
+mov ebx,[string_search]
+
+mov al,[ebx]
+mov ah,[byte_array]
+cmp al,ah ;compare the first character of search string with the byte read already
+jz search_start ; if they are equal, skip putchar and begin searching for the string
+
+;otherwise, if they are not equal, just putchar the last byte read and repeat the loop
+mov al,[byte_array]
+call putchar
+jmp textdump
+
+search_start:
 mov eax,[string_search]
 call strlen ;get the length of the search string
 ;call putint_and_line
@@ -123,7 +144,6 @@ mov byte [ebx],0 ;terminate the string with zero
 mov esi,[string_search]
 mov edi,byte_array
 call strcmp ;compare these two strings
-;call putint_and_line
 
 cmp eax,0 ;test if they are the same (if eax returned zero)
 jnz normal_print
@@ -140,24 +160,13 @@ call putchar
 
 jmp normal_print_skip
 
-normal_print: ;print normal / unquoted
+normal_print: ;print normal / unquoted because it doesn't match
 
 mov eax,byte_array
 call putstring ;print the string
 
 normal_print_skip:
 
-search_text_skip:
-
-
-;normally, we will print the last read character
-mov al,[byte_array]
-;call putchar
-
-skip_putchar:
-
-;cmp dword [bytes_read],1 
-;jl main_end ;if less than one bytes read, there is an error
 jmp textdump
 
 main_end:
