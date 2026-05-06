@@ -68,234 +68,248 @@ Disassembly of section .data:
   48:	3f                   	aas
   49:	3f                   	aas
 
-0000004a <int_newline>:
-  4a:	0a 00                	or     (%eax),%al
-
-0000004c <radix>:
-  4c:	02 00                	add    (%eax),%al
+0000004a <int_string_end>:
 	...
 
-00000050 <int_width>:
-  50:	08 00                	or     %al,(%eax)
+0000004b <radix>:
+  4b:	02 00                	add    (%eax),%al
 	...
 
-00000054 <intstr>:
-  54:	bb 49 00 00 00       	mov    $0x49,%ebx
-  59:	b9 01 00 00 00       	mov    $0x1,%ecx
-
-0000005e <digits_start>:
-  5e:	ba 00 00 00 00       	mov    $0x0,%edx
-  63:	f7 35 4c 00 00 00    	divl   0x4c
-  69:	83 fa 0a             	cmp    $0xa,%edx
-  6c:	72 02                	jb     70 <decimal_digit>
-  6e:	73 05                	jae    75 <hexadecimal_digit>
-
-00000070 <decimal_digit>:
-  70:	83 c2 30             	add    $0x30,%edx
-  73:	eb 06                	jmp    7b <save_digit>
-
-00000075 <hexadecimal_digit>:
-  75:	83 ea 0a             	sub    $0xa,%edx
-  78:	83 c2 41             	add    $0x41,%edx
-
-0000007b <save_digit>:
-  7b:	88 13                	mov    %dl,(%ebx)
-  7d:	83 f8 00             	cmp    $0x0,%eax
-  80:	74 04                	je     86 <intstr_end>
-  82:	4b                   	dec    %ebx
-  83:	41                   	inc    %ecx
-  84:	eb d8                	jmp    5e <digits_start>
-
-00000086 <intstr_end>:
-  86:	3b 0d 50 00 00 00    	cmp    0x50,%ecx
-  8c:	73 07                	jae    95 <end_zeros>
-  8e:	4b                   	dec    %ebx
-  8f:	c6 03 30             	movb   $0x30,(%ebx)
-  92:	41                   	inc    %ecx
-  93:	eb f1                	jmp    86 <intstr_end>
-
-00000095 <end_zeros>:
-  95:	89 d8                	mov    %ebx,%eax
-  97:	c3                   	ret
-
-00000098 <putint>:
-  98:	50                   	push   %eax
-  99:	53                   	push   %ebx
-  9a:	51                   	push   %ecx
-  9b:	52                   	push   %edx
-  9c:	e8 b3 ff ff ff       	call   54 <intstr>
-  a1:	e8 5e ff ff ff       	call   4 <putstring>
-  a6:	5a                   	pop    %edx
-  a7:	59                   	pop    %ecx
-  a8:	5b                   	pop    %ebx
-  a9:	58                   	pop    %eax
-  aa:	c3                   	ret
-
-000000ab <strint>:
-  ab:	89 c3                	mov    %eax,%ebx
-  ad:	b8 00 00 00 00       	mov    $0x0,%eax
-
-000000b2 <read_strint>:
-  b2:	b9 00 00 00 00       	mov    $0x0,%ecx
-  b7:	8a 0b                	mov    (%ebx),%cl
-  b9:	43                   	inc    %ebx
-  ba:	80 f9 00             	cmp    $0x0,%cl
-  bd:	74 4c                	je     10b <strint_end>
-  bf:	80 f9 30             	cmp    $0x30,%cl
-  c2:	72 0a                	jb     ce <not_digit>
-  c4:	80 f9 39             	cmp    $0x39,%cl
-  c7:	77 05                	ja     ce <not_digit>
-
-000000c9 <is_digit>:
-  c9:	80 e9 30             	sub    $0x30,%cl
-  cc:	eb 26                	jmp    f4 <process_char>
-
-000000ce <not_digit>:
-  ce:	80 f9 41             	cmp    $0x41,%cl
-  d1:	72 0d                	jb     e0 <not_upper>
-  d3:	80 f9 5a             	cmp    $0x5a,%cl
-  d6:	77 08                	ja     e0 <not_upper>
-
-000000d8 <is_upper>:
-  d8:	80 e9 41             	sub    $0x41,%cl
-  db:	80 c1 0a             	add    $0xa,%cl
-  de:	eb 14                	jmp    f4 <process_char>
-
-000000e0 <not_upper>:
-  e0:	80 f9 61             	cmp    $0x61,%cl
-  e3:	72 0d                	jb     f2 <not_lower>
-  e5:	80 f9 7a             	cmp    $0x7a,%cl
-  e8:	77 08                	ja     f2 <not_lower>
-
-000000ea <is_lower>:
-  ea:	80 e9 61             	sub    $0x61,%cl
-  ed:	80 c1 0a             	add    $0xa,%cl
-  f0:	eb 02                	jmp    f4 <process_char>
-
-000000f2 <not_lower>:
-  f2:	eb 17                	jmp    10b <strint_end>
-
-000000f4 <process_char>:
-  f4:	3b 0d 4c 00 00 00    	cmp    0x4c,%ecx
-  fa:	73 0f                	jae    10b <strint_end>
-  fc:	ba 00 00 00 00       	mov    $0x0,%edx
- 101:	f7 25 4c 00 00 00    	mull   0x4c
- 107:	01 c8                	add    %ecx,%eax
- 109:	eb a7                	jmp    b2 <read_strint>
-
-0000010b <strint_end>:
- 10b:	c3                   	ret
-
-0000010c <space>:
- 10c:	20 00                	and    %al,(%eax)
-
-0000010e <line>:
- 10e:	0d 0a 00         	or     $0xb850000a,%eax
-
-00000111 <putspace>:
- 111:	50                   	push   %eax
- 112:	b8 0c 01 00 00       	mov    $0x10c,%eax
- 117:	e8 e8 fe ff ff       	call   4 <putstring>
- 11c:	58                   	pop    %eax
- 11d:	c3                   	ret
-
-0000011e <putline>:
- 11e:	50                   	push   %eax
- 11f:	b8 0e 01 00 00       	mov    $0x10e,%eax
- 124:	e8 db fe ff ff       	call   4 <putstring>
- 129:	58                   	pop    %eax
- 12a:	c3                   	ret
-
-0000012b <char>:
+0000004f <int_width>:
+  4f:	08 00                	or     %al,(%eax)
 	...
 
-0000012d <putchar>:
- 12d:	50                   	push   %eax
- 12e:	a2 2b 01 00 00       	mov    %al,0x12b
- 133:	b8 2b 01 00 00       	mov    $0x12b,%eax
- 138:	e8 c7 fe ff ff       	call   4 <putstring>
- 13d:	58                   	pop    %eax
- 13e:	c3                   	ret
+00000053 <intstr>:
+  53:	bb 49 00 00 00       	mov    $0x49,%ebx
+  58:	b9 01 00 00 00       	mov    $0x1,%ecx
+
+0000005d <digits_start>:
+  5d:	ba 00 00 00 00       	mov    $0x0,%edx
+  62:	f7 35 4b 00 00 00    	divl   0x4b
+  68:	83 fa 0a             	cmp    $0xa,%edx
+  6b:	72 02                	jb     6f <decimal_digit>
+  6d:	73 05                	jae    74 <hexadecimal_digit>
+
+0000006f <decimal_digit>:
+  6f:	83 c2 30             	add    $0x30,%edx
+  72:	eb 06                	jmp    7a <save_digit>
+
+00000074 <hexadecimal_digit>:
+  74:	83 ea 0a             	sub    $0xa,%edx
+  77:	83 c2 41             	add    $0x41,%edx
+
+0000007a <save_digit>:
+  7a:	88 13                	mov    %dl,(%ebx)
+  7c:	83 f8 00             	cmp    $0x0,%eax
+  7f:	74 04                	je     85 <intstr_end>
+  81:	4b                   	dec    %ebx
+  82:	41                   	inc    %ecx
+  83:	eb d8                	jmp    5d <digits_start>
+
+00000085 <intstr_end>:
+  85:	3b 0d 4f 00 00 00    	cmp    0x4f,%ecx
+  8b:	73 07                	jae    94 <end_zeros>
+  8d:	4b                   	dec    %ebx
+  8e:	c6 03 30             	movb   $0x30,(%ebx)
+  91:	41                   	inc    %ecx
+  92:	eb f1                	jmp    85 <intstr_end>
+
+00000094 <end_zeros>:
+  94:	89 d8                	mov    %ebx,%eax
+  96:	c3                   	ret
+
+00000097 <putint>:
+  97:	50                   	push   %eax
+  98:	53                   	push   %ebx
+  99:	51                   	push   %ecx
+  9a:	52                   	push   %edx
+  9b:	e8 b3 ff ff ff       	call   53 <intstr>
+  a0:	e8 5f ff ff ff       	call   4 <putstring>
+  a5:	5a                   	pop    %edx
+  a6:	59                   	pop    %ecx
+  a7:	5b                   	pop    %ebx
+  a8:	58                   	pop    %eax
+  a9:	c3                   	ret
+
+000000aa <strint>:
+  aa:	89 c3                	mov    %eax,%ebx
+  ac:	b8 00 00 00 00       	mov    $0x0,%eax
+
+000000b1 <read_strint>:
+  b1:	b9 00 00 00 00       	mov    $0x0,%ecx
+  b6:	8a 0b                	mov    (%ebx),%cl
+  b8:	43                   	inc    %ebx
+  b9:	80 f9 00             	cmp    $0x0,%cl
+  bc:	74 4c                	je     10a <strint_end>
+  be:	80 f9 30             	cmp    $0x30,%cl
+  c1:	72 0a                	jb     cd <not_digit>
+  c3:	80 f9 39             	cmp    $0x39,%cl
+  c6:	77 05                	ja     cd <not_digit>
+
+000000c8 <is_digit>:
+  c8:	80 e9 30             	sub    $0x30,%cl
+  cb:	eb 26                	jmp    f3 <process_char>
+
+000000cd <not_digit>:
+  cd:	80 f9 41             	cmp    $0x41,%cl
+  d0:	72 0d                	jb     df <not_upper>
+  d2:	80 f9 5a             	cmp    $0x5a,%cl
+  d5:	77 08                	ja     df <not_upper>
+
+000000d7 <is_upper>:
+  d7:	80 e9 41             	sub    $0x41,%cl
+  da:	80 c1 0a             	add    $0xa,%cl
+  dd:	eb 14                	jmp    f3 <process_char>
+
+000000df <not_upper>:
+  df:	80 f9 61             	cmp    $0x61,%cl
+  e2:	72 0d                	jb     f1 <not_lower>
+  e4:	80 f9 7a             	cmp    $0x7a,%cl
+  e7:	77 08                	ja     f1 <not_lower>
+
+000000e9 <is_lower>:
+  e9:	80 e9 61             	sub    $0x61,%cl
+  ec:	80 c1 0a             	add    $0xa,%cl
+  ef:	eb 02                	jmp    f3 <process_char>
+
+000000f1 <not_lower>:
+  f1:	eb 17                	jmp    10a <strint_end>
+
+000000f3 <process_char>:
+  f3:	3b 0d 4b 00 00 00    	cmp    0x4b,%ecx
+  f9:	73 0f                	jae    10a <strint_end>
+  fb:	ba 00 00 00 00       	mov    $0x0,%edx
+ 100:	f7 25 4b 00 00 00    	mull   0x4b
+ 106:	01 c8                	add    %ecx,%eax
+ 108:	eb a7                	jmp    b1 <read_strint>
+
+0000010a <strint_end>:
+ 10a:	c3                   	ret
+
+0000010b <space>:
+ 10b:	20 00                	and    %al,(%eax)
+
+0000010d <line>:
+ 10d:	0d 0a 00         	or     $0xb850000a,%eax
+
+00000110 <putspace>:
+ 110:	50                   	push   %eax
+ 111:	b8 0b 01 00 00       	mov    $0x10b,%eax
+ 116:	e8 e9 fe ff ff       	call   4 <putstring>
+ 11b:	58                   	pop    %eax
+ 11c:	c3                   	ret
+
+0000011d <putline>:
+ 11d:	50                   	push   %eax
+ 11e:	b8 0d 01 00 00       	mov    $0x10d,%eax
+ 123:	e8 dc fe ff ff       	call   4 <putstring>
+ 128:	58                   	pop    %eax
+ 129:	c3                   	ret
+
+0000012a <char>:
+	...
+
+0000012c <putchar>:
+ 12c:	50                   	push   %eax
+ 12d:	a2 2a 01 00 00       	mov    %al,0x12a
+ 132:	b8 2a 01 00 00       	mov    $0x12a,%eax
+ 137:	e8 c8 fe ff ff       	call   4 <putstring>
+ 13c:	58                   	pop    %eax
+ 13d:	c3                   	ret
+
+0000013e <putint_and_space>:
+ 13e:	e8 54 ff ff ff       	call   97 <putint>
+ 143:	e8 c8 ff ff ff       	call   110 <putspace>
+ 148:	c3                   	ret
+
+00000149 <putint_and_line>:
+ 149:	e8 49 ff ff ff       	call   97 <putint>
+ 14e:	e8 ca ff ff ff       	call   11d <putline>
+ 153:	c3                   	ret
+
+00000154 <putstr_and_line>:
+ 154:	e8 ab fe ff ff       	call   4 <putstring>
+ 159:	e8 bf ff ff ff       	call   11d <putline>
+ 15e:	c3                   	ret
 
 Disassembly of section .text:
 
 00000000 <_start>:
-   0:	b8 b3 00 00 00       	mov    $0xb3,%eax
+   0:	b8 ac 00 00 00       	mov    $0xac,%eax
    5:	e8 00 00 00 00       	call   a <_start+0xa>
-   a:	c7 05 4c 00 00 00 10 	movl   $0x10,0x4c
+   a:	c7 05 4b 00 00 00 10 	movl   $0x10,0x4b
   11:	00 00 00 
-  14:	c7 05 50 00 00 00 01 	movl   $0x1,0x50
+  14:	c7 05 4f 00 00 00 01 	movl   $0x1,0x4f
   1b:	00 00 00 
-  1e:	c6 05 4a 00 00 00 00 	movb   $0x0,0x4a
-  25:	b8 09 01 00 00       	mov    $0x109,%eax
-  2a:	e8 a7 00 00 00       	call   d6 <main_string+0x23>
-  2f:	89 c3                	mov    %eax,%ebx
-  31:	b8 00 00 00 00       	mov    $0x0,%eax
+  1e:	b8 02 01 00 00       	mov    $0x102,%eax
+  23:	e8 a6 00 00 00       	call   ce <main_string+0x22>
+  28:	89 c3                	mov    %eax,%ebx
+  2a:	b8 00 00 00 00       	mov    $0x0,%eax
 
-00000036 <loop1>:
-  36:	c7 05 4c 00 00 00 02 	movl   $0x2,0x4c
-  3d:	00 00 00 
-  40:	c7 05 50 00 00 00 08 	movl   $0x8,0x50
-  47:	00 00 00 
-  4a:	e8 94 00 00 00       	call   e3 <main_string+0x30>
-  4f:	e8 0d 01 00 00       	call   161 <putchar+0x34>
-  54:	c7 05 4c 00 00 00 10 	movl   $0x10,0x4c
-  5b:	00 00 00 
-  5e:	c7 05 50 00 00 00 02 	movl   $0x2,0x50
-  65:	00 00 00 
-  68:	e8 94 00 00 00       	call   101 <main_string+0x4e>
-  6d:	e8 0d 01 00 00       	call   17f <putchar+0x52>
-  72:	c7 05 4c 00 00 00 0a 	movl   $0xa,0x4c
-  79:	00 00 00 
-  7c:	c7 05 50 00 00 00 03 	movl   $0x3,0x50
-  83:	00 00 00 
-  86:	e8 94 00 00 00       	call   11f <putline+0x1>
-  8b:	3c 20                	cmp    $0x20,%al
-  8d:	72 0e                	jb     9d <not_char>
-  8f:	3c 7e                	cmp    $0x7e,%al
-  91:	77 0a                	ja     9d <not_char>
-  93:	e8 0d 01 00 00       	call   1a5 <putchar+0x78>
-  98:	e8 29 01 00 00       	call   1c6 <putchar+0x99>
+0000002f <loop1>:
+  2f:	c7 05 4b 00 00 00 02 	movl   $0x2,0x4b
+  36:	00 00 00 
+  39:	c7 05 4f 00 00 00 08 	movl   $0x8,0x4f
+  40:	00 00 00 
+  43:	e8 93 00 00 00       	call   db <main_string+0x2f>
+  48:	e8 0c 01 00 00       	call   159 <putstr_and_line+0x5>
+  4d:	c7 05 4b 00 00 00 10 	movl   $0x10,0x4b
+  54:	00 00 00 
+  57:	c7 05 4f 00 00 00 02 	movl   $0x2,0x4f
+  5e:	00 00 00 
+  61:	e8 93 00 00 00       	call   f9 <main_string+0x4d>
+  66:	e8 0c 01 00 00       	call   177 <putstr_and_line+0x23>
+  6b:	c7 05 4b 00 00 00 0a 	movl   $0xa,0x4b
+  72:	00 00 00 
+  75:	c7 05 4f 00 00 00 03 	movl   $0x3,0x4f
+  7c:	00 00 00 
+  7f:	e8 93 00 00 00       	call   117 <putspace+0x7>
+  84:	3c 20                	cmp    $0x20,%al
+  86:	72 0e                	jb     96 <not_char>
+  88:	3c 7e                	cmp    $0x7e,%al
+  8a:	77 0a                	ja     96 <not_char>
+  8c:	e8 0c 01 00 00       	call   19d <putstr_and_line+0x49>
+  91:	e8 28 01 00 00       	call   1be <putstr_and_line+0x6a>
 
-0000009d <not_char>:
-  9d:	e8 1a 01 00 00       	call   1bc <putchar+0x8f>
-  a2:	40                   	inc    %eax
-  a3:	39 d8                	cmp    %ebx,%eax
-  a5:	75 8f                	jne    36 <loop1>
-  a7:	b8 01 00 00 00       	mov    $0x1,%eax
-  ac:	bb 00 00 00 00       	mov    $0x0,%ebx
-  b1:	cd 80                	int    $0x80
+00000096 <not_char>:
+  96:	e8 19 01 00 00       	call   1b4 <putstr_and_line+0x60>
+  9b:	40                   	inc    %eax
+  9c:	39 d8                	cmp    %ebx,%eax
+  9e:	75 8f                	jne    2f <loop1>
+  a0:	b8 01 00 00 00       	mov    $0x1,%eax
+  a5:	bb 00 00 00 00       	mov    $0x0,%ebx
+  aa:	cd 80                	int    $0x80
 
-000000b3 <main_string>:
-  b3:	54                   	push   %esp
-  b4:	68 69 73 20 70       	push   $0x70207369
-  b9:	72 6f                	jb     12a <putline+0xc>
-  bb:	67 72 61             	addr16 jb 11f <putline+0x1>
-  be:	6d                   	insl   (%dx),%es:(%edi)
-  bf:	20 69 73             	and    %ch,0x73(%ecx)
-  c2:	20 74 68 65          	and    %dh,0x65(%eax,%ebp,2)
-  c6:	20 6f 66             	and    %ch,0x66(%edi)
-  c9:	66 69 63 69 61 6c    	imul   $0x6c61,0x69(%ebx),%sp
-  cf:	20 74 65 73          	and    %dh,0x73(%ebp,%eiz,2)
-  d3:	74 20                	je     f5 <main_string+0x42>
-  d5:	73 75                	jae    14c <putchar+0x1f>
-  d7:	69 74 65 20 66 6f 72 	imul   $0x20726f66,0x20(%ebp,%eiz,2),%esi
-  de:	20 
-  df:	74 68                	je     149 <putchar+0x1c>
-  e1:	65 20 4c 69 6e       	and    %cl,%gs:0x6e(%ecx,%ebp,2)
-  e6:	75 78                	jne    160 <putchar+0x33>
-  e8:	20 41 73             	and    %al,0x73(%ecx)
-  eb:	73 65                	jae    152 <putchar+0x25>
-  ed:	6d                   	insl   (%dx),%es:(%edi)
-  ee:	62 6c 79 20          	bound  %ebp,0x20(%ecx,%edi,2)
-  f2:	76 65                	jbe    159 <putchar+0x2c>
-  f4:	72 73                	jb     169 <putchar+0x3c>
-  f6:	69 6f 6e 20 6f 66 20 	imul   $0x20666f20,0x6e(%edi),%ebp
-  fd:	63 68 61             	arpl   %bp,0x61(%eax)
- 100:	73 74                	jae    176 <putchar+0x49>
- 102:	65 6c                	gs insb (%dx),%es:(%edi)
- 104:	69 62 2e 0a 00   	imul   $0x3031000a,0x2e(%edx),%esp
+000000ac <main_string>:
+  ac:	54                   	push   %esp
+  ad:	68 69 73 20 70       	push   $0x70207369
+  b2:	72 6f                	jb     123 <putline+0x6>
+  b4:	67 72 61             	addr16 jb 118 <putspace+0x8>
+  b7:	6d                   	insl   (%dx),%es:(%edi)
+  b8:	20 69 73             	and    %ch,0x73(%ecx)
+  bb:	20 74 68 65          	and    %dh,0x65(%eax,%ebp,2)
+  bf:	20 6f 66             	and    %ch,0x66(%edi)
+  c2:	66 69 63 69 61 6c    	imul   $0x6c61,0x69(%ebx),%sp
+  c8:	20 74 65 73          	and    %dh,0x73(%ebp,%eiz,2)
+  cc:	74 20                	je     ee <main_string+0x42>
+  ce:	73 75                	jae    145 <putint_and_space+0x7>
+  d0:	69 74 65 20 66 6f 72 	imul   $0x20726f66,0x20(%ebp,%eiz,2),%esi
+  d7:	20 
+  d8:	74 68                	je     142 <putint_and_space+0x4>
+  da:	65 20 4c 69 6e       	and    %cl,%gs:0x6e(%ecx,%ebp,2)
+  df:	75 78                	jne    159 <putstr_and_line+0x5>
+  e1:	20 41 73             	and    %al,0x73(%ecx)
+  e4:	73 65                	jae    14b <putint_and_line+0x2>
+  e6:	6d                   	insl   (%dx),%es:(%edi)
+  e7:	62 6c 79 20          	bound  %ebp,0x20(%ecx,%edi,2)
+  eb:	76 65                	jbe    152 <putint_and_line+0x9>
+  ed:	72 73                	jb     162 <putstr_and_line+0xe>
+  ef:	69 6f 6e 20 6f 66 20 	imul   $0x20666f20,0x6e(%edi),%ebp
+  f6:	63 68 61             	arpl   %bp,0x61(%eax)
+  f9:	73 74                	jae    16f <putstr_and_line+0x1b>
+  fb:	65 6c                	gs insb (%dx),%es:(%edi)
+  fd:	69 62 2e 0a 00   	imul   $0x3031000a,0x2e(%edx),%esp
 
-00000109 <input_string_int>:
- 109:	31 30                	xor    %esi,(%eax)
- 10b:	30 00                	xor    %al,(%eax)
+00000102 <input_string_int>:
+ 102:	31 30                	xor    %esi,(%eax)
+ 104:	30 00                	xor    %al,(%eax)
