@@ -23,23 +23,15 @@ call putstring
 jmp main_end
 help_skip:
 
-;first arg is the name of the program. we skip past it
-pop eax
-dec dword [argc]
+pop eax ;pop the next arg which is the name of the program we are running
 call putstr_and_line
 
-;before we try to get the first argument as a filename, we must check if it exists
-cmp dword [argc],0
-jnz arg_open_file
-
-
+get_filename:
+pop eax ;pop the next arg which is the name of the file we will open
+call putstr_and_line
+mov [filename],eax ; save the name of the file we will open to read
 
 arg_open_file:
-
-pop eax
-dec dword [argc]
-mov [filename],eax ; save the name of the file we will open to read
-call putstr_and_line
 
 ;Linux system call to open a file
 
@@ -123,9 +115,9 @@ call putint_and_line
 ret
 
 help_message db 'chastext by Chastity White Rose',0Ah,0Ah
-db 'textdump a file:',0Ah,0Ah,9,'chastehex file',0Ah,0Ah
-db 'quote search string:',0Ah,0Ah,9,'chastehex file search',0Ah,0Ah
-db 'replace string:',0Ah,0Ah,9,'chastehex file search replace',0Ah,0Ah
+db 'textdump a file:',0Ah,0Ah,9,'chastext file',0Ah,0Ah
+db 'quote search string:',0Ah,0Ah,9,'chastext file search',0Ah,0Ah
+db 'replace string:',0Ah,0Ah,9,'chastext file search replace',0Ah,0Ah
 db 'The file must exist',0Ah,0
 
 ;variables for managing arguments and files
