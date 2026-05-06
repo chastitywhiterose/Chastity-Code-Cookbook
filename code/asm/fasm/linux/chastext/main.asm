@@ -3,16 +3,16 @@
 format ELF executable
 entry main
 
-;include 'chastelib32.asm'
+;a reduced form of chastelib without functions this program doesn't use
+include 'chastext-chastelib32.asm'
 
 main:
 
 ;radix will be 16 because this whole program is about hexadecimal
-mov dword [radix],16 ; can choose radix for integer input/output!
+;mov dword [radix],16 ; can choose radix for integer input/output!
 
 pop eax
 mov [argc],eax ;save the argument count for later
-call putint_and_line
 
 cmp [argc],1
 ja help_skip ;if more than 1 argument is given, skip the help message and process the other arguments
@@ -24,11 +24,10 @@ jmp main_end
 help_skip:
 
 pop eax ;pop the next arg which is the name of the program we are running
-call putstr_and_line
 
 get_filename:
 pop eax ;pop the next arg which is the name of the file we will open
-call putstr_and_line
+
 mov [filename],eax ; save the name of the file we will open to read
 
 arg_open_file:
@@ -45,8 +44,6 @@ jns file_open_no_errors ;if eax is not negative/signed there was no error
 
 ;Otherwise, if it was signed, then this code will display an error message.
 
-neg eax
-call putint_and_space
 mov eax,open_error_message
 call putstr_and_line
 
@@ -55,7 +52,6 @@ jmp main_end ;end the program because we failed at opening the file
 file_open_no_errors:
 
 mov [filedesc],eax ; save the file descriptor number for later use
-mov dword [file_offset],0 ;assume the offset is 0,beginning of file
 
 ;before we just textdump or "cat" the file, we need to check for the existence of more arguments which will modify the output
 
@@ -63,7 +59,6 @@ cmp [argc],3
 jb search_skip
 
 pop eax ;pop the next arg which is the string we are searching for
-call putstr_and_line
 mov [string_search],eax
 
 search_skip:
@@ -72,7 +67,6 @@ cmp [argc],4
 jb replace_skip
 
 pop eax ;pop the next arg which is the string we are searching for
-call putstr_and_line
 mov [string_replace],eax
 
 replace_skip:
@@ -104,7 +98,6 @@ jnz putchar_skip
 ;normally, we will print the last read character
 mov al,[byte_array]
 call putchar
-;jmp textdump
 
 putchar_skip:
 
@@ -126,7 +119,6 @@ jmp textdump
 search_start:
 mov eax,[string_search]
 call strlen ;get the length of the search string
-;call putint_and_line
 
 ;attempt to read the length-1 bytes because the first one is already read into the byte array
 
@@ -246,10 +238,10 @@ ret
 
 
 help_message db 'chastext by Chastity White Rose',0Ah,0Ah
-db 'textdump a file:',0Ah,0Ah,9,'chastext file',0Ah,0Ah
-db 'quote search string:',0Ah,0Ah,9,'chastext file search',0Ah,0Ah
+db '"cat" a file:',0Ah,0Ah,9,'chastext file',0Ah,0Ah
+db 'search for a string:',0Ah,0Ah,9,'chastext file search',0Ah,0Ah
 db 'replace string:',0Ah,0Ah,9,'chastext file search replace',0Ah,0Ah
-db 'The file must exist',0Ah,0
+db 'Find or replace any string!',0Ah,0
 
 open_error_message db 'error while opening file',0
 
@@ -258,7 +250,6 @@ argc rd 1
 filename rd 1 ; name of the file to be opened
 filedesc rd 1 ; file descriptor
 bytes_read rd 1
-file_offset rd 1
 
 string_search rd 1 ; place to hold the search string pointer
 string_replace rd 1 ; place to hold the replacement string pointer
