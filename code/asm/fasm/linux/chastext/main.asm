@@ -120,14 +120,32 @@ mov ebx,ecx
 add ebx,eax
 mov byte [ebx],0 ;terminate the string with zero
 
+mov esi,[string_search]
+mov edi,byte_array
+call strcmp ;compare these two strings
+;call putint_and_line
+
+cmp eax,0 ;test if they are the same (if eax returned zero)
+jnz normal_print
+
+;print quotes around matched string
+mov al,'"'
+call putchar
+
 mov eax,byte_array
-;call putstring ;print the string
+call putstring ;print the string
 
-;mov esi,ecx
-;add esi,edx
+mov al,'"'
+call putchar
 
-;mov eax,esi
-;call putstr_and_line
+jmp normal_print_skip
+
+normal_print: ;print normal / unquoted
+
+mov eax,byte_array
+call putstring ;print the string
+
+normal_print_skip:
 
 search_text_skip:
 
@@ -175,6 +193,31 @@ sub ebx,eax ;subtract start pointer from current pointer to get length of string
 
 mov eax,ebx ;copy the string length back to eax
 
+ret
+
+;compare the string at esi to the one at edi
+
+strcmp:
+
+mov eax,0 ;this will be stay zero unless the strings are different
+
+strcmp_start:
+mov bl,[edi]
+cmp bl,0
+jz strcmp_end
+mov bh,[esi]
+cmp bl,0
+jz strcmp_end
+
+inc edi
+inc esi
+
+cmp bl,bh
+jz strcmp_start ;if they are the same, continue to next character
+
+inc eax ;if they were different, eax will be incremented and the function ends
+
+strcmp_end:
 ret
 
 
