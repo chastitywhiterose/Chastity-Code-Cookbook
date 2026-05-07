@@ -41,7 +41,7 @@ mov byte [bx],0 ;terminate the ending with a zero for safety
 
 inc word [argc] ;argc is now 1 (name of program plus possibly more we will test for)
 mov ax,[argc]
-call putint_and_line
+;call putint_and_line
 
 ;now that the argument string is prepared, we will try to use the first argument as a filename to open
 
@@ -57,8 +57,8 @@ jc file_error ;if carry flag is set, we have an error, otherwise, file is open
 file_opened:
 
 mov ax,dx
-call putstring
-call putline
+;call putstring
+;call putline
 jmp use_file ;skip past error message and start using the file
 
 ;this section prints error message and then ends the program if file error found
@@ -81,7 +81,7 @@ use_file:
 
 inc word [argc] ;argc is now 2 because filename was processed and open now
 mov ax,[argc]
-call putint_and_line
+;call putint_and_line
 
 call get_next_arg ;get address of next arg and return into ax register
 cmp ax,[arg_string_end] ;this time, if ax equals end of string, we hex dump and then end the program later
@@ -89,10 +89,11 @@ jz textdump ;jump to hexdump section
 
 ;otherwise, we save the address at ax to our search string
 mov [string_search],ax
+call putstring
 
 inc word [argc] ;argc is now 3 because a search string was found
 mov ax,[argc]
-call putint_and_line
+;call putint_and_line
 
 call get_next_arg ;get address of next arg and return into ax register
 cmp ax,[arg_string_end] ;this time, if ax equals end of string, we hex dump and then end the program later
@@ -100,10 +101,11 @@ jz textdump ;jump to hexdump section
 
 ;otherwise, we save the address at ax to our replacement string
 mov [string_replace],ax
+call putstring
 
 inc word [argc] ;argc is now 4 because a replace string was found
 mov ax,[argc]
-call putint_and_line
+;call putint_and_line
 
 ;all other arguments that may exist are irrelevant
 ;we are done processing them but the argc variable will be later used to conditionally execute code
@@ -120,17 +122,13 @@ int 21h
 
 ;call putint ;check the number of bytes read
 
-;zero is expected if we are at the end of the file.
-;however, if it is zero, we print an EOF message and exit
-
-cmp ax,0
-jnz file_success ;if more than zero bytes read, proceed to display
-mov ax,end_of_file
-call putstring
-jmp file_close
+cmp ax,1        ;check to see if exactly 1 byte was read
+jz file_success ;if true, proceed to display
+;mov ax,end_of_file
+;call putstring
+jmp file_close ;otherwise close the file and end program after failure
 
 ; this point is reached if file was read from successfully
-
 file_success:
 
 cmp word[argc],2 ;if only 2 arguments, just putchar and read next one
@@ -162,6 +160,9 @@ mov ax,[string_search]
 call strlen ;get the length of the search string
 ;call putint_and_line
 
+mov ax,[string_search]
+call strlen ;get the length of the search string
+
 ;attempt to read the length-1 bytes because the first one is already read into the byte array
 
 dec ax               ;subtract 1 from ax which holds our length of string
@@ -172,9 +173,7 @@ mov bx,[file_handle] ;store file handle to read from in bx
 mov ah,3Fh           ;call number for read function
 int 21h
 
-
 mov bx,cx ;do some math to calculate where the string should end
-
 add bx,ax
 mov byte [bx],0 ;terminate the string with zero
 
@@ -303,11 +302,11 @@ mov [arg_index],bx ; save this index to variable
 mov ax,bx ;but also save it to ax register for use
 ret
 
-help db 'chastehex:',0Ah
-db 'hexdump a file:',0Ah,9,'chex file',0Ah
-db 'read a byte:',0Ah,9,'chex file address',0Ah
-db 'write a byte:',0Ah,9,'chex file address value',0Ah
-db 'The file must exist',0Ah,0
+help db 'chastext by Chastity White Rose',0Ah,0Ah
+db '"cat" a file:',0Ah,0Ah,9,'chastext file',0Ah,0Ah
+db 'search for a string:',0Ah,0Ah,9,'chastext file search',0Ah,0Ah
+db 'replace string:',0Ah,0Ah,9,'chastext file search replace',0Ah,0Ah
+db 'Find or replace any string!',0Ah,0
 
 ; About the chastelib variant
 
@@ -483,6 +482,25 @@ call putint
 call putline
 ret
 
+
+;a small function just for the common operation
+;printing an integer followed by a space
+;this saves a few bytes in the assembled code
+
+putstr_and_space:
+call putstring
+call putspace
+ret
+
+;a small function just for the common operation
+;printing an integer followed by a space
+;this saves a few bytes in the assembled code
+
+putstr_and_line:
+call putstring
+call putline
+ret
+
 ;end of chastelib
 
 
@@ -495,11 +513,14 @@ file_handle dw 0
 read_error_message db 'Failure during reading of file. Error number: ',0
 end_of_file db 'EOF',0
 
+
+byte_array db 0x100 dup 0
+
+;byte_array rb 0x100
+
 ;where we will store data from the file
 bytes_read rw 0
 
 string_search rw 1 ; place to hold the search string pointer
 string_replace rw 1 ; place to hold the replacement string pointer
-
-byte_array rb 0x100
 
