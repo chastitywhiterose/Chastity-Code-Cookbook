@@ -65,8 +65,7 @@ jmp use_file ;skip past error message and start using the file
 
 file_error: ;prints error code2=file not found
 mov ax,dx
-call putstring
-call putline
+call putstr_and_line
 mov ax,file_error_message
 call putstring
 mov ax,[file_handle]
@@ -89,7 +88,7 @@ jz textdump ;jump to hexdump section
 
 ;otherwise, we save the address at ax to our search string
 mov [string_search],ax
-call putstring
+;call putstr_and_line
 
 inc word [argc] ;argc is now 3 because a search string was found
 mov ax,[argc]
@@ -101,7 +100,7 @@ jz textdump ;jump to hexdump section
 
 ;otherwise, we save the address at ax to our replacement string
 mov [string_replace],ax
-call putstring
+;call putstr_and_line
 
 inc word [argc] ;argc is now 4 because a replace string was found
 mov ax,[argc]
