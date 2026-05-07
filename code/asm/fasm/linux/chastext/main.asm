@@ -8,13 +8,10 @@ include 'chastext-chastelib32.asm'
 
 main:
 
-;radix will be 16 because this whole program is about hexadecimal
-;mov dword [radix],16 ; can choose radix for integer input/output!
-
 pop eax
 mov [argc],eax ;save the argument count for later
 
-cmp [argc],1
+cmp dword [argc],1
 ja help_skip ;if more than 1 argument is given, skip the help message and process the other arguments
 
 help:
@@ -55,7 +52,7 @@ mov [filedesc],eax ; save the file descriptor number for later use
 
 ;before we just textdump or "cat" the file, we need to check for the existence of more arguments which will modify the output
 
-cmp [argc],3
+cmp dword[argc],3
 jb search_skip
 
 pop eax ;pop the next arg which is the string we are searching for
@@ -63,7 +60,7 @@ mov [string_search],eax
 
 search_skip:
 
-cmp [argc],4
+cmp dword[argc],4
 jb replace_skip
 
 pop eax ;pop the next arg which is the string we are searching for
@@ -92,7 +89,7 @@ jmp main_end
 
 file_success:
 
-cmp [argc],2 ;if only 2 arguments, just putchar and read next one
+cmp dword[argc],2 ;if only 2 arguments, just putchar and read next one
 jnz putchar_skip
 
 ;normally, we will print the last read character
@@ -101,7 +98,7 @@ call putchar
 
 putchar_skip:
 
-cmp [argc],3 ;if not enough arguments, skip the search string section
+cmp dword[argc],3 ;if not enough arguments, skip the search string section
 jb textdump
 
 mov ebx,[string_search]
@@ -143,7 +140,7 @@ jnz normal_print ;if they are not a match print them unmodified and unquoted
 ;but if they are a match, then we either quote them
 ;or replace them if a replacement string is available
 
-cmp [argc],4 ;if less than 4 args, no replacement exist, so we quote the strings
+cmp dword[argc],4 ;if less than 4 args, no replacement exist, so we quote the strings
 jb print_quotes
 
 ;otherwise, we will print the replacement string instead of the original!
