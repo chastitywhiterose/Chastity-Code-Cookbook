@@ -160,6 +160,7 @@ jmp textdump
 search_start:
 mov ax,[string_search]
 call strlen ;get the length of the search string
+;call putint_and_line
 
 ;attempt to read the length-1 bytes because the first one is already read into the byte array
 
@@ -171,7 +172,9 @@ mov bx,[file_handle] ;store file handle to read from in bx
 mov ah,3Fh           ;call number for read function
 int 21h
 
+
 mov bx,cx ;do some math to calculate where the string should end
+
 add bx,ax
 mov byte [bx],0 ;terminate the string with zero
 
@@ -200,7 +203,7 @@ print_quotes:
 mov al,'"'
 call putchar
 
-mov eax,byte_array
+mov ax,byte_array
 call putstring ;print the string
 
 mov al,'"'
@@ -210,7 +213,7 @@ jmp normal_print_skip
 
 normal_print: ;print normal / unquoted because it doesn't match
 
-mov eax,byte_array
+mov ax,byte_array
 call putstring ;print the string
 
 normal_print_skip:
@@ -275,21 +278,7 @@ inc ax ;if they were different, eax will be incremented and the function ends
 strcmp_end:
 ret
 
-arg_string_end dw 0
-arg_index dw 0
-file_error_message db 'Could not open the file! Error number: ',0
-file_handle dw 0
-read_error_message db 'Failure during reading of file. Error number: ',0
-end_of_file db 'EOF',0
-
-;where we will store data from the file
-byte_array db 16 dup '?',0
-file_offset dw 0,0
-bytes_read dw 0
-
-argc dw 0
-
-;function to move ahead to the next art
+;function to move ahead to the next arg
 ;only works after the filter has been applied to turn all spaces into zeroes
 
 get_next_arg:
@@ -312,86 +301,6 @@ jmp find_non_zero ;otherwise, keep looking
 arg_finish:
 mov [arg_index],bx ; save this index to variable
 mov ax,bx ;but also save it to ax register for use
-ret
-
-;this function prints a row of hex bytes
-;each row is 16 bytes
-print_bytes_row:
-mov cx,[bytes_read] ;number of bytes read
-
-;set width to 4 and display extra:offset
-mov word[int_width],4
-mov ax,bp
-call putint
-mov ax,[file_offset]
-call putint_and_space
-
-add [file_offset],cx
-adc bp,0
-
-mov ah,0 ;zero upper half of ax
-mov bx,byte_array
-
-mov word[int_width],2
-
-print_byte:
-mov al,[bx]
-call putint_and_space
-inc bx
-dec cx
-cmp cx,0
-jnz print_byte
-
-;optionally, print chars after hex bytes
-call print_bytes_row_text
-call putline
-
-ret
-
-space_three db '   ',0
-
-print_bytes_row_text:
-
-mov cx,[bytes_read]
-pad_spaces:
-cmp cx,0x10
-jz pad_spaces_end
-mov ax,space_three
-call putstring
-inc cx
-jmp pad_spaces
-pad_spaces_end:
-
-mov bx,byte_array
-mov cx,[bytes_read]
-next_char:
-mov ax,0
-mov al,[bx]
-
-;if char is below '0' or above '9', it is outside the range of these and is not a digit
-cmp al,0x20
-jb not_printable
-cmp al,0x7E
-ja not_printable
-
-printable:
-;if char is in printable range,copy as is and proceed to next index
-jmp next_index
-
-not_printable:
-mov al,'.' ;otherwise replace with placeholder value
-
-next_index:
-mov [bx],al
-inc bx
-dec cx
-cmp cx,0
-jnz next_char
-mov [bx],byte 0 ;make sure string is zero terminated
-
-mov ax,byte_array
-call putstring
-
 ret
 
 help db 'chastehex:',0Ah
@@ -577,5 +486,20 @@ ret
 ;end of chastelib
 
 
+
+argc dw 0
+arg_string_end dw 0
+arg_index dw 0
+file_error_message db 'Could not open the file! Error number: ',0
+file_handle dw 0
+read_error_message db 'Failure during reading of file. Error number: ',0
+end_of_file db 'EOF',0
+
+;where we will store data from the file
+bytes_read rw 0
+
 string_search rw 1 ; place to hold the search string pointer
 string_replace rw 1 ; place to hold the replacement string pointer
+
+byte_array rb 0x100
+
