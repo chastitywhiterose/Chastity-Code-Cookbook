@@ -99,7 +99,7 @@ cmp ax,[arg_string_end] ;this time, if ax equals end of string, we hex dump and 
 jz textdump ;jump to hexdump section
 
 ;otherwise, we save the address at ax to our replacement string
-mov [string_search],ax
+mov [string_replace],ax
 
 inc word [argc] ;argc is now 4 because a replace string was found
 mov ax,[argc]
@@ -147,7 +147,7 @@ jb textdump
 
 mov bx,[string_search]
 
-mov al,[ebx]
+mov al,[bx]
 mov ah,[byte_array]
 cmp al,ah ;compare the first character of search string with the byte read already
 jz search_start ; if they are equal, skip putchar and begin searching for the string
@@ -182,7 +182,7 @@ mov si,[string_search]
 mov di,byte_array
 call strcmp ;compare these two strings
 
-cmp ax,0 ;test if they are the same (if eax returned zero)
+cmp ax,0 ;test if they are the same (if ax returned zero)
 jnz normal_print ;if they are not a match print them unmodified and unquoted
 
 ;but if they are a match, then we either quote them
@@ -241,7 +241,7 @@ mov bx,ax ; copy ax to bx. bx will be used as index to the string
 
 strlen_start: ; this loop finds the length of the string as part of the putstring function
 
-cmp [bx],byte 0 ; compare byte at address ebx with 0
+cmp [bx],byte 0 ; compare byte at address bx with 0
 jz strlen_end ; if comparison was zero, jump to loop end because we have found the length
 inc bx
 jmp strlen_start
