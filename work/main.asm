@@ -124,18 +124,97 @@ int 21h
 ;however, if it is zero, we print an EOF message and exit
 
 cmp ax,0
-jnz hexdump_print_row
+jnz file_success ;if more than zero bytes read, proceed to display
 mov ax,end_of_file
 call putstring
 jmp file_close
 
-hexdump_print_row:
+; this point is reached if file was read from successfully
 
-mov [bytes_read],ax
+file_success:
 
-;call print_bytes_row
+cmp word[argc],2 ;if only 2 arguments, just putchar and read next one
+jnz putchar_skip
 
-jmp textdump ;jump back to hexdump and attempt another read of a row
+;normally, we will print the last read character
+mov al,[byte_array]
+call putchar
+
+putchar_skip:
+
+cmp word[argc],3 ;if not enough arguments, skip the search string section
+jb textdump
+
+mov bx,[string_search]
+
+mov al,[ebx]
+mov ah,[byte_array]
+cmp al,ah ;compare the first character of search string with the byte read already
+jz search_start ; if they are equal, skip putchar and begin searching for the string
+
+;otherwise, if they are not equal, just putchar the last byte read and repeat the loop
+mov al,[byte_array]
+call putchar
+jmp textdump
+
+search_start:
+mov ax,[string_search]
+call strlen ;get the length of the search string
+
+;attempt to read the length-1 bytes because the first one is already read into the byte array
+
+dec ax
+mov dx,ax            ;number of bytes to read
+mov cx,byte_array+1   ;address to store the bytes
+mov bx,[filedesc]     ;move the opened file descriptor into EBX
+mov ax,3              ;invoke SYS_READ (kernel opcode 3)
+int 80h                ;call the kernel
+
+mov bx,cx
+add bx,ax
+mov byte [bx],0 ;terminate the string with zero
+
+mov si,[string_search]
+mov di,byte_array
+call strcmp ;compare these two strings
+
+cmp ax,0 ;test if they are the same (if eax returned zero)
+jnz normal_print ;if they are not a match print them unmodified and unquoted
+
+;but if they are a match, then we either quote them
+;or replace them if a replacement string is available
+
+cmp word[argc],4 ;if less than 4 args, no replacement exist, so we quote the strings
+jb print_quotes
+
+;otherwise, we will print the replacement string instead of the original!
+
+mov ax,[string_replace]
+call putstring ;print the string
+
+jmp normal_print_skip
+
+print_quotes:
+;print quotes around matched string
+mov al,'"'
+call putchar
+
+mov eax,byte_array
+call putstring ;print the string
+
+mov al,'"'
+call putchar
+
+jmp normal_print_skip
+
+normal_print: ;print normal / unquoted because it doesn't match
+
+mov eax,byte_array
+call putstring ;print the string
+
+normal_print_skip:
+
+jmp textdump
 
 file_close:
 ;close the file if it is open
@@ -412,6 +491,18 @@ ret
 putline:
 push ax
 mov ax,line
+call putstring
+pop ax
+ret
+
+;a function for printing a single character that is the value of al
+
+char: db 0,0
+
+putchar:
+push ax
+mov [char],al
+mov ax,char
 call putstring
 pop ax
 ret
