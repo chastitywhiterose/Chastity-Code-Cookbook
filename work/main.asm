@@ -110,7 +110,7 @@ call putint_and_line
 
 textdump:
 
-;we start the loop with a call to read exactly 16 bytes
+;we start the loop with a call to read exactly 1 byte
 
 mov ah,3Fh           ;call number for read function
 mov bx,[file_handle] ;store file handle to read from in bx
@@ -163,14 +163,15 @@ call strlen ;get the length of the search string
 
 ;attempt to read the length-1 bytes because the first one is already read into the byte array
 
-dec ax
-mov dx,ax            ;number of bytes to read
-mov cx,byte_array+1   ;address to store the bytes
-mov bx,[filedesc]     ;move the opened file descriptor into EBX
-mov ax,3              ;invoke SYS_READ (kernel opcode 3)
-int 80h                ;call the kernel
+dec ax               ;subtract 1 from ax which holds our length of string
 
-mov bx,cx
+mov dx,byte_array+1  ;store the bytes here
+mov cx,ax            ;we are reading this many bytes to have a string to compare
+mov bx,[file_handle] ;store file handle to read from in bx
+mov ah,3Fh           ;call number for read function
+int 21h
+
+mov bx,cx ;do some math to calculate where the string should end
 add bx,ax
 mov byte [bx],0 ;terminate the string with zero
 
@@ -225,6 +226,54 @@ int 21h
 ending:
 mov ax,4C00h ; Exit program
 int 21h
+
+;the strlen and strcmp are named after the equivalent C functions
+;but are written from scratch by me based on their expected behavior
+
+;a function to get the length of string in ax and return the integer in ax
+
+strlen:
+
+mov bx,ax ; copy ax to bx. bx will be used as index to the string
+
+strlen_start: ; this loop finds the length of the string as part of the putstring function
+
+cmp [bx],byte 0 ; compare byte at address ebx with 0
+jz strlen_end ; if comparison was zero, jump to loop end because we have found the length
+inc bx
+jmp strlen_start
+
+strlen_end:
+sub bx,ax ;subtract start pointer from current pointer to get length of string
+
+mov ax,bx ;copy the string length back to eax
+
+ret
+
+;compare the string at si to the one at di
+
+strcmp:
+
+mov ax,0 ;this will be stay zero unless the strings are different
+
+strcmp_start:
+mov bl,[di]
+cmp bl,0
+jz strcmp_end
+mov bh,[si]
+cmp bh,0
+jz strcmp_end
+
+inc di
+inc si
+
+cmp bl,bh
+jz strcmp_start ;if they are the same, continue to next character
+
+inc ax ;if they were different, eax will be incremented and the function ends
+
+strcmp_end:
+ret
 
 arg_string_end dw 0
 arg_index dw 0

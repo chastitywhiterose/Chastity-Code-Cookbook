@@ -187,6 +187,9 @@ mov eax, 1  ; invoke SYS_EXIT (kernel opcode 1)
 mov ebx, 0  ; return 0 status on exit - 'No Errors'
 int 80h
 
+;the strlen and strcmp are named after the equivalent C functions
+;but are written from scratch by me based on their expected behavior
+
 ;a function to get the length of string in eax and return the integer in eax
 
 strlen:
