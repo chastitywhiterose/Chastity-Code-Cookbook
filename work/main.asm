@@ -512,14 +512,10 @@ file_handle dw 0
 read_error_message db 'Failure during reading of file. Error number: ',0
 end_of_file db 'EOF',0
 
-
-byte_array db 0x100 dup 0
-
-;byte_array rb 0x100
-
 ;where we will store data from the file
 bytes_read rw 0
 
 string_search rw 1 ; place to hold the search string pointer
 string_replace rw 1 ; place to hold the replacement string pointer
 
+byte_array db 0x97 dup 0
