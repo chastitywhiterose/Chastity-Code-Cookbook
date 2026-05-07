@@ -39,7 +39,7 @@ jnz filter ;if not at end, continue the filter
 filter_end:
 mov byte [bx],0 ;terminate the ending with a zero for safety
 
-inc word [argc]
+inc word [argc] ;argc is now 1 (name of program plus possibly more we will test for)
 mov ax,[argc]
 call putint_and_line
 
@@ -75,14 +75,38 @@ jmp ending
 
 ;how we use the file depends on the number of arguments given
 ;if no arguments other than the filename exist, we do a regular hex dump
+;otherwise we look for two more arguments: the search and replace strings
 
 use_file:
 
-mov bp,0 ;set bp to zero because it represents upper 16 bits of file address
+inc word [argc] ;argc is now 2 because filename was processed and open now
+mov ax,[argc]
+call putint_and_line
+
 call get_next_arg ;get address of next arg and return into ax register
 cmp ax,[arg_string_end] ;this time, if ax equals end of string, we hex dump and then end the program later
 jz textdump ;jump to hexdump section
 
+;otherwise, we save the address at ax to our search string
+mov [string_search],ax
+
+inc word [argc] ;argc is now 3 because a search string was found
+mov ax,[argc]
+call putint_and_line
+
+call get_next_arg ;get address of next arg and return into ax register
+cmp ax,[arg_string_end] ;this time, if ax equals end of string, we hex dump and then end the program later
+jz textdump ;jump to hexdump section
+
+;otherwise, we save the address at ax to our replacement string
+mov [string_search],ax
+
+inc word [argc] ;argc is now 4 because a replace string was found
+mov ax,[argc]
+call putint_and_line
+
+;all other arguments that may exist are irrelevant
+;we are done processing them but the argc variable will be later used to conditionally execute code
 
 textdump:
 
@@ -413,4 +437,5 @@ ret
 ;end of chastelib
 
 
-
+string_search rw 1 ; place to hold the search string pointer
+string_replace rw 1 ; place to hold the replacement string pointer
