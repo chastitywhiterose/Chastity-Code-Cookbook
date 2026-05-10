@@ -31,10 +31,27 @@ mov [arg_string_end],ax ;now we know where the string ends.
 ;cx contains the length
 ;and we know that [arg_string_end] is where it ends
 
+;the next step is to filter the arguments into separate zero terminated strings
+;each space will be changed to a zero (normally)
+;but we also need to account for spaces inside quotes that are considered part of the string
+;Linux handles this normally but DOS needs me to write the code to mimic this behavior
+;because the program needs to function identically for DOS or Linux
+
 arg_filter:
+
+filter_quotes:
+
+cmp byte [bx],'"' ;is this a double quote
+jnz filter_spaces ;not quote, skip to normal space filter section
+cmp byte [bx],'"' ;is this a single quote
+jnz filter_spaces ;not quote, skip to normal space filter section
+
+
+
+filter_spaces:
 cmp byte [bx],' '
-ja notspace ; if char is above space, leave it alone
-mov byte [bx],0 ;otherwise it counts as a space, change it to a zero
+jnz notspace ; if char is not space, leave it alone
+mov byte [bx],0 ;otherwise change the space to a zero
 notspace:
 inc bx
 cmp bx,[arg_string_end] ;are we at the end of the arg string?
