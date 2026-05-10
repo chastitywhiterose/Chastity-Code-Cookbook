@@ -46,7 +46,15 @@ jnz filter_spaces ;not quote, skip to normal space filter section
 cmp byte [bx],'"' ;is this a single quote
 jnz filter_spaces ;not quote, skip to normal space filter section
 
-
+;if it is a quote of either type, we handle it like this
+mov ah,[bx] ;save this quote byte to ah register
+quote_loop:
+inc bx      ;go to next byte
+cmp bx,[arg_string_end] ;are we at the end of the arg string?
+jz arg_filter_end       ;if yes, stop the filter and terminate with zero
+mov al,[bx] ;get this byte in al register
+cmp al,ah   ;check for next quote of same type
+jnz quote_loop
 
 filter_spaces:
 cmp byte [bx],' '
