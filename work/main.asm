@@ -56,6 +56,8 @@ inc bx      ;go to next byte
 
 quote_loop:
 
+;must check for end of the string or it could crash the DOSBOX emulator with infinite loop
+;because it will keep checking for a quote even if it doesn't exist
 cmp bx,[arg_string_end] ;are we at the end of the arg string?
 jz arg_filter_end       ;if yes, stop the filter and terminate with zero
 
@@ -67,16 +69,16 @@ jmp quote_loop
 
 quote_loop_end:
 mov byte[bx],0 ;but delete it from string with zero
-inc bx
 
 filter_spaces:
+cmp bx,[arg_string_end] ;are we at the end of the arg string?
+jz arg_filter_end       ;if yes, stop the filter and terminate with zero
 cmp byte [bx],' '
 jnz notspace ; if char is not space, leave it alone
 mov byte [bx],0 ;otherwise change the space to a zero
 notspace:
 inc bx
-cmp bx,[arg_string_end] ;are we at the end of the arg string?
-jnz arg_filter ;if not at end, continue the filter
+jmp arg_filter ;if not at end, continue the filter
 
 arg_filter_end:
 mov byte [bx],0 ;terminate the ending with a zero for safety
@@ -88,7 +90,7 @@ mov ax,[arg_string_index] ;get address of current argument
 call putstring
 call putline
 call get_next_arg
-cmp bx,[arg_string_end]
+cmp ax,[arg_string_end]
 jz arg_loop_end
 jmp arg_loop
 arg_loop_end:
