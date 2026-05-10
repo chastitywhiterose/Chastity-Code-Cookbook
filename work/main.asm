@@ -41,20 +41,33 @@ arg_filter:
 
 filter_quotes:
 
-cmp byte [bx],'"' ;is this a double quote
-jnz filter_spaces ;not quote, skip to normal space filter section
-cmp byte [bx],'"' ;is this a single quote
-jnz filter_spaces ;not quote, skip to normal space filter section
+cmp byte [bx],0x22 ;is this a double quote -> "
+jz quote_yes ;not quote, skip to normal space filter section
+cmp byte [bx],0x27 ;is this a single quote -> '
+jz quote_yes ;not quote, skip to normal space filter section
 
-;if it is a quote of either type, we handle it like this
+jmp filter_spaces ; if it was not a quote, skip this section
+
+quote_yes:
+;if it is a quote of either type, we handle it like thisWW
 mov ah,[bx] ;save this quote byte to ah register
-quote_loop:
+mov byte[bx],0 ;but delete it from string with zero
 inc bx      ;go to next byte
+
+quote_loop:
+
 cmp bx,[arg_string_end] ;are we at the end of the arg string?
 jz arg_filter_end       ;if yes, stop the filter and terminate with zero
+
 mov al,[bx] ;get this byte in al register
 cmp al,ah   ;check for next quote of same type
-jnz quote_loop
+jz quote_loop_end ;if this is the end quote, stop the loop
+inc bx      ;go to next byte
+jmp quote_loop
+
+quote_loop_end:
+mov byte[bx],0 ;but delete it from string with zero
+inc bx
 
 filter_spaces:
 cmp byte [bx],' '
