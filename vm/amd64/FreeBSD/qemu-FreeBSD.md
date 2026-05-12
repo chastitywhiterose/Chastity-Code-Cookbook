@@ -36,5 +36,8 @@ This means that for the first time, I am able to run a successful emulator in qe
 
 However, I can't get the internet working. I will learn more about this.
 
-https://www.youtube.com/watch?v=Q1PebvpQUvI
-https://wiki.qemu.org/Documentation/Networking
+<https://www.youtube.com/watch?v=Q1PebvpQUvI>
+<https://wiki.qemu.org/Documentation/Networking>
+<https://en.wikibooks.org/wiki/QEMU/Networking>
+<https://www.qemu.org/docs/master/system/invocation.html>
+
