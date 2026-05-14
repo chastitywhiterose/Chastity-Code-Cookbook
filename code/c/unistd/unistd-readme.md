@@ -36,3 +36,12 @@ Each of these functions has various arguments which have clearly defined meaning
 
 Interestingly, these calls are available on every operating system that I know about except for Windows. However, considering how easy these are to implement using the C standard library, it would be possible to write Windows versions of these. In fact, some people have already done this.
 
+See the Cygwin and MinGW projects for more information about how to use these calls on Windows. For all other operating systems: Linux, Unix (FreeBSD,OpeBSD,NetBSD,Minix, and ChromiumOS)
+these calls are already available if you have a working C compiler.
+
+You might wonder why I spent the time learning and explaining this. It is because having a super small library of functions that I can memorize allows faster programming and less time spent looking at my references when I have forgotten which order the arguments go in.
+
+This gives me an alternative library of functions I can use that is easier than the C standard library. However, I am keeping both versions of every program I have written.
+
+But the final point I want to make is that because these are the same calls used in my Assembly programs, I can make C programs that map 1 to 1 when comparing and teaching Assembly in the books I write!
+
