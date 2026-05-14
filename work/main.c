@@ -6,6 +6,9 @@
 /*
  rather than including string.h, I am keeping with the them of excluding the C standard library for an extra challenge
  Therefore, this unistd version of chastext includes my own versions of strlen and strcmp.
+*/
+
+
 /*
  Chastity's implementation of strlen
  This is the same routine normally used in putstring from chastelib
@@ -17,6 +20,16 @@ long unsigned int strlen(const char *s)
  while(*p){p++;}           /*loop until zero found and immediately exit*/
  count=p-s;                /*count is the difference of pointers p and s*/
  return count;             /*return how many bytes were written*/
+}
+
+int strcmp(const char *s0,const char *s1)
+{
+ while(*s0 && *s0==*s1)
+ {
+  s0++;
+  s1++;
+ }           /*loop until zero found and immediately exit*/
+ return *s0-*s1;             /*return how many bytes were written*/
 }
  
 int main(int argc, char *argv[])
