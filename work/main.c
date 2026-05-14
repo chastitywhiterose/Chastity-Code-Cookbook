@@ -1,10 +1,5 @@
-/*
-#include <stdio.h>
-#include <stdlib.h>
-*/
-
-#include <fcntl.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include "chastelib-unistd.h"
 
 int fd; /*file descriptor used in unistd*/
@@ -85,7 +80,8 @@ int main(int argc, char *argv[])
  if(argc>1)
  {
   /*
-   open the file for reading or writing because chastehex is unique in that it can do both
+   open the file for reading or writing because
+   chastehex is unique in that it can do both
   */
   fd=open(argv[1],O_RDWR);
   if(fd==-1)
