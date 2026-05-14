@@ -353,11 +353,11 @@ mov [arg_string_index],bx ; save this index to the variable
 mov ax,bx ;but also save it to ax register for use in printing or something else
 ret
 
-help db 'chastext by Chastity White Rose',0Ah,0Ah
-db '"cat" a file:',0Ah,0Ah,9,'chastext file',0Ah,0Ah
-db 'search for a string:',0Ah,0Ah,9,'chastext file search',0Ah,0Ah
-db 'replace string:',0Ah,0Ah,9,'chastext file search replace',0Ah,0Ah
-db 'Find or replace any string!',0Ah,0
+help db 'chastext by Chastity White Rose',0Dh,0Ah
+db '"cat" or "type" a file without changing it:',0Dh,0Ah,9,'chastext file',0Dh,0Ah
+db 'search for a string and quote it:',0Dh,0Ah,9,'chastext file search',0Dh,0Ah
+db 'replace string:',0Dh,0Ah,9,'chastext file search replace',0Dh,0Ah
+db 'Find or replace any string!',0Dh,0Ah,0
 
 ; About the chastelib variant
 
@@ -554,8 +554,6 @@ ret
 
 ;end of chastelib
 
-
-
 argc dw 0
 
 arg_string_start dw 0
@@ -573,4 +571,4 @@ bytes_read dw 0
 string_search rw 1 ; place to hold the search string pointer
 string_replace rw 1 ; place to hold the replacement string pointer
 
-byte_array db 0x64 dup 0
+byte_array db 0x38 dup 0
