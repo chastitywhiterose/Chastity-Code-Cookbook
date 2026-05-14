@@ -1,0 +1,9 @@
+chastext is a generic text editing tool
+It can act as a replacement for sed when you don't need regular expressions
+but you still need to change a small part in a plain text configuration file
+or source file depending on what options you want.
+
+To make multiple changes to a text file, you would make extra copies by redirecting standard output
+with the > operator from the Linux or DOS command line.
+Then you can use them as new input files to further transform them.
+If you mess up files beyond repair, at least you still have the original file.
