@@ -84,15 +84,15 @@ int main(int argc, char *argv[])
 
  if(argc>1)
  {
- 
- 
-  fd=open(argv[1], 0 /*O_RDWR*/);
+  /*
+   open the file for reading or writing because chastehex is unique in that it can do both
+  */
+  fd=open(argv[1],O_RDWR);
   if(fd==-1)
- {
-  putstr("Failed to open file\n");
-putint(fd);
-  _exit(1); 
- }
+  {
+   putstr("Failed to open file\n");
+   _exit(1); 
+  }
   else
   {
    putstr(argv[1]);
@@ -115,12 +115,19 @@ putint(fd);
  /*read a byte at address of second arg*/
  if(argc==3)
  {
-  /*c=fgetc(fp);*/
+
   count=read(fd,&c,1);
   int_width=8;
   putstr(intstr(x));
   putstr(" ");
-  if(count==-1){putstr("EOF");}
+  /*
+   according to the read function manual page "man 2 read",
+   a return of 0 means the end of file and
+   a return of -1 means some kind of error
+   therefore, anything less than 1 means we should stop reading
+   and assume End Of File by printing EOF
+  */
+  if(count<1){putstr("EOF");}
   else
   {
    int_width=2;
