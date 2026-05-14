@@ -49,49 +49,8 @@ char *intstr(unsigned int i)    /*Chastity's supreme integer to string conversio
  return s;                      /*return this string to be used by putstr,printf,std::cout or whatever*/
 }
 
-/*
-The strint_errors variable is used to keep track of how many errors happened in the strint function.
-The following errors can occur:
 
-Radix is not in range 2 to 36
-Character is not a number 0 to 9 or alphabet A to Z (in either case)
-Character is alphanumeric but is not valid for current radix
 
-If any of these errors happen, error messages are printed to let the programmer or user know what went wrong in the string that was passed to the function.
-If getting input from the keyboard, the strint_errors variable can be used in a conditional statement to tell them to try again and recall the code that grabs user input.
-*/
-
-int strint_errors = 0; 
-
-/*
- The strint function is my own replacement for the strtol function from the C standard library.
- I didn't technically need to make this function because the functions from stdlib.h can already convert strings from bases 2 to 36 into integers.
- However, my function is simpler because it only requires 2 arguments instead of three, and it also does not handle negative numbers.
-I have never needed negative integers, but if I ever do, I can use the standard functions or write my own in the future.
-*/
-
-int strint(const char *s)
-{
- int i=0;
- char c;
- strint_errors = 0; /*set zero errors before we parse the string*/
- if( radix<2 || radix>36 ){ strint_errors++; printf("Error: radix %i is out of range!\n",radix);}
- while( *s == ' ' || *s == '\n' || *s == '\t' ){s++;} /*skip whitespace at beginning*/
- while(*s!=0)
- {
-  c=*s;
-  if( c >= '0' && c <= '9' ){c-='0';}
-  else if( c >= 'A' && c <= 'Z' ){c-='A';c+=10;}
-  else if( c >= 'a' && c <= 'z' ){c-='a';c+=10;}
-  else if( c == ' ' || c == '\n' || c == '\t' ){break;}
-  else{ strint_errors++; printf("Error: %c is not an alphanumeric character!\n",c);break;}
-  if(c>=radix){ strint_errors++; printf("Error: %c is not a valid character for radix %i\n",*s,radix);break;}
-  i*=radix;
-  i+=c;
-  s++;
- }
- return i;
-}
 
 /*
  This function prints a string using fwrite.
@@ -130,6 +89,51 @@ void putint(unsigned int i)
 {
  putstr(intstr(i));
 }
+
+/*
+The strint_errors variable is used to keep track of how many errors happened in the strint function.
+The following errors can occur:
+
+Radix is not in range 2 to 36
+Character is not a number 0 to 9 or alphabet A to Z (in either case)
+Character is alphanumeric but is not valid for current radix
+
+If any of these errors happen, error messages are printed to let the programmer or user know what went wrong in the string that was passed to the function.
+If getting input from the keyboard, the strint_errors variable can be used in a conditional statement to tell them to try again and recall the code that grabs user input.
+*/
+
+int strint_errors = 0; 
+
+/*
+ The strint function is my own replacement for the strtol function from the C standard library.
+ I didn't technically need to make this function because the functions from stdlib.h can already convert strings from bases 2 to 36 into integers.
+ However, my function is simpler because it only requires 2 arguments instead of three, and it also does not handle negative numbers.
+I have never needed negative integers, but if I ever do, I can use the standard functions or write my own in the future.
+*/
+
+int strint(const char *s)
+{
+ int i=0;
+ char c;
+ strint_errors = 0; /*set zero errors before we parse the string*/
+ if( radix<2 || radix>36 ){ strint_errors++; printf("Error: radix %i is out of range!\n",radix);}
+ while( *s == ' ' || *s == '\n' || *s == '\t' ){s++;} /*skip whitespace at beginning*/
+ while(*s!=0)
+ {
+  c=*s;
+  if( c >= '0' && c <= '9' ){c-='0';}
+  else if( c >= 'A' && c <= 'Z' ){c-='A';c+=10;}
+  else if( c >= 'a' && c <= 'z' ){c-='a';c+=10;}
+  else if( c == ' ' || c == '\n' || c == '\t' ){break;}
+  else{ strint_errors++; printf("Error: %c is not an alphanumeric character!\n",*s);break;}
+  if(c>=radix){ strint_errors++; printf("Error: %c is not a valid character for radix %i\n",*s,radix);break;}
+  i*=radix;
+  i+=c;
+  s++;
+ }
+ return i;
+}
+
 
 /*
  Those four functions above are the core of chastelib.

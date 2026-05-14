@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
  char *s; /*pointer used to search through the file array*/
  char *ss,*sr; /*string search and replacement pointers*/
  int sslength;
- int flength,count;
+ int count;
    
  if(argc==1)
  {
@@ -50,6 +50,70 @@ int main(int argc, char *argv[])
   }
   return 0; /*return with no errors*/
  }
+ 
+ 
+ 
+ 
+ 
+  /*
+ if only a search string is given, display the whole file except also quote parts that match the search string
+ this is a good way to prove that the program is correctly finding them
+ 
+ but if a replacement string was provided, then this section will replace the search string with the replacement
+ */
+ 
+ if(argc>2)
+ {
+  s=temp;
+  
+  /*assign pointer to the search string and find its length*/
+  ss=argv[2];
+  sslength=strlen(ss);
+  
+   /*if 4 or more arguments are present, use the 4th arg as the replacement string*/
+  if(argc>3)
+  {
+   sr=argv[3];
+  }
+
+  /*next begin this loop which cleverly reads and modified data*/  
+  while(count>0)
+  {
+   count=fread(s,1,1,fp); /*read one byte*/
+   if(s[0]==ss[0]) /*is this byte the same as the first in search string?*/
+   {
+    count=fread(s+1,1,sslength-1,fp); /*read enough bytes to have an equal length string as search string*/
+    s[sslength]=0; /*terminate this temporary string with a zero*/
+
+    /*if the temporary string equals the search string, we do these operations*/
+    if(!strcmp(s,ss))
+    {
+     if(argc==3)
+     {
+      putchar('"');
+      putstr(ss);
+      putchar('"');
+     }
+     else if(argc>3)
+     {
+      putstr(sr);
+     }
+    }
+    
+   }
+   else
+   {
+    fwrite(temp,1,1,stdout); /*write this byte to stdout and move on*/
+   }
+  
+  }
+ 
+ }
+ 
+ 
+ 
+ 
+ 
  
  fclose(fp);
 
