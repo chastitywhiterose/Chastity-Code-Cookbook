@@ -1,0 +1,4 @@
+chastext is a generic text editing tool
+It can act as a replacement for sed when you don't need regular expressions
+but you still need to change a small part in a configuration file
+or source file depending on what options you want.
