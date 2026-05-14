@@ -1,7 +1,23 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include "chastelib-unistd.h"
-#include <string.h>
+/*#include <string.h>*/
+
+/*
+ rather than including string.h, I am keeping with the them of excluding the C standard library for an extra challenge
+ Therefore, this unistd version of chastext includes my own versions of strlen and strcmp.
+/*
+ Chastity's implementation of strlen
+ This is the same routine normally used in putstring from chastelib
+*/
+long unsigned int strlen(const char *s)
+{
+ int count=0;              /*used to calcular how many bytes will be written*/
+ const char *p=s;          /*pointer used to find terminating zero of string*/
+ while(*p){p++;}           /*loop until zero found and immediately exit*/
+ count=p-s;                /*count is the difference of pointers p and s*/
+ return count;             /*return how many bytes were written*/
+}
  
 int main(int argc, char *argv[])
 {
@@ -105,7 +121,7 @@ int main(int argc, char *argv[])
    else
    {
    
-    count=read(fd,s,sslength-1); /*read enough bytes to have an equal length string as search string*/
+    count=read(fd,s+1,sslength-1); /*read enough bytes to have an equal length string as search string*/
     s[count+1]=0; /*terminate this temporary string with a zero*/
     
     if(count<(sslength-1)) /*if we don't have enough characters left in the file to compare*/
