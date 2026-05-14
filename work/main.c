@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
    sr=argv[3];
   }
 
-  /*next begin this loop which cleverly reads and modified data*/  
+  /*next begin this loop which cleverly reads and modified data*/
   while(count>0)
   {
    count=fread(s,1,1,fp); /*read one byte*/
