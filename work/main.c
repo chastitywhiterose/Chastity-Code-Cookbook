@@ -41,7 +41,7 @@ void hexdump()
 {
  int x,address=0;
  x=0;
- while((count=fread(bytes,1,16,fp)))
+ while((count=read(fd,bytes,16)))
  {
   int_width=8;
   putint(address);
@@ -89,9 +89,8 @@ int main(int argc, char *argv[])
   fd=open("filename.txt", O_RDWR);
   if(fd==-1)
  {
-  perror("\nFailed to open file\n");
-  return 1;
-
+  putstr("\nFailed to open file\n");
+  _exit(1); 
  }
   else
   {
@@ -116,11 +115,11 @@ int main(int argc, char *argv[])
  if(argc==3)
  {
   /*c=fgetc(fp);*/
-  read(fd,&c,1);
+  count=read(fd,&c,1);
   int_width=8;
   putstr(intstr(x));
   putstr(" ");
-  if(c==EOF){putstr("EOF");}
+  if(count==-1){putstr("EOF");}
   else
   {
    int_width=2;
@@ -149,7 +148,7 @@ int main(int argc, char *argv[])
  }
  
  close(fd);
- return 0;
+ _exit(0); 
 }
 
 /* gcc -Wall -ansi -pedantic main.c -o chastehex */
