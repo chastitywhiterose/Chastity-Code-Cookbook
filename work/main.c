@@ -13,14 +13,24 @@
  Chastity's implementation of strlen
  This is the same routine normally used in putstring from chastelib
 */
+
 long unsigned int strlen(const char *s)
 {
- int count=0;              /*used to calcular how many bytes will be written*/
+ int count=0;              /*used to calcular how many bytes this string is*/
  const char *p=s;          /*pointer used to find terminating zero of string*/
  while(*p){p++;}           /*loop until zero found and immediately exit*/
  count=p-s;                /*count is the difference of pointers p and s*/
  return count;             /*return how many bytes were written*/
 }
+
+/*
+This is a very basic way of making the strcmp function
+As long as the character indexed in the first string is not zero
+and both characters are equal to each other, it will continue the loop
+If the loop ends, then we have either reached a difference of bytes or
+they are both zero, in which case, the difference returned is zero.
+If this function zero, then you know the strings are the same.
+*/
 
 int strcmp(const char *s0,const char *s1)
 {
@@ -28,8 +38,8 @@ int strcmp(const char *s0,const char *s1)
  {
   s0++;
   s1++;
- }           /*loop until zero found and immediately exit*/
- return *s0-*s1;             /*return how many bytes were written*/
+ }
+ return *s0-*s1;
 }
  
 int main(int argc, char *argv[])
@@ -67,11 +77,6 @@ int main(int argc, char *argv[])
   {
    putstr("Failed to open file\n");
    _exit(1); 
-  }
-  else
-  {
-   putstr(argv[1]);
-   putstr("\n");
   }
   
  }
