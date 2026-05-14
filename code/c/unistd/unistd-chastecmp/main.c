@@ -6,7 +6,7 @@ int main(int argc, char *argv[])
 {
  int argx,x;
  int fd[3]; /*file descriptors used in unistd*/
- int c0=1,c1,c2;
+ int c0=1,c1=0,c2=0;
 
  radix=0x10; /*set radix for integer output*/
  int_width=1; /*set default integer width*/
