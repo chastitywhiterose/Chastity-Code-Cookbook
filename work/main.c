@@ -7,10 +7,10 @@ int main(int argc, char *argv[])
 {
  FILE *fp; /*file pointer*/
  char temp[0x100]; /*buffer used to temporarily store data read from a file*/
- char *s; /*pointer used to search through the file array*/
+ char *s; /*pointer to temporary buffer*/
  char *ss,*sr; /*string search and replacement pointers*/
  int sslength;
- int count;
+ int count=1;
    
  if(argc==1)
  {
@@ -51,15 +51,14 @@ int main(int argc, char *argv[])
   return 0; /*return with no errors*/
  }
  
- 
- 
- 
- 
-  /*
+ /*
  if only a search string is given, display the whole file except also quote parts that match the search string
  this is a good way to prove that the program is correctly finding them
  
- but if a replacement string was provided, then this section will replace the search string with the replacement
+ but if a replacement string was provided, then this section will replace the search string with the replacement string
+ 
+ This version of the program does not load the entire file into memory and therefore avoids seeking backwards.
+ It reads the minimal amount of information needed to check for string matches.
  */
  
  if(argc>2)
@@ -83,7 +82,13 @@ int main(int argc, char *argv[])
    if(s[0]==ss[0]) /*is this byte the same as the first in search string?*/
    {
     count=fread(s+1,1,sslength-1,fp); /*read enough bytes to have an equal length string as search string*/
-    s[sslength]=0; /*terminate this temporary string with a zero*/
+    s[1+count]=0; /*terminate this temporary string with a zero*/
+    
+    if(count<sslength-1) /*if we don't have enough characters left in the file to compare*/
+    {
+     putstr(s); /*write the buffer of characters read*/
+     break;     /*break out of the loop, which ends the program*/
+    }
 
     /*if the temporary string equals the search string, we do these operations*/
     if(!strcmp(s,ss))
@@ -100,8 +105,17 @@ int main(int argc, char *argv[])
      }
     }
     
+    /*
+     but if the strings were not equal
+     print the characters in the buffer
+    */
+    else
+    {
+     putstr(s);
+    }
+    
    }
-   else
+   else /*the first character didn't even match*/
    {
     fwrite(temp,1,1,stdout); /*write this byte to stdout and move on*/
    }
