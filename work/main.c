@@ -75,39 +75,60 @@ int main(int argc, char *argv[])
    sr=argv[3];
   }
 
-  /*next begin this loop which cleverly reads and modified data*/
+  /*
+   next begin this loop which cleverly reads and modified data
+   It attempts to read one byte.
+   If this byte matches the first in the search string, it does a separate 
+  */
   while(count>0)
   {
    count=fread(s,1,1,fp); /*read one byte*/
-   if(s[0]==ss[0]) /*is this byte the same as the first in search string?*/
+   if(count==0){break;} /*if we couldn't read this byte, end the program*/
+   
+   if(s[0]!=ss[0]) /*if this byte is not the same as the first in search string*/
    {
+    fwrite(temp,1,1,stdout); /*write this byte to stdout and move on*/
+   }
+  
+   /*
+    the first character matched read more bytes see if the entire search string is a match
+   */
+   else
+   {
+   
     count=fread(s+1,1,sslength-1,fp); /*read enough bytes to have an equal length string as search string*/
-    s[1+count]=0; /*terminate this temporary string with a zero*/
+    s[count+1]=0; /*terminate this temporary string with a zero*/
     
-    if(count<sslength-1) /*if we don't have enough characters left in the file to compare*/
+    if(count<(sslength-1)) /*if we don't have enough characters left in the file to compare*/
     {
-     putstr(s); /*write the buffer of characters read*/
+     putstr(s); /*write the buffer of characters read before we end*/
      break;     /*break out of the loop, which ends the program*/
     }
 
     /*if the temporary string equals the search string, we do these operations*/
     if(!strcmp(s,ss))
     {
+     /*
+      if there was not a replacement string argument,
+      put quotes around the matching strings
+      so that the user can see where they are
+     */
      if(argc==3)
      {
       putchar('"');
       putstr(ss);
       putchar('"');
      }
-     else if(argc>3)
+     /*but if there is a replacement string, we print it instead of the search string*/
+     else
      {
       putstr(sr);
      }
     }
     
     /*
-     but if the strings were not equal
-     print the characters in the buffer
+     but if the strings were not equal print the characters
+     in the buffer as they were in the original file
     */
     else
     {
@@ -115,20 +136,11 @@ int main(int argc, char *argv[])
     }
     
    }
-   else /*the first character didn't even match*/
-   {
-    fwrite(temp,1,1,stdout); /*write this byte to stdout and move on*/
-   }
+ 
+  } /*end of while loop*/
+ 
+ } /*end of if(argc>2) section*/
   
-  }
- 
- }
- 
- 
- 
- 
- 
- 
  fclose(fp);
 
  return 0;
