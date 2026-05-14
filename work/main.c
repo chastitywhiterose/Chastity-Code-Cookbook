@@ -86,10 +86,11 @@ int main(int argc, char *argv[])
  {
  
  
-  fd=open("filename.txt", O_RDWR);
+  fd=open(argv[1], 0 /*O_RDWR*/);
   if(fd==-1)
  {
-  putstr("\nFailed to open file\n");
+  putstr("Failed to open file\n");
+putint(fd);
   _exit(1); 
  }
   else
