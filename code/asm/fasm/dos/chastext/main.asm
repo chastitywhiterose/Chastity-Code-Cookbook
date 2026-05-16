@@ -55,7 +55,7 @@ jz quote_yes ;not quote, skip to normal space filter section
 jmp filter_spaces ; if it was not a quote, skip this section
 
 quote_yes:
-;if it is a quote of either type, we handle it like thisWW
+;if it is a quote of either type, we handle it like this
 mov ah,[bx] ;save this quote byte to ah register
 mov byte[bx],0 ;but delete it from string with zero
 inc bx      ;go to next byte
@@ -222,8 +222,10 @@ mov bx,[file_handle] ;store file handle to read from in bx
 mov ah,3Fh           ;call number for read function
 int 21h
 
-mov bx,cx ;do some math to calculate where the string should end
-add bx,ax
+;do some math to calculate where the string should end
+
+mov bx,dx ;mov into bx the address of second byte in the string
+add bx,ax ;add ax (the return value of the number of characters read)
 mov byte [bx],0 ;terminate the string with zero
 
 mov si,[string_search]
