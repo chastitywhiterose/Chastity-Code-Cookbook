@@ -109,6 +109,7 @@ inc word[arg_string_index] ;add 1 so it points to the next byte before we proces
 first_argument_was_not_quote:
 
 
+
 ;now that the argument string is prepared, we will try to use the first argument as a filename to open
 
 mov ah,3Dh                ;call number for DOS open existing file
@@ -200,8 +201,6 @@ putchar_skip:
 
 ;if search string doesn't exist, just jump and repeat the loop
 ;otherwise we continue into the section that compares the input with the search string
-cmp word[string_search],0 
-jz textdump
 
 mov bx,[string_search]
 
@@ -238,6 +237,7 @@ mov byte [bx],0 ;terminate the string with zero
 
 mov si,[string_search]
 mov di,byte_array
+
 call strcmp ;compare these two strings
 
 cmp ax,0 ;test if they are the same (if ax returned zero)
