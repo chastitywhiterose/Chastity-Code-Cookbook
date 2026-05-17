@@ -19,8 +19,7 @@ dec cx ;but subtract 1 from character count
 jmp skip_start_spaces
 skip_start_spaces_end:
 
-mov [arg_string_start],bx ; save the location of the first non space in the arg string
-mov [arg_string_index],bx ; save the location of the first non space in the arg string
+mov [arg_string_index],bx ; save the location of the first non space char in the arg string
 
 ;find the end of the string based on length
 mov ax,bx
@@ -38,6 +37,15 @@ mov [arg_string_end],ax ;now we know where the string ends.
 
 mov cl,' ' ;set the default filter character (argument terminator) to a space
 mov ch,0   ;are we currently checking spaces 0 or quote characters 1 as terminators?
+
+;this loop is the new and improved argument filter
+;it keeps track of whether we are inside or outside a quote
+;and also which type of quote started the quote
+;the actual quote marks are not part of the string unless they
+;are the opposite quote type than what started the string
+;The important thing is that spaces can exist inside of quoted strings
+;as one argument rather than each new word being a new argument
+;could be important for filenames containing spaces, etc.
 
 argument_filter:
 
@@ -84,6 +92,16 @@ jmp argument_filter   ;jump back to the beginning of argument filter
 argument_filter_end:
 mov byte [bx],0 ;terminate the ending with a zero for safety
 
+;special case!!!
+;If the first argument passed began with a quoted string
+;it would have been changed to a 0 instead. This requires us to add one to the
+;starting argument string index
+mov bx,[arg_string_index]
+cmp byte[bx],0
+jnz first_argument_was_not_quote
+inc word[arg_string_index] ;add 1 so it points to the next byte before we process arguments
+first_argument_was_not_quote:
+
 ;this loop will get all the command line arguments and print them on a separate line
 
 arg_loop:
@@ -100,9 +118,8 @@ ending:
 mov ax,4C00h ; Exit program
 int 21h
 
-arg_string_start dw 0
-arg_string_end dw 0
 arg_string_index dw 0
+arg_string_end dw 0
 
 ;function to move ahead to the next argument
 ;only works after the filter has been applied to turn all spaces into zeroes
@@ -132,3 +149,5 @@ mov ax,bx ;but also save it to ax register for use in printing or something else
 ret
 
 include 'chastelib16.asm'
+
+db 0x33 dup 0 ;add extra bytes to make it 512 bytes exactly
