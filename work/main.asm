@@ -170,20 +170,29 @@ jz file_success ;if true, proceed to display
 ;call putstring
 jmp file_close ;otherwise close the file and end program after failure
 
-; this point is reached if file was read from successfully
+; this point is reached if 1 byte was read from the file successfully
 file_success:
 
-cmp word[argc],2 ;if only 2 arguments, just putchar and read next one
+;cmp word[argc],2 ;if only 2 arguments, just putchar and read next one
+
+;first, check to see if there is a search string
+;if there is a search string, skip the normal putchar
+cmp word[string_search],0 
 jnz putchar_skip
 
-;normally, we will print the last read character
+;but if there is not a search string
+;we will print the last read character
+;and then jump to the beginning of the textdump loop to print them until EOF
 mov al,[byte_array]
 call putchar
+jmp textdump
 
 putchar_skip:
 
-cmp word[argc],3 ;if not enough arguments, skip the search string section
-jb textdump
+;if search string doesn't exist, just jump and repeat the loop
+;otherwise we continue into the section that compares the input with the search string
+cmp word[string_search],0 
+jz textdump
 
 mov bx,[string_search]
 
@@ -201,9 +210,6 @@ search_start:
 mov ax,[string_search]
 call strlen ;get the length of the search string
 ;call putint_and_line ; print length of search string only for debugging
-
-mov ax,[string_search]
-call strlen ;get the length of the search string
 
 ;attempt to read the length-1 bytes because the first one is already read into the byte array
 
@@ -231,8 +237,8 @@ jnz normal_print ;if they are not a match print them unmodified and unquoted
 ;but if they are a match, then we either quote them
 ;or replace them if a replacement string is available
 
-cmp word[argc],4 ;if less than 4 args, no replacement exist, so we quote the strings
-jb print_quotes
+cmp word[string_replace],0 ;check to see if a replacement string is available
+jz print_quotes ;if not, skip to the part where we just quote the strings that match
 
 ;otherwise, we will print the replacement string instead of the original!
 
@@ -275,9 +281,6 @@ mov ax,[string_search]
 call putstr_and_line
 mov ax,[string_replace]
 call putstr_and_line
-
-mov ax,[argc]
-call putint_and_line
 
 
 ending:
