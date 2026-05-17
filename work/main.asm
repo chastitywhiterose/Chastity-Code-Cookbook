@@ -129,8 +129,6 @@ jmp ending
 use_file:
 
 inc word [argc] ;argc is now 2 because filename was processed and open now
-mov ax,[argc]
-;call putint_and_line
 
 call get_next_arg ;get address of next arg and return into ax register
 cmp ax,[arg_string_end] ;this time, if ax equals end of string, we hex dump and then end the program later
@@ -139,10 +137,7 @@ jz textdump ;jump to hexdump section
 ;otherwise, we save the address at ax to our search string
 mov [string_search],ax
 ;call putstr_and_line
-
 inc word [argc] ;argc is now 3 because a search string was found
-mov ax,[argc]
-;call putint_and_line
 
 call get_next_arg ;get address of next arg and return into ax register
 cmp ax,[arg_string_end] ;this time, if ax equals end of string, we hex dump and then end the program later
@@ -153,8 +148,6 @@ mov [string_replace],ax
 ;call putstr_and_line
 
 inc word [argc] ;argc is now 4 because a replace string was found
-mov ax,[argc]
-;call putint_and_line
 
 ;all other arguments that may exist are irrelevant
 ;we are done processing them but the argc variable will be later used to conditionally execute code
@@ -277,8 +270,15 @@ mov bx,[file_handle]
 int 21h
 
 ;debugging section I use just to test values
+call putline
 mov ax,[string_search]
-call putstring
+call putstr_and_line
+mov ax,[string_replace]
+call putstr_and_line
+
+mov ax,[argc]
+call putint_and_line
+
 
 ending:
 mov ax,4C00h ; Exit program
