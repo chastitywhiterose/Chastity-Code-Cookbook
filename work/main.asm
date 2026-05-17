@@ -90,9 +90,7 @@ jmp arg_filter ;if not at end, continue the filter
 arg_filter_end:
 mov byte [bx],0 ;terminate the ending with a zero for safety
 
-inc word [argc] ;argc is now 1 (name of program plus possibly more we will test for)
-mov ax,[argc]
-;call putint_and_line
+
 
 ;now that the argument string is prepared, we will try to use the first argument as a filename to open
 
@@ -129,8 +127,6 @@ jmp ending
 
 use_file:
 
-inc word [argc] ;argc is now 2 because filename was processed and open now
-
 call get_next_arg ;get address of next arg and return into ax register
 cmp ax,[arg_string_end] ;this time, if ax equals end of string, we hex dump and then end the program later
 jz textdump ;jump to hexdump section
@@ -138,7 +134,7 @@ jz textdump ;jump to hexdump section
 ;otherwise, we save the address at ax to our search string
 mov [string_search],ax
 ;call putstr_and_line
-inc word [argc] ;argc is now 3 because a search string was found
+
 
 call get_next_arg ;get address of next arg and return into ax register
 cmp ax,[arg_string_end] ;this time, if ax equals end of string, we hex dump and then end the program later
@@ -148,10 +144,7 @@ jz textdump ;jump to hexdump section
 mov [string_replace],ax
 ;call putstr_and_line
 
-inc word [argc] ;argc is now 4 because a replace string was found
-
-;all other arguments that may exist are irrelevant
-;we are done processing them but the argc variable will be later used to conditionally execute code
+;all other arguments that may exist after this are irrelevant
 
 textdump:
 
@@ -173,8 +166,6 @@ jmp file_close ;otherwise close the file and end program after failure
 
 ; this point is reached if 1 byte was read from the file successfully
 file_success:
-
-;cmp word[argc],2 ;if only 2 arguments, just putchar and read next one
 
 ;first, check to see if there is a search string
 ;if there is a search string, skip the normal putchar
@@ -277,11 +268,11 @@ mov bx,[file_handle]
 int 21h
 
 ;debugging section I use just to test values
-call putline
-mov ax,[string_search]
-call putstr_and_line
-mov ax,[string_replace]
-call putstr_and_line
+;call putline
+;mov ax,[string_search]
+;call putstr_and_line
+;mov ax,[string_replace]
+;call putstr_and_line
 
 
 ending:
@@ -563,8 +554,6 @@ call putline
 ret
 
 ;end of chastelib
-
-argc dw 0
 
 arg_string_start dw 0
 arg_string_end dw 0
