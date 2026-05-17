@@ -49,7 +49,7 @@ jz quote_yes ;not quote, skip to normal space filter section
 jmp filter_spaces ; if it was not a quote, skip this section
 
 quote_yes:
-;if it is a quote of either type, we handle it like thisWW
+;if it is a quote of either type, we handle it like this
 mov ah,[bx] ;save this quote byte to ah register
 mov byte[bx],0 ;but delete it from string with zero
 inc bx      ;go to next byte
