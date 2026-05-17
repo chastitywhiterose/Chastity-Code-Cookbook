@@ -58,7 +58,7 @@ quote_yes:
 ;if it is a quote of either type, we handle it like this
 mov ah,[bx] ;save this quote byte to ah register
 mov byte[bx],0 ;but delete it from string with zero
-inc bx      ;go to next byte
+inc bx      ;go to next byte and then begin the quote loop
 
 quote_loop:
 
@@ -75,6 +75,7 @@ jmp quote_loop
 
 quote_loop_end:
 mov byte[bx],0 ;but delete it from string with zero
+inc bx ;go to the next byte
 
 filter_spaces:
 cmp bx,[arg_string_end] ;are we at the end of the arg string?
