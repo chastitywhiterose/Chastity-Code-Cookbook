@@ -37,18 +37,49 @@ mov [arg_string_end],ax ;now we know where the string ends.
 ;because the program needs to function identically for DOS or Linux
 
 mov cl,' ' ;set the default filter character (argument terminator) to a space
+mov ch,0   ;are we currently checking spaces 0 or quote characters 1 as terminators?
 
 argument_filter:
 
 cmp bx,[arg_string_end] ;are we at the end of the arg string?
 jz argument_filter_end       ;if yes, stop the filter and terminate with zero
 
+cmp ch,1       ;are we inside a quoted string?
+jz quote_check ;if yes, don't do anything to the spaces
+
 cmp byte[bx],cl ;compare the byte at address bx to the string terminator
 jnz ignore_char ;if it is not the same, we ignore it
 mov byte[bx],0  ;but if it matches, change it to a zero
 ignore_char:
 
+cmp byte [bx],0x22 ;is this a double quote -> "
+jz start_quote
+cmp byte [bx],0x27 ;is this a single quote -> '
+jz start_quote
+jmp quote_no ;it was not a quote
+
+start_quote:
+
+mov ch,1    ;set ch to 1 to set that we are inside a quote now
+mov cl,[bx] ;save this quote type as the new terminator
+mov byte[bx],0 ;but delete the first quote with zero
+
+;check for single or double quotes
+quote_check:
+
+cmp [bx],cl ;is this character the same type of quote that started this sub string?
+jnz quote_no ;if it is not, then skip to quote_no section
+
+;but if it was matching, change this byte to zero
+;and change cl back to a space
+mov cl,' ' ;cl is now a space
+mov ch,0   ;ch is 0 because now we have ended the quoted string
+mov byte[bx],0 ;delete the end quote with zero
+
+quote_no:
+
 inc bx ;go to the next character
+jmp argument_filter   ;jump back to the beginning of argument filter
 
 argument_filter_end:
 mov byte [bx],0 ;terminate the ending with a zero for safety

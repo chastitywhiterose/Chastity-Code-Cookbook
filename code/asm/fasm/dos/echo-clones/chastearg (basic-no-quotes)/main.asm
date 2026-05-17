@@ -28,19 +28,30 @@ add ax,cx
 mov [arg_string_end],ax ;now we know where the string ends.
 
 ;now bx points to the first non space character in the arguments passed to the DOS program
-;cx contains the length
 ;and we know that [arg_string_end] is where it ends
 
-arg_filter:
-cmp byte [bx],' '
-ja notspace ; if char is above space, leave it alone
-mov byte [bx],0 ;otherwise it counts as a space, change it to a zero
-notspace:
-inc bx
-cmp bx,[arg_string_end] ;are we at the end of the arg string?
-jnz arg_filter ;if not at end, continue the filter
+;the next step is to filter the arguments into separate zero terminated strings
+;each space will be changed to a zero (normally)
+;but we also need to account for spaces inside quotes that are considered part of the string
+;Linux handles this normally but DOS needs me to write the code to mimic this behavior
+;because the program needs to function identically for DOS or Linux
 
-arg_filter_end:
+mov cl,' ' ;set the default filter character (argument terminator) to a space
+
+argument_filter:
+
+cmp bx,[arg_string_end] ;are we at the end of the arg string?
+jz argument_filter_end       ;if yes, stop the filter and terminate with zero
+
+cmp byte[bx],cl ;compare the byte at address bx to the string terminator
+jnz ignore_char ;if it is not the same, we ignore it
+mov byte[bx],0  ;but if it matches, change it to a zero
+ignore_char:
+
+inc bx ;go to the next character
+jmp argument_filter   ;jump back to the beginning of argument filter
+
+argument_filter_end:
 mov byte [bx],0 ;terminate the ending with a zero for safety
 
 ;this loop will get all the command line arguments and print them on a separate line
@@ -50,7 +61,7 @@ mov ax,[arg_string_index] ;get address of current argument
 call putstring
 call putline
 call get_next_arg
-cmp bx,[arg_string_end]
+cmp ax,[arg_string_end]
 jz arg_loop_end
 jmp arg_loop
 arg_loop_end:
