@@ -19,8 +19,7 @@ dec cx ;but subtract 1 from character count
 jmp skip_start_spaces
 skip_start_spaces_end:
 
-mov [arg_string_start],bx ; save the location of the first non space in the arg string
-mov [arg_string_index],bx ; save the location of the first non space in the arg string
+mov [arg_string_index],bx ; save the location of the first non space char in the arg string
 
 ;find the end of the string based on length
 mov ax,bx
@@ -28,7 +27,6 @@ add ax,cx
 mov [arg_string_end],ax ;now we know where the string ends.
 
 ;now bx points to the first non space character in the arguments passed to the DOS program
-;cx contains the length
 ;and we know that [arg_string_end] is where it ends
 
 ;the next step is to filter the arguments into separate zero terminated strings
@@ -37,51 +35,72 @@ mov [arg_string_end],ax ;now we know where the string ends.
 ;Linux handles this normally but DOS needs me to write the code to mimic this behavior
 ;because the program needs to function identically for DOS or Linux
 
-arg_filter:
+mov cl,' ' ;set the default filter character (argument terminator) to a space
+mov ch,0   ;are we currently checking spaces 0 or quote characters 1 as terminators?
 
-filter_quotes:
+;this loop is the new and improved argument filter
+;it keeps track of whether we are inside or outside a quote
+;and also which type of quote started the quote
+;the actual quote marks are not part of the string unless they
+;are the opposite quote type than what started the string
+;The important thing is that spaces can exist inside of quoted strings
+;as one argument rather than each new word being a new argument
+;could be important for filenames containing spaces, etc.
+
+argument_filter:
+
+cmp bx,[arg_string_end] ;are we at the end of the arg string?
+jz argument_filter_end       ;if yes, stop the filter and terminate with zero
+
+cmp ch,1       ;are we inside a quoted string?
+jz quote_check ;if yes, don't do anything to the spaces
+
+cmp byte[bx],cl ;compare the byte at address bx to the string terminator
+jnz ignore_char ;if it is not the same, we ignore it
+mov byte[bx],0  ;but if it matches, change it to a zero
+ignore_char:
 
 cmp byte [bx],0x22 ;is this a double quote -> "
-jz quote_yes ;not quote, skip to normal space filter section
+jz start_quote
 cmp byte [bx],0x27 ;is this a single quote -> '
-jz quote_yes ;not quote, skip to normal space filter section
+jz start_quote
+jmp quote_no ;it was not a quote
 
-jmp filter_spaces ; if it was not a quote, skip this section
+start_quote:
 
-quote_yes:
-;if it is a quote of either type, we handle it like thisWW
-mov ah,[bx] ;save this quote byte to ah register
-mov byte[bx],0 ;but delete it from string with zero
-inc bx      ;go to next byte
+mov ch,1    ;set ch to 1 to set that we are inside a quote now
+mov cl,[bx] ;save this quote type as the new terminator
+mov byte[bx],0 ;but delete the first quote with zero
 
-quote_loop:
+;check for single or double quotes
+quote_check:
 
-;must check for end of the string or it could crash the DOSBOX emulator with infinite loop
-;because it will keep checking for a quote even if it doesn't exist
-cmp bx,[arg_string_end] ;are we at the end of the arg string?
-jz arg_filter_end       ;if yes, stop the filter and terminate with zero
+cmp [bx],cl ;is this character the same type of quote that started this sub string?
+jnz quote_no ;if it is not, then skip to quote_no section
 
-mov al,[bx] ;get this byte in al register
-cmp al,ah   ;check for next quote of same type
-jz quote_loop_end ;if this is the end quote, stop the loop
-inc bx      ;go to next byte
-jmp quote_loop
+;but if it was matching, change this byte to zero
+;and change cl back to a space
+mov cl,' ' ;cl is now a space
+mov ch,0   ;ch is 0 because now we have ended the quoted string
+mov byte[bx],0 ;delete the end quote with zero
 
-quote_loop_end:
-mov byte[bx],0 ;but delete it from string with zero
+quote_no:
 
-filter_spaces:
-cmp bx,[arg_string_end] ;are we at the end of the arg string?
-jz arg_filter_end       ;if yes, stop the filter and terminate with zero
-cmp byte [bx],' '
-jnz notspace ; if char is not space, leave it alone
-mov byte [bx],0 ;otherwise change the space to a zero
-notspace:
-inc bx
-jmp arg_filter ;if not at end, continue the filter
+inc bx ;go to the next character
+jmp argument_filter   ;jump back to the beginning of argument filter
 
-arg_filter_end:
+argument_filter_end:
 mov byte [bx],0 ;terminate the ending with a zero for safety
+
+;special case!!!
+;If the first argument passed began with a quoted string
+;it would have been changed to a 0 instead. This requires us to add one to the
+;starting argument string index
+mov bx,[arg_string_index]
+cmp byte[bx],0
+jnz first_argument_was_not_quote
+inc word[arg_string_index] ;add 1 so it points to the next byte before we process arguments
+first_argument_was_not_quote:
 
 ;this loop will get all the command line arguments and print them on a separate line
 
@@ -99,9 +118,8 @@ ending:
 mov ax,4C00h ; Exit program
 int 21h
 
-arg_string_start dw 0
-arg_string_end dw 0
 arg_string_index dw 0
+arg_string_end dw 0
 
 ;function to move ahead to the next argument
 ;only works after the filter has been applied to turn all spaces into zeroes
@@ -131,3 +149,5 @@ mov ax,bx ;but also save it to ax register for use in printing or something else
 ret
 
 include 'chastelib16.asm'
+
+db 0x33 dup 0 ;add extra bytes to make it 512 bytes exactly
