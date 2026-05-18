@@ -220,34 +220,34 @@ mov dx,[file_address] ;lower word of offset
 int 21h
 
 ;obtain the length of the search string using my strlen function
-mov eax,[string_search]
+mov ax,[string_search]
 call strlen ;get the length of the search string
 
 ;use the length of the string we are searching for as the number of bytes to read at this location
 
-mov edx,eax            ;number of bytes to read
-mov ecx,byte_array     ;address to store the bytes
-mov ebx,[filedesc]     ;move the opened file descriptor into EBX
-mov eax,3              ;invoke SYS_READ (kernel opcode 3)
-int 80h                ;call the kernel
+mov dx,byte_array    ;store the bytes here
+mov cx,ax            ;we are reading this many bytes to have a string to compare
+mov bx,[filedesc]    ;store file handle to read from in bx
+mov ah,3Fh           ;call number for read function
+int 21h
 
-mov ebx,byte_array     ;move the address of bytes read into ebx
-add ebx,eax            ;add number of bytes read (return value of read function in eax)
-mov byte[ebx],0        ;terminate the string with zero
+mov bx,byte_array    ;move the address of bytes read into ebx
+add bx,ax            ;add number of bytes read (return value of read function in eax)
+mov byte[bx],0       ;terminate the string with zero
 
-mov [bytes_read],eax   ;store how many bytes were read with that last read operation
+mov [bytes_read],ax  ;store how many bytes were read with that last read operation
 
-cmp eax,edx ;if the number of bytes is not what we expected to read, end this loop
+cmp ax,cx ;if the number of bytes is not what we expected to read, end this loop
 jnz textdump_end
 
 ;move our two strings into the esi and edi registers for comparison
 ;with my custom written strcmp function
 
-mov esi,[string_search]
-mov edi,byte_array
+mov si,[string_search]
+mov di,byte_array
 call strcmp ;compare these two strings
 
-cmp eax,0 ;test if they are the same (if eax returned zero)
+cmp ax,0 ;test if they are the same (if eax returned zero)
 jnz not_match ;if they are not a match go to that section for printing a character
 
 ;but if they are a match, then we either quote them
@@ -255,15 +255,15 @@ jnz not_match ;if they are not a match go to that section for printing a charact
 
 ;but regardless of which action we do, since a match was found, let us add this count to the file address
 ;so that we read from beyond this point next time the textdump loop starts
-mov eax,[bytes_read]
-add [file_address],eax
+mov ax,[bytes_read]
+add [file_address],ax
 
 cmp dword[argc],4 ;if less than 4 args, no replacement exist, so we quote the strings
 jb print_quotes
 
 ;otherwise, we will print the replacement string instead of the original!
 
-mov eax,[string_replace]
+mov ax,[string_replace]
 call putstring ;print the string
 
 jmp textdump ;restart the main loop
@@ -600,6 +600,7 @@ arg_string_end dw 0
 
 file_error_message db 'Could not open the file! Error number: ',0
 filedesc dw 0
+file_address dw 0 ;file address defaults to zero AKA beginning of file
 end_of_file db 'EOF',0
 
 ;where we will store data from the file
