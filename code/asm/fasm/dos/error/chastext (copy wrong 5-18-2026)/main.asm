@@ -117,7 +117,7 @@ mov al,0                  ;file access: 0=read,1=write,2=read+write
 mov dx,[arg_string_index] ;string address to interpret as filename
 int 21h                   ;DOS call to finalize open function
 
-mov [filedesc],ax ;save the file handle
+mov [file_handle],ax ;save the file handle
 
 jc file_error ;if carry flag is set, we have an error, otherwise, file is open
 
@@ -135,7 +135,7 @@ mov ax,dx
 call putstr_and_line
 mov ax,file_error_message
 call putstring
-mov ax,[filedesc]
+mov ax,[file_handle]
 call putint
 jmp ending
 
@@ -146,8 +146,8 @@ jmp ending
 use_file:
 
 call get_next_arg ;get address of next arg and return into ax register
-cmp ax,[arg_string_end] ;this time, if ax equals end of string, we begin the textdump main loop without search or replace strings
-jz textdump ;jump to textdump section
+cmp ax,[arg_string_end] ;this time, if ax equals end of string, we hex dump and then end the program later
+jz textdump ;jump to hexdump section
 
 ;otherwise, we save the address at ax to our search string
 mov [string_search],ax
@@ -166,22 +166,10 @@ mov [string_replace],ax
 
 textdump:
 
-;this is the beginning of the textdump main loop of chastext
-
-;first, check to see if there is a search string
-;if there is a search string, skip the normal putchar
-
-cmp word[string_search],0 ;do we have a search string?
-jnz putchar_skip
-
-;but if there is not a search string
-;we will read one character, then display it to stdout
-;and then jump to the beginning of the textdump loop to print them until EOF
-
 ;we start the loop with a call to read exactly 1 byte
 
 mov ah,3Fh           ;call number for read function
-mov bx,[filedesc] ;store file handle to read from in bx
+mov bx,[file_handle] ;store file handle to read from in bx
 mov cx,1             ;we are reading one byte
 mov dx,byte_array    ;store the bytes here
 int 21h
@@ -197,66 +185,66 @@ jmp file_close ;otherwise close the file and end program after failure
 ; this point is reached if 1 byte was read from the file successfully
 file_success:
 
+;first, check to see if there is a search string
+;if there is a search string, skip the normal putchar
+cmp word[string_search],0 
+jnz putchar_skip
+
+;but if there is not a search string
+;we will print the last read character
+;and then jump to the beginning of the textdump loop to print them until EOF
 mov al,[byte_array]
 call putchar
 jmp textdump
 
-;if search string doesn't exist, just jump and repeat the loop
-;otherwise we continue into the next section that compares the input with the search string
-
 putchar_skip:
 
-;this is the beginning of search mode
-;it handles the file by seeking and reading to search every position for the search string
+;if search string doesn't exist, just jump and repeat the loop
+;otherwise we continue into the section that compares the input with the search string
 
-;first, seek to the file_address we initialized to zero
-;this variable will be added to depending on actions taken
+mov bx,[string_search]
 
-mov ah,42h           ;lseek call number
-mov al,0             ;seek origin 00h start of file,01h current file position,02h end of file
-mov bx,[filedesc]
-mov cx,0              ;upper word of offset zero because not planning for larger than 64kb files
-mov dx,[file_address] ;lower word of offset
-int 21h
+mov al,[bx]
+mov ah,[byte_array]
+cmp al,ah ;compare the first character of search string with the byte read already
+jz search_start ; if they are equal, skip putchar and begin searching for the string
 
-;obtain the length of the search string using my strlen function
+;otherwise, if they are not equal, just putchar the last byte read and repeat the loop
+mov al,[byte_array]
+call putchar
+jmp textdump
+
+search_start:
 mov ax,[string_search]
 call strlen ;get the length of the search string
+;call putint_and_line ; print length of search string only for debugging
 
-;use the length of the string we are searching for as the number of bytes to read at this location
+;attempt to read the length-1 bytes because the first one is already read into the byte array
 
-mov dx,byte_array    ;store the bytes here
+dec ax               ;subtract 1 from ax which holds our length of string
+
+mov dx,byte_array+1  ;store the bytes here
 mov cx,ax            ;we are reading this many bytes to have a string to compare
-mov bx,[filedesc]    ;store file handle to read from in bx
+mov bx,[file_handle] ;store file handle to read from in bx
 mov ah,3Fh           ;call number for read function
 int 21h
 
-mov bx,byte_array    ;move the address of bytes read into bx
-add bx,ax            ;add number of bytes read (return value of read function in ax)
-mov byte[bx],0       ;terminate the string with zero
+;do some math to calculate where the string should end
 
-mov [bytes_read],ax  ;store how many bytes were read with that last read operation
-
-cmp ax,cx ;if the number of bytes is not what we expected to read, end this loop
-jnz textdump_end
-
-;move our two strings into the si and di registers for comparison
-;with my custom written strcmp function
+mov bx,dx ;mov into bx the address of second byte in the string
+add bx,ax ;add ax (the return value of the number of characters read)
+mov byte [bx],0 ;terminate the string with zero
 
 mov si,[string_search]
 mov di,byte_array
+
 call strcmp ;compare these two strings
 
 cmp ax,0 ;test if they are the same (if ax returned zero)
-jnz not_match ;if they are not a match go to that section for printing a character
+jnz normal_print ;if they are not a match print them unmodified and unquoted
 
 ;but if they are a match, then we either quote them
 ;or replace them if a replacement string is available
-
-;but regardless of which action we do, since a match was found, let us add this count to the file address
-;so that we read from beyond this point next time the textdump loop starts
-mov ax,[bytes_read]
-add [file_address],ax
 
 cmp word[string_replace],0 ;check to see if a replacement string is available
 jz print_quotes ;if not, skip to the part where we just quote the strings that match
@@ -266,7 +254,7 @@ jz print_quotes ;if not, skip to the part where we just quote the strings that m
 mov ax,[string_replace]
 call putstring ;print the string
 
-jmp textdump ;restart the main loop
+jmp normal_print_skip
 
 print_quotes:
 ;print quotes around matched string
@@ -279,32 +267,21 @@ call putstring ;print the string
 mov al,'"'
 call putchar
 
-jmp textdump ;restart the main loop
+jmp normal_print_skip
 
-not_match: 
+normal_print: ;print normal / unquoted because it doesn't match
 
-mov al,[byte_array]
-call putchar
-add [file_address],1 ;add 1 to the file address so we don't read this same position again
+mov ax,byte_array
+call putstring ;print the string
+
+normal_print_skip:
 
 jmp textdump
-
-
-textdump_end:
-
-;print the remaining bytes, if any, left after the main loop ended
-mov ax,byte_array
-call putstring
-
-main_end:
-
-;this is the end of the program
-;we close the open file and then use the exit call
 
 file_close:
 ;close the file if it is open
 mov ah,3Eh
-mov bx,[filedesc]
+mov bx,[file_handle]
 int 21h
 
 ;debugging section I use just to test values
@@ -338,7 +315,7 @@ jmp strlen_start
 strlen_end:
 sub bx,ax ;subtract start pointer from current pointer to get length of string
 
-mov ax,bx ;copy the string length back to ax
+mov ax,bx ;copy the string length back to eax
 
 ret
 
@@ -362,7 +339,7 @@ inc si
 cmp bl,bh
 jz strcmp_start ;if they are the same, continue to next character
 
-inc ax ;if they were different, ax will be incremented and the function ends
+inc ax ;if they were different, eax will be incremented and the function ends
 
 strcmp_end:
 ret
@@ -599,8 +576,7 @@ arg_string_index dw 0
 arg_string_end dw 0
 
 file_error_message db 'Could not open the file! Error number: ',0
-filedesc dw 0
-file_address dw 0 ;file address defaults to zero AKA beginning of file
+file_handle dw 0
 end_of_file db 'EOF',0
 
 ;where we will store data from the file
