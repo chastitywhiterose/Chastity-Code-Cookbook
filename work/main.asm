@@ -103,8 +103,8 @@ call putchar
 
 putchar_skip:
 
-;cmp dword[argc],3 ;if not enough arguments, skip the search string section
-;jb textdump
+cmp dword[argc],3 ;if not enough arguments, skip the search string section
+jb textdump
 
 ;this is the beginning of search mode
 ;it handles the file by seeking and reading to search every position for the search string
@@ -278,4 +278,4 @@ string_search rd 1 ; place to hold the search string pointer
 string_replace rd 1 ; place to hold the replacement string pointer
 
 ;where we will store data from the file
-byte_array rb 0x100
+byte_array db 0xBD dup 0
