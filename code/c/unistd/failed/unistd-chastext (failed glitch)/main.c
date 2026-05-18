@@ -4,9 +4,10 @@
 /*#include <string.h>*/
 
 /*
- rather than including string.h, I am keeping with the theme of excluding the C standard library for an extra challenge
+ rather than including string.h, I am keeping with the them of excluding the C standard library for an extra challenge
  Therefore, this unistd version of chastext includes my own versions of strlen and strcmp.
 */
+
 
 /*
  Chastity's implementation of strlen

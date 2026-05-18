@@ -1,11 +1,48 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "chastelib.h"
+#include <unistd.h>
+#include <fcntl.h>
+#include "chastelib-unistd.h"
+
+/*
+ rather than including string.h, I am keeping with the theme of excluding the C standard library for an extra challenge
+ Therefore, this unistd version of chastext includes my own versions of strlen and strcmp.
+*/
+
+/*
+ Chastity's implementation of strlen
+ This is the same routine normally used in putstring from chastelib
+*/
+
+long unsigned int strlen(const char *s)
+{
+ int count=0;              /*used to calcular how many bytes this string is*/
+ const char *p=s;          /*pointer used to find terminating zero of string*/
+ while(*p){p++;}           /*loop until zero found and immediately exit*/
+ count=p-s;                /*count is the difference of pointers p and s*/
+ return count;             /*return how many bytes were written*/
+}
+
+/*
+This is a very basic way of making the strcmp function
+As long as the character indexed in the first string is not zero
+and both characters are equal to each other, it will continue the loop
+If the loop ends, then we have either reached a difference of bytes or
+they are both zero, in which case, the difference returned is zero.
+If this function zero, then you know the strings are the same.
+*/
+
+int strcmp(const char *s0,const char *s1)
+{
+ while(*s0 && *s0==*s1)
+ {
+  s0++;
+  s1++;
+ }
+ return *s0-*s1;
+}
  
 int main(int argc, char *argv[])
 {
- FILE *fp; /*file pointer*/
+ int fd; /*file descriptor used in unistd*/
  char s[0x100]; /*buffer used to temporarily store data read from a file*/
  char *ss,*sr; /*string search and replacement pointers*/
  int sslength;
@@ -29,14 +66,18 @@ int main(int argc, char *argv[])
 
  if(argc>1)
  {
-  fp=fopen(argv[1],"rb");
-  if(fp==NULL)
+  /*
+   open the file for reading only
+  */
+  fd=open(argv[1],O_RDONLY);
+  if(fd==-1)
   {
-   putstr(argv[1]);
-   putstr("\nFailed to open file\n");
-   return 1;
+   putstr("Failed to open file\n");
+   _exit(1); 
   }
  }
+
+
  
  /*
   if only the filename was given but nothing else, we will just display all characters to stdout
@@ -44,9 +85,9 @@ int main(int argc, char *argv[])
  
  if(argc==2)
  {
-  while(fread(s,1,1,fp))
+  while(read(fd,s,1))
   {
-   fwrite(s,1,1,stdout);
+   write(1,s,1);
   }
   return 0; /*return with no errors*/
  }
@@ -80,8 +121,8 @@ int main(int argc, char *argv[])
   */
   while(count>0)
   {
-   fseek(fp,file_address,SEEK_SET); /*seek to file_address (which starts at 0)*/
-   count=fread(s,1,sslength,fp); /*read number of bytes equal to search string length*/
+   lseek(fd,file_address,SEEK_SET); /*seek to file_address (which starts at 0)*/
+   count=read(fd,s,sslength); /*read number of bytes equal to search string length*/
    
    s[count]=0; /*terminate our temporary string with zero*/
    
@@ -97,9 +138,10 @@ int main(int argc, char *argv[])
     */
     if(argc==3)
     {
-     putchar('"');
+     char q='"'; /*temp variable that contains a quote character*/
+     write(1,&q,1);
      putstr(ss);
-     putchar('"');
+     write(1,&q,1);
     }
     /*but if there is a replacement string, we print it instead of the search string*/
     else
@@ -115,7 +157,7 @@ int main(int argc, char *argv[])
    */
    else
    {
-    fwrite(s,1,1,stdout);
+    write(1,s,1);
     file_address++;
    }
   
@@ -126,12 +168,11 @@ int main(int argc, char *argv[])
    In this case, we simply write to standard output the last characters that were read
    so we can display the rest of the file
   */
-  fwrite(s,1,count,stdout);
+   write(1,s,count);
  
  } /*end of if(argc>2) section*/
   
- fclose(fp);
-
- return 0;
+ close(fd);
+ _exit(0); 
 }
 
