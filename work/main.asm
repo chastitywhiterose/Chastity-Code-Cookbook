@@ -117,7 +117,7 @@ mov al,0                  ;file access: 0=read,1=write,2=read+write
 mov dx,[arg_string_index] ;string address to interpret as filename
 int 21h                   ;DOS call to finalize open function
 
-mov [file_handle],ax ;save the file handle
+mov [filedesc],ax ;save the file handle
 
 jc file_error ;if carry flag is set, we have an error, otherwise, file is open
 
@@ -135,7 +135,7 @@ mov ax,dx
 call putstr_and_line
 mov ax,file_error_message
 call putstring
-mov ax,[file_handle]
+mov ax,[filedesc]
 call putint
 jmp ending
 
@@ -181,7 +181,7 @@ jnz putchar_skip
 ;we start the loop with a call to read exactly 1 byte
 
 mov ah,3Fh           ;call number for read function
-mov bx,[file_handle] ;store file handle to read from in bx
+mov bx,[filedesc] ;store file handle to read from in bx
 mov cx,1             ;we are reading one byte
 mov dx,byte_array    ;store the bytes here
 int 21h
@@ -206,88 +206,105 @@ jmp textdump
 
 putchar_skip:
 
+;this is the beginning of search mode
+;it handles the file by seeking and reading to search every position for the search string
 
+;first, seek to the file_address we initialized to zero
+;this variable will be added to depending on actions taken
 
-mov bx,[string_search]
-
-mov al,[bx]
-mov ah,[byte_array]
-cmp al,ah ;compare the first character of search string with the byte read already
-jz search_start ; if they are equal, skip putchar and begin searching for the string
-
-;otherwise, if they are not equal, just putchar the last byte read and repeat the loop
-mov al,[byte_array]
-call putchar
-jmp textdump
-
-search_start:
-mov ax,[string_search]
-call strlen ;get the length of the search string
-;call putint_and_line ; print length of search string only for debugging
-
-;attempt to read the length-1 bytes because the first one is already read into the byte array
-
-dec ax               ;subtract 1 from ax which holds our length of string
-
-mov dx,byte_array+1  ;store the bytes here
-mov cx,ax            ;we are reading this many bytes to have a string to compare
-mov bx,[file_handle] ;store file handle to read from in bx
-mov ah,3Fh           ;call number for read function
+mov ah,42h           ;lseek call number
+mov al,0             ;seek origin 00h start of file,01h current file position,02h end of file
+mov bx,[filedesc]
+mov cx,0              ;upper word of offset zero because not planning for larger than 64kb files
+mov dx,[file_address] ;lower word of offset
 int 21h
 
-;do some math to calculate where the string should end
+;obtain the length of the search string using my strlen function
+mov eax,[string_search]
+call strlen ;get the length of the search string
 
-mov bx,dx ;mov into bx the address of second byte in the string
-add bx,ax ;add ax (the return value of the number of characters read)
-mov byte [bx],0 ;terminate the string with zero
+;use the length of the string we are searching for as the number of bytes to read at this location
 
-mov si,[string_search]
-mov di,byte_array
+mov edx,eax            ;number of bytes to read
+mov ecx,byte_array     ;address to store the bytes
+mov ebx,[filedesc]     ;move the opened file descriptor into EBX
+mov eax,3              ;invoke SYS_READ (kernel opcode 3)
+int 80h                ;call the kernel
 
+mov ebx,byte_array     ;move the address of bytes read into ebx
+add ebx,eax            ;add number of bytes read (return value of read function in eax)
+mov byte[ebx],0        ;terminate the string with zero
+
+mov [bytes_read],eax   ;store how many bytes were read with that last read operation
+
+cmp eax,edx ;if the number of bytes is not what we expected to read, end this loop
+jnz textdump_end
+
+;move our two strings into the esi and edi registers for comparison
+;with my custom written strcmp function
+
+mov esi,[string_search]
+mov edi,byte_array
 call strcmp ;compare these two strings
 
-cmp ax,0 ;test if they are the same (if ax returned zero)
-jnz normal_print ;if they are not a match print them unmodified and unquoted
+cmp eax,0 ;test if they are the same (if eax returned zero)
+jnz not_match ;if they are not a match go to that section for printing a character
 
 ;but if they are a match, then we either quote them
 ;or replace them if a replacement string is available
 
-cmp word[string_replace],0 ;check to see if a replacement string is available
-jz print_quotes ;if not, skip to the part where we just quote the strings that match
+;but regardless of which action we do, since a match was found, let us add this count to the file address
+;so that we read from beyond this point next time the textdump loop starts
+mov eax,[bytes_read]
+add [file_address],eax
+
+cmp dword[argc],4 ;if less than 4 args, no replacement exist, so we quote the strings
+jb print_quotes
 
 ;otherwise, we will print the replacement string instead of the original!
 
-mov ax,[string_replace]
+mov eax,[string_replace]
 call putstring ;print the string
 
-jmp normal_print_skip
+jmp textdump ;restart the main loop
 
 print_quotes:
 ;print quotes around matched string
 mov al,'"'
 call putchar
 
-mov ax,byte_array
+mov eax,byte_array
 call putstring ;print the string
 
 mov al,'"'
 call putchar
 
-jmp normal_print_skip
+jmp textdump ;restart the main loop
 
-normal_print: ;print normal / unquoted because it doesn't match
+not_match: 
 
-mov ax,byte_array
-call putstring ;print the string
-
-normal_print_skip:
+mov al,[byte_array]
+call putchar
+add [file_address],1 ;add 1 to the file address so we don't read this same position again
 
 jmp textdump
+
+
+textdump_end:
+
+;print the remaining bytes, if any, left after the main loop ended
+mov eax,byte_array
+call putstring
+
+main_end:
+
+;this is the end of the program
+;we close the open file and then use the exit call
 
 file_close:
 ;close the file if it is open
 mov ah,3Eh
-mov bx,[file_handle]
+mov bx,[filedesc]
 int 21h
 
 ;debugging section I use just to test values
@@ -582,7 +599,7 @@ arg_string_index dw 0
 arg_string_end dw 0
 
 file_error_message db 'Could not open the file! Error number: ',0
-file_handle dw 0
+filedesc dw 0
 end_of_file db 'EOF',0
 
 ;where we will store data from the file

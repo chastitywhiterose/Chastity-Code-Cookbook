@@ -1,0 +1,73 @@
+mov bx,[string_search]
+
+mov al,[bx]
+mov ah,[byte_array]
+cmp al,ah ;compare the first character of search string with the byte read already
+jz search_start ; if they are equal, skip putchar and begin searching for the string
+
+;otherwise, if they are not equal, just putchar the last byte read and repeat the loop
+mov al,[byte_array]
+call putchar
+jmp textdump
+
+search_start:
+mov ax,[string_search]
+call strlen ;get the length of the search string
+;call putint_and_line ; print length of search string only for debugging
+
+;attempt to read the length-1 bytes because the first one is already read into the byte array
+
+dec ax               ;subtract 1 from ax which holds our length of string
+
+mov dx,byte_array+1  ;store the bytes here
+mov cx,ax            ;we are reading this many bytes to have a string to compare
+mov bx,[file_handle] ;store file handle to read from in bx
+mov ah,3Fh           ;call number for read function
+int 21h
+
+;do some math to calculate where the string should end
+
+mov bx,dx ;mov into bx the address of second byte in the string
+add bx,ax ;add ax (the return value of the number of characters read)
+mov byte [bx],0 ;terminate the string with zero
+
+mov si,[string_search]
+mov di,byte_array
+
+call strcmp ;compare these two strings
+
+cmp ax,0 ;test if they are the same (if ax returned zero)
+jnz normal_print ;if they are not a match print them unmodified and unquoted
+
+;but if they are a match, then we either quote them
+;or replace them if a replacement string is available
+
+cmp word[string_replace],0 ;check to see if a replacement string is available
+jz print_quotes ;if not, skip to the part where we just quote the strings that match
+
+;otherwise, we will print the replacement string instead of the original!
+
+mov ax,[string_replace]
+call putstring ;print the string
+
+jmp normal_print_skip
+
+print_quotes:
+;print quotes around matched string
+mov al,'"'
+call putchar
+
+mov ax,byte_array
+call putstring ;print the string
+
+mov al,'"'
+call putchar
+
+jmp normal_print_skip
+
+normal_print: ;print normal / unquoted because it doesn't match
+
+mov ax,byte_array
+call putstring ;print the string
+
+normal_print_skip:
