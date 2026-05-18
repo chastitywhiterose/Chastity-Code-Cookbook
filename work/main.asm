@@ -240,7 +240,7 @@ mov [bytes_read],ax  ;store how many bytes were read with that last read operati
 cmp ax,cx ;if the number of bytes is not what we expected to read, end this loop
 jnz textdump_end
 
-;move our two strings into the esi and edi registers for comparison
+;move our two strings into the si and di registers for comparison
 ;with my custom written strcmp function
 
 mov si,[string_search]
@@ -258,8 +258,8 @@ jnz not_match ;if they are not a match go to that section for printing a charact
 mov ax,[bytes_read]
 add [file_address],ax
 
-cmp dword[argc],4 ;if less than 4 args, no replacement exist, so we quote the strings
-jb print_quotes
+cmp word[string_replace],0 ;check to see if a replacement string is available
+jz print_quotes ;if not, skip to the part where we just quote the strings that match
 
 ;otherwise, we will print the replacement string instead of the original!
 
