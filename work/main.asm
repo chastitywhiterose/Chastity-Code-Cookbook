@@ -103,13 +103,14 @@ call putchar
 
 putchar_skip:
 
-cmp dword[argc],3 ;if not enough arguments, skip the search string section
-jb textdump
+;cmp dword[argc],3 ;if not enough arguments, skip the search string section
+;jb textdump
 
 ;this is the beginning of search mode
 ;it handles the file by seeking and reading to search every position for the search string
 
-;first
+;first, seek to the file_address we initialized to zero
+;this variable will be added to depending on actions taken
 
 mov edx,0              ;whence argument (SEEK_SET)
 mov ecx,[file_address] ;move the file cursor to this address
@@ -136,7 +137,7 @@ mov byte[ebx],0        ;terminate the string with zero
 mov [bytes_read],eax   ;store how many bytes were read with that last read operation
 
 cmp eax,edx ;if the number of bytes is not what we expected to read, end this loop
-jnz main_end
+jnz textdump_end
 
 ;move our two strings into the esi and edi registers for comparison
 ;with my custom written strcmp function
@@ -185,9 +186,14 @@ mov al,[byte_array]
 call putchar
 add [file_address],1 ;add 1 to the file address so we don't read this same position again
 
-normal_print_skip:
-
 jmp textdump
+
+
+textdump_end:
+
+;print the remaining bytes, if any, left after the main loop ended
+mov eax,byte_array
+call putstring
 
 main_end:
 
