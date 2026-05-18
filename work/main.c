@@ -6,8 +6,7 @@
 int main(int argc, char *argv[])
 {
  FILE *fp; /*file pointer*/
- char temp[0x100]; /*buffer used to temporarily store data read from a file*/
- char *s; /*pointer to temporary buffer*/
+ char s[0x100]; /*buffer used to temporarily store data read from a file*/
  char *ss,*sr; /*string search and replacement pointers*/
  int sslength;
  int file_address=0;
@@ -45,9 +44,9 @@ int main(int argc, char *argv[])
  
  if(argc==2)
  {
-  while(fread(temp,1,1,fp))
+  while(fread(s,1,1,fp))
   {
-   fwrite(temp,1,1,stdout);
+   fwrite(s,1,1,stdout);
   }
   return 0; /*return with no errors*/
  }
@@ -64,8 +63,6 @@ int main(int argc, char *argv[])
  
  if(argc>2)
  {
-  s=temp;
-  
   /*assign pointer to the search string and find its length*/
   ss=argv[2];
   sslength=strlen(ss);
@@ -125,9 +122,9 @@ int main(int argc, char *argv[])
   } /*end of while loop*/
   
   /*
-  the loop above breaks when we don't have enough characters to match with a search string
-  In this case, we simply write to standard output the last characters that were read
-  so we can display the rest of the file
+   the loop above breaks when we don't have enough characters to match with a search string
+   In this case, we simply write to standard output the last characters that were read
+   so we can display the rest of the file
   */
   fwrite(s,1,count,stdout);
  
