@@ -135,6 +135,9 @@ mov byte[ebx],0        ;terminate the string with zero
 
 mov [bytes_read],eax   ;store how many bytes were read with that last read operation
 
+cmp eax,edx ;if the number of bytes is not what we expected to read, end this loop
+jnz main_end
+
 ;move our two strings into the esi and edi registers for comparison
 ;with my custom written strcmp function
 
