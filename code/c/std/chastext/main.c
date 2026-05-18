@@ -6,10 +6,10 @@
 int main(int argc, char *argv[])
 {
  FILE *fp; /*file pointer*/
- char temp[0x100]; /*buffer used to temporarily store data read from a file*/
- char *s; /*pointer to temporary buffer*/
+ char s[0x100]; /*buffer used to temporarily store data read from a file*/
  char *ss,*sr; /*string search and replacement pointers*/
  int sslength;
+ int file_address=0;
  int count=1;
    
  if(argc==1)
@@ -44,9 +44,9 @@ int main(int argc, char *argv[])
  
  if(argc==2)
  {
-  while(fread(temp,1,1,fp))
+  while(fread(s,1,1,fp))
   {
-   fwrite(temp,1,1,stdout);
+   fwrite(s,1,1,stdout);
   }
   return 0; /*return with no errors*/
  }
@@ -63,13 +63,11 @@ int main(int argc, char *argv[])
  
  if(argc>2)
  {
-  s=temp;
-  
   /*assign pointer to the search string and find its length*/
   ss=argv[2];
   sslength=strlen(ss);
   
-   /*if 4 or more arguments are present, use the 4th arg as the replacement string*/
+  /*if 4 or more arguments are present, use the 4th arg as the replacement string*/
   if(argc>3)
   {
    sr=argv[3];
@@ -82,62 +80,53 @@ int main(int argc, char *argv[])
   */
   while(count>0)
   {
-   count=fread(s,1,1,fp); /*read one byte*/
-   if(count==0){break;} /*if we couldn't read this byte, end the program*/
+   fseek(fp,file_address,SEEK_SET); /*seek to file_address (which starts at 0)*/
+   count=fread(s,1,sslength,fp); /*read number of bytes equal to search string length*/
    
-   if(s[0]!=ss[0]) /*if this byte is not the same as the first in search string*/
+   s[count]=0; /*terminate our temporary string with zero*/
+   
+   if(count<sslength){break;} /*if we couldn't read enough bytes, end this loop*/
+   
+   /*if the temporary string equals the search string, we do these operations*/
+   if(!strcmp(s,ss))
    {
-    fwrite(temp,1,1,stdout); /*write this byte to stdout and move on*/
+    /*
+     if there was not a replacement string argument,
+     put quotes around the matching strings
+     so that the user can see where they are
+    */
+    if(argc==3)
+    {
+     putchar('"');
+     putstr(ss);
+     putchar('"');
+    }
+    /*but if there is a replacement string, we print it instead of the search string*/
+    else
+    {
+     putstr(sr);
+    }
+    file_address+=count;
    }
-  
    /*
-    the first character matched read more bytes see if the entire search string is a match
+    but if the strings were not equal print the characters
+    in the buffer as they were in the original file
+    print the first character and then go to next address
    */
    else
    {
-   
-    count=fread(s+1,1,sslength-1,fp); /*read enough bytes to have an equal length string as search string*/
-    s[count+1]=0; /*terminate this temporary string with a zero*/
-    
-    if(count<(sslength-1)) /*if we don't have enough characters left in the file to compare*/
-    {
-     putstr(s); /*write the buffer of characters read before we end*/
-     break;     /*break out of the loop, which ends the program*/
-    }
-
-    /*if the temporary string equals the search string, we do these operations*/
-    if(!strcmp(s,ss))
-    {
-     /*
-      if there was not a replacement string argument,
-      put quotes around the matching strings
-      so that the user can see where they are
-     */
-     if(argc==3)
-     {
-      putchar('"');
-      putstr(ss);
-      putchar('"');
-     }
-     /*but if there is a replacement string, we print it instead of the search string*/
-     else
-     {
-      putstr(sr);
-     }
-    }
-    
-    /*
-     but if the strings were not equal print the characters
-     in the buffer as they were in the original file
-    */
-    else
-    {
-     putstr(s);
-    }
-    
+    fwrite(s,1,1,stdout);
+    file_address++;
    }
- 
+  
   } /*end of while loop*/
+  
+  /*
+   the loop above breaks when we don't have enough characters to match with a search string
+   In this case, we simply write to standard output the last characters that were read
+   so we can display the rest of the file
+  */
+  fwrite(s,1,count,stdout);
  
  } /*end of if(argc>2) section*/
   
