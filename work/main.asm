@@ -72,6 +72,14 @@ replace_skip:
 
 textdump:
 
+;if only there are only 2 arguments (name of program plus input file)
+;then we do a loop that ignores searching and replacing
+;this loop will read one character from the file and then send it to stdout
+;until there are no more bytes to display
+
+cmp dword[argc],2 
+jnz putchar_skip
+
 mov edx,1            ;number of bytes to read
 mov ecx,byte_array   ;address to store the bytes
 mov ebx,[filedesc]   ;move the opened file descriptor into EBX
@@ -83,14 +91,11 @@ mov [bytes_read],eax
 cmp eax,0
 jnz file_success ;if more than zero bytes read, proceed to display
 
-jmp main_end
+jmp main_end ;otherwise, end the program
 
 ; this point is reached if file was read from successfully
 
 file_success:
-
-cmp dword[argc],2 ;if only 2 arguments, just putchar and read next one
-jnz putchar_skip
 
 ;normally, we will print the last read character
 mov al,[byte_array]
@@ -242,6 +247,8 @@ db 'replace string:',0Ah,0Ah,9,'chastext file search replace',0Ah,0Ah
 db 'Find or replace any string!',0Ah,0
 
 open_error_message db 'error while opening file',0
+
+file_address dd 0 ;file address defaults to zero AKA beginning of file
 
 ;variables for managing arguments and files
 argc rd 1
