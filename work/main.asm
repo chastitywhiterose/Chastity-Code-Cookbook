@@ -106,44 +106,52 @@ putchar_skip:
 cmp dword[argc],3 ;if not enough arguments, skip the search string section
 jb textdump
 
-mov ebx,[string_search]
+;this is the beginning of search mode
+;it handles the file by seeking and reading to search every position for the search string
 
-mov al,[ebx]
-mov ah,[byte_array]
-cmp al,ah ;compare the first character of search string with the byte read already
-jz search_start ; if they are equal, skip putchar and begin searching for the string
+;first
 
-;otherwise, if they are not equal, just putchar the last byte read and repeat the loop
-mov al,[byte_array]
-call putchar
-jmp textdump
+mov edx,0              ;whence argument (SEEK_SET)
+mov ecx,[file_address] ;move the file cursor to this address
+mov ebx,[filedesc]     ;move the opened file descriptor into EBX
+mov eax,19             ;invoke SYS_LSEEK (kernel opcode 19)
+int 80h                ;call the kernel
 
-search_start:
+;obtain the length of the search string using my strlen function
 mov eax,[string_search]
 call strlen ;get the length of the search string
 
-;attempt to read the length-1 bytes because the first one is already read into the byte array
+;use the length of the string we are searching for as the number of bytes to read at this location
 
-dec eax
 mov edx,eax            ;number of bytes to read
-mov ecx,byte_array+1   ;address to store the bytes
+mov ecx,byte_array     ;address to store the bytes
 mov ebx,[filedesc]     ;move the opened file descriptor into EBX
 mov eax,3              ;invoke SYS_READ (kernel opcode 3)
 int 80h                ;call the kernel
 
-mov ebx,ecx
-add ebx,eax
-mov byte [ebx],0 ;terminate the string with zero
+mov ebx,byte_array     ;move the address of bytes read into ebx
+add ebx,eax            ;add number of bytes read (return value of read function in eax)
+mov byte[ebx],0        ;terminate the string with zero
+
+mov [bytes_read],eax   ;store how many bytes were read with that last read operation
+
+;move our two strings into the esi and edi registers for comparison
+;with my custom written strcmp function
 
 mov esi,[string_search]
 mov edi,byte_array
 call strcmp ;compare these two strings
 
 cmp eax,0 ;test if they are the same (if eax returned zero)
-jnz normal_print ;if they are not a match print them unmodified and unquoted
+jnz not_match ;if they are not a match go to that section for printing a character
 
 ;but if they are a match, then we either quote them
 ;or replace them if a replacement string is available
+
+;but regardless of which action we do, since a match was found, let us add this count to the file address
+;so that we read from beyond this point next time the textdump loop starts
+mov eax,[bytes_read]
+add [file_address],eax
 
 cmp dword[argc],4 ;if less than 4 args, no replacement exist, so we quote the strings
 jb print_quotes
@@ -153,7 +161,7 @@ jb print_quotes
 mov eax,[string_replace]
 call putstring ;print the string
 
-jmp normal_print_skip
+jmp textdump ;restart the main loop
 
 print_quotes:
 ;print quotes around matched string
@@ -166,12 +174,13 @@ call putstring ;print the string
 mov al,'"'
 call putchar
 
-jmp normal_print_skip
+jmp textdump ;restart the main loop
 
-normal_print: ;print normal / unquoted because it doesn't match
+not_match: 
 
-mov eax,byte_array
-call putstring ;print the string
+mov al,[byte_array]
+call putchar
+add [file_address],1 ;add 1 to the file address so we don't read this same position again
 
 normal_print_skip:
 
