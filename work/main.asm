@@ -609,4 +609,4 @@ bytes_read dw 0
 string_search dw 0 ; place to hold the search string pointer
 string_replace dw 0 ; place to hold the replacement string pointer
 
-byte_array db 0x80 dup 0
+byte_array db 0x70 dup 0
