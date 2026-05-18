@@ -109,6 +109,7 @@ int main(int argc, char *argv[])
     {
      putstr(sr);
     }
+    file_address+=count;
    }
    /*
     but if the strings were not equal print the characters
@@ -122,6 +123,13 @@ int main(int argc, char *argv[])
    }
   
   } /*end of while loop*/
+  
+  /*
+  the loop above breaks when we don't have enough characters to match with a search string
+  In this case, we simply write to standard output the last characters that were read
+  so we can display the rest of the file
+  */
+  fwrite(s,1,count,stdout);
  
  } /*end of if(argc>2) section*/
   
