@@ -343,17 +343,18 @@ call putstring
 
 ret
 
-help db 'chastehex:',0Ah
-db 'hexdump a file:',0Ah,9,'chex file',0Ah
-db 'read a byte:',0Ah,9,'chex file address',0Ah
-db 'write a byte:',0Ah,9,'chex file address value',0Ah
-db 'The file must exist',0Ah,0
+help db 'chastehex:',0Dh,0Ah
+db 'hexdump a file:',0Dh,0Ah,9,'chex file',0Dh,0Ah
+db 'read a byte:',0Dh,0Ah,9,'chex file address',0Dh,0Ah
+db 'write bytes:',0Dh,0Ah,9,'chex file address byte1 byte2 etc.',0Dh,0Ah
+db 4 dup 0
 
 ; About the chastelib variant
 
 ;instead of including chastelib16.asm as a header file
 ;I copy pasted it except that I excluded functions that were not used.
 ;Notably, the strint function is excluded because strint_32 is used instead
+;This was to squeeze chastehex for DOS down to 1024 bytes.
 
 ;start of chastelib
 

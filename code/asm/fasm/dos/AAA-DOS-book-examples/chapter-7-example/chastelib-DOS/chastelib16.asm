@@ -253,3 +253,40 @@ mov ax,char
 call putstring
 pop ax
 ret
+
+;a small function just for the common operation
+;printing an integer followed by a space
+;this saves a few bytes in the assembled code
+
+putint_and_space:
+call putint
+call putspace
+ret
+
+;a small function just for the common operation
+;printing an integer followed by a space
+;this saves a few bytes in the assembled code
+
+putint_and_line:
+call putint
+call putline
+ret
+
+;a small function just for the common operation
+;printing an integer followed by a space
+;this saves a few bytes in the assembled code
+
+putstr_and_space:
+call putstring
+call putspace
+ret
+
+;a small function just for the common operation
+;printing an integer followed by a space
+;this saves a few bytes in the assembled code
+
+putstr_and_line:
+call putstring
+call putline
+ret
+

@@ -1,0 +1,3 @@
+This test file was made to test the DOS version of chastehex which has been named chasthex because of the DOS 8.3 filename limit.
+
+The program works the same as the Linux version of chastehex and has been tested in both traditional DOSBox and DOSBox-X.
