@@ -1,0 +1,23 @@
+riscemu is a python program and I followed some instructions to get it installed.
+
+---
+chastity@chastity-um250:~/tmp$ pipx install riscemu
+  installed package riscemu 2.2.7, installed using Python 3.11.2
+  These apps are now globally available
+    - riscemu
+⚠️  Note: '/home/chastity/.local/bin' is not on your PATH environment
+    variable. These apps will not be globally accessible until your PATH is
+    updated. Run `pipx ensurepath` to automatically add it, or manually modify
+    your PATH in your shell's config file (i.e. ~/.bashrc).
+done! ✨ 🌟 ✨
+chastity@chastity-um250:~/tmp$ pipx ensurepath
+Success! Added /home/chastity/.local/bin to the PATH environment variable.
+
+Consider adding shell completions for pipx. Run 'pipx completions' for
+instructions.
+
+You will need to open a new terminal or re-login for the PATH changes to take
+effect.
+
+Otherwise pipx is ready to go! ✨ 🌟 ✨
+---
