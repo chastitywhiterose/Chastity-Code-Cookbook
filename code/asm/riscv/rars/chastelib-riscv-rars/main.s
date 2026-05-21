@@ -23,7 +23,7 @@ char:  .byte 0, 0
 string0: .asciz "chastelib test suite for RISC-V Assembly in RARS simulator\n"
 
 input_int_0: .asciz "0"
-input_int_1: .asciz "10"
+input_int_1: .asciz "100"
 
 .text
 
@@ -34,7 +34,7 @@ __start:
 # as if they are hexadecimal integers
 
 # change radix to decimal
-li t0,16     #load t0 register with the new radix
+li t0,16    #load t0 register with the new radix
 la t1,radix #load t1 register with the address the radix will go to
 sb t0,0(t1) #save t0 register (byte) to address t1
 
@@ -124,8 +124,8 @@ ecall
 # The following functions are independent of a specific RISC-V Operating System #
 #                                                                               #
 # intstr = convert integer into a string ready for printing                     #
+# putint = prints integer using intstr and the OS specific putstr function      #
 # strint = convert string into an integer                                       #
-# putint = prints integer using intstr and the OS specific putstr function   #
 #                                                                               #
 # The s0 register is used for pass data in or out of these functions            #
 # See comments above those specific functions for full details                  #
@@ -210,7 +210,6 @@ lw s0, 4(sp)
 addi sp, sp, 8
 
 ret
-
 
 # RISC-V does not allow constants for branches
 # Because of this fact, the RISC-V version of strint
@@ -349,7 +348,7 @@ addi sp, sp, 12
 
 ret
 
-#the putspace function prints a space to standard output
+# the putspace function prints a space to standard output
 
 putspace:
 
@@ -366,7 +365,7 @@ addi sp, sp, 8
 
 ret
 
-#the putline function prints a newline to standard output
+# the putline function prints a newline to standard output
 
 putline:
 
