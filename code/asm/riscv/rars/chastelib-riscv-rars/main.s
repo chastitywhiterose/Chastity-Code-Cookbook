@@ -1,5 +1,3 @@
-.globl __start
-
 .data
 
 # These variables are used by the intstr function to convert an integer to a string
@@ -27,82 +25,80 @@ input_int_1: .asciz "100"
 
 .text
 
-__start:
+la s0, string0
+jal putstr
 
 # at the beginning of a program, it is usually good to get user input
 # this program doesn't use real user input but simulates it with global strings we will interpret
 # as if they are hexadecimal integers
 
 # change radix to decimal
-li t0,16    #load t0 register with the new radix
-la t1,radix #load t1 register with the address the radix will go to
-sb t0,0(t1) #save t0 register (byte) to address t1
+li t0, 16    #load t0 register with the new radix
+la t1, radix #load t1 register with the address the radix will go to
+sb t0, 0(t1) #save t0 register (byte) to address t1
 
 # load s0 with address of first integer string, convert it with strint, and save in another register
-la s0,input_int_0
+la s0, input_int_0
 jal strint
-mv s2,s0
+mv s2, s0
 
 # load s0 with address of second integer string, convert it with strint, and save in another register
-la s0,input_int_1
+la s0, input_int_1
 jal strint
-mv s3,s0
-
-la s0,string0
-jal putstr
+mv s3, s0
 
 # this is how we would load the loop controller variables directly
 # these are commented out for this example
-# li s0,0
-# li s1,0x100
+# li s0, 0
+# li s1, 0x100
 
-mv s0,s2
-mv s1,s3
+mv s0, s2
+mv s1, s3
 
 loop:
 
 # change radix to binary
-li t0,2     #load t0 register with the new radix
-la t1,radix #load t1 register with the address the radix will go to
-sb t0,0(t1) #save t0 register (byte) to address t1
+li t0, 2     #load t0 register with the new radix
+la t1, radix #load t1 register with the address the radix will go to
+sb t0, 0(t1) #save t0 register (byte) to address t1
 
 # change width to 8 to represent an 8 bit binary value
-li t0,8     #load t0 register with the new width
-la t1,int_width #load t1 register with the address the width will go to
-sb t0,0(t1) #save t0 register (byte) to address t1
+li t0, 8     #load t0 register with the new width
+la t1, int_width #load t1 register with the address the width will go to
+sb t0, 0(t1) #save t0 register (byte) to address t1
 
 jal putint
 jal putspace
 
 # change radix to hexadecimal
-li t0,16     #load t0 register with the new radix
-la t1,radix #load t1 register with the address the radix will go to
-sb t0,0(t1) #save t0 register (byte) to address t1
+li t0, 16     #load t0 register with the new radix
+la t1, radix #load t1 register with the address the radix will go to
+sb t0, 0(t1) #save t0 register (byte) to address t1
 
 # change width to 2 to represent an 8 bit binary value as a two digit hex value
-li t0,2     #load t0 register with the new width
-la t1,int_width #load t1 register with the address the width will go to
-sb t0,0(t1) #save t0 register (byte) to address t1
+li t0, 2     #load t0 register with the new width
+la t1, int_width #load t1 register with the address the width will go to
+sb t0, 0(t1) #save t0 register (byte) to address t1
 
 jal putint
 jal putspace
 
 # change radix to decimal
-li t0,10     #load t0 register with the new radix
-la t1,radix #load t1 register with the address the radix will go to
-sb t0,0(t1) #save t0 register (byte) to address t1
+li t0, 10     #load t0 register with the new radix
+la t1, radix #load t1 register with the address the radix will go to
+sb t0, 0(t1) #save t0 register (byte) to address t1
 
 # change width to 3 to represent an 8 bit binary value decimal value of up to 3 digits
-li t0,3       #load t0 register with the new width
-la t1,int_width #load t1 register with the address the width will go to
-sb t0,0(t1) #save t0 register (byte) to address t1
+li t0, 3       #load t0 register with the new width
+la t1, int_width #load t1 register with the address the width will go to
+sb t0, 0(t1) #save t0 register (byte) to address t1
 
 jal putint
 
-li t1,0x20
-blt s0,t1,not_char
-li t1,0x7E
-bgt s0,t1,not_char
+li t1, 0x20
+blt s0, t1, not_char
+li t1, 0x7E
+blt t1, s0, not_char
 
 jal putspace
 jal putchar
@@ -111,10 +107,10 @@ not_char:                # jump here if character is outside range to print
 
 jal putline
 
-addi s0,s0,1
-blt s0,s1,loop
+addi s0, s0, 1
+blt s0, s1, loop
 
-la s0,string0
+la s0, string0
 jal putstr
 
 li   a7, 10     # exit syscall
