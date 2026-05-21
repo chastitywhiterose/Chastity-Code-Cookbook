@@ -13,9 +13,12 @@ int_width: .byte 1 #by default
 # These variables are for outputting special strings
 # such as a newline, space, or a single character based on s0
 
-char: .byte 0, 0 
-space: .asciiz " "
-line: .asciiz "\n"
+# These variables are for outputting special strings
+# such as a newline, space, or a single character based on s0
+
+space: .byte 0x20, 0
+line:  .byte 0x0A, 0
+char:  .byte 0, 0 
 
 string0: .asciiz "I am Chastity White Rose\n"
 
@@ -27,13 +30,14 @@ jal putstr
 li s0, 16
 jal putint
 jal putline
-jal putspace
-
-li s0, 0x38
-jal putchar
 
 addi s0, zero, string0
 jal putstr
+
+jal putspace
+li s0, 0x38
+jal putchar
+
 
 addi    a0, zero, 0     # a0=0  (exit code for OS)
 addi    a7, zero, 93    # a7=93 (exit system call)
@@ -154,17 +158,22 @@ ret
 #prints the lowest byte of the s0 register as a byte or character to standard output
 
 putchar:
-addi sp, sp, -8
+
+addi sp, sp, -12
 sw ra, 0(sp)
 sw s0, 4(sp)
+sw t1, 8(sp)
 
-sb s0, char(zero)
+la t1, char
+sb s0, 0(t1)
 la s0, char
 jal putstr
 
 lw ra, 0(sp)
 lw s0, 4(sp)
-addi sp, sp, 8
+lw t1, 8(sp)
+addi sp, sp, 12
+
 ret
 
 #the putspace function prints a space to standard output
@@ -183,8 +192,6 @@ lw s0, 4(sp)
 addi sp, sp, 8
 
 ret
-
-
 
 #the putline function prints a newline to standard output
 
