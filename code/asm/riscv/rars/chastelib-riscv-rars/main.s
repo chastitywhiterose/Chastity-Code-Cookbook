@@ -23,7 +23,7 @@ char:  .byte 0, 0
 string0: .asciz "chastelib test suite for RISC-V Assembly in RARS simulator\n"
 
 input_int_0: .asciz "0"
-input_int_1: .asciz "100"
+input_int_1: .asciz "10"
 
 .text
 
@@ -221,25 +221,26 @@ ret
 
 strint:
 
-mv t1,s0 # copy string address from s0 to t1
-li s0,0
+la t1, radix     # load address of radix into t1
+lb t2, 0(t1)     # load value of radix into t2
 
-lb t2,radix     # load value of radix into t2
+mv t1, s0 # copy string address from s0 to t1
+li s0, 0
 
 read_strint:
-lb t0,0(t1)
-addi t1,t1,1
-beq t0,zero,strint_end
+lb t0, 0(t1)
+addi t1, t1, 1
+beq t0, zero, strint_end
 
 # if char is below '0' or above '9', it is outside the range of these and is not a digit
-li t5,'0'
-blt t0,t5,not_digit
-li t5,'9'
-bgt t0,t5,not_digit
+li t5, 0x30
+blt t0, t5, not_digit
+li t5, 0x39
+blt t5, t0, not_digit
 
 # but if it is a digit, then correct and process the character
 is_digit:
-andi t0,t0,0xF
+andi t0, t0, 0xF
 j process_char
 
 not_digit:
@@ -247,29 +248,29 @@ not_digit:
 # which is a digit in a higher base
 
 # if char is below 'A' or above 'Z', it is outside the range of these and is not capital letter
-li t5,'A'
-blt t0,t5,not_upper
-li t5,'Z'
-bgt t0,t5,not_upper
+li t5, 0x41
+blt t0, t5, not_upper
+li t5, 0x5A
+blt t5, t0, not_upper
 
 is_upper:
-li t5,'A'
-sub t0,t0,t5
-addi t0,t0,10
+li t5, 0x41
+sub t0, t0, t5
+addi t0, t0, 10
 j process_char
 
 not_upper:
 
 # if char is below 'a' or above 'z', it is outside the range of these and is not lowercase letter
-li t5,'a'
-blt t0,t5,not_lower
-li t5,'z'
-bgt t0,t5,not_lower
+li t5, 0x61
+blt t0, t5, not_lower
+li t5, 0x7A
+blt t5, t0, not_lower
 
 is_lower:
-li t5,'a'
-sub t0,t0,t5
-addi t0,t0,10
+li t5, 0x61
+sub t0, t0, t5
+addi t0, t0, 10
 j process_char
 
 not_lower:
@@ -280,11 +281,11 @@ j strint_end
 
 process_char:
 
-bgt t0,t2 strint_end #;if this value is above or equal to radix, it is too high despite being a valid digit/alpha
+blt t2, t0 strint_end #;if this value is above or equal to radix, it is too high despite being a valid digit/alpha
 
 
-mul s0,s0,t2 # multiply s0 by the radix
-add s0,s0,t0 # add the correct value of this digit
+mul s0, s0, t2 # multiply s0 by the radix
+add s0, s0, t0 # add the correct value of this digit
 
 j read_strint # jump back and continue the loop if nothing has exited it
 
@@ -293,7 +294,7 @@ strint_end:
 ret
 
 ###############################################################################
-# This putstr function is the most portable function for RISC-V simulators #
+# This putstr function is the most portable function for RISC-V simulators    #
 # It calculates the length of a zero terminated string before printing it     #
 # This is the same way used in my Intel Assembly programs for DOS and Linux   #
 # This function was written to operate the same in both RARS and riscemu      #
@@ -320,28 +321,11 @@ ecall             #          (environment call  )
 ret
 
 #############################################################################
-# Important notice! The next four functions print things to standard output #
-# These functions only work in the rars simulator but not Jupiter or Venus  #
-# This is because those simulators use  different registers for the ecalls  #
-# ecalls are environment calls for a specific operating system              #
+# The next four 3 functions print things to standard output                 #
+# All of them use the putstr function above to achieve the output           #
+# They use the stack to preserve the values of the s0 and t1 registers used #
+# They also use global variables in the data section                        #
 #############################################################################
-
-# putstr is arguably both the simplest but the most important because it is how I print all my strings.
-# The s0 register must be loaded with the address of a string to print.
-# Obviously the string must be terminated with a zero byte and stored in memory somewhere.
-# The version below specifically is designed for the RARS simulator which has call number 4 available
-# The RARS simulator automatically calculates the length of the string and stops at a zero byte
-
-putstr_rars:
-li a7,4   # load immediate, (4 is print string system call)
-mv a0,s0  # load address of string to print into a0
-ecall
-ret
-
-###############################################
-# Call 11 of RARS prints a single character.  #
-# It is the fastest way to print 1 character. #
-###############################################
 
 #the putchar function, which is named after the C language function of the same name
 #prints the lowest byte of the s0 register as a byte or character to standard output
