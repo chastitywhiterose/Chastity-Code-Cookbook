@@ -20,14 +20,27 @@ space: .byte 0x20, 0
 line:  .byte 0x0A, 0
 char:  .byte 0, 0 
 
+
 string0: .asciiz "I am Chastity White Rose\n"
+string1: .asciiz "11001\n"
 
 .text
 
 addi s0, zero, string0
 jal putstr
 
-li s0, 16
+li s0, 16 #set value regular way
+
+# I will use the binary string to get a number
+# the default radix for my library is 2
+
+addi s0, zero, string1 #set address of binary string
+jal strint #convert the string to integer for s0 register
+
+la t1, radix     # load address of radix into t1
+li t2, 10        # base ten or decimal
+sb t2, 0(t1)     # load save value of t2 to radix address
+
 jal putint
 jal putline
 
@@ -35,7 +48,7 @@ addi s0, zero, string0
 jal putstr
 
 jal putspace
-li s0, 0x38
+li s0, 0x3F  # char for a question mark
 jal putchar
 
 
@@ -150,6 +163,112 @@ lw s0, 4(sp)
 addi sp, sp, 8
 
 ret
+
+
+
+# RISC-V does not allow constants for branches
+# Because of this fact, the RISC-V version of strint
+# requires a lot more code than the MIPS version
+# Whatever value I wanted to compare in the branch statement
+# was placed in the t5 register on the line before the conditional branch
+# Even though it is completely stupid, it has proven to work
+
+strint:
+
+la t1, radix     # load address of radix into t1
+lb t2, 0(t1)     # load value of radix into t2
+
+mv t1, s0 # copy string address from s0 to t1
+li s0, 0
+
+read_strint:
+lb t0, 0(t1)
+addi t1, t1, 1
+beq t0, zero, strint_end
+
+# if char is below '0' or above '9', it is outside the range of these and is not a digit
+li t5, 0x30
+blt t0, t5, not_digit
+li t5, 0x39
+blt t5, t0, not_digit
+
+# but if it is a digit, then correct and process the character
+is_digit:
+andi t0, t0, 0xF
+j process_char
+
+not_digit:
+# it isn't a digit, but it could be perhaps and alphabet character
+# which is a digit in a higher base
+
+# if char is below 'A' or above 'Z', it is outside the range of these and is not capital letter
+li t5, 0x41
+blt t0, t5, not_upper
+li t5, 0x5A
+blt t5, t0, not_upper
+
+is_upper:
+li t5, 0x41
+sub t0, t0, t5
+addi t0, t0, 10
+j process_char
+
+not_upper:
+
+# if char is below 'a' or above 'z', it is outside the range of these and is not lowercase letter
+li t5, 0x61
+blt t0, t5, not_lower
+li t5, 0x7A
+blt t5, t0, not_lower
+
+is_lower:
+li t5, 0x61
+sub t0, t0, t5
+addi t0, t0, 10
+j process_char
+
+not_lower:
+
+# if we have reached this point, result invalid and end function
+# this is only reached if the byte was not a valid digit or alphabet character
+j strint_end
+
+process_char:
+
+blt t2, t0 strint_end #;if this value is above or equal to radix, it is too high despite being a valid digit/alpha
+
+
+mul s0, s0, t2 # multiply s0 by the radix
+add s0, s0, t0 # add the correct value of this digit
+
+j read_strint # jump back and continue the loop if nothing has exited it
+
+strint_end:
+
+ret
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
