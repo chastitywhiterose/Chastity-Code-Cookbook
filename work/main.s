@@ -16,7 +16,7 @@ int_width: .byte 1 #by default
 string0: .asciz "chastelib test suite for RISC-V Assembly in RARS simulator\n"
 
 input_int_0: .asciz "0"
-input_int_1: .asciz "10"
+input_int_1: .asciz "100"
 
 .text
 
@@ -315,13 +315,18 @@ ret
 # The s0 register must be loaded with the address of a string to print.
 # Obviously the string must be terminated with a zero byte and stored in memory somewhere.
 # The version below specifically is designed for the RARS simulator which has call number 4 available
-# The simulator automatically calculates the length of the string and stops at a zero byte
+# The RARS simulator automatically calculates the length of the string and stops at a zero byte
 
 putstring_rars:
 li a7,4   # load immediate, (4 is print string system call)
 mv a0,s0  # load address of string to print into a0
 ecall
 ret
+
+###############################################
+# Call 11 of RARS prints a single character.  #
+# It is the fastest way to print 1 character. #
+###############################################
 
 #the putchar function, which is named after the C language function of the same name
 #prints the lowest byte of the s0 register as a byte or character to standard output

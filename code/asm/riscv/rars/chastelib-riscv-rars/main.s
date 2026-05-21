@@ -13,7 +13,7 @@ int_width: .byte 1 #by default
 # These variables are for outputting specific messages
 # or to simulate user input as integers in the strint function
 
-msg: .asciz "Hello World!\n"
+string0: .asciz "chastelib test suite for RISC-V Assembly in RARS simulator\n"
 
 input_int_0: .asciz "0"
 input_int_1: .asciz "100"
@@ -41,7 +41,7 @@ la s0,input_int_1
 jal strint
 mv s3,s0
 
-la s0,msg
+la s0,string0
 jal putstring
 
 # this is how we would load the loop controller variables directly
@@ -106,6 +106,9 @@ jal putline
 
 addi s0,s0,1
 blt s0,s1,loop
+
+la s0,string0
+jal putstring_rars # print the same string but using the RARS specific function
 
 li   a7, 10     # exit syscall
 ecall
@@ -173,7 +176,7 @@ end_zeros:
 
 mv s0,t1
 
-jr ra
+ret
 
 # RISC-V does not allow constants for branches
 # Because of this fact, the RISC-V version of strint
@@ -253,7 +256,7 @@ j read_strint # jump back and continue the loop if nothing has exited it
 
 strint_end:
 
-jr ra
+ret
 
 # this function calls intstr to convert the s0 register into a string
 # then it uses the system specific call to print the string
@@ -272,24 +275,58 @@ jal putstring
 lw ra,0(sp)
 lw s0,4(sp)
 addi sp,sp,8
-jr ra
+ret
+
+
+###############################################################################
+# This putstring function is the most portable function for RISC-V simulators #
+# It calculates the length of a zero terminated string before printing it     #
+# This is the same way used in my Intel Assembly programs for DOS and Linux   #
+###############################################################################
+
+putstring:
+
+mv t1, s0 # t1 will be used as an index register
+
+putstring_strlen_start:
+lb t0, 0(t1)                       # load byte into t0 from address of t1
+beq t0, zero, putstring_strlen_end # if t0==0, then we jump to the end of the loop.
+addi t1, t1, 1                     # go to next byte
+j putstring_strlen_start           # jump to start of the loop
+putstring_strlen_end:              
+
+
+addi a0, zero, 1  # a0=1     (STDOUT file number)
+addi a1, s0, 0    # a1=s0    (address of string )
+sub  a2, t1, s0   # a2=t1-s0 (length of string  )
+addi a7, zero, 64 # a7=64    (write system call )
+ecall             #          (environment call  )
+
+ret
 
 #############################################################################
 # Important notice! The next four functions print things to standard output #
-# These functions only work in the rars simulator but not Jupiter           #
-# This is because simulators use  different registers for the ecalls        #
+# These functions only work in the rars simulator but not Jupiter or Venus  #
+# This is because those simulators use  different registers for the ecalls  #
 # ecalls are environment calls for a specific operating system              #
 #############################################################################
 
 # putstring is arguably both the simplest but the most important because it is how I print all my strings.
 # The s0 register must be loaded with the address of a string to print.
-# Obviously the string will be terminated with a zero byte and stored in memory somewhere.
+# Obviously the string must be terminated with a zero byte and stored in memory somewhere.
+# The version below specifically is designed for the RARS simulator which has call number 4 available
+# The RARS simulator automatically calculates the length of the string and stops at a zero byte
 
-putstring:
-li a7,4      # load immediate, v0 = 4 (4 is print string system call)
+putstring_rars:
+li a7,4   # load immediate, (4 is print string system call)
 mv a0,s0  # load address of string to print into a0
 ecall
-jr ra
+ret
+
+###############################################
+# Call 11 of RARS prints a single character.  #
+# It is the fastest way to print 1 character. #
+###############################################
 
 #the putchar function, which is named after the C language function of the same name
 #prints the lowest byte of the s0 register as a byte or character to standard output
@@ -298,7 +335,7 @@ putchar:
 li a7, 11  # ecall code for print character
 mv a0, s0  # character to print (in this case, 0x0A for newline)
 ecall
-jr ra
+ret
 
 #the putspace function prints a space to standard output
 
@@ -306,7 +343,7 @@ putspace:
 li a7, 11  # ecall code for print character
 li a0, 0x20 # character to print (in this case, 0x20 for a space)
 ecall
-jr ra
+ret
 
 #the putspace function prints a newline to standard output
 
@@ -314,4 +351,5 @@ putline:
 li a7, 11  # ecall code for print character
 li a0, 0x0A # character to print (in this case, 0x0A for newline)
 ecall
-jr ra
+ret
+
