@@ -39,14 +39,16 @@ mv t1, s0 ; t1 will be used as an index register
 putstring_strlen_start:
 lb t0, 0(t1) ; load byte into t0 from address of t1
 beq t0, zero, putstring_strlen_end ; if t0==0, then we jump to the end of the loop.
-addi t1, zero, 1
-;jal zero, putstring_strlen_start
+addi t1, zero, 1 ; go to next byte
+;j putstring_strlen_start
 putstring_strlen_end:
 
 ;cmp [ebx],byte 0 ; compare byte at address ebx with 0
 ;jz putstring_strlen_end ; if comparison was zero, jump to loop end because we have found the length
 ;inc ebx
 ;jmp putstring_strlen_start
+
+sub a2, s0, t1
 
 addi    a0, zero, 1  ;STDOUT file number
 addi    a1, s0, 0
