@@ -22,7 +22,7 @@ Walking the Rainbow Bridge is another book I wrote that I occasionally add to bu
 
 <https://github.com/chastitywhiterose/Walking-the-Rainbow-Bridge>
 
-Chastehex is a program I wrote that can open a file and read or write bytes at any location from command line arguments alone. The idea was to have a hex editor that is scriptable using Bash, or other scripting languages. Mostly I use it to debug programs I cam writing or reverse engineering my favorite video games.
+Chastehex is a program I wrote that can open a file and read or write bytes at any location from command line arguments alone. The idea was to have a hex editor that is scriptable using Bash, or other scripting languages. Mostly I use it to debug programs I am writing or reverse engineering my favorite video games.
 
 <https://github.com/chastitywhiterose/chastehex>
 
