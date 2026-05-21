@@ -15,17 +15,12 @@ string0: .asciiz "I am Chastity White Rose\n"
 .text
 
 addi s0, zero, string0
-
-#li t0, '0x30'
-#sb t0, 0(s0)
-
 jal putstr
 
+li s0, 16
+jal putint
 
-
-jal intstr
-
-li s0, int_string
+addi s0, zero, string0
 jal putstr
 
 addi    a0, zero, 0     # a0=0  (exit code for OS)
@@ -74,8 +69,8 @@ la t1, int_width # load address of width into t1
 lb t4, 0(t1)     # load value of int_width into t4
 li t3, 1         # load current number of digits, always 1
 
-la t1, int_end # load target index address of lowest digit
-addi t1, t1, -1
+addi t1, zero, int_end # t1=address of terminating zero in string
+addi t1, t1, -1        # t1-- to go to lowest digit
 
 digits_start:
 
@@ -83,19 +78,22 @@ remu t0, s0, t2 # t0=remainder of the previous division
 divu s0, s0, t2 # s0=s0/t2 (divide s0 by the radix value in t2)
 
 li t5, 10 # load t5 with 10 because RISC-V does not allow constants for branches
-blt t0, t5,decimal_digit
-bge t0, t5,hexadecimal_digit
+
+blt t0, t5, decimal_digit
+bge t0, t5, hexadecimal_digit
 
 decimal_digit: # we go here if it is only a digit 0 to 9
-addi t0, t0, '0'
+
+addi t0, t0, 0x30
+
 j save_digit
 
 hexadecimal_digit:
 addi t0, t0, -10
-addi t0, t0, 'A'
+addi t0, t0, 0x41
 
 save_digit:
-sb t0,0(t1) # store byte from t0 at address t1
+sb t0, 0(t1) # store byte from t0 at address t1
 beq s0, zero, intstr_end
 addi t1, t1, -1
 addi t3, t3, 1
@@ -103,7 +101,7 @@ j digits_start
 
 intstr_end:
 
-li t0, '0'
+li t0, 0x30
 prefix_zeros:
 bge t3, t4, end_zeros
 addi t1, t1, -1
@@ -116,3 +114,24 @@ mv s0, t1
 
 ret
 
+# this function calls intstr to convert the s0 register into a string
+# then it uses the system specific putstr call to print the string
+# it also uses the stack to save the value of s0 and ra (return address)
+# this way, s0 is restored to the value it had before this function
+# restoring ra is required because it is modified during calls to other functions
+
+putint:
+
+addi sp, sp, -8
+
+sw ra, 0(sp)
+sw s0, 4(sp)
+
+jal intstr
+jal putstr
+
+lw ra, 0(sp)
+lw s0, 4(sp)
+addi sp, sp, 8
+
+ret
