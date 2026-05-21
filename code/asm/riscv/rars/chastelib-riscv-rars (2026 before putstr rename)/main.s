@@ -42,7 +42,7 @@ jal strint
 mv s3,s0
 
 la s0,string0
-jal putstr
+jal putstring
 
 # this is how we would load the loop controller variables directly
 # these are commented out for this example
@@ -108,7 +108,7 @@ addi s0,s0,1
 blt s0,s1,loop
 
 la s0,string0
-jal putstr_rars # print the same string but using the RARS specific function
+jal putstring_rars # print the same string but using the RARS specific function
 
 li   a7, 10     # exit syscall
 ecall
@@ -118,7 +118,7 @@ ecall
 #                                                                               #
 # intstr = convert integer into a string ready for printing                     #
 # strint = convert string into an integer                                       #
-# putint = prints integer using intstr and the OS specific putstr function   #
+# putint = prints integer using intstr and the OS specific putstring function   #
 #                                                                               #
 # The s0 register is used for pass data in or out of these functions            #
 # See comments above those specific functions for full details                  #
@@ -270,7 +270,7 @@ sw ra,0(sp)
 sw s0,4(sp)
 
 jal intstr
-jal putstr
+jal putstring
 
 lw ra,0(sp)
 lw s0,4(sp)
@@ -279,22 +279,22 @@ ret
 
 
 ###############################################################################
-# This putstr function is the most portable function for RISC-V simulators #
+# This putstring function is the most portable function for RISC-V simulators #
 # It calculates the length of a zero terminated string before printing it     #
 # This is the same way used in my Intel Assembly programs for DOS and Linux   #
 # This function was written to operate the same in both RARS and riscemu      #
 ###############################################################################
 
-putstr:
+putstring:
 
 mv t1, s0 # t1 will be used as an index register
 
-putstr_strlen_start:
+putstring_strlen_start:
 lb t0, 0(t1)                       # load byte into t0 from address of t1
-beq t0, zero, putstr_strlen_end # if t0==0, then we jump to the end of the loop.
+beq t0, zero, putstring_strlen_end # if t0==0, then we jump to the end of the loop.
 addi t1, t1, 1                     # go to next byte
-j putstr_strlen_start           # jump to start of the loop
-putstr_strlen_end:              
+j putstring_strlen_start           # jump to start of the loop
+putstring_strlen_end:              
 
 
 addi a0, zero, 1  # a0=1     (STDOUT file number)
@@ -312,13 +312,13 @@ ret
 # ecalls are environment calls for a specific operating system              #
 #############################################################################
 
-# putstr is arguably both the simplest but the most important because it is how I print all my strings.
+# putstring is arguably both the simplest but the most important because it is how I print all my strings.
 # The s0 register must be loaded with the address of a string to print.
 # Obviously the string must be terminated with a zero byte and stored in memory somewhere.
 # The version below specifically is designed for the RARS simulator which has call number 4 available
 # The RARS simulator automatically calculates the length of the string and stops at a zero byte
 
-putstr_rars:
+putstring_rars:
 li a7,4   # load immediate, (4 is print string system call)
 mv a0,s0  # load address of string to print into a0
 ecall
