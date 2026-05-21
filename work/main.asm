@@ -10,6 +10,13 @@ int_end: .byte 0 #the terminating zero of the integer string
 radix: .byte 2   #the radix the number will be shown in
 int_width: .byte 1 #by default
 
+# These variables are for outputting special strings
+# such as a newline, space, or a single character based on s0
+
+char: .byte 0, 0 
+space: .asciiz " "
+line: .asciiz "\n"
+
 string0: .asciiz "I am Chastity White Rose\n"
 
 .text
@@ -19,6 +26,11 @@ jal putstr
 
 li s0, 16
 jal putint
+jal putline
+jal putspace
+
+li s0, 0x38
+jal putchar
 
 addi s0, zero, string0
 jal putstr
@@ -69,7 +81,7 @@ la t1, int_width # load address of width into t1
 lb t4, 0(t1)     # load value of int_width into t4
 li t3, 1         # load current number of digits, always 1
 
-addi t1, zero, int_end # t1=address of terminating zero in string
+la t1, int_end # t1=address of terminating zero in string
 addi t1, t1, -1        # t1-- to go to lowest digit
 
 digits_start:
@@ -123,7 +135,6 @@ ret
 putint:
 
 addi sp, sp, -8
-
 sw ra, 0(sp)
 sw s0, 4(sp)
 
@@ -135,3 +146,60 @@ lw s0, 4(sp)
 addi sp, sp, 8
 
 ret
+
+
+
+
+#the putchar function, which is named after the C language function of the same name
+#prints the lowest byte of the s0 register as a byte or character to standard output
+
+putchar:
+addi sp, sp, -8
+sw ra, 0(sp)
+sw s0, 4(sp)
+
+sb s0, char(zero)
+la s0, char
+jal putstr
+
+lw ra, 0(sp)
+lw s0, 4(sp)
+addi sp, sp, 8
+ret
+
+#the putspace function prints a space to standard output
+
+putspace:
+
+addi sp, sp, -8
+sw ra, 0(sp)
+sw s0, 4(sp)
+
+la s0, space
+jal putstr
+
+lw ra, 0(sp)
+lw s0, 4(sp)
+addi sp, sp, 8
+
+ret
+
+
+
+#the putline function prints a newline to standard output
+
+putline:
+
+addi sp, sp, -8
+sw ra, 0(sp)
+sw s0, 4(sp)
+
+la s0, line
+jal putstr
+
+lw ra, 0(sp)
+lw s0, 4(sp)
+addi sp, sp, 8
+
+ret
+
