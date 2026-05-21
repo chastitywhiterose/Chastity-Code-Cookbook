@@ -282,6 +282,7 @@ ret
 # This putstring function is the most portable function for RISC-V simulators #
 # It calculates the length of a zero terminated string before printing it     #
 # This is the same way used in my Intel Assembly programs for DOS and Linux   #
+# This function was written to operate the same in both RARS and riscemu      #
 ###############################################################################
 
 putstring:
