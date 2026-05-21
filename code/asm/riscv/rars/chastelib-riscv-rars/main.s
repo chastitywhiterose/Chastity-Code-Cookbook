@@ -1,3 +1,8 @@
+# chastelib test suite for RISC-V Assembly in RARS simulator
+
+# The same library of functions I commonly use in my Intel Assembly code
+# have now been translated to RISC-V.
+
 .data
 
 # These variables are used by the intstr function to convert an integer to a string

@@ -1,4 +1,7 @@
-# Chastity's putstr function for RISC-V Assembly in riscemu
+# chastelib test suite for RISC-V Assembly in riscemu simulator
+
+# The same library of functions I commonly use in my Intel Assembly code
+# have now been translated to RISC-V.
 
 .data
 
