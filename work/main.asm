@@ -2,15 +2,30 @@
 
 .data
 
+# These variables are used by the intstr function to convert an integer to a string
+# and what radix should be used as well as the width (how many leading zeros)
+
+int_string: .space 32 #reserve space for 32 bytes for up to 32 bits if printed in binary
+int_end: .byte 0 #the terminating zero of the integer string
+radix: .byte 2   #the radix the number will be shown in
+int_width: .byte 1 #by default
+
 string0: .asciiz "I am Chastity White Rose\n"
 
 .text
 
 addi s0, zero, string0
 
-#li t0, 0x21
+#li t0, '0x30'
 #sb t0, 0(s0)
 
+jal putstr
+
+
+
+jal intstr
+
+li s0, int_string
 jal putstr
 
 addi    a0, zero, 0     # a0=0  (exit code for OS)
@@ -59,45 +74,45 @@ la t1, int_width # load address of width into t1
 lb t4, 0(t1)     # load value of int_width into t4
 li t3, 1         # load current number of digits, always 1
 
-la t1,int_end # load target index address of lowest digit
-addi t1,t1,-1
+la t1, int_end # load target index address of lowest digit
+addi t1, t1, -1
 
 digits_start:
 
-remu t0,s0,t2 # t0=remainder of the previous division
-divu s0,s0,t2 # s0=s0/t2 (divide s0 by the radix value in t2)
+remu t0, s0, t2 # t0=remainder of the previous division
+divu s0, s0, t2 # s0=s0/t2 (divide s0 by the radix value in t2)
 
-li t5,10 # load t5 with 10 because RISC-V does not allow constants for branches
-blt t0,t5,decimal_digit
-bge t0,t5,hexadecimal_digit
+li t5, 10 # load t5 with 10 because RISC-V does not allow constants for branches
+blt t0, t5,decimal_digit
+bge t0, t5,hexadecimal_digit
 
 decimal_digit: # we go here if it is only a digit 0 to 9
-addi t0,t0,'0'
+addi t0, t0, '0'
 j save_digit
 
 hexadecimal_digit:
-addi t0,t0,-10
-addi t0,t0,'A'
+addi t0, t0, -10
+addi t0, t0, 'A'
 
 save_digit:
 sb t0,0(t1) # store byte from t0 at address t1
-beq s0,zero,intstr_end
-addi t1,t1,-1
-addi t3,t3,1
+beq s0, zero, intstr_end
+addi t1, t1, -1
+addi t3, t3, 1
 j digits_start
 
 intstr_end:
 
-li t0,'0'
+li t0, '0'
 prefix_zeros:
-bge t3,t4,end_zeros
-addi t1,t1,-1
-sb t0,0(t1) # store byte from t0 at address t1
-addi t3,t3,1
+bge t3, t4, end_zeros
+addi t1, t1, -1
+sb t0, 0(t1) # store byte from t0 at address t1
+addi t3, t3, 1
 j prefix_zeros
 end_zeros:
 
-mv s0,t1
+mv s0, t1
 
 ret
 
