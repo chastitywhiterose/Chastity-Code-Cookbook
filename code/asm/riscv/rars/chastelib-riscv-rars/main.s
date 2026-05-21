@@ -10,6 +10,13 @@ int_end: .byte 0 #the terminating zero of the integer string
 radix: .byte 2   #the radix the number will be shown in
 int_width: .byte 1 #by default
 
+# These variables are for outputting special strings
+# such as a newline, space, or a single character based on s0
+
+space: .byte 0x20, 0
+line:  .byte 0x0A, 0
+char:  .byte 0, 0 
+
 # These variables are for outputting specific messages
 # or to simulate user input as integers in the strint function
 
@@ -108,7 +115,7 @@ addi s0,s0,1
 blt s0,s1,loop
 
 la s0,string0
-jal putstr_rars # print the same string but using the RARS specific function
+jal putstr
 
 li   a7, 10     # exit syscall
 ecall
@@ -340,24 +347,54 @@ ret
 #prints the lowest byte of the s0 register as a byte or character to standard output
 
 putchar:
-li a7, 11  # ecall code for print character
-mv a0, s0  # character to print (in this case, 0x0A for newline)
-ecall
+
+addi sp, sp, -12
+sw ra, 0(sp)
+sw s0, 4(sp)
+sw t1, 8(sp)
+
+la t1, char
+sb s0, 0(t1)
+la s0, char
+jal putstr
+
+lw ra, 0(sp)
+lw s0, 4(sp)
+lw t1, 8(sp)
+addi sp, sp, 12
+
 ret
 
 #the putspace function prints a space to standard output
 
 putspace:
-li a7, 11  # ecall code for print character
-li a0, 0x20 # character to print (in this case, 0x20 for a space)
-ecall
+
+addi sp, sp, -8
+sw ra, 0(sp)
+sw s0, 4(sp)
+
+la s0, space
+jal putstr
+
+lw ra, 0(sp)
+lw s0, 4(sp)
+addi sp, sp, 8
+
 ret
 
 #the putline function prints a newline to standard output
 
 putline:
-li a7, 11  # ecall code for print character
-li a0, 0x0A # character to print (in this case, 0x0A for newline)
-ecall
-ret
 
+addi sp, sp, -8
+sw ra, 0(sp)
+sw s0, 4(sp)
+
+la s0, line
+jal putstr
+
+lw ra, 0(sp)
+lw s0, 4(sp)
+addi sp, sp, 8
+
+ret
