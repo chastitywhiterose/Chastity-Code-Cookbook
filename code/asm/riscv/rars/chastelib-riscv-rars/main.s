@@ -132,12 +132,14 @@ ecall
 
 intstr:
 
+la t1, radix     # load address of radix into t1
+lb t2, 0(t1)     # load value of radix into t2
+la t1, int_width # load address of width into t1
+lb t4, 0(t1)     # load value of int_width into t4
+li t3, 1         # load current number of digits, always 1
+
 la t1,int_end # load target index address of lowest digit
 addi t1,t1,-1
-
-lb t2,radix     # load value of radix into t2
-lb t4,int_width # load value of int_width into t4
-li t3,1         # load current number of digits, always 1
 
 digits_start:
 
