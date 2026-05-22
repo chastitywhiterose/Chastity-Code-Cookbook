@@ -8,6 +8,9 @@ include 'chastelib32.asm'
 
 main:
 
+mov dword [radix],16 ; can choose radix for integer input/output!
+mov dword [int_width],1
+
 pop eax
 mov [argc],eax ;save the argument count for later
 ;call putint_and_line
@@ -41,6 +44,17 @@ mov eax,[string1]
 call strlen
 call putint_and_line
 
+;move the two strings into the edi and esi registers for comparison
+;my strlen function expects them to be pointed to by these registers
+
+mov eax,msg_strcmp
+call putstring
+
+mov edi,[string0]
+mov esi,[string1]
+call strcmp
+
+call putint_and_line
 
 main_end:
 
