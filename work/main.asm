@@ -10,8 +10,7 @@ main:
 
 pop eax
 mov [argc],eax ;save the argument count for later
-
-call putint_and_line
+;call putint_and_line
 
 cmp dword [argc],2
 ja help_skip ;if more than 1 argument is given, skip the help message and process the other arguments
@@ -27,12 +26,18 @@ pop eax ;pop the arg for program name but discard it
 pop eax ;pop the first argument
 mov [string0],eax
 call putstr_and_line
+mov eax,msg_strlen
+call putstring
+mov eax,[string0]
 call strlen
 call putint_and_line
 
 pop eax ;pop the second argument
 mov [string1],eax
 call putstr_and_line
+mov eax,msg_strlen
+call putstring
+mov eax,[string1]
 call strlen
 call putint_and_line
 
@@ -94,6 +99,10 @@ ret
 help_message db 'strcmp by Chastity White Rose',0xA
 db 'This is an assembly program to compare two strings.',0xA
 db 'strcmp string0 string1',0xA,0
+
+msg_strlen db 'strlen=',0
+msg_strcmp db 'strcmp=',0
+
 
 argc    dd 0
 string0 dd 0
