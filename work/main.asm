@@ -25,12 +25,17 @@ help_skip:
 pop eax ;pop the arg for program name but discard it
 
 pop eax ;pop the first argument
-call putstr_and_line
 mov [string0],eax
+call putstr_and_line
+call strlen
+call putint_and_line
 
 pop eax ;pop the second argument
-call putstr_and_line
 mov [string1],eax
+call putstr_and_line
+call strlen
+call putint_and_line
+
 
 main_end:
 
