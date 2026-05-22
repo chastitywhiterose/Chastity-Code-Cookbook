@@ -240,23 +240,31 @@ strcmp:
 mov eax,0 ;this will be stay zero unless the strings are different
 
 strcmp_start:
-mov bl,[edi]
-cmp bl,0
-jz strcmp_end
-mov bh,[esi]
-cmp bh,0
-jz strcmp_end
 
+;read a byte from each string
+mov bl,[edi]
+mov bh,[esi]
+cmp bl,bh ;compare these two bytes
+jnz strcmp_end_diff ;if they are not equal, jump to difference label
+
+;if the last jump was skipped, the bytes are equal
+;so we do one more check to see if one of them is zero
+cmp bl,0
+jz  strcmp_end_same ;if it was zero, jump to sameness label
+
+;go to next character of each string
 inc edi
 inc esi
 
-cmp bl,bh
-jz strcmp_start ;if they are the same, continue to next character
+jmp strcmp_start ;continue the loop
 
+strcmp_end_diff: ;we jump here if there was a difference
 inc eax ;if they were different, eax will be incremented and the function ends
+strcmp_end_same:
+;eax will remain zero if the same label was jumped to
 
-strcmp_end:
 ret
+
 
 help_message db 'chastext by Chastity White Rose',0Ah,0Ah
 db '"cat" a file:',0Ah,0Ah,9,'chastext file',0Ah,0Ah

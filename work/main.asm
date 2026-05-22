@@ -87,34 +87,41 @@ ret
 
 ;compare the string at esi to the one at edi
 ;eax returns 0 if the strings are the same and 1 if different
+;the algorithm is simple but I will explain it for those who are confused
+
+;eax is initialized to zero
+;a byte from each string is loaded into the al and bl registers
+;the bytes are compared. if they are different, then we jump to the end
+;However, if they are the same, then we check if one of them is zero
+;for this purpose it doesn't matter whether we compare al or bl with zero
+;because it is known that they are the same if the jnz did not take place
+;if it is zero, this also jumps to the end of the function
+;If neither jump took place, then we jump to the start of the loop
+;but when the function finally ends bl will be subtracted from al
+;this ensures that the function returns zero if the final characters are the same
 
 strcmp:
 
-mov eax,0 ;this will be stay zero unless the strings are different
+mov eax,0
 
 strcmp_start:
 
 ;read a byte from each string
-mov bl,[edi]
-mov bh,[esi]
-cmp bl,bh ;compare these two bytes
-jnz strcmp_end_diff ;if they are not equal, jump to difference label
+mov al,[edi]
+mov bl,[esi]
+cmp al,bl
+jnz strcmp_end
 
-;if the last jump was skipped, the bytes are equal
-;so we do one more check to see if one of them is zero
-cmp bl,0
-jz  strcmp_end_same ;if it was zero, jump to sameness label
+cmp al,0
+jz  strcmp_end
 
-;go to next character of each string
 inc edi
 inc esi
 
-jmp strcmp_start ;continue the loop
+jmp strcmp_start
 
-strcmp_end_diff: ;we jump here if there was a difference
-inc eax ;if they were different, eax will be incremented and the function ends
-strcmp_end_same:
-;eax will remain zero if the same label was jumped to
+strcmp_end:
+sub al,bl
 
 ret
 
