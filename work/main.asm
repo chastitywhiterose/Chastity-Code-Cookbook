@@ -92,17 +92,21 @@ strcmp:
 mov eax,0 ;this will be stay zero unless the strings are different
 
 strcmp_start:
+
+;read a byte from each string
 mov bl,[edi]
-cmp bl,0
-jz strcmp_end
 mov bh,[esi]
-cmp bh,0
-jz strcmp_end
+cmp bl,bh ;compare these two bytes
+jnz strcmp_end ;if they are not equal, stop searching
+
+;if the last jump was skipped, the bytes are equal
+;so we do one more check to see if one of them is zero
+cmp bl,0
+
 
 inc edi
 inc esi
 
-cmp bl,bh
 jz strcmp_start ;if they are the same, continue to next character
 
 inc eax ;if they were different, eax will be incremented and the function ends
