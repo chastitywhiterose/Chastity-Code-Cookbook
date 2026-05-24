@@ -95,7 +95,7 @@ jmp argument_filter   ;jump back to the beginning of argument filter
 argument_filter_end:
 mov byte [ebx],0 ;terminate the ending with a zero for safety
 
-;check first argument
+;check first argument which is name of program
 ;mov eax,[arg_string_index]
 ;call putstr_and_line
 
@@ -109,8 +109,9 @@ jmp ending     ;and end the program because there is nothing to do
 
 args_exist:
 
-mov [filename],eax
-call putstr_and_line
+;uncomment these two lines to print the filename before the text
+;mov [filename],eax
+;call putstr_and_line
 
 ;This is where the main part of the chastext program really begins.;
 
@@ -149,7 +150,7 @@ mov [filedesc],eax
 ;before we proceed, we also check for more arguments.
 
 call get_next_arg ;get address of next arg and return into eax register
-cmp eax,[arg_string_end] ;this time, if eax equals end of string, we begin the textdump main loop without search or replace strings
+cmp eax,[arg_string_end] ;if at end, no search string argument
 jz textdump ;jump to textdump section
 
 ;otherwise, we save the address at ax to our search string
@@ -158,7 +159,7 @@ mov [string_search],eax
 
 
 call get_next_arg ;get address of next arg and return into ax register
-cmp eax,[arg_string_end] ;this time, if there are no more args, no replacement is available
+cmp eax,[arg_string_end] ;if at end, no replacement string argument
 jz textdump ;jump to hexdump section
 
 ;otherwise, we save the address at ax to our replacement string
@@ -180,16 +181,7 @@ jnz putchar_skip
 ;but if there is not a search string
 ;we will read one character, then display it to stdout
 ;and then jump to the beginning of the textdump loop to print them until EOF
-
 ;we start the loop with a call to read exactly 1 byte
-
-;mov ah,3Fh           ;call number for read function
-;mov bx,[filedesc] ;store file handle to read from in bx
-;mov cx,1             ;we are reading one byte
-;mov dx,byte_array    ;store the bytes here
-;int 21h
-
-;call putint ;check the number of bytes read
 
 ;read only 1 byte using Win32 ReadFile system call.
 push 0              ;Optional Overlapped Structure 
@@ -238,6 +230,9 @@ mov eax,[string_search]
 call strlen ;get the length of the search string
 
 mov ecx,eax ;store this length in ecx
+mov [search_length],ecx
+
+;call putint_and_line ;check length of search string
 
 ;use the length of the string we are searching for as the number of bytes to read at this location
 
@@ -249,23 +244,23 @@ push byte_array     ;address to store bytes
 push [filedesc]     ;handle of the open file
 call [ReadFile]
 
+mov eax,[bytes_read]  ;get how many bytes were read with that last read operation
+
 mov ebx,byte_array    ;move the address of bytes read into bx
-add ebx,eax            ;add number of bytes read (return value of read function in ax)
+add ebx,eax           ;add number of bytes read (return value of read function in eax)
 mov byte[ebx],0       ;terminate the string with zero
 
-mov eax,[bytes_read]  ;check how many bytes were read with that last read operation
-
-cmp eax,ecx ;if the number of bytes is not what we expected to read, end this loop
+cmp eax,[search_length] ;if the number of bytes is not what we expected to read, end this loop
 jnz textdump_end
 
-;move our two strings into the si and di registers for comparison
+;move our two strings into the esi and edi registers for comparison
 ;with my custom written strcmp function
 
 mov esi,[string_search]
 mov edi,byte_array
 call strcmp ;compare these two strings
 
-cmp eax,0 ;test if they are the same (if ax returned zero)
+cmp eax,0 ;test if they are the same (if eax returned zero)
 jnz not_match ;if they are not a match go to that section for printing a character
 
 ;but if they are a match, then we either quote them
@@ -306,7 +301,6 @@ call putchar
 add [file_address],1 ;add 1 to the file address so we don't read this same position again
 
 jmp textdump
-
 
 textdump_end:
 
@@ -383,8 +377,6 @@ mov eax,ebx ;copy the string length back to eax
 
 ret
 
-
-
 ;strcmp compares the string at esi to the one at edi
 ;ax returns 0 if the strings are the same and 1 if different
 ;the algorithm is simple but I will explain it for those who are confused
@@ -440,6 +432,7 @@ end_of_file db 'EOF',0
 ;where we will store data from the file
 bytes_read dd 0
 
+search_length dd 0
 string_search dd 0 ; place to hold the search string pointer
 string_replace dd 0 ; place to hold the replacement string pointer
 
