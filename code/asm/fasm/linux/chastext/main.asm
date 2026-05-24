@@ -233,7 +233,7 @@ mov eax,ebx ;copy the string length back to eax
 
 ret
 
-;compare the string at esi to the one at edi
+;strcmp compares the string at esi to the one at edi
 ;eax returns 0 if the strings are the same and 1 if different
 ;the algorithm is simple but I will explain it for those who are confused
 
