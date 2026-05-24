@@ -24,8 +24,11 @@ File API
 
 <https://learn.microsoft.com/en-us/windows/win32/debug/system-error-codes--0-499->
 
-Command Line Arguments  
+## Command Line Arguments
+
 <https://learn.microsoft.com/en-us/windows/win32/api/processenv/nf-processenv-getcommandlinea>  
+
+<https://learn.microsoft.com/en-us/windows/win32/api/shellapi/nf-shellapi-commandlinetoargvw>
 
 # Examples
 
