@@ -9,8 +9,12 @@
 
 org 100h     ;DOS programs start at this address
 
-mov word [radix],16 ; can choose radix for integer output!
 
+
+main:
+
+mov [radix],10 ; Choose radix for integer output.
+mov [int_width],1
 mov ch,0     ;zero ch (upper half of cx)
 mov cl,[80h] ;load length in bytes of the command string
 cmp cx,0
