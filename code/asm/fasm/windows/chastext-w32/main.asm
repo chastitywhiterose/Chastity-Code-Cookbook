@@ -1,6 +1,12 @@
-;chastearg Assembly source code for FASM
-;This program prints all the arguments on a separate line
-;Quoted strings count as one argument and will be on the same line.
+;chastext is a generic find and replace program for text files
+;using it is very simple because it only requires 3 arguments
+;
+;chastext filename "search string" "replacement string"
+;
+;It does not do regular expressions like sed but it is useful
+;I use it when I need to change the name of a variable in a program
+;or when I am modifying configuration files.
+
 format PE console
 include 'win32ax.inc'
 include 'chastelibw32.asm'
