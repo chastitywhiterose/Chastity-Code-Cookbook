@@ -109,9 +109,8 @@ jmp ending     ;and end the program because there is nothing to do
 
 args_exist:
 
-;uncomment these two lines to print the filename before the text
-;mov [filename],eax
-;call putstr_and_line
+mov [filename],eax
+;call putstr_and_line ;print filename before text output
 
 ;This is where the main part of the chastext program really begins.;
 
