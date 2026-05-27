@@ -3,7 +3,7 @@
 ; These are my string and integer output and conversion routines.
 
 ; To simplify documentation. The Accumulator/Arithmetic register
-; (ax,ebx,rax) depending on bit size shall be referred to as register A
+; (ax,eax,rax) depending on bit size shall be referred to as register A
 ; for the description of these core functions because the A register
 ; is treated special both by the Intel company and my code;
 
@@ -13,8 +13,6 @@
 ; strint;    Converts the zero terminated string into an integer and sets A to that value
    
 ; Now, the source of the functions begins, with comments included for parts that I felt needed explanation.
-
-stdout dd 1 ; variable for standard output so that it can theoretically be redirected
 
 putstring:
 
@@ -41,8 +39,8 @@ sub ebx,eax ;subtract start pointer from current pointer to get length of string
 
 mov edx,ebx      ;number of bytes to write
 mov ecx,eax      ;pointer/address of string to write
-mov ebx,[stdout] ;write to the STDOUT file
-mov eax, 4       ;invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
+mov ebx,1        ;write to the STDOUT file
+mov eax,4        ;invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
 int 80h          ;system call to write the message
 
 pop edx
@@ -60,7 +58,7 @@ int_string db 32 dup '?' ;enough bytes to hold maximum size 32-bit binary intege
 int_string_end db 0 ;zero byte terminator for the integer string
 
 radix dd 2 ;radix or base for integer output. 2=binary, 8=octal, 10=decimal, 16=hexadecimal
-int_width dd 8
+int_width dd 8 ;default width of integers. Extra zeros prefixed if more than 1
 
 ;this function creates a string of the integer in eax
 ;it uses the above radix variable to determine base from 2 to 36
@@ -219,7 +217,7 @@ ret
 ;these help me save code when printing lots of strings and integers.
 
 space db ' ',0
-line db 0Dh,0Ah,0
+line db 0Ah,0
 
 putspace:
 push eax
