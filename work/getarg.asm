@@ -6,8 +6,36 @@ getarg:
 mov bx,[arguments_start] ;get the address of start of arguments
 cmp bx,0 ;is this address zero? (meaning this function was not called before)
 jz get_arg_data ;if it was zero, then get the argument data for the first execution of this function
-;cmp bx,[arguments_end]   ;is the address of the start and end the same?
 
+;if the start was not zero, then clearly arguments exist and addresses have been saved
+
+cmp bx,[arguments_end]  ;is the address of the start and end the same?
+jnz find_next_string  ;if they are not the same, find the next sub string
+mov ax,0 ;otherwise, return ax as zero and check this in the main program
+ret ;return statement here so that get_arg_data is only run if we jump to it
+
+find_next_string:
+
+mov bx,[arguments_start] ;get address of current arg
+
+skip_spaces:
+cmp byte[bx],' ' ;is this byte a space?
+jnz skip_spaces_end ;if it is not a space, we can end this loop
+inc bx ;otherwise, go to next byte
+jmp skip_spaces ;and keep looping till we find non-space
+skip_spaces_end:
+mov ax,bx ;copy this non-space address to ax register
+
+;we have found a non-space which is the start of a printable string
+;but we still have to find the next space and terminate it with a zero!
+
+find_space:
+cmp byte [bx],' ' ;is this a space?
+jz found_space ;if this was a space, end the loop and terminate with zero
+inc bx
+jmp find_space ; this char was not space, go to the next char
+found_space:
+mov byte[bx],0
 
 ;this will happen first time this function is called to get the argument data
 get_arg_data:
@@ -27,6 +55,7 @@ mov ax,[arguments_start] ;copy the address of the arguments start to ax
 getarg_end:
 ret
 
+;start and end default to address of zero, which means we have not tested the arguments yet
 arguments_start dw 0
 arguments_end dw 0
 

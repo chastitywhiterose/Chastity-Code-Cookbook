@@ -5,7 +5,7 @@ org 100h     ;DOS programs start at this address
 
 arg_loop:
 call getarg
-cmp ax,0
+cmp ax,0 ;did the getarg function return 0?
 jz arg_loop_end
 call putstring
 call putline
