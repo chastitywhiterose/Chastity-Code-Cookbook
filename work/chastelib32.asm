@@ -3,7 +3,7 @@
 ; These are my string and integer output and conversion routines.
 
 ; To simplify documentation. The Accumulator/Arithmetic register
-; (ax,ebx,rax) depending on bit size shall be referred to as register A
+; (ax,eax,rax) depending on bit size shall be referred to as register A
 ; for the description of these core functions because the A register
 ; is treated special both by the Intel company and my code;
 
@@ -217,7 +217,7 @@ ret
 ;these help me save code when printing lots of strings and integers.
 
 space db ' ',0
-line db 0Dh,0Ah,0
+line db 0Ah,0
 
 putspace:
 push eax

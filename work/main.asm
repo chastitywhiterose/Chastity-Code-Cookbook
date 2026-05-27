@@ -57,7 +57,7 @@ int 80h
 string0 db 'chastelib test suite for Intel 32-bit Assembly on Linux',0Ah,0
 
 ;test string of integer for input
-input_string_int db '10',0
+input_string_int db '100',0
 
 ; This Assembly source file has been formatted for the FASM assembler.
 ; The following 3 commands assemble, give executable permissions, and run the program
