@@ -150,4 +150,4 @@ ret
 
 include 'chastelib16.asm'
 
-db 0x33 dup 0 ;add extra bytes to make it 512 bytes exactly
+db 0x36 dup 0 ;add extra bytes to make it 512 bytes exactly

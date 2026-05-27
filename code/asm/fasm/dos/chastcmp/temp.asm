@@ -50,7 +50,7 @@ mov [filename1],ax
 ;check for next argument and if exists, use as second filename
 call get_next_arg
 cmp ax,[arg_string_end]
-jz print_help ;show help if you forgot to include both filenames
+jz print_help ;show help if you forgot to %include both filenames
 mov [filename2],ax
 
 ;At this point, both filenames exist, we will attempt to open both of them.
@@ -216,7 +216,7 @@ call putspace
 call putline
 ret
 
-include 'chastelib16.asm'
+%include 'chastelib16.asm'
 
 help db 'chastecmp: compares two files in hexadecimal',0Dh,0Ah
 db 9,'chastecmp file1 file2',0Dh,0Ah
