@@ -19,6 +19,7 @@ find_next_string:
 mov bx,[arguments_start] ;get address of current arg
 
 skip_spaces:
+
 cmp byte[bx],' ' ;is this byte a space?
 jnz skip_spaces_end ;if it is not a space, we can end this loop
 inc bx ;otherwise, go to next byte
@@ -32,10 +33,26 @@ mov ax,bx ;copy this non-space address to ax register
 find_space:
 cmp byte [bx],' ' ;is this a space?
 jz found_space ;if this was a space, end the loop and terminate with zero
+
+;we must also check to see if we have reached the terminating zero of the arguments string
+cmp byte[bx],0 ;is this byte a zero?
+jz no_more_args ;if yes this string is already terminated
+
 inc bx
 jmp find_space ; this char was not space, go to the next char
 found_space:
-mov byte[bx],0
+mov byte[bx],0 ;terminate this string
+
+inc bx ;but go to the next byte
+mov [arguments_start],bx ;and set the new start address for the next call
+
+ret ;We can return ax safely knowing the string ends in a zero
+
+no_more_args:
+
+mov [arguments_start],bx ;mov the start to where the string ended
+
+ret
 
 ;this will happen first time this function is called to get the argument data
 get_arg_data:

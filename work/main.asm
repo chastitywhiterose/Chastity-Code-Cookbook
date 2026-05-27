@@ -16,9 +16,6 @@ ending:
 mov ax,4C00h ; Exit program
 int 21h
 
-arg_string_index dw 0
-arg_string_end dw 0
-
 
 include 'getarg.asm'
 include 'chastelib16.asm'
