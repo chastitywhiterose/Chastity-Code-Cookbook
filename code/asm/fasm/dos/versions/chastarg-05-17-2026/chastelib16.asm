@@ -5,6 +5,8 @@
 ;this means that it works in a similar way to my Linux Assembly code
 ;the plan is to make both my DOS and Linux functions identical except for the size of registers involved
 
+stdout dw 1 ; variable for standard output so that it can theoretically be redirected
+
 putstring:
 
 push ax
@@ -28,7 +30,7 @@ mov cx,bx                  ; mov bx to cx
 mov dx,ax                  ; dx will have address of string to write
 
 mov ah,40h                 ; select DOS function 40h write 
-mov bx,1                   ; file handle 1=stdout
+mov bx,[stdout]            ; file handle 1=stdout
 int 21h                    ; call the DOS kernel
 
 pop dx
@@ -262,7 +264,7 @@ call putspace
 ret
 
 ;a small function just for the common operation
-;of printing an integer followed by a space
+;printing an integer followed by a space
 ;this saves a few bytes in the assembled code
 
 putint_and_line:
