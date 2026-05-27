@@ -1,6 +1,6 @@
 org 100h     ;DOS programs start at this address
 
-;this loop will get all the command line arguments and print them on a separate line
+;this loop will get all the command line arguments and print them on separate lines
 
 arg_loop:
 call getarg
@@ -18,5 +18,4 @@ int 21h
 include 'getarg.asm'
 include 'chastelib16.asm'
 
-
-;db 0x36 dup 0 ;add extra bytes to make it 512 bytes exactly
+db 0x4B dup 0 ;add extra bytes to make it 512 bytes exactly

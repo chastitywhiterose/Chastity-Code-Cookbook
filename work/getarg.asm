@@ -29,6 +29,14 @@ mov ax,bx ;copy this non-space address to ax register
 ;we have found a non-space which is the start of a printable string
 ;but we still have to find the next space and terminate it with a zero!
 
+;however, there is a special case where we want a string to contain spaces. In this case, I have another routine!
+
+;check for quoted strings
+cmp byte[bx],0x22 ;is this a double quote -> "
+jz scan_quoted_string
+cmp byte[bx],0x27 ;is this a single quote -> '
+jz scan_quoted_string
+
 find_space:
 cmp byte [bx],' ' ;is this a space?
 jz found_space ;if this was a space, end the loop and terminate with zero
@@ -46,6 +54,31 @@ inc bx ;but go to the next byte
 mov [arguments_start],bx ;and set the new start address for the next call
 
 ret ;We can return ax safely knowing the string ends in a zero
+
+scan_quoted_string:
+
+mov cl,byte[bx] ;mov this quote type to cl
+inc bx ;go to next byte
+mov ax,bx ;set ax to this address which is assumed to be the start of a quoted string
+
+find_end_quote:
+cmp byte[bx],cl ;is this the same quote we started with?
+jz found_end_quote ;if it is, end this loop
+
+;we must also check to see if we have reached the terminating zero of the arguments string
+;this avoids a crash if I forgot to add the second quotation mark in the arguments
+cmp byte[bx],0 ;is this byte a zero?
+jz no_more_args ;if yes this string is already terminated
+
+inc bx
+jmp find_end_quote
+found_end_quote:
+mov byte[bx],0 ;terminate this string
+
+inc bx ;but go to the next byte
+mov [arguments_start],bx ;and set the new start address for the next call
+
+ret
 
 no_more_args:
 
@@ -76,3 +109,4 @@ ret
 ;start and end default to address of zero, which means we have not tested the arguments yet
 arguments_start dw 0
 arguments_end dw 0
+
