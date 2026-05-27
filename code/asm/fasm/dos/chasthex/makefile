@@ -7,3 +7,5 @@ main-fasm-linux:
 	fasm main.asm
 	chmod +x main
 	./main
+ndisasm:
+	ndisasm -o 0x100 main.com

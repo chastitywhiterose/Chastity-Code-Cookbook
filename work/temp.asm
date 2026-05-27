@@ -1,7 +1,3 @@
-org 100h     ;DOS programs start at this address
-
-mov word [radix],16 ; can choose radix for integer output!
-
 mov ch,0     ;zero ch (upper half of cx)
 mov cl,[80h] ;load length of the command string
 cmp cx,0
@@ -102,24 +98,28 @@ jnz first_argument_was_not_quote
 inc word[arg_string_index] ;add 1 so it points to the next byte before we process arguments
 first_argument_was_not_quote:
 
-;this loop will get all the command line arguments and print them on a separate line
 
-arg_loop:
-mov ax,[arg_string_index] ;get address of current argument
-call putstring
-call putline
-call get_next_arg
-cmp ax,[arg_string_end]
-jz arg_loop_end
-jmp arg_loop
-arg_loop_end:
 
-ending:
-mov ax,4C00h ; Exit program
-int 21h
 
-arg_string_index dw 0
-arg_string_end dw 0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ;function to move ahead to the next argument
 ;only works after the filter has been applied to turn all spaces into zeroes
@@ -147,7 +147,3 @@ arg_finish:
 mov [arg_string_index],bx ; save this index to the variable
 mov ax,bx ;but also save it to ax register for use in printing or something else
 ret
-
-%include 'chastelib16.asm'
-
-db 0x33 dup 0 ;add extra bytes to make it 512 bytes exactly
