@@ -1,5 +1,17 @@
-;a function to return zero in the ax register if no arguments are available
-;if arguments are available, return a pointer in ax to the first argument
+;The getarg function was something I badly needed in order to make my assembly code for DOS easier to read.
+;It will automatically process the command line arguments if they are available.
+;
+;The first time it is run, it returns the whole command string or zero if no args are given
+;DOS does not allow the program name to be part of the arguments
+;
+;Each time after that, it will give you the next argument which is a subtring of the original.
+;When no more arguments are available, it will always return zero
+;The program calling this is expected to check for this error and then terminate
+;or print a message depending on the goals of that program
+
+;A word of warning though, this function has multiple return statements and is long
+;However, it is fully featured in that it can recognize quoted strings as being the same argument
+;This brings full compatibility between my DOS and Linux programs which expect consistent behavior
 
 getarg:
 
@@ -11,7 +23,8 @@ jz get_arg_data ;if it was zero, then get the argument data for the first execut
 cmp bx,[arguments_end]  ;is the address of the start and end the same?
 jnz find_next_string  ;if they are not the same, find the next sub string
 mov ax,0 ;otherwise, return ax as zero and check this in the main program
-ret ;return statement here so that get_arg_data is only run if we jump to it
+
+ret
 
 find_next_string:
 
@@ -90,8 +103,7 @@ ret
 
 ;this will happen first time this function is called to get the argument data
 get_arg_data:
-mov ax,0
-;mov ah,0     ;zero ah (upper half of ax)
+mov ax,0      ;zero ax (upper half of ax)
 mov al,[80h] ;load length of the command string from this address
 cmp ax,0
 jz getarg_end
@@ -99,7 +111,7 @@ jz getarg_end
 mov bx,0x81  ;mov into bx the address of the start of the argument string
 mov [arguments_start],bx ;save the start of the arguments to this variable
 add bx,ax    ;add the length of the command string to this address
-mov byte[bx],0 ;terminate this with a zero to avoid segfaults when printed with putsting
+mov byte[bx],0 ;terminate this with a zero to avoid segfaults when printed with putstring
 mov [arguments_end],bx ;save the end of the arguments to this variable
 mov ax,[arguments_start] ;copy the address of the arguments start to ax
 
