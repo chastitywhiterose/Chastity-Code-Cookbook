@@ -283,4 +283,8 @@ file_offset dd 0
 open_error_message db 'error while opening file',0
 
 ;where we will store data from the file
+;17 bytes because 16 bytes read per row plus the terminating 0
+;used for the text printing function
 byte_array db 17 dup '?'
+
+db 6 dup 0 ;fill with extra space to match 1280 executable size
