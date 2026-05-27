@@ -6,10 +6,9 @@ org 100h     ;DOS programs start at this address
 arg_loop:
 call getarg
 cmp ax,0
+jz arg_loop_end
 call putstring
 call putline
-
-jz arg_loop_end
 jmp arg_loop
 arg_loop_end:
 
@@ -21,8 +20,8 @@ arg_string_index dw 0
 arg_string_end dw 0
 
 
-
-include 'chastelib16.asm'
 include 'getarg.asm'
+include 'chastelib16.asm'
 
-db 0x36 dup 0 ;add extra bytes to make it 512 bytes exactly
+
+;db 0x36 dup 0 ;add extra bytes to make it 512 bytes exactly
