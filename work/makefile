@@ -1,6 +1,6 @@
-main-strict:
-	gcc -Wall -ansi -pedantic main.c -o main && ./main
-main-simple:
-	gcc main.c -o main && ./main
-main-sdl2:
-	gcc -Wall -ansi -pedantic main.c -o main `sdl2-config --cflags --libs` -lm && ./main
+main-fasm:
+	fasm main.asm
+	chmod +x main
+	./main
+ndisasm:
+	ndisasm -b 32 -o 0x8048054 -e 0x54 main
