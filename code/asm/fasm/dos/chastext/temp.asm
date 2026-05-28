@@ -218,7 +218,7 @@ ending:
 mov ax,4C00h ; Exit program
 int 21h
 
-include 'getarg.asm'
+%include 'getarg.asm'
 
 ;the strlen and strcmp are named after the equivalent C functions
 ;but are written from scratch by me based on their expected behavior
