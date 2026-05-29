@@ -14,16 +14,16 @@ mov [int_width],1
 
 ;this loop will get all the command line arguments and print them on separate lines
 
-;call getarg ;this first call will get the command string
-;call putstring
+call getarg ;this first call will get the command string
+cmp eax,0 ;did the getarg function return 0?
+jz main_end ;if eax was zero, there are no args so we end the program safely
 
-
-;jmp main_end
+;we can uncomment these if we wish to see the whole command string
+call putstring
+call putline
 
 arg_loop:
 call getarg
-call putint
-call putline
 cmp eax,0 ;did the getarg function return 0?
 jz arg_loop_end ;if eax was zero, there are no args
 call putstring

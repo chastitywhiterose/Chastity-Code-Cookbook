@@ -115,31 +115,28 @@ add ebx,eax ;add the length to ebx which has the address of the start
 mov [arguments_end],ebx ;save ebx address containing the zero byte
 mov ebx,[arguments_start] ;copy the address of the arguments start to ebx
 
-;we are going to skip over the first argument containing the program name
-;this is for consistency with DOS which does not have the program name
-;as a part of its arguments. We are looking for the space just beyond it.
-
 skip_prog_name:
-
+cmp byte[ebx],0   ;check for zero first (very important)
+jz no_args        ;if we found a zero before a space, there are no arguments after program name!
 cmp byte[ebx],' ' ;is this byte a space?
 jz skip_prog_name_end ;if it is a space, we can end this loop
-inc ebx ;otherwise, go to next byte
-jmp skip_prog_name ;and keep looping till we find a space
+mov byte[ebx],' ' ;turn this byte into a space and therefore delete it
+inc ebx ; go to next byte
+jmp skip_prog_name ;and keep looping till we find space
 skip_prog_name_end:
-mov [arguments_start],ebx ;copy this space address to memory
-mov eax,[arguments_start] ;and also copy it to eax register
+mov eax,ebx ;copy this non-space address to eax register
+;return eax pointing to an address of string with arguments after program name
+ret
 
-;now when we return eax will contain the address of the whole argument string
+no_args:
+mov eax,0
+;in this case, we return zero because there are no args
 
-getarg_end:
 ret
 
 ;start and end default to address of zero, which means we have not tested the arguments yet
 arguments_start dd 0
 arguments_end dd 0
-
-
-
 
 ;a function to get the length of string in eax and return the integer in eax
 
