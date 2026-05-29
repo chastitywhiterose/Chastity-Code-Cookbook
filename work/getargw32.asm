@@ -109,15 +109,15 @@ get_arg_data:
 call [GetCommandLineA]
 
 mov [arguments_start],eax ;copy it to memory address
-mov ebx,eax ;and copy it to the ebx register
-call strlen ;get the length of it with my strlen function
+call strlen ;get the length of string with my strlen function
+mov ebx,[arguments_start] ;and copy address to the ebx register
 add ebx,eax ;add the length to ebx which has the address of the start
 mov [arguments_end],ebx ;save ebx address containing the zero byte
 mov ebx,[arguments_start] ;copy the address of the arguments start to ebx
 
 ;we are going to skip over the first argument containing the program name
 ;this is for consistency with DOS which does not have the program name
-;as parts of its arguments. We are looking for the space just beyond it.
+;as a part of its arguments. We are looking for the space just beyond it.
 
 skip_prog_name:
 
@@ -126,7 +126,8 @@ jz skip_prog_name_end ;if it is a space, we can end this loop
 inc ebx ;otherwise, go to next byte
 jmp skip_prog_name ;and keep looping till we find a space
 skip_prog_name_end:
-mov eax,ebx ;copy this space address to eax register
+mov [arguments_start],ebx ;copy this space address to memory
+mov eax,[arguments_start] ;and also copy it to eax register
 
 ;now when we return eax will contain the address of the whole argument string
 
