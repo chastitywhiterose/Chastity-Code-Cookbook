@@ -82,10 +82,10 @@ jnz search_mode
 
 ;we start the loop with a call to read exactly 1 byte
 cat:
-mov ah,3Fh           ;call number for read function
+mov ah,3Fh        ;call number for read function
 mov bx,[filedesc] ;store file handle to read from in bx
-mov cx,1             ;we are reading one byte
-mov dx,byte_array    ;store the bytes here
+mov cx,1          ;we are reading one byte
+mov dx,byte_array ;store the bytes here
 int 21h
 
 cmp ax,1        ;check to see if exactly 1 byte was read
@@ -130,11 +130,11 @@ mov bx,[filedesc]    ;store file handle to read from in bx
 mov ah,3Fh           ;call number for read function
 int 21h
 
+mov [bytes_read],ax  ;store how many bytes were read with that last read operation
+
 mov bx,byte_array    ;move the address of bytes read into bx
 add bx,ax            ;add number of bytes read (return value of read function in ax)
 mov byte[bx],0       ;terminate the string with zero
-
-mov [bytes_read],ax  ;store how many bytes were read with that last read operation
 
 cmp ax,cx ;if the number of bytes is not what we expected to read, end this loop
 jnz textdump_end
@@ -168,7 +168,9 @@ call putstring ;print the string
 jmp textdump ;restart the main loop
 
 print_quotes:
+
 ;print quotes around matched string
+
 mov al,'"'
 call putchar
 
@@ -182,8 +184,20 @@ jmp textdump ;restart the main loop
 
 not_match: 
 
-mov al,[byte_array]
-call putchar
+;mov al,[byte_array]
+;call putchar
+
+;Instead of calling the putchar function in the case of no match,
+;I do a system call to print 1 byte to standard output
+;This is simple and also compatible with binary files we want to replace text in.
+;But it only works if the search and replace strings are of the same length
+
+mov ah,40h        ; select DOS function 40h write 
+mov bx,1          ; file handle 1=stdout
+mov cx,1          ; write 1 byte
+mov dx,byte_array ; address to write from
+int 21h           ; call the DOS kernel
+
 add word[file_address],1 ;add 1 to the file address so we don't read this same position again
 
 jmp textdump
@@ -192,8 +206,12 @@ jmp textdump
 textdump_end:
 
 ;print the remaining bytes, if any, left after the main loop ended
-mov ax,byte_array
-call putstring
+
+mov ah,40h          ; select DOS function 40h write 
+mov bx,1            ; file handle 1=stdout
+mov cx,[bytes_read] ; write number of bytes matching last read call
+mov dx,byte_array   ; address to write from
+int 21h             ; call the DOS kernel
 
 main_end:
 
@@ -494,4 +512,4 @@ bytes_read dw 0
 string_search dw 0 ; place to hold the search string pointer
 string_replace dw 0 ; place to hold the replacement string pointer
 
-byte_array db 0x79 dup 0
+byte_array db 0x6A dup 0
