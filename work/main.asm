@@ -130,13 +130,13 @@ mov bx,[filedesc]    ;store file handle to read from in bx
 mov ah,3Fh           ;call number for read function
 int 21h
 
+mov [bytes_read],ax  ;store how many bytes were read with that last read operation
+
 mov bx,byte_array    ;move the address of bytes read into bx
 add bx,ax            ;add number of bytes read (return value of read function in ax)
 mov byte[bx],0       ;terminate the string with zero
 
-mov [bytes_read],ax  ;store how many bytes were read with that last read operation
-
-cmp ax,cx ;if the number of bytes is not what we expected to read, end this loop
+cmp ax,[bytes_read] ;if the number of bytes is not what we expected to read, end this loop
 jnz textdump_end
 
 ;move our two strings into the si and di registers for comparison
@@ -168,7 +168,9 @@ call putstring ;print the string
 jmp textdump ;restart the main loop
 
 print_quotes:
+
 ;print quotes around matched string
+
 mov al,'"'
 call putchar
 
@@ -204,8 +206,12 @@ jmp textdump
 textdump_end:
 
 ;print the remaining bytes, if any, left after the main loop ended
-mov ax,byte_array
-call putstring
+
+mov ah,40h          ; select DOS function 40h write 
+mov bx,1            ; file handle 1=stdout
+mov cx,[bytes_read] ; write number of bytes matching last read call
+mov dx,byte_array   ; address to write from
+int 21h             ; call the DOS kernel
 
 main_end:
 
@@ -506,4 +512,4 @@ bytes_read dw 0
 string_search dw 0 ; place to hold the search string pointer
 string_replace dw 0 ; place to hold the replacement string pointer
 
-byte_array db 0x72 dup 0
+byte_array db 0x68 dup 0
