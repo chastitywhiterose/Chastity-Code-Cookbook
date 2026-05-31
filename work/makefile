@@ -1,11 +1,11 @@
-main-fasm-dos:
-	fasm main.asm
-main-nasm-dos:
-	chastext main.asm 'include' '%include' > temp.asm
-	nasm temp.asm -o main.com
-main-fasm-linux:
+main-fasm:
 	fasm main.asm
 	chmod +x main
 	./main
+chastehex:
+	fasm main.asm
+	chmod +x main
+	./main testfile
 ndisasm:
-	ndisasm -o 0x100 main.com
+	ndisasm -b 32 -e 0x54 -o 0x08048054 main
+	

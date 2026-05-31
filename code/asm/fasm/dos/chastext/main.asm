@@ -184,9 +184,6 @@ jmp textdump ;restart the main loop
 
 not_match: 
 
-;mov al,[byte_array]
-;call putchar
-
 ;Instead of calling the putchar function in the case of no match,
 ;I do a system call to print 1 byte to standard output
 ;This is simple and also compatible with binary files we want to replace text in.

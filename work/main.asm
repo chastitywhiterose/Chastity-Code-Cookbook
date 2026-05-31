@@ -1,107 +1,113 @@
-org 100h     ;DOS programs start at this address
+;Linux 32-bit Assembly Source for chastext
+;a basic text search and replace program
+format ELF executable
+entry main
 
-mov word [radix],16 ; can choose radix for integer output!
+;a reduced form of chastelib without functions this program doesn't use
+include 'chastext-chastelib32.asm'
 
-call getarg
-cmp ax,0
-jnz args_exist
+main:
 
-mov ax,help    ;if no arguments were given, show a help message
+pop eax
+mov [argc],eax ;save the argument count for later
+
+cmp dword [argc],1
+ja help_skip ;if more than 1 argument is given, skip the help message and process the other arguments
+
+help:
+mov eax,help_message
 call putstring
-jmp ending     ;and end the program because there is nothing to do
+jmp main_end
+help_skip:
 
-args_exist:
+pop eax ;pop the next arg which is the name of the program we are running
 
-;now that the argument string is prepared, we will try to use the first argument as a filename to open
-call getarg
+get_filename:
+pop eax ;pop the next arg which is the name of the file we will open
 
-mov dx,ax                 ;string address to interpret as filename
-mov ah,3Dh                ;call number for DOS open existing file
-mov al,0                  ;file access: 0=read,1=write,2=read+write
-int 21h                   ;DOS call to finalize open function
+mov [filename],eax ; save the name of the file we will open to read
 
-mov [filedesc],ax ;save the file handle
+arg_open_file:
 
-jc file_error ;if carry flag is set, we have an error, otherwise, file is open
+;Linux system call to open a file
 
-jmp use_file ;skip past error message and start using the file
+mov ecx,0   ;open file in read only mode
+mov ebx,eax ;filename should be in eax before this function was called
+mov eax,5   ;invoke SYS_OPEN (kernel opcode 5)
+int 80h     ;call the kernel
 
-;this section prints error message and then ends the program if file error found
-;usually this happens if the file doesn't exist
+cmp eax,0
+jns file_open_no_errors ;if eax is not negative/signed there was no error
 
-file_error: ;prints error code2=file not found
-mov ax,dx
+;Otherwise, if it was signed, then this code will display an error message.
+
+mov eax,open_error_message
 call putstr_and_line
-mov ax,file_error_message
-call putstring
-mov ax,[filedesc]
-call putint
-jmp ending
 
-;how we use the file depends on the number of arguments given
-;if no arguments other than the filename exist, we do a regular hex dump
-;otherwise we look for two more arguments: the search and replace strings
+jmp main_end ;end the program because we failed at opening the file
 
-use_file:
+file_open_no_errors:
 
-call getarg ;get address of next arg and return into ax register
-cmp ax,0 ;if ax equals 0, we begin the textdump main loop without search or replace strings
-jz textdump ;jump to textdump section
+mov [filedesc],eax ; save the file descriptor number for later use
 
-;otherwise, we save the address at ax to our search string
-mov [string_search],ax
-;call putstr_and_line
+;before we just textdump or "cat" the file, we need to check for the existence of more arguments which will modify the output
 
+cmp dword[argc],3
+jb search_skip
 
-call getarg ;get address of next arg and return into ax register
-cmp ax,0 ;if ax equals 0, we have a search string but no replace strings
-jz textdump ;jump to textdump section
+pop eax ;pop the next arg which is the string we are searching for
+mov [string_search],eax
 
-;otherwise, we save the address at ax to our replacement string
-mov [string_replace],ax
-;call putstr_and_line
+search_skip:
 
-;all other arguments that may exist after this are irrelevant
+cmp dword[argc],4
+jb replace_skip
+
+pop eax ;pop the next arg which is the string we are searching for
+mov [string_replace],eax
+
+replace_skip:
+
+;now we begin displaying the file but also searching for the search string if it exists. We will check for these based on the number of arguments like we did earlier
 
 textdump:
 
-;this is the beginning of the textdump main loop of chastext
+;if only there are only 2 arguments (name of program plus input file)
+;then we do a loop that ignores searching and replacing
+;this loop will read one character from the file and then send it to stdout
+;until there are no more bytes to display
+;but if there are above 2 arguments, we skip this loop and go to search mode
 
-;first, check to see if there is a search string
-;if there is a search string, go to search_mode
-
-cmp word[string_search],0 ;do we have a search string?
-jnz search_mode
-
-;but if there is not a search string
-;we will read one character, then display it to stdout
-;and then jump to the beginning of the textdump loop to print them until EOF
+cmp dword[argc],2 ;test arguments 2=only filename given
+ja search_mode    ;but if above 2, then go to search mode because a search string was given
 
 ;This loop is the same as the Linux 'cat' command
-;or the DOS 'type' command
+;or the DOS 'type' command for a single file
+;it will read one byte and echo it to standard output until EOF
 
-;we start the loop with a call to read exactly 1 byte
 cat:
-mov ah,3Fh        ;call number for read function
-mov bx,[filedesc] ;store file handle to read from in bx
-mov cx,1          ;we are reading one byte
-mov dx,byte_array ;store the bytes here
-int 21h
 
-cmp ax,1        ;check to see if exactly 1 byte was read
-jz file_success ;if true, proceed to display
+mov edx,1            ;number of bytes to read
+mov ecx,byte_array   ;address to store the bytes
+mov ebx,[filedesc]   ;move the opened file descriptor into EBX
+mov eax,3            ;invoke SYS_READ (kernel opcode 3)
+int 80h              ;call the kernel
 
-jmp file_close ;otherwise close the file and end program after failure
+mov [bytes_read],eax
 
-; this point is reached if 1 byte was read from the file successfully
+cmp eax,0
+jnz file_success ;if more than zero bytes read, proceed to display
+
+jmp main_end ;otherwise, end the program
+
+; this point is reached if file was read from successfully
+
 file_success:
 
+;normally, we will print the last read character
 mov al,[byte_array]
 call putchar
 jmp cat
-
-;if search string doesn't exist, just jump and repeat the loop
-;otherwise we continue into the next section that compares the input with the search string
 
 search_mode:
 
@@ -111,42 +117,41 @@ search_mode:
 ;first, seek to the file_address we initialized to zero
 ;this variable will be added to depending on actions taken
 
-mov ah,42h           ;lseek call number
-mov al,0             ;seek origin 00h start of file,01h current file position,02h end of file
-mov bx,[filedesc]
-mov cx,0              ;upper word of offset zero because not planning for larger than 64kb files
-mov dx,[file_address] ;lower word of offset
-int 21h
+mov edx,0              ;whence argument (SEEK_SET)
+mov ecx,[file_address] ;move the file cursor to this address
+mov ebx,[filedesc]     ;move the opened file descriptor into EBX
+mov eax,19             ;invoke SYS_LSEEK (kernel opcode 19)
+int 80h                ;call the kernel
 
 ;obtain the length of the search string using my strlen function
-mov ax,[string_search]
+mov eax,[string_search]
 call strlen ;get the length of the search string
 
 ;use the length of the string we are searching for as the number of bytes to read at this location
 
-mov dx,byte_array    ;store the bytes here
-mov cx,ax            ;we are reading this many bytes to have a string to compare
-mov bx,[filedesc]    ;store file handle to read from in bx
-mov ah,3Fh           ;call number for read function
-int 21h
+mov edx,eax            ;number of bytes to read
+mov ecx,byte_array     ;address to store the bytes
+mov ebx,[filedesc]     ;move the opened file descriptor into EBX
+mov eax,3              ;invoke SYS_READ (kernel opcode 3)
+int 80h                ;call the kernel
 
-mov [bytes_read],ax  ;store how many bytes were read with that last read operation
+mov [bytes_read],eax   ;store how many bytes were read with that last read operation
 
-mov bx,byte_array    ;move the address of bytes read into bx
-add bx,ax            ;add number of bytes read (return value of read function in ax)
-mov byte[bx],0       ;terminate the string with zero
+mov ebx,byte_array     ;move the address of bytes read into ebx
+add ebx,eax            ;add number of bytes read (return value of read function in eax)
+mov byte[ebx],0        ;terminate the string with zero
 
-cmp ax,cx ;if the number of bytes is not what we expected to read, end this loop
+cmp eax,edx ;if the number of bytes is not what we expected to read, end this loop
 jnz textdump_end
 
-;move our two strings into the si and di registers for comparison
+;move our two strings into the esi and edi registers for comparison
 ;with my custom written strcmp function
 
-mov si,[string_search]
-mov di,byte_array
+mov esi,[string_search]
+mov edi,byte_array
 call strcmp ;compare these two strings
 
-cmp ax,0 ;test if they are the same (if ax returned zero)
+cmp eax,0 ;test if they are the same (if eax returned zero)
 jnz not_match ;if they are not a match go to that section for printing a character
 
 ;but if they are a match, then we either quote them
@@ -154,27 +159,25 @@ jnz not_match ;if they are not a match go to that section for printing a charact
 
 ;but regardless of which action we do, since a match was found, let us add this count to the file address
 ;so that we read from beyond this point next time the textdump loop starts
-mov ax,[bytes_read]
-add [file_address],ax
+mov eax,[bytes_read]
+add [file_address],eax
 
-cmp word[string_replace],0 ;check to see if a replacement string is available
-jz print_quotes ;if not, skip to the part where we just quote the strings that match
+cmp dword[argc],4 ;if less than 4 args, no replacement exist, so we quote the strings
+jb print_quotes
 
 ;otherwise, we will print the replacement string instead of the original!
 
-mov ax,[string_replace]
+mov eax,[string_replace]
 call putstring ;print the string
 
 jmp textdump ;restart the main loop
 
 print_quotes:
-
 ;print quotes around matched string
-
 mov al,'"'
 call putchar
 
-mov ax,byte_array
+mov eax,byte_array
 call putstring ;print the string
 
 mov al,'"'
@@ -184,88 +187,76 @@ jmp textdump ;restart the main loop
 
 not_match: 
 
-;mov al,[byte_array]
-;call putchar
-
 ;Instead of calling the putchar function in the case of no match,
 ;I do a system call to print 1 byte to standard output
 ;This is simple and also compatible with binary files we want to replace text in.
 ;But it only works if the search and replace strings are of the same length
 
-mov ah,40h        ; select DOS function 40h write 
-mov bx,1          ; file handle 1=stdout
-mov cx,1          ; write 1 byte
-mov dx,byte_array ; address to write from
-int 21h           ; call the DOS kernel
+mov eax,4          ;invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
+mov ebx,1          ;write to the STDOUT file
+mov ecx,byte_array ;pointer/address of string to write
+mov edx,1          ;number of bytes to write == 1
+int 80h            ;system call to write the message
 
-add word[file_address],1 ;add 1 to the file address so we don't read this same position again
+add [file_address],1 ;add 1 to the file address so we don't read this same position again
 
 jmp textdump
-
 
 textdump_end:
 
 ;print the remaining bytes, if any, left after the main loop ended
+;mov eax,byte_array
+;call putstring
 
-mov ah,40h          ; select DOS function 40h write 
-mov bx,1            ; file handle 1=stdout
-mov cx,[bytes_read] ; write number of bytes matching last read call
-mov dx,byte_array   ; address to write from
-int 21h             ; call the DOS kernel
+mov eax,4            ;invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
+mov ebx,1            ;write to the STDOUT file
+mov ecx,byte_array   ;pointer/address of string to write
+mov edx,[bytes_read] ;number of bytes to write == last read call result
+int 80h              ;system call to write the message
 
 main_end:
 
 ;this is the end of the program
 ;we close the open file and then use the exit call
 
-file_close:
-;close the file if it is open
-mov ah,3Eh
-mov bx,[filedesc]
-int 21h
+;Linux system call to close a file
 
-;debugging section I use just to test values
-;call putline
-;mov ax,[string_search]
-;call putstr_and_line
-;mov ax,[string_replace]
-;call putstr_and_line
+mov ebx,[filedesc] ;file number to close
+mov eax,6          ;invoke SYS_CLOSE (kernel opcode 6)
+int 80h            ;call the kernel
 
-
-ending:
-mov ax,4C00h ; Exit program
-int 21h
-
-include 'getarg.asm'
+mov eax, 1  ; invoke SYS_EXIT (kernel opcode 1)
+mov ebx, 0  ; return 0 status on exit - 'No Errors'
+int 80h
 
 ;the strlen and strcmp are named after the equivalent C functions
 ;but are written from scratch by me based on their expected behavior
 
-;a function to get the length of string in ax and return the integer in ax
+;a function to get the length of string in eax and return the integer in eax
 
 strlen:
 
-mov bx,ax ; copy ax to bx. bx will be used as index to the string
+mov ebx,eax ; copy eax to ebx. ebx will be used as index to the string
 
 strlen_start: ; this loop finds the length of the string as part of the putstring function
 
-cmp [bx],byte 0 ; compare byte at address bx with 0
+cmp [ebx],byte 0 ; compare byte at address ebx with 0
 jz strlen_end ; if comparison was zero, jump to loop end because we have found the length
-inc bx
+inc ebx
 jmp strlen_start
 
 strlen_end:
-sub bx,ax ;subtract start pointer from current pointer to get length of string
+sub ebx,eax ;subtract start pointer from current pointer to get length of string
 
-mov ax,bx ;copy the string length back to ax
+mov eax,ebx ;copy the string length back to eax
 
 ret
 
-;strcmp compares the string at si to the one at di
-;ax returns 0 if the strings are the same and 1 if different
+;strcmp compares the string at esi to the one at edi
+;eax returns 0 if the strings are the same and 1 if different
 ;the algorithm is simple but I will explain it for those who are confused
 
-;ax is initialized to zero
+;eax is initialized to zero
 ;a byte from each string is loaded into the al and bl registers
 ;the bytes are compared. if they are different, then we jump to the end
 ;However, if they are the same, then we check if one of them is zero
@@ -278,21 +269,21 @@ ret
 
 strcmp:
 
-mov ax,0
+mov eax,0
 
 strcmp_start:
 
 ;read a byte from each string
-mov al,[di]
-mov bl,[si]
+mov al,[edi]
+mov bl,[esi]
 cmp al,bl
 jnz strcmp_end
 
 cmp al,0
 jz strcmp_end
 
-inc di
-inc si
+inc edi
+inc esi
 
 jmp strcmp_start
 
@@ -301,215 +292,24 @@ sub al,bl
 
 ret
 
-help db 'chastext by Chastity White Rose',0Dh,0Ah
-db '"cat" or "type" a file without changing it:',0Dh,0Ah,9,'chastext file',0Dh,0Ah
-db 'search for a string and quote it:',0Dh,0Ah,9,'chastext file search',0Dh,0Ah
-db 'replace string:',0Dh,0Ah,9,'chastext file search replace',0Dh,0Ah
-db 'Find or replace any string!',0Dh,0Ah,0
+help_message db 'chastext by Chastity White Rose',0Ah,0Ah
+db '"cat" a file:',0Ah,0Ah,9,'chastext file',0Ah,0Ah
+db 'search for a string:',0Ah,0Ah,9,'chastext file search',0Ah,0Ah
+db 'replace string:',0Ah,0Ah,9,'chastext file search replace',0Ah,0Ah
+db 'Find or replace any string!',0Ah,0
 
-; About the chastelib variant
+open_error_message db 'error while opening file',0
 
-;instead of including chastelib16.asm as a header file
-;I copy pasted it except that I excluded functions that were not used.
-;Notably, the strint function is excluded because strint_32 is used instead
+file_address dd 0 ;file address defaults to zero AKA beginning of file
 
-;start of chastelib
+;variables for managing arguments and files
+argc rd 1
+filename rd 1 ; name of the file to be opened
+filedesc rd 1 ; file descriptor
+bytes_read rd 1
 
-; This file is where I keep my function definitions.
-; These are usually my string and integer output routines.
-
-;this is my best putstring function for DOS because it uses call 40h of interrupt 21h
-;this means that it works in a similar way to my Linux Assembly code
-;the plan is to make both my DOS and Linux functions identical except for the size of registers involved
-
-putstring:
-
-push ax
-push bx
-push cx
-push dx
-
-mov bx,ax                  ;copy ax to bx for use as index register
-
-putstring_strlen_start:    ;this loop finds the length of the string as part of the putstring function
-
-cmp [bx], byte 0           ;compare this byte with 0
-jz putstring_strlen_end    ;if comparison was zero, jump to loop end because we have found the length
-inc bx                     ;increment bx (add 1)
-jmp putstring_strlen_start ;jump to the start of the loop and keep trying until we find a zero
-
-putstring_strlen_end:
-
-sub bx,ax                  ; sub ax from bx to get the difference for number of bytes
-mov cx,bx                  ; mov bx to cx
-mov dx,ax                  ; dx will have address of string to write
-
-mov ah,40h                 ; select DOS function 40h write 
-mov bx,1                   ; file handle 1=stdout
-int 21h                    ; call the DOS kernel
-
-pop dx
-pop cx
-pop bx
-pop ax
-
-ret
-
-;this is the location in memory where digits are written to by the intstr function
-int_string db 16 dup '?' ;enough bytes to hold maximum size 16-bit binary integer
-int_string_end db 0 ;zero byte terminator for the integer string
-
-radix dw 2 ;radix or base for integer output. 2=binary, 8=octal, 10=decimal, 16=hexadecimal
-int_width dw 8
-
-intstr:
-
-mov bx,int_string_end-1 ;find address of lowest digit(just before the newline 0Ah)
-mov cx,1
-
-digits_start:
-
-mov dx,0;
-div word [radix]
-cmp dx,10
-jb decimal_digit
-jge hexadecimal_digit
-
-decimal_digit: ;we go here if it is only a digit 0 to 9
-add dx,'0'
-jmp save_digit
-
-hexadecimal_digit:
-sub dx,10
-add dx,'A'
-
-save_digit:
-
-mov [bx],dl
-cmp ax,0
-jz intstr_end
-dec bx
-inc cx
-jmp digits_start
-
-intstr_end:
-
-prefix_zeros:
-cmp cx,[int_width]
-jnb end_zeros
-dec bx
-mov [bx],byte '0'
-inc cx
-jmp prefix_zeros
-end_zeros:
-
-mov ax,bx ; store string in ax for display later
-
-ret
-
-;function to print string form of whatever integer is in ax
-;The radix determines which number base the string form takes.
-;Anything from 2 to 36 is a valid radix
-;in practice though, only bases 2,8,10,and 16 will make sense to other programmers
-;this function does not process anything by itself but calls the combination of my other
-;functions in the order I intended them to be used.
-
-putint: 
-
-push ax
-push bx
-push cx
-push dx
-
-call intstr
-call putstring
-
-pop dx
-pop cx
-pop bx
-pop ax
-
-ret
-
-;the next utility functions simply print a space or a newline
-;these help me save code when printing lots of things for debugging
-
-space db ' ',0
-line db 0Dh,0Ah,0
-
-putspace:
-push ax
-mov ax,space
-call putstring
-pop ax
-ret
-
-putline:
-push ax
-mov ax,line
-call putstring
-pop ax
-ret
-
-;a function for printing a single character that is the value of al
-
-char: db 0,0
-
-putchar:
-push ax
-mov [char],al
-mov ax,char
-call putstring
-pop ax
-ret
-
-;a small function just for the common operation
-;printing an integer followed by a space
-;this saves a few bytes in the assembled code
-
-putint_and_space:
-call putint
-call putspace
-ret
-
-;a small function just for the common operation
-;printing an integer followed by a space
-;this saves a few bytes in the assembled code
-
-putint_and_line:
-call putint
-call putline
-ret
-
-;a small function just for the common operation
-;printing an integer followed by a space
-;this saves a few bytes in the assembled code
-
-putstr_and_space:
-call putstring
-call putspace
-ret
-
-;a small function just for the common operation
-;printing an integer followed by a space
-;this saves a few bytes in the assembled code
-
-putstr_and_line:
-call putstring
-call putline
-ret
-
-;end of chastelib
-
-file_error_message db 'Could not open the file! Error number: ',0
-filedesc dw 0
-file_address dw 0 ;file address defaults to zero AKA beginning of file
-end_of_file db 'EOF',0
+string_search rd 1 ; place to hold the search string pointer
+string_replace rd 1 ; place to hold the replacement string pointer
 
 ;where we will store data from the file
-bytes_read dw 0
-
-string_search dw 0 ; place to hold the search string pointer
-string_replace dw 0 ; place to hold the replacement string pointer
-
-byte_array db 0x6A dup 0
+byte_array db 0xAE dup 0
