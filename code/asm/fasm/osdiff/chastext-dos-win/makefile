@@ -13,4 +13,5 @@ geany:
 	geany $(main1) $(main2)
 codediff:
 	code --diff $(main1) $(main2)
-	
+winmerge:
+	winmergeu $(main1) $(main2)

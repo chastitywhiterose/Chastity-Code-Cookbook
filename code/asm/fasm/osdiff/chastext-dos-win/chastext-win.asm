@@ -10,103 +10,15 @@
 format PE console
 include 'win32ax.inc'
 include 'chastelibw32.asm'
+include 'getargw32.asm'
 
 main:
 
 mov [radix],10 ; Choose radix for integer output.
 mov [int_width],1
 
-;get command line argument string
-call [GetCommandLineA]
-
-mov [arg_string_index],eax ;back up eax to restore later
-
-call strlen ;get the length of the string
-
-mov ebx,[arg_string_index] ;mov the address of the string start into ebx
-add ebx,eax                ;add eax which contains the length
-mov [arg_string_end],ebx   ;move end of string address to permanent location
-
-;optionally display the arg string to make sure it is working correctly
-;mov eax,[arg_string_index]
-;call putstring
-;call putline
-
-;set ebx back to the start of the arg string for the filter loop
-mov ebx,[arg_string_index]
-
-;now ebx points to the first non space character in the arguments passed to the DOS program
-;and we know that [arg_string_end] is where it ends
-
-;the next step is to filter the arguments into separate zero terminated strings
-;each space will be changed to a zero (normally)
-;but we also need to account for spaces inside quotes that are considered part of the string
-;Linux handles this normally but DOS needs me to write the code to mimic this behavior
-;because the program needs to function identically for DOS or Linux
-
-mov cl,' ' ;set the default filter character (argument terminator) to a space
-mov ch,0   ;are we currently checking spaces 0 or quote characters 1 as terminators?
-
-;this loop is the new and improved argument filter
-;it keeps track of whether we are inside or outside a quote
-;and also which type of quote started the quote
-;the actual quote marks are not part of the string unless they
-;are the opposite quote type than what started the string
-;The important thing is that spaces can exist inside of quoted strings
-;as one argument rather than each new word being a new argument
-;could be important for filenames containing spaces, etc.
-
-argument_filter:
-
-cmp ebx,[arg_string_end] ;are we at the end of the arg string?
-jz argument_filter_end       ;if yes, stop the filter and terminate with zero
-
-cmp ch,1       ;are we inside a quoted string?
-jz quote_check ;if yes, don't do anything to the spaces
-
-cmp byte[ebx],cl ;compare the byte at address bx to the string terminator
-jnz ignore_char ;if it is not the same, we ignore it
-mov byte[ebx],0  ;but if it matches, change it to a zero
-ignore_char:
-
-cmp byte [ebx],0x22 ;is this a double quote -> "
-jz start_quote
-cmp byte [ebx],0x27 ;is this a single quote -> '
-jz start_quote
-jmp quote_no ;it was not a quote
-
-start_quote:
-
-mov ch,1    ;set ch to 1 to set that we are inside a quote now
-mov cl,[ebx] ;save this quote type as the new terminator
-mov byte[ebx],0 ;but delete the first quote with zero
-
-;check for single or double quotes
-quote_check:
-
-cmp [ebx],cl ;is this character the same type of quote that started this sub string?
-jnz quote_no ;if it is not, then skip to quote_no section
-
-;but if it was matching, change this byte to zero
-;and change cl back to a space
-mov cl,' ' ;cl is now a space
-mov ch,0   ;ch is 0 because now we have ended the quoted string
-mov byte[ebx],0 ;delete the end quote with zero
-
-quote_no:
-
-inc ebx ;go to the next character
-jmp argument_filter   ;jump back to the beginning of argument filter
-
-argument_filter_end:
-mov byte [ebx],0 ;terminate the ending with a zero for safety
-
-;check first argument which is name of program
-;mov eax,[arg_string_index]
-;call putstr_and_line
-
-call get_next_arg ;get address of next arg and return into eax register
-cmp eax,[arg_string_end] ;if there is no filename arg, we end
+call getarg ;this first call will get the command string
+cmp eax,0 ;did the getarg function return 0?
 jnz args_exist
 
 mov eax,help    ;if no arguments were given, show a help message
@@ -115,8 +27,9 @@ jmp ending     ;and end the program because there is nothing to do
 
 args_exist:
 
+call getarg
 mov [filename],eax
-;call putstr_and_line ;print filename before text output
+;call putstr_and_line ;print filename before text output (for debugging)
 
 ;This is where the main part of the chastext program really begins.;
 
@@ -154,20 +67,19 @@ mov [filedesc],eax
 
 ;before we proceed, we also check for more arguments.
 
-call get_next_arg ;get address of next arg and return into eax register
-cmp eax,[arg_string_end] ;if at end, no search string argument
+call getarg ;this first call will get the command string
+cmp eax,0 ;if 0, no search string argument
 jz textdump ;jump to textdump section
 
 ;otherwise, we save the address at ax to our search string
 mov [string_search],eax
 ;call putstr_and_line
 
+call getarg ;this first call will get the command string
+cmp eax,0 ;if 0, no replacement string argument
+jz textdump ;jump to textdump section
 
-call get_next_arg ;get address of next arg and return into ax register
-cmp eax,[arg_string_end] ;if at end, no replacement string argument
-jz textdump ;jump to hexdump section
-
-;otherwise, we save the address at ax to our replacement string
+;otherwise, we save the address at eax to our replacement string
 mov [string_replace],eax
 ;call putstr_and_line
 
@@ -181,14 +93,17 @@ textdump:
 ;if there is a search string, skip the normal putchar
 
 cmp dword[string_search],0 ;do we have a search string?
-jnz putchar_skip
+jnz search_mode
 
 ;but if there is not a search string
 ;we will read one character, then display it to stdout
 ;and then jump to the beginning of the textdump loop to print them until EOF
-;we start the loop with a call to read exactly 1 byte
+
+;This loop is the same as the Linux 'cat' command
+;or the DOS 'type' command
 
 ;read only 1 byte using Win32 ReadFile system call.
+cat:
 push 0              ;Optional Overlapped Structure 
 push bytes_read     ;Store Number of Bytes Read from this call
 push 1              ;Number of bytes to read
@@ -209,12 +124,12 @@ file_success:
 
 mov al,[byte_array]
 call putchar
-jmp textdump
+jmp cat
 
 ;if search string doesn't exist, just jump and repeat the loop
 ;otherwise we continue into the next section that compares the input with the search string
 
-putchar_skip:
+search_mode:
 
 ;this is the beginning of search mode
 ;it handles the file by seeking and reading to search every position for the search string
@@ -301,8 +216,21 @@ jmp textdump ;restart the main loop
 
 not_match: 
 
-mov al,[byte_array]
-call putchar
+;Instead of calling the putchar function in the case of no match,
+;I do a system call to print 1 byte to standard output
+;This is simple and also compatible with binary files we want to replace text in.
+;But it only works if the search and replace strings are of the same length
+
+;Write 1 byte using Win32 WriteFile system call.
+push 0              ;Optional Overlapped Structure 
+push 0              ;Optionally Store Number of Bytes Written
+push 1              ;Number of bytes to write
+push byte_array     ;address of string to print
+push -11            ;STD_OUTPUT_HANDLE = Negative Eleven
+call [GetStdHandle] ;use the above handle
+push eax            ;eax is return value of previous function
+call [WriteFile]    ;all the data is in place, do the write thing!
+
 add [file_address],1 ;add 1 to the file address so we don't read this same position again
 
 jmp textdump
@@ -310,8 +238,16 @@ jmp textdump
 textdump_end:
 
 ;print the remaining bytes, if any, left after the main loop ended
-mov eax,byte_array
-call putstring
+;however many were read in the last read call will be written
+
+push 0              ;Optional Overlapped Structure 
+push 0              ;Optionally Store Number of Bytes Written
+push [bytes_read]   ;Number of bytes to write
+push byte_array     ;address of string to print
+push -11            ;STD_OUTPUT_HANDLE = Negative Eleven
+call [GetStdHandle] ;use the above handle
+push eax            ;eax is return value of previous function
+call [WriteFile]    ;all the data is in place, do the write thing!
 
 main_end:
 
@@ -333,31 +269,6 @@ call [ExitProcess]
 arg_string_index  dd 0 ;start of arg string
 arg_string_end    dd 0 ;address of the end of the arg string
 
-;function to move ahead to the next art
-;only works after the filter has been applied to turn all spaces into zeroes
-get_next_arg:
-mov ebx,[arg_string_index]
-find_zero:
-cmp byte [ebx],0
-jz found_zero
-inc ebx
-jmp find_zero ; this char is not zero, go to the next char
-found_zero:
-
-find_non_zero:
-cmp ebx,[arg_string_end]
-jz arg_finish ;if ebx is already at end, nothing left to find
-cmp byte [ebx],0
-jnz arg_finish ;if this char is not zero we have found the next string!
-inc ebx
-jmp find_non_zero ;otherwise, keep looking
-
-arg_finish:
-mov [arg_string_index],ebx ; save this index to variable
-mov eax,ebx ;but also save it to ax register for use
-ret
-;we can know that there are no more arguments when
-;the either [arg_start] or eax are equal to [arg_end]
 
 ;the strlen and strcmp are named after the equivalent C functions
 ;but are written from scratch by me based on their expected behavior
