@@ -29,7 +29,7 @@ args_exist:
 
 call getarg
 mov [filename],eax
-call putstr_and_line ;print filename before text output
+;call putstr_and_line ;print filename before text output (for debugging)
 
 ;This is where the main part of the chastext program really begins.;
 

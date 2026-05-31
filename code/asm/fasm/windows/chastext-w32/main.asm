@@ -29,7 +29,7 @@ args_exist:
 
 call getarg
 mov [filename],eax
-call putstr_and_line ;print filename before text output
+;call putstr_and_line ;print filename before text output (for debugging)
 
 ;This is where the main part of the chastext program really begins.;
 
@@ -216,8 +216,21 @@ jmp textdump ;restart the main loop
 
 not_match: 
 
-mov al,[byte_array]
-call putchar
+;Instead of calling the putchar function in the case of no match,
+;I do a system call to print 1 byte to standard output
+;This is simple and also compatible with binary files we want to replace text in.
+;But it only works if the search and replace strings are of the same length
+
+;Write 1 byte using Win32 WriteFile system call.
+push 0              ;Optional Overlapped Structure 
+push 0              ;Optionally Store Number of Bytes Written
+push 1              ;Number of bytes to write
+push byte_array     ;address of string to print
+push -11            ;STD_OUTPUT_HANDLE = Negative Eleven
+call [GetStdHandle] ;use the above handle
+push eax            ;eax is return value of previous function
+call [WriteFile]    ;all the data is in place, do the write thing!
+
 add [file_address],1 ;add 1 to the file address so we don't read this same position again
 
 jmp textdump
@@ -225,8 +238,16 @@ jmp textdump
 textdump_end:
 
 ;print the remaining bytes, if any, left after the main loop ended
-mov eax,byte_array
-call putstring
+;however many were read in the last read call will be written
+
+push 0              ;Optional Overlapped Structure 
+push 0              ;Optionally Store Number of Bytes Written
+push [bytes_read]   ;Number of bytes to write
+push byte_array     ;address of string to print
+push -11            ;STD_OUTPUT_HANDLE = Negative Eleven
+call [GetStdHandle] ;use the above handle
+push eax            ;eax is return value of previous function
+call [WriteFile]    ;all the data is in place, do the write thing!
 
 main_end:
 
@@ -248,31 +269,6 @@ call [ExitProcess]
 arg_string_index  dd 0 ;start of arg string
 arg_string_end    dd 0 ;address of the end of the arg string
 
-;function to move ahead to the next art
-;only works after the filter has been applied to turn all spaces into zeroes
-get_next_arg:
-mov ebx,[arg_string_index]
-find_zero:
-cmp byte [ebx],0
-jz found_zero
-inc ebx
-jmp find_zero ; this char is not zero, go to the next char
-found_zero:
-
-find_non_zero:
-cmp ebx,[arg_string_end]
-jz arg_finish ;if ebx is already at end, nothing left to find
-cmp byte [ebx],0
-jnz arg_finish ;if this char is not zero we have found the next string!
-inc ebx
-jmp find_non_zero ;otherwise, keep looking
-
-arg_finish:
-mov [arg_string_index],ebx ; save this index to variable
-mov eax,ebx ;but also save it to ax register for use
-ret
-;we can know that there are no more arguments when
-;the either [arg_start] or eax are equal to [arg_end]
 
 ;the strlen and strcmp are named after the equivalent C functions
 ;but are written from scratch by me based on their expected behavior
