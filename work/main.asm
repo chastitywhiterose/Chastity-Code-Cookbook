@@ -238,8 +238,16 @@ jmp textdump
 textdump_end:
 
 ;print the remaining bytes, if any, left after the main loop ended
-mov eax,byte_array
-call putstring
+;however many were read in the last read call will be written
+
+push 0              ;Optional Overlapped Structure 
+push 0              ;Optionally Store Number of Bytes Written
+push [bytes_read]   ;Number of bytes to write
+push byte_array     ;address of string to print
+push -11            ;STD_OUTPUT_HANDLE = Negative Eleven
+call [GetStdHandle] ;use the above handle
+push eax            ;eax is return value of previous function
+call [WriteFile]    ;all the data is in place, do the write thing!
 
 main_end:
 
