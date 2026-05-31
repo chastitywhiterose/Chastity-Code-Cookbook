@@ -136,7 +136,7 @@ mov bx,byte_array    ;move the address of bytes read into bx
 add bx,ax            ;add number of bytes read (return value of read function in ax)
 mov byte[bx],0       ;terminate the string with zero
 
-cmp ax,[bytes_read] ;if the number of bytes is not what we expected to read, end this loop
+cmp ax,cx ;if the number of bytes is not what we expected to read, end this loop
 jnz textdump_end
 
 ;move our two strings into the si and di registers for comparison
@@ -512,4 +512,4 @@ bytes_read dw 0
 string_search dw 0 ; place to hold the search string pointer
 string_replace dw 0 ; place to hold the replacement string pointer
 
-byte_array db 0x68 dup 0
+byte_array db 0x6A dup 0
