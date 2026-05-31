@@ -76,9 +76,16 @@ textdump:
 ;then we do a loop that ignores searching and replacing
 ;this loop will read one character from the file and then send it to stdout
 ;until there are no more bytes to display
+;but if there are above 2 arguments, we skip this loop and go to search mode
 
-cmp dword[argc],2 
-jnz putchar_skip
+cmp dword[argc],2 ;test arguments 2=only filename given
+ja search_mode    ;but if above 2, then go to search mode because a search string was given
+
+;This loop is the same as the Linux 'cat' command
+;or the DOS 'type' command for a single file
+;it will read one byte and echo it to standard output until EOF
+
+cat:
 
 mov edx,1            ;number of bytes to read
 mov ecx,byte_array   ;address to store the bytes
@@ -100,11 +107,9 @@ file_success:
 ;normally, we will print the last read character
 mov al,[byte_array]
 call putchar
+jmp cat
 
-putchar_skip:
-
-cmp dword[argc],3 ;if not enough arguments, skip the search string section
-jb textdump
+search_mode:
 
 ;this is the beginning of search mode
 ;it handles the file by seeking and reading to search every position for the search string
@@ -130,11 +135,11 @@ mov ebx,[filedesc]     ;move the opened file descriptor into EBX
 mov eax,3              ;invoke SYS_READ (kernel opcode 3)
 int 80h                ;call the kernel
 
+mov [bytes_read],eax   ;store how many bytes were read with that last read operation
+
 mov ebx,byte_array     ;move the address of bytes read into ebx
 add ebx,eax            ;add number of bytes read (return value of read function in eax)
 mov byte[ebx],0        ;terminate the string with zero
-
-mov [bytes_read],eax   ;store how many bytes were read with that last read operation
 
 cmp eax,edx ;if the number of bytes is not what we expected to read, end this loop
 jnz textdump_end
@@ -182,18 +187,32 @@ jmp textdump ;restart the main loop
 
 not_match: 
 
-mov al,[byte_array]
-call putchar
+;Instead of calling the putchar function in the case of no match,
+;I do a system call to print 1 byte to standard output
+;This is simple and also compatible with binary files we want to replace text in.
+;But it only works if the search and replace strings are of the same length
+
+mov eax,4          ;invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
+mov ebx,1          ;write to the STDOUT file
+mov ecx,byte_array ;pointer/address of string to write
+mov edx,1          ;number of bytes to write == 1
+int 80h            ;system call to write the message
+
 add [file_address],1 ;add 1 to the file address so we don't read this same position again
 
 jmp textdump
 
-
 textdump_end:
 
 ;print the remaining bytes, if any, left after the main loop ended
-mov eax,byte_array
-call putstring
+;mov eax,byte_array
+;call putstring
+
+mov eax,4            ;invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
+mov ebx,1            ;write to the STDOUT file
+mov ecx,byte_array   ;pointer/address of string to write
+mov edx,[bytes_read] ;number of bytes to write == last read call result
+int 80h              ;system call to write the message
 
 main_end:
 
@@ -293,4 +312,4 @@ string_search rd 1 ; place to hold the search string pointer
 string_replace rd 1 ; place to hold the replacement string pointer
 
 ;where we will store data from the file
-byte_array db 0xC0 dup 0
+byte_array db 0xAE dup 0
