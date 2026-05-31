@@ -107,13 +107,21 @@ get_arg_data:
 ;get command line argument string with this Windows API call
 ;it returns a pointer in the eax register
 call [GetCommandLineA]
+mov [arguments_start],eax ;but copy it to memory too
 
-mov [arguments_start],eax ;copy it to memory address
-call strlen ;get the length of string with my strlen function
-mov ebx,[arguments_start] ;and copy address to the ebx register
-add ebx,eax ;add the length to ebx which has the address of the start
+;the following loop is a modified strlen loop except that we don't
+;care about how long the string is. We only need the pointer for where it ends
+
+mov ebx,eax  ;copy eax to ebx to be used in loop to find ending zero
+argend_find: ; this loop finds the zero at the end of the argument string
+cmp [ebx],byte 0 ; compare byte at address ebx with 0
+jz argend_found ; if comparison was zero, jump to loop end because we have found the length
+inc ebx
+jmp argend_find
+argend_found:
 mov [arguments_end],ebx ;save ebx address containing the zero byte
-mov ebx,[arguments_start] ;copy the address of the arguments start to ebx
+
+mov ebx,eax ;mov the start of the arg string again before the next loop
 
 skip_prog_name:
 cmp byte[ebx],0   ;check for zero first (very important)
@@ -137,23 +145,3 @@ ret
 ;start and end default to address of zero, which means we have not tested the arguments yet
 arguments_start dd 0
 arguments_end dd 0
-
-;a function to get the length of string in eax and return the integer in eax
-
-strlen:
-
-mov ebx,eax ; copy eax to ebx. ebx will be used as index to the string
-
-strlen_start: ; this loop finds the length of the string as part of the putstring function
-
-cmp [ebx],byte 0 ; compare byte at address ebx with 0
-jz strlen_end ; if comparison was zero, jump to loop end because we have found the length
-inc ebx
-jmp strlen_start
-
-strlen_end:
-sub ebx,eax ;subtract start pointer from current pointer to get length of string
-
-mov eax,ebx ;copy the string length back to eax
-
-ret
