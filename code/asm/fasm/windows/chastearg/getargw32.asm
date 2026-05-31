@@ -2,16 +2,19 @@
 ;It will automatically process the command line arguments if they are available.
 ;
 ;The first time it is run, it returns the whole command string or zero if no args are given
-;DOS does not allow the program name to be part of the arguments
-;
-;Each time after that, it will give you the next argument which is a subtring of the original.
+;Each time after that, it will give you the next argument, which is a substring of the original.
 ;When no more arguments are available, it will always return zero
 ;The program calling this is expected to check for this error and then terminate
 ;or print a message depending on the goals of that program
 
-;A word of warning though, this function has multiple return statements and is long
+;A word of warning, though, this function has multiple return statements and is long
 ;However, it is fully featured in that it can recognize quoted strings as being the same argument
 ;This brings full compatibility between my DOS and Linux programs which expect consistent behavior
+;
+;I also wrote a Windows version of this same function in a separate file
+;Because DOS does not allow the program name to be part of the arguments,
+;I also wrote the Windows edition to exclude it from results.
+;However, the DOS getarg function is the most important because DOS systems are freely available.
 
 getarg:
 
