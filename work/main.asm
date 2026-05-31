@@ -248,31 +248,6 @@ call [ExitProcess]
 arg_string_index  dd 0 ;start of arg string
 arg_string_end    dd 0 ;address of the end of the arg string
 
-;function to move ahead to the next art
-;only works after the filter has been applied to turn all spaces into zeroes
-get_next_arg:
-mov ebx,[arg_string_index]
-find_zero:
-cmp byte [ebx],0
-jz found_zero
-inc ebx
-jmp find_zero ; this char is not zero, go to the next char
-found_zero:
-
-find_non_zero:
-cmp ebx,[arg_string_end]
-jz arg_finish ;if ebx is already at end, nothing left to find
-cmp byte [ebx],0
-jnz arg_finish ;if this char is not zero we have found the next string!
-inc ebx
-jmp find_non_zero ;otherwise, keep looking
-
-arg_finish:
-mov [arg_string_index],ebx ; save this index to variable
-mov eax,ebx ;but also save it to ax register for use
-ret
-;we can know that there are no more arguments when
-;the either [arg_start] or eax are equal to [arg_end]
 
 ;the strlen and strcmp are named after the equivalent C functions
 ;but are written from scratch by me based on their expected behavior
