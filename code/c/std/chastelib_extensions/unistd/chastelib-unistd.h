@@ -42,7 +42,7 @@ char *intstr(unsigned int i)    /*Chastity's supreme integer to string conversio
   s--;                          /*decrement the pointer to go left for correct digit placing*/
   *s=i%radix;                   /*get the remainder of division by the radix or base*/
   i/=radix;                     /*divide the input by radix*/
-  if(*s<10){*s+='0';}           /*fconvert digits 0 to 9 to the ASCII character for that digit*/
+  if(*s<10){*s+='0';}           /*convert digits 0 to 9 to the ASCII character for that digit*/
   else{*s=*s+'A'-10;}           /*for digits higher than 9, convert to letters starting at A*/
   width++;                      /*increment the width so we know when enough digits are saved*/
  }
