@@ -39,7 +39,7 @@ char *intstr(unsigned int i)    /*Chastity's supreme integer to string conversio
  *s=0;                          /*set the zero that terminates the string in the C language*/
  while(i!=0 || width<int_width) /*loop to fill the string with every required digit plus prefixed zeros*/
  {
-  s--;                          /*decrement the pointer to go left for corrent digit placing*/
+  s--;                          /*decrement the pointer to go left for correct digit placing*/
   *s=i%radix;                   /*get the remainder of division by the radix or base*/
   i/=radix;                     /*divide the input by radix*/
   if(*s<10){*s+='0';}           /*fconvert digits 0 to 9 to the ASCII character for that digit*/

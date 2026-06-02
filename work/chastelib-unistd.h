@@ -39,7 +39,7 @@ char *intstr(unsigned int i)    /*Chastity's supreme integer to string conversio
  *s=0;                          /*set the zero that terminates the string in the C language*/
  while(i!=0 || width<int_width) /*loop to fill the string with every required digit plus prefixed zeros*/
  {
-  s--;                          /*decrement the pointer to go left for correct digit placing*/
+  s--;                          /*decrement the pointer to go left for corrent digit placing*/
   *s=i%radix;                   /*get the remainder of division by the radix or base*/
   i/=radix;                     /*divide the input by radix*/
   if(*s<10){*s+='0';}           /*fconvert digits 0 to 9 to the ASCII character for that digit*/
@@ -50,10 +50,11 @@ char *intstr(unsigned int i)    /*Chastity's supreme integer to string conversio
 }
 
 
-
-
 /*
- This function prints a string using fwrite.
+ putstring: system call edition
+ This function prints a string using the write POSIX system call.
+ This changes only one line from the C fwrite function to the standard Unix write call
+ 
  This algorithm is the best C representation of how my Assembly programs also work.
  Its true purpose is to be used in the putint function for conveniently printing integers, 
  but it can print any valid string.
@@ -61,12 +62,12 @@ char *intstr(unsigned int i)    /*Chastity's supreme integer to string conversio
 
 int putstring(const char *s)
 {
- int count=0;              /*used to count how many bytes will be written*/
- const char *p=s;          /*pointer used to find terminating zero of string*/
- while(*p){p++;}           /*loop until zero found and immediately exit*/
- count=p-s;                /*count is the difference of pointers p and s*/
- fwrite(s,1,count,stdout); /*https://cppreference.com/w/c/io/fwrite.html*/
- return count;             /*return how many bytes were written*/
+ int count=0;      /*used to count how many bytes will be written*/
+ const char *p=s;  /*pointer used to find terminating zero of string*/
+ while(*p){p++;}   /*loop until zero found and immediately exit*/
+ count=p-s;        /*count is the difference of pointers p and s*/
+ write(1,s,count); /*the unix system call way of writing the bytes*/
+ return count;     /*return how many bytes were written*/
 }
 
 /*
@@ -116,7 +117,11 @@ int strint(const char *s)
  int i=0;
  char c;
  strint_errors = 0; /*set zero errors before we parse the string*/
- if( radix<2 || radix>36 ){ strint_errors++; printf("Error: radix %i is out of range!\n",radix);}
+ if( radix<2 || radix>36 )
+ {
+  strint_errors++;
+  putstr("Error: radix is out of range!\n");
+ }
  while( *s == ' ' || *s == '\n' || *s == '\t' ){s++;} /*skip whitespace at beginning*/
  while(*s!=0)
  {
@@ -125,15 +130,28 @@ int strint(const char *s)
   else if( c >= 'A' && c <= 'Z' ){c-='A';c+=10;}
   else if( c >= 'a' && c <= 'z' ){c-='a';c+=10;}
   else if( c == ' ' || c == '\n' || c == '\t' ){break;}
-  else{ strint_errors++; printf("Error: %c is not an alphanumeric character!\n",*s);break;}
-  if(c>=radix){ strint_errors++; printf("Error: %c is not a valid character for radix %i\n",*s,radix);break;}
+  else
+  {
+   strint_errors++;
+   putstr("Error: ");
+   write(1,s,1);
+   putstr(" is not an alphanumeric character!\n");
+   break;
+  }
+  if(c>=radix)
+  {
+   strint_errors++;
+   putstr("Error: ");
+   write(1,s,1);
+   putstr(" is not a valid character for radix.\n");
+   break;
+  }
   i*=radix;
   i+=c;
   s++;
  }
  return i;
 }
-
 
 /*
  Those four functions above are the core of chastelib.
