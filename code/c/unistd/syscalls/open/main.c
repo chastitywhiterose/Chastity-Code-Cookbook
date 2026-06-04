@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
   Assign all file permissions of Read and Write for the user and Read Only for others.
  */
  fd=open("filename.txt", O_WRONLY | O_CREAT,0644);
- if(fd>0)
+ if(fd!=-1)
  {
   write(fd,s,sizeof(s)-1); /* write "Hello World" to stdout */
   close(fd);
