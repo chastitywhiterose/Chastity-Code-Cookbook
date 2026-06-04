@@ -8,8 +8,8 @@ mov dword [int_width],1
 
 mov eax,5        ;invoke SYS_OPEN (kernel opcode 5)
 mov ebx,filename ;path to filename should be in eax before this function was called
-mov ecx,0100     ;flags to control open mode 0101 = 0100 (O_CREAT) + 1 (O_WRONLY)
-mov edx,0644     ;permissions of the new file
+mov ecx,101o     ;flags to control open mode 0101 = 0100 (O_CREAT) + 1 (O_WRONLY)
+mov edx,644o     ;permissions of the new file
 int 80h     ;call the kernel
 
 mov [filedesc],eax
