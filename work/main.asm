@@ -5,24 +5,35 @@ main:
 mov dword [radix],10
 mov dword [int_width],1
 
-mov eax,string1
+mov eax,string0
 call putstring
 
 call getstring
 
+mov eax,string1
 call putstring
 
-;mov eax,[count]
-;call putint
+mov eax,buf
+call putstring
+call putline
+
+mov eax,string2
+call putstring
+
+mov eax,[count]
+call putint
+call putline
 
 the_end:
 mov eax,1
 mov ebx,0
 int 80h
 
-string1 db 'Enter a string from the keyboard:',0Ah,0
+string0 db 'Enter a string from the keyboard: ',0
+string1 db 'The string you entered is: ',0
+string2 db 'The length of the string you entered is: ',0
 
-buf db 0x10 dup '?'
+buf db 0x100 dup '?'
 count dd 0
 
 
@@ -30,11 +41,11 @@ count dd 0
 getstring:
 
 mov [count],0 ;set count of characters read during this function to zero
+mov edx,1     ;number of bytes to read
+mov ecx,buf   ;address to store the bytes
 
 getstring_chars:
 
-mov edx,1     ;number of bytes to read
-mov ecx,buf   ;address to store the bytes
 mov ebx,0     ;read from stdin
 mov eax,3     ;invoke SYS_READ (kernel opcode 3)
 int 80h       ;call the kernel
