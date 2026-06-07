@@ -90,7 +90,7 @@ cat:
 mov edx,1            ;number of bytes to read
 mov ecx,byte_array   ;address to store the bytes
 mov ebx,[filedesc]   ;move the opened file descriptor into EBX
-mov eax,3            ;invoke SYS_READ (kernel opcode 3)
+mov eax,3            ;invoke SYS_READ (kernel opcode 3 on 32 bit systems)
 int 80h              ;call the kernel
 
 mov [bytes_read],eax
@@ -104,9 +104,11 @@ jmp main_end ;otherwise, end the program
 
 file_success:
 
-;normally, we will print the last read character
-mov al,[byte_array]
-call putchar
+;print the last read character to stdout by switching to write call
+mov ebx,1            ;write to the STDOUT file
+mov eax,4            ;invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
+int 80h              ;call the kernel
+
 jmp cat
 
 search_mode:
@@ -232,23 +234,25 @@ int 80h
 ;the strlen and strcmp are named after the equivalent C functions
 ;but are written from scratch by me based on their expected behavior
 
-;a function to get the length of string in eax and return the integer in eax
+;The strlen function gets the length of string in eax and returns it in eax
+;This is the same algorithm used in my putstring function
 
 strlen:
 
+push ebx
 mov ebx,eax ; copy eax to ebx. ebx will be used as index to the string
 
-strlen_start: ; this loop finds the length of the string as part of the putstring function
+strlen_start: ; this loop finds the length of the string
 
 cmp [ebx],byte 0 ; compare byte at address ebx with 0
-jz strlen_end ; if comparison was zero, jump to loop end because we have found the length
+jz strlen_end ; if comparison was zero, jump to loop end
 inc ebx
 jmp strlen_start
 
 strlen_end:
 sub ebx,eax ;subtract start pointer from current pointer to get length of string
-
 mov eax,ebx ;copy the string length back to eax
+pop ebx
 
 ret
 
@@ -312,4 +316,4 @@ string_search rd 1 ; place to hold the search string pointer
 string_replace rd 1 ; place to hold the replacement string pointer
 
 ;where we will store data from the file
-byte_array db 0xAE dup 0
+byte_array db 0xAA dup 0

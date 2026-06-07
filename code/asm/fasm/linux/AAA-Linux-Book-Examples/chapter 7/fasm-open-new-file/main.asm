@@ -39,23 +39,25 @@ filedesc dd 0 ; file descriptor
 string0 db 'This string writes to the file.',0Ah,0
 string1 db '=file descriptor',0Ah,0
 
-;a function to get the length of string in eax and return the integer in eax
+;The strlen function gets the length of string in eax and returns it in eax
+;This is the same algorithm used in my putstring function
 
 strlen:
 
+push ebx
 mov ebx,eax ; copy eax to ebx. ebx will be used as index to the string
 
-strlen_start: ; this loop finds the length of the string as part of the putstring function
+strlen_start: ; this loop finds the length of the string
 
 cmp [ebx],byte 0 ; compare byte at address ebx with 0
-jz strlen_end ; if comparison was zero, jump to loop end because we have found the length
+jz strlen_end ; if comparison was zero, jump to loop end
 inc ebx
 jmp strlen_start
 
 strlen_end:
 sub ebx,eax ;subtract start pointer from current pointer to get length of string
-
 mov eax,ebx ;copy the string length back to eax
+pop ebx
 
 ret
 
