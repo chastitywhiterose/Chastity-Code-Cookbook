@@ -38,8 +38,6 @@ pop ax
 
 ret
 
-
-
 ;this is the location in memory where digits are written to by the intstr function
 
 int_string db 16 dup '?' ;enough bytes to hold maximum size 16-bit binary integer
@@ -63,7 +61,7 @@ mov dx,0;
 div word [radix]
 cmp dx,10
 jb decimal_digit
-jge hexadecimal_digit
+jnb hexadecimal_digit
 
 decimal_digit: ;we go here if it is only a digit 0 to 9
 add dx,'0'
@@ -198,7 +196,7 @@ jmp strint_end
 process_char:
 
 cmp cx,[radix] ;compare char with radix
-jae strint_end ;if this value is above or equal to radix, it is too high despite being a valid digit/alpha
+jnb strint_end ;if this value is above or equal to radix, it is too high despite being a valid digit/alpha
 
 mov dx,0 ;zero dx because it is used in mul sometimes
 mul word [radix]    ;mul ax with radix
