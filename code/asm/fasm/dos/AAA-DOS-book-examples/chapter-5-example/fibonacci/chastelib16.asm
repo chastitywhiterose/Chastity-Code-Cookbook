@@ -5,8 +5,6 @@
 ;this means that it works in a similar way to my Linux Assembly code
 ;the plan is to make both my DOS and Linux functions identical except for the size of registers involved
 
-stdout dw 1 ; variable for standard output so that it can theoretically be redirected
-
 putstring:
 
 push ax
@@ -30,7 +28,7 @@ mov cx,bx                  ; mov bx to cx
 mov dx,ax                  ; dx will have address of string to write
 
 mov ah,40h                 ; select DOS function 40h write 
-mov bx,[stdout]            ; file handle 1=stdout
+mov bx,1                   ; file handle 1=stdout
 int 21h                    ; call the DOS kernel
 
 pop dx
@@ -39,8 +37,6 @@ pop bx
 pop ax
 
 ret
-
-
 
 ;this is the location in memory where digits are written to by the intstr function
 
@@ -65,7 +61,7 @@ mov dx,0;
 div word [radix]
 cmp dx,10
 jb decimal_digit
-jge hexadecimal_digit
+jnb hexadecimal_digit
 
 decimal_digit: ;we go here if it is only a digit 0 to 9
 add dx,'0'
@@ -200,7 +196,7 @@ jmp strint_end
 process_char:
 
 cmp cx,[radix] ;compare char with radix
-jae strint_end ;if this value is above or equal to radix, it is too high despite being a valid digit/alpha
+jnb strint_end ;if this value is above or equal to radix, it is too high despite being a valid digit/alpha
 
 mov dx,0 ;zero dx because it is used in mul sometimes
 mul word [radix]    ;mul ax with radix
@@ -226,7 +222,6 @@ ret
 ;these help me save code when printing lots of things for debugging
 
 space db ' ',0
-line db 0Dh,0Ah,0
 
 putspace:
 push ax
@@ -234,6 +229,8 @@ mov ax,space
 call putstring
 pop ax
 ret
+
+line db 0Dh,0Ah,0
 
 putline:
 push ax
@@ -264,7 +261,7 @@ call putspace
 ret
 
 ;a small function just for the common operation
-;printing an integer followed by a space
+;of printing an integer followed by a space
 ;this saves a few bytes in the assembled code
 
 putint_and_line:
