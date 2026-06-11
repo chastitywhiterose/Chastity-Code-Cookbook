@@ -5,7 +5,7 @@ include 'chastelib64.asm'
 
 main: ; the main function of the assembly program
 
-mov rax,main_string
+mov rax,string0
 call putstring
 
 mov qword[radix],16           ; can choose radix for integer output!
@@ -46,12 +46,16 @@ inc rax
 cmp rax,rbx;
 jnz loop1
 
+mov rax,string0
+call putstring
+
 mov rax, 60 ; invoke SYS_EXIT (kernel opcode 60 on 64 bit systems)
 mov rdi,0   ; return 0 status on exit - 'No Errors'
 syscall
 
 ;A string to test if output works
-main_string db 'This program is the official test suite for the Linux Assembly version of chastelib.',0Ah,0
+string0 db 'chastelib test suite for Intel 64-bit Assembly on Linux',0Ah,0
+
 ;test string of integer for input
 input_string_int db '100',0
 
