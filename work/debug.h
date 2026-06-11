@@ -1,19 +1,3 @@
-#include <stdio.h>
-#include "chastelib.h"
-
-#define stack_length 0x10
-int stack[stack_length]; /*stack array of size stack_length*/
-
-/*
-variables named after registers
-
-esp is declared as a pointer because its only purpose in Assembly is managing the stack
-ebp is declared as a pointer to keep track of the original stack pointer address
-
-all other registers are used as normal integers
-*/
-int eax,ebx,ecx,edx,esi,edi,*ebp,*esp;
-
 /*
 a function just for printing the stack
 this is used for debugging
@@ -32,22 +16,12 @@ void debug_putstack()
  }
 }
 
-void push(i)
-{
- esp--;
- *esp=i;
-}
+/*
+a function used for testing the stack
+it pushes, pops, and prints using the debug_putstack function
+*/
 
-int pop()
-{
- int i=*esp;
- *esp=0; /*set the value at [esp] to 0 to delete it*/
- esp++;
- return i;
-}
-
-
-int main(int argc, char **argv)
+int stack_demo(int argc, char **argv)
 {
 
  /*set the radix used for integer display*/
@@ -85,24 +59,3 @@ int main(int argc, char **argv)
  
  return 0;
 }
-
-
-
-
-
-
-
-
-/* print all command line arguments on a separate line */
-
-
-/*
- int x=1;
- while(x!=argc)
- {
-  putstr(argv[x]);
-  putstr("\n");
-  x++;
- }
-*/
-
