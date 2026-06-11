@@ -36,7 +36,7 @@ putstring_strlen_end:
 sub rbx,rax ;subtract start pointer from current pointer to get length of string
 
 ;Write string using Linux Write system call
-;Reference for 32 bit x86 syscalls is below.
+;Reference for 64 bit x86 syscalls is below.
 ;https://www.chromium.org/chromium-os/developer-library/reference/linux-constants/syscalls/#x86_64-64-bit
 
 mov rdx,rbx      ;number of bytes to write
@@ -78,7 +78,7 @@ mov rdx,0;
 div qword [radix]
 cmp rdx,10
 jb decimal_digit
-jge hexadecimal_digit
+jnb hexadecimal_digit
 
 decimal_digit: ;we go here if it is only a digit 0 to 9
 add rdx,'0'
@@ -203,7 +203,7 @@ jmp strint_end
 process_char:
 
 cmp rcx,[radix] ;compare char with radix
-jae strint_end ;if this value is above or equal to radix, it is too high despite being a valid digit/alpha
+jnb strint_end ;if this value is above or equal to radix, it is too high despite being a valid digit/alpha
 
 mov rdx,0 ;zero rdx because it is used in mul sometimes
 mul qword[radix]    ;mul rax with radix

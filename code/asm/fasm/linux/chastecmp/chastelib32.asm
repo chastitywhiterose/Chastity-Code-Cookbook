@@ -76,7 +76,7 @@ mov edx,0;
 div dword [radix]
 cmp edx,10
 jb decimal_digit
-jae hexadecimal_digit
+jnb hexadecimal_digit
 
 decimal_digit: ;we go here if it is only a digit 0 to 9
 add edx,'0'
@@ -201,7 +201,7 @@ jmp strint_end
 process_char:
 
 cmp ecx,[radix] ;compare char with radix
-jae strint_end ;if this value is above or equal to radix, it is too high despite being a valid digit/alpha
+jnb strint_end ;if this value is above or equal to radix, it is too high despite being a valid digit/alpha
 
 mov edx,0 ;zero edx because it is used in mul sometimes
 mul  dword [radix] ;mul eax with radix

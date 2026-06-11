@@ -238,7 +238,7 @@ file_offset dw 0,0
 bytes_read dw 0
 
 
-;function to move ahead to the next art
+;function to move ahead to the next arg
 ;only works after the filter has been applied to turn all spaces into zeroes
 
 get_next_arg:
@@ -416,7 +416,7 @@ mov dx,0;
 div word [radix]
 cmp dx,10
 jb decimal_digit
-jge hexadecimal_digit
+jnb hexadecimal_digit
 
 decimal_digit: ;we go here if it is only a digit 0 to 9
 add dx,'0'
@@ -507,7 +507,7 @@ ret
 
 ; About the strint_32 function
 
-;this function converts a string pointed to by ax into an integer returned in eax instead
+;this function converts a string pointed to by ax into an integer returned in ax instead
 ;it is a little complicated because it has to account for whether the character in
 ;a string is a decimal digit 0 to 9, or an alphabet character for bases higher than ten
 ;it also checks for both uppercase and lowercase letters for bases 11 to 36
@@ -540,7 +540,7 @@ strint_32:
 ;initialize new variables added to this function
 mov word[extra_word],0
 
-mov bx,ax ;copy string address from ax to bx because eax will be replaced soon!
+mov bx,ax ;copy string address from ax to bx because ax will be replaced soon!
 mov ax,0
 
 read_strint_32:
@@ -597,7 +597,7 @@ jmp strint_end_32
 process_char_32:
 
 cmp cx,[radix] ;compare char with radix
-jae strint_end_32 ;if this value is above or equal to radix, it is too high despite being a valid digit/alpha
+jnb strint_end_32 ;if this value is above or equal to radix, it is too high despite being a valid digit/alpha
 
 ;before we process the character, to avoid data loss, we shift bits into the [extra_word]
 push ax
@@ -607,7 +607,7 @@ add [extra_word],ax
 pop ax
 
 mov dx,0 ;zero edx because it is used in mul sometimes
-mul word [radix]    ;mul eax with radix
+mul word [radix]    ;mul ax with radix
 add ax,cx
 
 jmp read_strint_32 ;jump back and continue the loop if nothing has exited it
