@@ -42,36 +42,52 @@ int main(int argc, char **argv)
   esp=stack+stack_length;
   ebp=esp; /*backup address of esp to ebp*/
 
- push(1);  
- push(2);  
- push(4);  
- push(8);  
-
- push(360); /*push a wrong number to the stack*/
- pop();     /*pop it off the stack to show it is deleted*/
-
- push(16);  
- push(32);  
- push(64);  
- push(128);  
- 
  /*
  Now the fun begins. Each argument is processed as a number or command
  */
 
  while(x!=argc)
  {
+  /*
   putstr(argv[x]);
   putstr("\n");
+  */
   
   /*first, we check for commands before we check for integers*/
   
   if(!strcmp(argv[x],"add"))
   {
-   printf("The add command adds the top two numbers on the stack.\n");
-   eax=pop();
+   /*putstr("The add command adds using the top two numbers on the stack.\n");*/
    ebx=pop();
+   eax=pop();
    eax+=ebx;
+   push(eax);
+  }
+  
+  else if(!strcmp(argv[x],"mul"))
+  {
+   /*putstr("The mul command multiplies using the top two numbers on the stack.\n");*/
+   ebx=pop();
+   eax=pop();
+   eax*=ebx;
+   push(eax);
+  }
+
+  else if(!strcmp(argv[x],"sub"))
+  {
+   /*putstr("The sub command subtracts using the top two numbers on the stack.\n");*/
+   ebx=pop();
+   eax=pop();
+   eax-=ebx;
+   push(eax);
+  }
+
+  else if(!strcmp(argv[x],"div"))
+  {
+   /*putstr("The div command divides using the top two numbers on the stack.\n");*/
+   ebx=pop();
+   eax=pop();
+   eax/=ebx;
    push(eax);
   }
 
@@ -83,12 +99,17 @@ int main(int argc, char **argv)
   {
    putstr("Last argument was not a number, but it could be a command!\n");
   }
+  else
+  {
+   /*
+   putstr("number returned by strint(argv[x]) is: ");
+   putint(eax);
+   putstr("\n");
+   putstr("It will be pushed to the stack.");
+   */
+   push(eax);
+  }
   
-  putstring("number returned by strint(argv[x]) is: ");
-  putint(eax);
-  putstr("\n");
-
-  push(eax);
   }
   
   x++;
@@ -103,16 +124,5 @@ int main(int argc, char **argv)
  
  return 0;
 }
-
-
-
-
-
-
-
-
-/* print all command line arguments on a separate line */
-
-
 
 
