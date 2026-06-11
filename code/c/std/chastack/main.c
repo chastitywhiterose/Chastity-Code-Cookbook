@@ -14,24 +14,6 @@ all other registers are used as normal integers
 */
 int eax,ebx,ecx,edx,esi,edi,*ebp,*esp;
 
-/*
-a function just for printing the stack
-this is used for debugging
-*/
-void debug_putstack()
-{
- int x=0;
- while(x<stack_length)
- {
-  putstr("[");
-  putint(x);
-  putstr("] ");
-  putint(stack[x]);
-  putstr("\n");
-  x++;
- }
-}
-
 void push(i)
 {
  esp--;
