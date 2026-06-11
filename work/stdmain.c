@@ -2,11 +2,11 @@
 This is the original C version of chastehex upon which the Assembly versions were based.
 */
 
-#include <unistd.h>
-#include <fcntl.h>
-#include "chastelib-unistd.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include "chastelib.h"
 
-int fd; /*file descriptor used in unistd*/
+FILE* fp; /*file pointer*/
 char bytes[17]; /*the byte buffer for hex and text dumping*/
 int count=1; /*keeps track of how many bytes were read during each row*/
 
@@ -40,7 +40,7 @@ void hexdump()
 {
  int x,address=0;
  x=0;
- while((count=read(fd,bytes,16)))
+ while((count=fread(bytes,1,16,fp)))
  {
   int_width=8;
   putint(address);
@@ -83,22 +83,18 @@ int main(int argc, char *argv[])
 
  if(argc>1)
  {
-  /*
-   open the file for reading or writing because
-   chastehex is unique in that it can do both
-  */
-  fd=open(argv[1],O_RDWR);
-  if(fd==-1)
+  fp=fopen(argv[1],"rb+");
+  if(fp==NULL)
   {
-   putstr("Failed to open file\n");
-   _exit(1); 
+   putstr(argv[1]);
+   putstr("\nFailed to open file\n");
+   return 1;
   }
   else
   {
    putstr(argv[1]);
    putstr("\n");
   }
- 
  }
 
  if(argc==2)
@@ -109,25 +105,17 @@ int main(int argc, char *argv[])
  if(argc>2)
  {
   x=strint(argv[2]); /*extract a number from the argument string after the filename*/
-  lseek(fd,x,SEEK_SET); /*seek to the address given in argument*/
+  fseek(fp,x,SEEK_SET); /*seek to the address given in argument*/
  }
 
  /*read a byte at address of second arg*/
  if(argc==3)
  {
-
-  count=read(fd,&c,1);
+  c=fgetc(fp);
   int_width=8;
-  putstr(intstr(x));
+  putint(x);
   putstr(" ");
-  /*
-   according to the read function manual page "man 2 read",
-   a return of 0 means the end of file and
-   a return of -1 means some kind of error
-   therefore, anything less than 1 means we should stop reading
-   and assume End Of File by printing EOF
-  */
-  if(count<1){putstr("EOF");}
+  if(c==EOF){putstr("EOF");}
   else
   {
    int_width=2;
@@ -149,15 +137,14 @@ int main(int argc, char *argv[])
    int_width=2;
    putint(c);
    putstr("\n");
-   write(fd,&c,1);
+   fputc(c,fp);
    x++;
    argx++;
   }
  }
  
- close(fd);
- _exit(0); 
+ fclose(fp);
+ return 0;
 }
 
 /* gcc -Wall -ansi -pedantic main.c -o chastehex */
-

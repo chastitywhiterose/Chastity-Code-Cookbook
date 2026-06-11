@@ -1,3 +1,7 @@
+/*
+This is the original C version of chastehex upon which the Assembly versions were based.
+*/
+
 #include <unistd.h>
 #include <fcntl.h>
 #include "chastelib-unistd.h"
@@ -127,7 +131,7 @@ int main(int argc, char *argv[])
   else
   {
    int_width=2;
-   putstr(intstr(c));
+   putint(c);
   }
   putstr("\n");
  }
@@ -140,10 +144,10 @@ int main(int argc, char *argv[])
   {
    c=strint(argv[argx]);
    int_width=8;
-   putstr(intstr(x));
+   putint(x);
    putstr(" ");
    int_width=2;
-   putstr(intstr(c));
+   putint(c);
    putstr("\n");
    write(fd,&c,1);
    x++;
