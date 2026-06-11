@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include "chastelib.h"
 
 #define stack_length 0x10
@@ -31,6 +32,7 @@ int pop()
 
 int main(int argc, char **argv)
 {
+ int x=1;
 
  /*set the radix used for integer display*/
  radix=10;
@@ -53,10 +55,44 @@ int main(int argc, char **argv)
  push(64);  
  push(128);  
  
- putstr("printing the stack\n");
- debug_putstack();
- putstr("end of debug stack\n");
- 
+ /*
+ Now the fun begins. Each argument is processed as a number or command
+ */
+
+ while(x!=argc)
+ {
+  putstr(argv[x]);
+  putstr("\n");
+  
+  /*first, we check for commands before we check for integers*/
+  
+  if(!strcmp(argv[x],"add"))
+  {
+   printf("The add command adds the top two numbers on the stack.\n");
+   eax=pop();
+   ebx=pop();
+   eax+=ebx;
+   push(eax);
+  }
+
+  else /*try to get a number and push it to the stack*/
+  {
+   
+  eax=strint(argv[x]); /*get a number from the string*/
+  if(strint_errors)
+  {
+   putstr("Last argument was not a number, but it could be a command!\n");
+  }
+  
+  putstring("number returned by strint(argv[x]) is: ");
+  putint(eax);
+  putstr("\n");
+
+  push(eax);
+  }
+  
+  x++;
+ }
  
  while(esp<ebp)
  {
@@ -78,13 +114,5 @@ int main(int argc, char **argv)
 /* print all command line arguments on a separate line */
 
 
-/*
- int x=1;
- while(x!=argc)
- {
-  putstr(argv[x]);
-  putstr("\n");
-  x++;
- }
-*/
+
 
