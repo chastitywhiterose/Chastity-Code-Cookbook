@@ -10,6 +10,11 @@ He provides it free of charge on his website
 
 I went from knowing only Intel Assembly language to being a noob as RISC-V that can write some pretty cool programs. I learned everything from Robert's book and he is a great teacher.
 
-I will also list any helpful references I find when I need to look up an instruction for RISC-V processors.
+I will also list any helpful references I find when I need to look up an instruction for RISC-V processors. Some of these were linked in Robert's book.
 
-https://projectf.io/posts/riscv-cheat-sheet/
+<https://raw.githubusercontent.com/rswinkle/riscv_book/master/references/riscv_greensheet.pdf>
+<https://raw.githubusercontent.com/rswinkle/riscv_book/master/references/reference-card.pdf>
+<https://raw.githubusercontent.com/rswinkle/riscv_book/master/references/riscv_greensheet_large.pdf>
+
+<https://projectf.io/posts/riscv-cheat-sheet/>
+
