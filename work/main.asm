@@ -56,6 +56,12 @@ int 0x80
 
 argc dd 0
 
+string_add db 'add',0
+string_sub db 'sub',0
+
+string_nan db 'Last argument was not a number. Is it a command?',0 ;
+
+
 strcmp:
 
 mov eax,0
