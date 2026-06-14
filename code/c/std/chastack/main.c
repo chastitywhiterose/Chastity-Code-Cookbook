@@ -84,10 +84,19 @@ int main(int argc, char **argv)
 
   else if(!strcmp(argv[x],"div"))
   {
-   /*putstr("The div command divides using the top two numbers on the stack.\n");*/
+   /*putstr("The div command divides using the top two numbers on the stack and leaves the quotient\n");*/
    ebx=pop();
    eax=pop();
    eax/=ebx;
+   push(eax);
+  }
+  
+  else if(!strcmp(argv[x],"rem"))
+  {
+   /*putstr("The rem command divides using the top two numbers on the stack and leaves the remainder.\n");*/
+   ebx=pop();
+   eax=pop();
+   eax%=ebx;
    push(eax);
   }
 
