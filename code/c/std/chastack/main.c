@@ -2,7 +2,7 @@
 #include <string.h>
 #include "chastelib.h"
 
-#define stack_length 0x10
+#define stack_length 0x100
 int stack[stack_length]; /*stack array of size stack_length*/
 
 /*
@@ -24,7 +24,7 @@ void push(i)
 int pop()
 {
  int i=*esp;
- *esp=0; /*set the value at [esp] to 0 to delete it*/
+ *esp=0; /*optionally set the value at [esp] to 0 to delete it*/
  esp++;
  return i;
 }
@@ -121,7 +121,7 @@ int main(int argc, char **argv)
   putstr("\n");
   esp++;
  }
- 
+
  return 0;
 }
 

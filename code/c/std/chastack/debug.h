@@ -16,6 +16,18 @@ void debug_putstack()
  }
 }
 
+void stack_address()
+{
+ /*display the addresses of the start of the stack and the current esp*/
+ radix=16;
+  
+ putint((long int)stack);
+ putstr("\n");
+
+ putint((long int)esp);
+ putstr("\n");
+}
+
 /*
 a function used for testing the stack
 it pushes, pops, and prints using the debug_putstack function
