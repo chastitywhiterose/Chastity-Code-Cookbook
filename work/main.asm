@@ -21,8 +21,8 @@ mov eax,[argc]
 cmp eax,0
 jnz usearg ;if arguments are available, use the main loop
 
-
-
+mov eax, string_help
+call putstring
 
 usearg:
 
@@ -145,7 +145,10 @@ string_mul db 'mul',0
 string_div db 'div',0
 string_rem db 'rem',0
 
-string_nan db 'Last argument was not a number. Is it a command?',0 ;
+string_help db 'chastack is a stack based command line calculator',0xA
+            db 'Numbers are pushed on the stack and commands can do math.',0xA
+            db 'Commands are add,sub,mul,div,rem',0xA
+            db 'Example: "chastack 3 4 5 add mul"',0xA,0,0
 
 ;strcmp compares the string at esi to the one at edi
 ;eax returns 0 if the strings are the same and 1 if different
