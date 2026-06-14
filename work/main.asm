@@ -21,17 +21,30 @@ putarg:
 cmp [argc],0         ;check for remaining arguments
 jz putarg_end        ;if none, end the loop and stop printing
 pop eax              ;pop the next argument off the stack
-call putstr_and_line ;print the string and a new line
+;call putstr_and_line ;print the string and a new line
 
 ;Now we process the string we got from the stack
 
+;first, we will try testing for commands
+command:
+
+mov esi,eax ;save this string address in esi for string comparisons later
+
+
+
+num_push:
+
 call strint ;try to get a number from the string pointed to by eax
-;call putint_and_line
+cmp [strint_error],0 ;did we have zero errors in the strint function?
+jnz num_push_end     ;if there were errors, do not push this to stack
 
 ;push the number to the fake stack
 add ebp,4     ;add 4 bytes for 32 bit value
 mov [ebp],eax
 
+num_push_end:
+
+;end of command processing
 
 dec [argc]           ;subtract 1 from argument count
 jmp putarg           ;jump to the beginning of the loop
@@ -56,6 +69,7 @@ int 0x80
 
 argc dd 0
 
+string_nul db 'add',0 ;for checking if the string was meant to represent zero
 string_add db 'add',0
 string_sub db 'sub',0
 
