@@ -8,13 +8,21 @@ main:
 mov dword[radix],10    ;I can choose the radix for integer output!
 mov dword[int_width],1 ;and the width of each integer for padded zeros
 
+mov ebp,chastack      ;mov the address of the beginning of the stack to ebp registers
+
 pop eax                ;pop the number of arguments from the stack
 mov [argc],eax         ;save the argument count for later
 
 pop eax                ;pop argument 0 (name of the program)
 dec [argc]             ;subtract 1 from argument count
 
-mov ebp,chastack      ;mov the address of the beginning of the stack to ebp registers
+mov eax,[argc]
+;call putint_and_line
+cmp eax,0
+jnz usearg ;if arguments are available, use the main loop
+
+mov eax, string_help
+call putstring
 
 usearg:
 
@@ -137,8 +145,28 @@ string_mul db 'mul',0
 string_div db 'div',0
 string_rem db 'rem',0
 
-string_nan db 'Last argument was not a number. Is it a command?',0 ;
+string_help db 'chastack is a stack based command line calculator',0xA
+            db 'Numbers are pushed on the stack and commands can do math.',0xA
+            db 'Commands are add,sub,mul,div,rem',0xA
+            db 'Example: "chastack 3 4 5 add mul"',0xA,0,0
 
+;strcmp compares the string at esi to the one at edi
+;eax returns 0 if the strings are the same and 1 if different
+;the algorithm is simple but I will explain it for those who are confused
+
+;eax is initialized to zero
+;a byte from each string is loaded into the al and bl registers
+;the bytes are compared. if they are different, then we jump to the end
+;However, if they are the same, then we check if one of them is zero
+;for this purpose it doesn't matter whether we compare al or bl with zero
+;because it is known that they are the same if the jnz did not take place
+;if it is zero, this also jumps to the end of the function
+;If neither jump took place, then we jump to the start of the loop
+;but when the function finally ends bl will be subtracted from al
+;this ensures that the function returns zero if the final characters are the same
+;ebx,esi,and edi are preserved but eax is the return value
+;also, the sub instruction at the end of the function also updates the flags
+;so you can "jz" or "jnz" to a label after calling this function based on results
 
 strcmp:
 
