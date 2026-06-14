@@ -5,22 +5,22 @@ include 'chastelib32.asm'
 
 main:
 
-mov dword[radix],10       ;I can choose the radix for integer output!
-mov dword[int_width],1    ;and the width of each integer for padded zeros
+mov dword[radix],10    ;I can choose the radix for integer output!
+mov dword[int_width],1 ;and the width of each integer for padded zeros
 
-pop eax              ;pop the number of arguments from the stack
-mov [argc],eax       ;save the argument count for later
+pop eax                ;pop the number of arguments from the stack
+mov [argc],eax         ;save the argument count for later
 
-pop eax              ;pop argument 0 (name of the program)
-dec [argc]           ;subtract 1 from argument count
+pop eax                ;pop argument 0 (name of the program)
+dec [argc]             ;subtract 1 from argument count
 
-mov ebp,chastack     ;mov the address of the beginning of the stack to ebp registers
+mov ebp,chastack      ;mov the address of the beginning of the stack to ebp registers
 
 usearg:
 
-cmp [argc],0         ;check for remaining arguments
-jz usearg_end        ;if none, end the loop and stop printing
-pop eax              ;pop the next argument off the stack
+cmp [argc],0          ;check for remaining arguments
+jz usearg_end         ;if none, end the loop and stop printing
+pop eax               ;pop the next argument off the stack
 ;call putstr_and_line ;print the string and a new line
 
 mov esi,eax ;save this string address in esi for string comparisons later
@@ -33,29 +33,55 @@ try_add:
 mov edi,string_add
 call strcmp
 jnz try_sub
-;do this command
 mov eax,[ebp]
 sub ebp,4 ;subtract 4 bytes for 32 bit value
 add [ebp],eax
 jmp num_push_end ;skip number push because command happened
 
-
 try_sub:
 mov edi,string_sub
 call strcmp
 jnz try_mul
-;do this command
 mov eax,[ebp]
 sub ebp,4 ;subtract 4 bytes for 32 bit value
 sub [ebp],eax
 jmp num_push_end ;skip number push because command happened
 
 try_mul:
+mov edi,string_mul
+call strcmp
+jnz try_div
+mov ebx,[ebp]
+sub ebp,4 ;subtract 4 bytes for 32 bit value
+mov eax,[ebp]
+mov edx,0 ;zero edx before multiply
+mul ebx   ;multiply eax with value in ebx
+mov [ebp],eax
+jmp num_push_end ;skip number push because command happened
 
 try_div:
+mov edi,string_div
+call strcmp
+jnz try_rem
+mov ebx,[ebp]
+sub ebp,4 ;subtract 4 bytes for 32 bit value
+mov eax,[ebp]
+mov edx,0 ;zero edx before divide
+div ebx   ;divide eax with value in ebx
+mov [ebp],eax ;store quotient on stack
+jmp num_push_end ;skip number push because command happened
 
 try_rem:
-
+mov edi,string_rem
+call strcmp
+jnz command_end
+mov ebx,[ebp]
+sub ebp,4 ;subtract 4 bytes for 32 bit value
+mov eax,[ebp]
+mov edx,0 ;zero edx before divide
+div ebx   ;divide eax with value in ebx
+mov [ebp],edx ;store remainder on stack
+jmp num_push_end ;skip number push because command happened
 
 command_end:
 
@@ -72,7 +98,6 @@ call putline
 jmp num_push_end ;skip the push because this can't be used
 
 num_push:
-
 
 ;push the number to the fake stack
 add ebp,4     ;add 4 bytes for 32 bit value
@@ -108,6 +133,9 @@ argc dd 0
 string_err db 'Error: invalid number or command: ',0 ;Generic error message
 string_add db 'add',0
 string_sub db 'sub',0
+string_mul db 'mul',0
+string_div db 'div',0
+string_rem db 'rem',0
 
 string_nan db 'Last argument was not a number. Is it a command?',0 ;
 
@@ -150,4 +178,3 @@ ret
 ;I name it "chastack" for Chastity's stack.
 
 chastack: rd 0x100
-

@@ -142,6 +142,8 @@ ret
 ;finally, it checks if that letter makes sense for the base.
 ;For example, G to Z cannot be used in hexadecimal, only A to F can
 ;The purpose of writing this function was to be able to accept user input as integers
+;This function is improved with error checking and uses the new strint_error variable
+;The program can check this value after the call and see how many errors happened.
 
 strint_error db 0 ;declare a byte variable that keeps track of errors
 
