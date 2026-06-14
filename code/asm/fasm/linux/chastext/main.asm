@@ -327,4 +327,4 @@ string_search rd 1 ; place to hold the search string pointer
 string_replace rd 1 ; place to hold the replacement string pointer
 
 ;where we will store data from the file
-byte_array db 0xAA dup 0
+byte_array db 0xA4 dup 0
