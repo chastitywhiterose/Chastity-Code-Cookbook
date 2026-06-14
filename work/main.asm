@@ -16,27 +16,63 @@ dec [argc]           ;subtract 1 from argument count
 
 mov ebp,chastack     ;mov the address of the beginning of the stack to ebp registers
 
-putarg:
+usearg:
 
 cmp [argc],0         ;check for remaining arguments
-jz putarg_end        ;if none, end the loop and stop printing
+jz usearg_end        ;if none, end the loop and stop printing
 pop eax              ;pop the next argument off the stack
 ;call putstr_and_line ;print the string and a new line
 
-;Now we process the string we got from the stack
+mov esi,eax ;save this string address in esi for string comparisons later
 
+;Now we process the string we got from the stack
 ;first, we will try testing for commands
 command:
 
-mov esi,eax ;save this string address in esi for string comparisons later
+try_add:
+mov edi,string_add
+call strcmp
+jnz try_sub
+;do this command
+mov eax,[ebp]
+sub ebp,4 ;subtract 4 bytes for 32 bit value
+add [ebp],eax
+jmp num_push_end ;skip number push because command happened
 
 
+try_sub:
+mov edi,string_sub
+call strcmp
+jnz try_mul
+;do this command
+mov eax,[ebp]
+sub ebp,4 ;subtract 4 bytes for 32 bit value
+sub [ebp],eax
+jmp num_push_end ;skip number push because command happened
+
+try_mul:
+
+try_div:
+
+try_rem:
+
+
+command_end:
+
+mov eax,esi ;mov the string back to eax for processing numbers
+call strint ;try to get a number from the string pointed to by eax
+cmp [strint_error],0 ;did we have zero errors in the strint function?
+jz num_push         ;if there were no errors, push this to stack
+
+mov eax,string_err
+call putstring
+mov eax,esi
+call putstring
+call putline
+jmp num_push_end ;skip the push because this can't be used
 
 num_push:
 
-call strint ;try to get a number from the string pointed to by eax
-cmp [strint_error],0 ;did we have zero errors in the strint function?
-jnz num_push_end     ;if there were errors, do not push this to stack
 
 ;push the number to the fake stack
 add ebp,4     ;add 4 bytes for 32 bit value
@@ -47,9 +83,9 @@ num_push_end:
 ;end of command processing
 
 dec [argc]           ;subtract 1 from argument count
-jmp putarg           ;jump to the beginning of the loop
+jmp usearg           ;jump to the beginning of the loop
 
-putarg_end:
+usearg_end:
 
 putstack:
 cmp ebp,chastack ;is ebp equal to the address of stack start?
@@ -69,7 +105,7 @@ int 0x80
 
 argc dd 0
 
-string_nul db 'add',0 ;for checking if the string was meant to represent zero
+string_err db 'Error: invalid number or command: ',0 ;Generic error message
 string_add db 'add',0
 string_sub db 'sub',0
 
@@ -77,6 +113,10 @@ string_nan db 'Last argument was not a number. Is it a command?',0 ;
 
 
 strcmp:
+
+push ebx
+push esi
+push edi
 
 mov eax,0
 
@@ -98,6 +138,10 @@ jmp strcmp_start
 
 strcmp_end:
 sub al,bl
+
+pop edi
+pop esi
+pop ebx
 
 ret
 
