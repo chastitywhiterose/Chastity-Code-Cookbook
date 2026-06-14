@@ -268,10 +268,10 @@ ret
 
 end_of_file_string db 'EOF',0
 
-help_message db 'chastehex by Chastity White Rose',0Ah,0Ah
-db 'hexdump a file:',0Ah,0Ah,9,'chastehex file',0Ah,0Ah
-db 'read a byte:',0Ah,0Ah,9,'chastehex file address',0Ah,0Ah
-db 'write a byte:',0Ah,0Ah,9,'chastehex file address value',0Ah,0Ah
+help_message db 'chastehex by Chastity White Rose',0Ah
+db 'hexdump a file:',0Ah,9,'chastehex file',0Ah
+db 'read a byte:',0Ah,9,'chastehex file address',0Ah
+db 'write a byte:',0Ah,9,'chastehex file address value',0Ah
 db 'The file must exist',0Ah,0
 
 ;variables for managing arguments
@@ -282,5 +282,8 @@ bytes_read dq 0
 file_offset dq 0
 open_error_message db 'error while opening file',0
 
+db 2 dup 0 ;fill with extra space to match 1530 executable size
+
 ;where we will store data from the file
 byte_array db 17 dup ?
+

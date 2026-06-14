@@ -164,7 +164,7 @@ int 80h
 
 help_message db 'chastecmp by Chastity White Rose',0Ah,0Ah
 db 9,'chastecmp file1 file2',0Ah,0Ah
-db 'Bytes that differ between files are shown in hexadecimal',0Ah
+db 'Differing bytes are shown in hexadecimal',0Ah
 db 'until the EOF has been reached.',0Ah,0
 
 
@@ -172,7 +172,7 @@ file_open db ' opened',0
 file_error db ' error',0
 end_of_file_string db ' EOF',0
 
-db 6 dup 0 ;fill with extra space to match 1280 executable size
+db 8 dup 0 ;fill with extra space to match 1280 executable size
 
 ;variables for managing arguments and files
 argc dd ?

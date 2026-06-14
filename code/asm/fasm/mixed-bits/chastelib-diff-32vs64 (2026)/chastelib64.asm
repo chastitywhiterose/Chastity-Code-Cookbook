@@ -14,8 +14,6 @@
    
 ; Now, the source of the functions begins, with comments included for parts that I felt needed explanation.
 
-stdout dq 1 ; variable for standard output so that it can theoretically be redirected
-
 putstring:
 
 push rax
@@ -36,12 +34,12 @@ putstring_strlen_end:
 sub rbx,rax ;subtract start pointer from current pointer to get length of string
 
 ;Write string using Linux Write system call
-;Reference for 32 bit x86 syscalls is below.
+;Reference for 64 bit x86 syscalls is below.
 ;https://www.chromium.org/chromium-os/developer-library/reference/linux-constants/syscalls/#x86_64-64-bit
 
 mov rdx,rbx      ;number of bytes to write
 mov rsi,rax      ;pointer/address of string to write
-mov rdi,[stdout] ;write to the STDOUT file
+mov rdi,1        ;write to the STDOUT file
 mov rax,1        ;invoke SYS_WRITE (kernel opcode 1 on 64 bit systems)
 syscall          ;system call to write the message
 
@@ -55,15 +53,12 @@ ret ; this is the end of the putstring function return to calling location
 ; This is the location in memory where digits are written to by the intstr function
 ; The string of bytes and settings such as the radix and width are global variables defined below.
 
-int_string     db 64 dup '?' ;enough bytes to hold maximum size 64-bit binary integer
+int_string db 64 dup '?' ;enough bytes to hold maximum size 64-bit binary integer
 
-; this is the end of the integer string optional line feed and terminating zero
-; clever use of this label can change the ending to be a different character when needed
-
-int_newline db 0Ah,0
+int_string_end db 0 ;zero byte terminator for the integer string
 
 radix dq 2 ;radix or base for integer output. 2=binary, 8=octal, 10=decimal, 16=hexadecimal
-int_width dq 8
+int_width dq 8 ;default width of integers. Extra zeros prefixed if more than 1
 
 ;this function creates a string of the integer in rax
 ;it uses the above radix variable to determine base from 2 to 36
@@ -72,7 +67,7 @@ int_width dq 8
 
 intstr:
 
-mov rbx,int_newline-1 ;find address of lowest digit(just before the newline 0Ah)
+mov rbx,int_string_end-1 ;find address of lowest digit(just before the newline 0Ah)
 mov rcx,1
 
 digits_start:
@@ -81,7 +76,7 @@ mov rdx,0;
 div qword [radix]
 cmp rdx,10
 jb decimal_digit
-jge hexadecimal_digit
+jnb hexadecimal_digit
 
 decimal_digit: ;we go here if it is only a digit 0 to 9
 add rdx,'0'
@@ -115,7 +110,6 @@ mov rax,rbx ; now that the digits have been written to the string, display it!
 
 ret
 
-
 ; function to print string form of whatever integer is in rax
 ; The radix determines which number base the string form takes.
 ; Anything from 2 to 36 is a valid radix
@@ -148,11 +142,16 @@ ret
 ;finally, it checks if that letter makes sense for the base.
 ;For example, G to Z cannot be used in hexadecimal, only A to F can
 ;The purpose of writing this function was to be able to accept user input as integers
+;This function is improved with error checking and uses the new strint_error variable
+;The program can check this value after the call and see how many errors happened.
+
+strint_error db 0 ;declare a byte variable that keeps track of errors
 
 strint:
 
 mov rbx,rax ;copy string address from rax to rbx because rax will be replaced soon!
 mov rax,0
+mov [strint_error],0 ;set errors to 0 at the start of this function
 
 read_strint:
 mov rcx,0 ; zero rcx so only lower 8 bits are used
@@ -173,8 +172,7 @@ sub cl,'0'
 jmp process_char
 
 not_digit:
-;it isn't a digit, but it could be perhaps and alphabet character
-;which is a digit in a higher base
+;it isn't a digit, but it could an alphabet character which is a digit in a higher base
 
 ;if char is below 'A' or above 'Z', it is outside the range of these and is not capital letter
 cmp cl,'A'
@@ -202,29 +200,31 @@ jmp process_char
 
 not_lower:
 
-;if we have reached this point, result invalid and end function
-jmp strint_end
+;if we have reached this point, result invalid and end function with error
+jmp strint_end_error
 
 process_char:
 
 cmp rcx,[radix] ;compare char with radix
-jae strint_end ;if this value is above or equal to radix, it is too high despite being a valid digit/alpha
+jnb strint_end_error ;if this value is above or equal to radix, it is too high despite being a valid digit/alpha
 
 mov rdx,0 ;zero rdx because it is used in mul sometimes
-mul [radix]    ;mul rax with radix
+mul qword [radix] ;mul rax with radix
 add rax,rcx
 
 jmp read_strint ;jump back and continue the loop if nothing has exited it
 
-strint_end:
+strint_end_error: ;we jump here if there was an error with one of the chars
+inc [strint_error] ;increment error counter because char invalid
+
+strint_end: ;we jump here when no errors happened
 
 ret
 
-;the next utility functions simply print a space or a newline
-;these help me save code when printing lots of things for debugging
+;The utility functions below simply print a space or a newline.
+;these help me save code when printing lots of strings and integers.
 
-space db ' ',0
-line db 0Dh,0Ah,0
+space db ' ',0 ;a string containing only a space
 
 putspace:
 push rax
@@ -232,6 +232,13 @@ mov rax,space
 call putstring
 pop rax
 ret
+
+line db 0Ah,0 ;a string containing only a newline
+
+;the next function which pushes rax to the stack
+;moves the address of the line string and prints it with putstring
+;then it pops the original value of rax back from the stack before the function returns
+;this allows me to print a newline anywhere in the code without a single register changing
 
 putline:
 push rax
@@ -252,3 +259,33 @@ call putstring
 pop rax
 ret
 
+;a small function just for the common operation
+;printing an integer followed by a space
+;this saves a few bytes in the assembled code
+;by reducing the number of function calls in the main program
+
+putint_and_space:
+call putint
+call putspace
+ret
+
+;a small function just for the common operation
+;printing an integer followed by a line feed
+;this saves a few bytes in the assembled code
+;by reducing the number of function calls in the main program
+
+putint_and_line:
+call putint
+call putline
+ret
+
+;a small function just for the common operation
+;printing a string followed by a line feed
+;this saves a few bytes in the assembled code
+;by reducing the number of function calls in the main program
+;it also means we don't need to include a newline in every string!
+
+putstr_and_line:
+call putstring
+call putline
+ret
