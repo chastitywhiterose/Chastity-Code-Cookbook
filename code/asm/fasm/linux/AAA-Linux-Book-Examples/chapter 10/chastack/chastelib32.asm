@@ -142,11 +142,16 @@ ret
 ;finally, it checks if that letter makes sense for the base.
 ;For example, G to Z cannot be used in hexadecimal, only A to F can
 ;The purpose of writing this function was to be able to accept user input as integers
+;This function is improved with error checking and uses the new strint_error variable
+;The program can check this value after the call and see how many errors happened.
+
+strint_error db 0 ;declare a byte variable that keeps track of errors
 
 strint:
 
 mov ebx,eax ;copy string address from eax to ebx because eax will be replaced soon!
 mov eax,0
+mov [strint_error],0 ;set errors to 0 at the start of this function
 
 read_strint:
 mov ecx,0 ; zero ecx so only lower 8 bits are used
@@ -195,13 +200,13 @@ jmp process_char
 
 not_lower:
 
-;if we have reached this point, result invalid and end function
-jmp strint_end
+;if we have reached this point, result invalid and end function with error
+jmp strint_end_error
 
 process_char:
 
 cmp ecx,[radix] ;compare char with radix
-jnb strint_end ;if this value is above or equal to radix, it is too high despite being a valid digit/alpha
+jnb strint_end_error ;if this value is above or equal to radix, it is too high despite being a valid digit/alpha
 
 mov edx,0 ;zero edx because it is used in mul sometimes
 mul dword [radix] ;mul eax with radix
@@ -209,7 +214,10 @@ add eax,ecx
 
 jmp read_strint ;jump back and continue the loop if nothing has exited it
 
-strint_end:
+strint_end_error: ;we jump here if there was an error with one of the chars
+inc [strint_error] ;increment error counter because char invalid
+
+strint_end: ;we jump here when no errors happened
 
 ret
 
