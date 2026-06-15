@@ -10,75 +10,75 @@ main:
 mov [radix],16 ; can choose radix for integer input/output!
 mov [int_width],1
 
-pop eax
-mov [argc],eax ;save the argument count for later
+pop rax
+mov [argc],rax ;save the argument count for later
 
 ;first arg is the name of the program. we skip past it
-pop eax
+pop rax
 dec [argc]
-mov eax,[argc]
+mov rax,[argc]
 
-cmp eax,2
+cmp rax,2
 jb help
 mov [file_offset],0 ;assume the offset is 0,beginning of file
 jmp arg_open_file_1
 
 help:
-mov eax,help_message
+mov rax,help_message
 call putstring
 jmp main_end
 
 arg_open_file_1:
-pop eax
-mov [filename1],eax ; save the name of the file we will open to read
+pop rax
+mov [filename1],rax ; save the name of the file we will open to read
 
 call putstring ;print the name of the file we will try opening
 
-mov ecx,0   ;open file in read mode 
-mov ebx,eax ;filename should be in eax before this function was called
-mov eax,5   ;invoke SYS_OPEN (kernel opcode 5)
+mov rcx,0   ;open file in read mode 
+mov rbx,rax ;filename should be in rax before this function was called
+mov rax,5   ;invoke SYS_OPEN (kernel opcode 5)
 int 80h     ;call the kernel
 
-cmp eax,0
+cmp rax,0
 js file_error_display ;end program if the file can't be opened
-mov [filedesc1],eax ; save the file descriptor number for later use
-mov eax,file_open
+mov [filedesc1],rax ; save the file descriptor number for later use
+mov rax,file_open
 call putstr_and_line
 
 arg_open_file_2:
-pop eax
-mov [filename2],eax ; save the name of the file we will open to read
+pop rax
+mov [filename2],rax ; save the name of the file we will open to read
 
 call putstring ;print the name of the file we will try opening
 
-mov ecx,0   ;open file in read mode 
-mov ebx,eax ;filename should be in eax before this function was called
-mov eax,5   ;invoke SYS_OPEN (kernel opcode 5)
+mov rcx,0   ;open file in read mode 
+mov rbx,rax ;filename should be in rax before this function was called
+mov rax,5   ;invoke SYS_OPEN (kernel opcode 5)
 int 80h     ;call the kernel
 
-cmp eax,0
+cmp rax,0
 js file_error_display ;end program if the file can't be opened
-mov [filedesc2],eax ; save the file descriptor number for later use
-mov eax,file_open
+mov [filedesc2],rax ; save the file descriptor number for later use
+mov rax,file_open
 call putstr_and_line
 
 files_compare:
 
 file_1_read_one_byte:
-mov edx,1          ;number of bytes to read
-mov ecx,byte1 ;address to store the bytes
-mov ebx,[filedesc1] ;move the opened file descriptor into EBX
-mov eax,3          ;invoke SYS_READ (kernel opcode 3)
+mov rdx,1          ;number of bytes to read
+mov rcx,byte1 ;address to store the bytes
+mov rbx,[filedesc1] ;move the opened file descriptor into rbx
+mov rax,3          ;invoke SYS_READ (kernel opcode 3)
 int 80h            ;call the kernel
 
-;eax will have the number of bytes read after system call
-mov [file_1_bytes_read],eax ;we save the number of bytes read for later
-cmp eax,0
+;rax will have the number of bytes read after system call
+mov [file_1_bytes_read],rax ;we save the number of bytes read for later
+cmp rax,0
 jnz file_2_read_one_byte ;unless zero bytes were read, proceed to read from next file
 
-mov eax,[filename1]
+mov rax,[filename1]
 call putstring
-mov eax,end_of_file_string
+mov rax,end_of_file_string
 call putstr_and_line
 
 ;Even if we have reached the end of the first file,
@@ -86,20 +86,20 @@ call putstr_and_line
 ;to see if it also ends at the same address
 
 file_2_read_one_byte:
-mov edx,1          ;number of bytes to read
-mov ecx,byte2 ;address to store the bytes
-mov ebx,[filedesc2] ;move the opened file descriptor into EBX
-mov eax,3          ;invoke SYS_READ (kernel opcode 3)
+mov rdx,1          ;number of bytes to read
+mov rcx,byte2 ;address to store the bytes
+mov rbx,[filedesc2] ;move the opened file descriptor into rbx
+mov rax,3          ;invoke SYS_READ (kernel opcode 3)
 int 80h            ;call the kernel
 
-;eax will have the number of bytes read after system call
-mov [file_2_bytes_read],eax ;we save the number of bytes read for later
-cmp eax,0
+;rax will have the number of bytes read after system call
+mov [file_2_bytes_read],rax ;we save the number of bytes read for later
+cmp rax,0
 jnz check_both_bytes ;unless zero bytes were read, proceed to compare bytes from both files
 
-mov eax,[filename2]
+mov rax,[filename2]
 call putstring
-mov eax,end_of_file_string
+mov rax,end_of_file_string
 call putstr_and_line
 
 jmp main_end ;we have reach end of one file and should end program
@@ -107,9 +107,9 @@ jmp main_end ;we have reach end of one file and should end program
 check_both_bytes:
 
 ;we add the number of bytes read from both files
-mov eax,[file_1_bytes_read]
-add eax,[file_2_bytes_read]
-cmp eax,2
+mov rax,[file_1_bytes_read]
+add rax,[file_2_bytes_read]
+cmp rax,2
 jnz main_end
 
 compare_bytes:
@@ -122,11 +122,11 @@ cmp al,bl
 jz bytes_are_same
 
 ;print the address and the bytes at that address
-mov eax,[file_offset]
+mov rax,[file_offset]
 mov [int_width],8
 call putint_and_space
 mov [int_width],2
-mov eax,0
+mov rax,0
 mov al,[byte1]
 call putint_and_space
 mov al,[byte2]
@@ -140,7 +140,7 @@ jmp files_compare
 
 file_error_display:
 
-mov eax,file_error
+mov rax,file_error
 call putstr_and_line
 
 main_end:
@@ -148,16 +148,16 @@ main_end:
 ;this is the end of the program
 ;we close the open files and then use the exit call
 
-mov ebx,[filedesc1] ;file number to close
-mov eax,6   ;invoke SYS_CLOSE (kernel opcode 6)
+mov rbx,[filedesc1] ;file number to close
+mov rax,6   ;invoke SYS_CLOSE (kernel opcode 6)
 int 80h     ;call the kernel
 
-mov ebx,[filedesc2] ;file number to close
-mov eax,6   ;invoke SYS_CLOSE (kernel opcode 6)
+mov rbx,[filedesc2] ;file number to close
+mov rax,6   ;invoke SYS_CLOSE (kernel opcode 6)
 int 80h     ;call the kernel
 
-mov eax, 1  ; invoke SYS_EXIT (kernel opcode 1)
-mov ebx, 0  ; return 0 status on exit - 'No Errors'
+mov rax, 1  ; invoke SYS_EXIT (kernel opcode 1)
+mov rbx, 0  ; return 0 status on exit - 'No Errors'
 int 80h
 
 ;variables for displaying information

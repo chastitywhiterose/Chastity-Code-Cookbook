@@ -4,6 +4,10 @@ title="Chastity's Code Cookbook"
 subtitle="Computer Programming Recipes for Technical Math Nerds"
 author="Chastity White Rose"
 
+push:
+	git add .
+	git commit -m "Code Cookbook Update"
+	git push
 Make-Ebook:
 	pandoc $(source) -o ebook.epub -s --metadata title=$(title) --metadata subtitle=$(subtitle) --metadata author=$(author)
 docx:
@@ -14,7 +18,4 @@ html:
 	pandoc $(source) -o book.html
 html-book:
 	pandoc $(source) -o book.html -s --metadata title=$(title) --metadata subtitle=$(subtitle) --metadata author=$(author)
-push:
-	git add .
-	git commit -m "Code Cookbook Update"
-	git push
+
