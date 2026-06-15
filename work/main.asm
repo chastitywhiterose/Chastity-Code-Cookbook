@@ -175,14 +175,14 @@ end_of_file_string db ' EOF',0
 db 8 dup 0 ;fill with extra space to match 1280 executable size
 
 ;variables for managing arguments and files
-argc dd ?
-filename1 dd ? ; name of the file to be opened
-filename2 dd ? ; name of the file to be opened
-filedesc1 dd ? ; file descriptor
-filedesc2 dd ? ; file descriptor
+argc dq ?
+filename1 dq ? ; name of the file to be opened
+filename2 dq ? ; name of the file to be opened
+filedesc1 dq ? ; file descriptor
+filedesc2 dq ? ; file descriptor
 byte1 db ?
 byte2 db ?
-file_1_bytes_read dd ?
-file_2_bytes_read dd ?
-file_offset dd ?
+file_1_bytes_read dq ?
+file_2_bytes_read dq ?
+file_offset dq ?
 
