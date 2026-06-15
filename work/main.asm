@@ -34,10 +34,10 @@ mov [filename1],rax ; save the name of the file we will open to read
 
 call putstring ;print the name of the file we will try opening
 
-mov rcx,0   ;open file in read mode 
-mov rbx,rax ;filename should be in rax before this function was called
-mov rax,5   ;invoke SYS_OPEN (kernel opcode 5)
-int 80h     ;call the kernel
+mov rsi,0   ;open file in read mode 
+mov rdi,rax ;filename should be in rax before this function was called
+mov rax,2   ;invoke SYS_OPEN (kernel opcode 2 on 64 bit systems)
+syscall     ;call the kernel
 
 cmp rax,0
 js file_error_display ;end program if the file can't be opened
@@ -51,10 +51,10 @@ mov [filename2],rax ; save the name of the file we will open to read
 
 call putstring ;print the name of the file we will try opening
 
-mov rcx,0   ;open file in read mode 
-mov rbx,rax ;filename should be in rax before this function was called
-mov rax,5   ;invoke SYS_OPEN (kernel opcode 5)
-int 80h     ;call the kernel
+mov rsi,0   ;open file in read mode 
+mov rdi,rax ;filename should be in rax before this function was called
+mov rax,2   ;invoke SYS_OPEN (kernel opcode 2 on 64 bit systems)
+syscall     ;call the kernel
 
 cmp rax,0
 js file_error_display ;end program if the file can't be opened
@@ -65,11 +65,11 @@ call putstr_and_line
 files_compare:
 
 file_1_read_one_byte:
-mov rdx,1          ;number of bytes to read
-mov rcx,byte1 ;address to store the bytes
-mov rbx,[filedesc1] ;move the opened file descriptor into rbx
-mov rax,3          ;invoke SYS_READ (kernel opcode 3)
-int 80h            ;call the kernel
+mov rdx,1            ;number of bytes to read
+mov rsi,byte1        ;address to store the bytes
+mov rdi,[filedesc1]  ;move the opened file descriptor into rdi
+mov rax,0            ;invoke SYS_READ (kernel opcode 0 on 64 bit Intel)
+syscall              ;call the kernel
 
 ;rax will have the number of bytes read after system call
 mov [file_1_bytes_read],rax ;we save the number of bytes read for later
@@ -86,11 +86,11 @@ call putstr_and_line
 ;to see if it also ends at the same address
 
 file_2_read_one_byte:
-mov rdx,1          ;number of bytes to read
-mov rcx,byte2 ;address to store the bytes
-mov rbx,[filedesc2] ;move the opened file descriptor into rbx
-mov rax,3          ;invoke SYS_READ (kernel opcode 3)
-int 80h            ;call the kernel
+mov rdx,1            ;number of bytes to read
+mov rsi,byte2        ;address to store the bytes
+mov rdi,[filedesc2]  ;move the opened file descriptor into rdi
+mov rax,0            ;invoke SYS_READ (kernel opcode 0 on 64 bit Intel)
+syscall              ;call the kernel
 
 ;rax will have the number of bytes read after system call
 mov [file_2_bytes_read],rax ;we save the number of bytes read for later
@@ -148,17 +148,17 @@ main_end:
 ;this is the end of the program
 ;we close the open files and then use the exit call
 
-mov rbx,[filedesc1] ;file number to close
-mov rax,6   ;invoke SYS_CLOSE (kernel opcode 6)
-int 80h     ;call the kernel
+mov rdi,[filedesc1] ;file number to close
+mov rax,3           ;invoke SYS_CLOSE (kernel opcode 3 for 64 bit Intel)
+syscall             ;call the kernel
 
-mov rbx,[filedesc2] ;file number to close
-mov rax,6   ;invoke SYS_CLOSE (kernel opcode 6)
-int 80h     ;call the kernel
+mov rdi,[filedesc2] ;file number to close
+mov rax,3           ;invoke SYS_CLOSE (kernel opcode 3 for 64 bit Intel)
+syscall             ;call the kernel
 
-mov rax, 1  ; invoke SYS_EXIT (kernel opcode 1)
-mov rbx, 0  ; return 0 status on exit - 'No Errors'
-int 80h
+mov rax, 0x3C ; invoke SYS_EXIT (kernel opcode 0x3C (60 decimal) on 64 bit systems)
+mov rdi,0   ; return 0 status on exit - 'No Errors'
+syscall
 
 ;variables for displaying information
 
@@ -167,12 +167,11 @@ db 9,'chastecmp file1 file2',0Ah,0Ah
 db 'Differing bytes are shown in hexadecimal',0Ah
 db 'until the EOF has been reached.',0Ah,0
 
-
 file_open db ' opened',0
 file_error db ' error',0
 end_of_file_string db ' EOF',0
 
-db 8 dup 0 ;fill with extra space to match 1280 executable size
+db 48 dup 0 ;fill with extra space to match 1280 executable size
 
 ;variables for managing arguments and files
 argc dq ?
@@ -185,4 +184,3 @@ byte2 db ?
 file_1_bytes_read dq ?
 file_2_bytes_read dq ?
 file_offset dq ?
-
