@@ -11,7 +11,8 @@ sed 's/edx/rdx/g' -i main64.asm
 sed 's/esi/rsi/g' -i main64.asm
 sed 's/edi/rdi/g' -i main64.asm
 sed 's/ebp/rbp/g' -i main64.asm
-#subtract 8 from rbp instead of 4
+#add and subtract 8 from rbp instead of 4
+sed 's/add rbp,4/add rbp,8/g' -i main64.asm
 sed 's/sub rbp,4/sub rbp,8/g' -i main64.asm
 #change exit call at the end of program
 sed 's/mov rax,1/mov rax,0x3C/g' -i main64.asm

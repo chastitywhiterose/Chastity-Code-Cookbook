@@ -108,7 +108,7 @@ jmp num_push_end ;skip the push because this can't be used
 num_push:
 
 ;push the number to the fake stack
-add rbp,4
+add rbp,8
 mov [rbp],rax
 
 num_push_end:
