@@ -3,7 +3,7 @@
 ; These are my string and integer output and conversion routines.
 
 ; To simplify documentation. The Accumulator/Arithmetic register
-; (ax,ebx,rax) depending on bit size shall be referred to as register A
+; (ax,eax,rax) depending on bit size shall be referred to as register A
 ; for the description of these core functions because the A register
 ; is treated special both by the Intel company and my code;
 
