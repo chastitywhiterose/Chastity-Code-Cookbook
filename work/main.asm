@@ -30,10 +30,10 @@ arg_open_file:
 
 ;Linux system call to open a file
 
-mov rcx,0   ;open file in read only mode
-mov rbx,rax ;filename should be in rax before this function was called
-mov rax,5   ;invoke SYS_OPEN (kernel opcode 5)
-int 80h     ;call the kernel
+mov rsi,0   ;open file in read only mode
+mov rdi,rax ;filename should be in rax before this function was called
+mov rax,2   ;invoke SYS_OPEN (kernel opcode 2 on 64 bit systems)
+syscall     ;call the kernel
 
 cmp rax,0
 jns file_open_no_errors ;if rax is not negative/signed there was no error
