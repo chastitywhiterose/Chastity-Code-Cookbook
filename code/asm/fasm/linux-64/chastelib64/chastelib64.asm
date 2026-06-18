@@ -21,11 +21,11 @@ push rbx
 push rcx
 push rdx
 
-mov rbx,rax ; copy rax to rbx as well. Now both registers have the address of the main_string
+mov rbx,rax ;copy eax to ebx to be used as index to the string
 
-putstring_strlen_start: ; this loop finds the lenge of the string as part of the putstring function
+putstring_strlen_start: ; this loop finds the length of the string as part of the putstring function
 
-cmp [rbx],byte 0 ; compare byte at address rdx with 0
+cmp [rbx],byte 0 ; compare byte at address rbx with 0
 jz putstring_strlen_end ; if comparison was zero, jump to loop end because we have found the length
 inc rbx
 jmp putstring_strlen_start
@@ -33,15 +33,15 @@ jmp putstring_strlen_start
 putstring_strlen_end:
 sub rbx,rax ;subtract start pointer from current pointer to get length of string
 
-;Write string using Linux Write system call
+;Write string using Linux Write system call.
 ;Reference for 64 bit x86 syscalls is below.
 ;https://www.chromium.org/chromium-os/developer-library/reference/linux-constants/syscalls/#x86_64-64-bit
 
 mov rdx,rbx      ;number of bytes to write
 mov rsi,rax      ;pointer/address of string to write
 mov rdi,1        ;write to the STDOUT file
-mov rax,1        ;invoke SYS_WRITE (kernel opcode 1 on 64 bit systems)
-syscall          ;system call to write the message
+mov rax,1        ;write (kernel opcode 1 on 64 bit systems)
+syscall          ;system call for 64-bit Linux kernel
 
 pop rdx
 pop rcx
@@ -53,7 +53,7 @@ ret ; this is the end of the putstring function return to calling location
 ; This is the location in memory where digits are written to by the intstr function
 ; The string of bytes and settings such as the radix and width are global variables defined below.
 
-int_string db 64 dup '?' ;enough bytes to hold maximum size 64-bit binary integer
+int_string db 64 dup '?' ;reserve bytes for characters string for 64-bit binary integer
 
 int_string_end db 0 ;zero byte terminator for the integer string
 
@@ -106,7 +106,7 @@ inc rcx
 jmp prefix_zeros
 end_zeros:
 
-mov rax,rbx ; now that the digits have been written to the string, display it!
+mov rax,rbx ;point eax register to this string for putstring
 
 ret
 

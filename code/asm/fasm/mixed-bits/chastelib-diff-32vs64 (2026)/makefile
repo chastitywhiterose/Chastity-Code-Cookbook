@@ -15,6 +15,8 @@ diffuse-lib:
 	diffuse chastelib32.asm chastelib64.asm
 geany:
 	geany main32.asm main64.asm
+geany-lib:
+	geany chastelib32.asm chastelib64.asm
 codediff:
 	code --diff main32.asm main64.asm
 codediff-lib:
