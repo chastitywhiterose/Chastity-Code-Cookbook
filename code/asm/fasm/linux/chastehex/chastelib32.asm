@@ -21,7 +21,7 @@ push ebx
 push ecx
 push edx
 
-mov ebx,eax ; copy eax to ebx. ebx will be used as index to the string
+mov ebx,eax ;copy eax to ebx to be used as index to the string
 
 putstring_strlen_start: ; this loop finds the length of the string as part of the putstring function
 
@@ -40,8 +40,8 @@ sub ebx,eax ;subtract start pointer from current pointer to get length of string
 mov edx,ebx      ;number of bytes to write
 mov ecx,eax      ;pointer/address of string to write
 mov ebx,1        ;write to the STDOUT file
-mov eax,4        ;invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
-int 80h          ;system call to write the message
+mov eax,4        ;write (kernel opcode 4 on 32 bit systems)
+int 80h          ;system call for 32-bit Linux kernel
 
 pop edx
 pop ecx
@@ -53,7 +53,7 @@ ret ; this is the end of the putstring function return to calling location
 ; This is the location in memory where digits are written to by the intstr function
 ; The string of bytes and settings such as the radix and width are global variables defined below.
 
-int_string db 32 dup '?' ;enough bytes to hold maximum size 32-bit binary integer
+int_string db 32 dup '?' ;reserve bytes for characters string for 32-bit binary integer
 
 int_string_end db 0 ;zero byte terminator for the integer string
 
@@ -106,7 +106,7 @@ inc ecx
 jmp prefix_zeros
 end_zeros:
 
-mov eax,ebx ; now that the digits have been written to the string, display it!
+mov eax,ebx ;point eax register to this string for putstring
 
 ret
 
