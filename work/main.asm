@@ -10,7 +10,7 @@ main:
 pop rax
 mov [argc],rax ;save the argument count for later
 
-cmp dword [argc],1
+cmp qword [argc],1
 ja help_skip ;if more than 1 argument is given, skip the help message and process the other arguments
 
 help:
@@ -51,7 +51,7 @@ mov [filedesc],rax ; save the file descriptor number for later use
 
 ;before we just textdump or "cat" the file, we need to check for the existence of more arguments which will modify the output
 
-cmp dword[argc],3
+cmp qword[argc],3
 jb search_skip
 
 pop rax ;pop the next arg which is the string we are searching for
@@ -59,7 +59,7 @@ mov [string_search],rax
 
 search_skip:
 
-cmp dword[argc],4
+cmp qword[argc],4
 jb replace_skip
 
 pop rax ;pop the next arg which is the string we are searching for
@@ -77,7 +77,7 @@ textdump:
 ;until there are no more bytes to display
 ;but if there are above 2 arguments, we skip this loop and go to search mode
 
-cmp dword[argc],2 ;test arguments 2=only filename given
+cmp qword[argc],2 ;test arguments 2=only filename given
 ja search_mode    ;but if above 2, then go to search mode because a search string was given
 
 ;This loop is the same as the Linux 'cat' command
@@ -121,8 +121,8 @@ search_mode:
 mov rdx,0              ;whence argument (SEEK_SET)
 mov rsi,[file_address] ;move the file cursor to this address
 mov rdi,[filedesc]     ;move the opened file descriptor into rbx
-mov rax,8          ;invoke SYS_LSEEK (kernel opcode 8 on 64 bit Intel)
-syscall            ;call the kernel
+mov rax,8              ;invoke SYS_LSEEK (kernel opcode 8 on 64 bit Intel)
+syscall                ;call the kernel
 
 ;obtain the length of the search string using my strlen function
 mov rax,[string_search]
@@ -131,10 +131,10 @@ call strlen ;get the length of the search string
 ;use the length of the string we are searching for as the number of bytes to read at this location
 
 mov rdx,rax            ;number of bytes to read
-mov rcx,byte_array     ;address to store the bytes
-mov rbx,[filedesc]     ;move the opened file descriptor into rbx
-mov rax,3              ;invoke SYS_READ (kernel opcode 3)
-int 80h                ;call the kernel
+mov rsi,byte_array     ;address to store the bytes
+mov rdi,[filedesc]     ;move the opened file descriptor into rbx
+mov rax,0              ;invoke SYS_READ (kernel opcode 0 on 64 bit Intel)
+syscall                ;call the kernel
 
 mov [bytes_read],rax   ;store how many bytes were read with that last read operation
 
@@ -163,7 +163,7 @@ jnz not_match ;if they are not a match go to that section for printing a charact
 mov rax,[bytes_read]
 add [file_address],rax
 
-cmp dword[argc],4 ;if less than 4 args, no replacement exist, so we quote the strings
+cmp qword[argc],4 ;if less than 4 args, no replacement exist, so we quote the strings
 jb print_quotes
 
 ;otherwise, we will print the replacement string instead of the original!
@@ -209,11 +209,11 @@ textdump_end:
 ;mov rax,byte_array
 ;call putstring
 
-mov rax,4            ;invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
-mov rbx,1            ;write to the STDOUT file
-mov rcx,byte_array   ;pointer/address of string to write
 mov rdx,[bytes_read] ;number of bytes to write == last read call result
-int 80h              ;system call to write the message
+mov rsi,byte_array   ;pointer/address of string to write
+mov rdi,1            ;write to the STDOUT file
+mov rax,1          ;invoke SYS_WRITE (kernel opcode 1 on 64 bit systems)
+syscall            ;system call to write the message
 
 main_end:
 
@@ -222,13 +222,13 @@ main_end:
 
 ;Linux system call to close a file
 
-mov rbx,[filedesc] ;file number to close
-mov rax,6          ;invoke SYS_CLOSE (kernel opcode 6)
-int 80h            ;call the kernel
+mov rdi,[filedesc] ;file number to close
+mov rax,3          ;invoke SYS_CLOSE (kernel opcode 3 for 64 bit Intel)
+syscall            ;call the kernel
 
-mov rax, 1  ; invoke SYS_EXIT (kernel opcode 1)
-mov rbx, 0  ; return 0 status on exit - 'No Errors'
-int 80h
+mov rax, 0x3C ; invoke SYS_EXIT (kernel opcode 0x3C (60 decimal) on 64 bit systems)
+mov rdi,0   ; return 0 status on exit - 'No Errors'
+syscall
 
 ;the strlen and strcmp are named after the equivalent C functions
 ;but are written from scratch by me based on their expected behavior
