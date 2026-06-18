@@ -193,11 +193,11 @@ not_match:
 ;This is simple and also compatible with binary files we want to replace text in.
 ;But it only works if the search and replace strings are of the same length
 
-mov rax,4          ;invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
-mov rbx,1          ;write to the STDOUT file
-mov rcx,byte_array ;pointer/address of string to write
-mov rdx,1          ;number of bytes to write == 1
-int 80h            ;system call to write the message
+mov rdx,1            ;number of bytes to write == 1
+mov rsi,byte_array   ;pointer/address of string to write
+mov rdi,1            ;write to the STDOUT file
+mov rax,1            ;invoke SYS_WRITE (kernel opcode 1 on 64 bit systems)
+syscall              ;system call to write the message
 
 add [file_address],1 ;add 1 to the file address so we don't read this same position again
 
@@ -212,8 +212,8 @@ textdump_end:
 mov rdx,[bytes_read] ;number of bytes to write == last read call result
 mov rsi,byte_array   ;pointer/address of string to write
 mov rdi,1            ;write to the STDOUT file
-mov rax,1          ;invoke SYS_WRITE (kernel opcode 1 on 64 bit systems)
-syscall            ;system call to write the message
+mov rax,1            ;invoke SYS_WRITE (kernel opcode 1 on 64 bit systems)
+syscall              ;system call to write the message
 
 main_end:
 
