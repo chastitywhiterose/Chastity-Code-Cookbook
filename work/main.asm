@@ -87,10 +87,10 @@ ja search_mode    ;but if above 2, then go to search mode because a search strin
 cat:
 
 mov rdx,1            ;number of bytes to read
-mov rcx,byte_array   ;address to store the bytes
-mov rbx,[filedesc]   ;move the opened file descriptor into rbx
-mov rax,3            ;invoke SYS_READ (kernel opcode 3 on 32 bit systems)
-int 80h              ;call the kernel
+mov rsi,byte_array   ;address to store the bytes
+mov rdi,[filedesc]   ;move the opened file descriptor into rdi
+mov rax,0            ;invoke SYS_READ (kernel opcode 0 on 64 bit Intel)
+syscall              ;call the kernel
 
 mov [bytes_read],rax
 
@@ -104,9 +104,9 @@ jmp main_end ;otherwise, end the program
 file_success:
 
 ;print the last read character to stdout by switching to write call
-mov rbx,1            ;write to the STDOUT file
-mov rax,4            ;invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
-int 80h              ;call the kernel
+mov rdi,1            ;write to the STDOUT file
+mov rax,1          ;invoke SYS_WRITE (kernel opcode 1 on 64 bit systems)
+syscall            ;system call to write the message
 
 jmp cat
 
@@ -119,10 +119,10 @@ search_mode:
 ;this variable will be added to depending on actions taken
 
 mov rdx,0              ;whence argument (SEEK_SET)
-mov rcx,[file_address] ;move the file cursor to this address
-mov rbx,[filedesc]     ;move the opened file descriptor into rbx
-mov rax,19             ;invoke SYS_LSEEK (kernel opcode 19)
-int 80h                ;call the kernel
+mov rsi,[file_address] ;move the file cursor to this address
+mov rdi,[filedesc]     ;move the opened file descriptor into rbx
+mov rax,8          ;invoke SYS_LSEEK (kernel opcode 8 on 64 bit Intel)
+syscall            ;call the kernel
 
 ;obtain the length of the search string using my strlen function
 mov rax,[string_search]
