@@ -193,11 +193,11 @@ not_match:
 ;This is simple and also compatible with binary files we want to replace text in.
 ;But it only works if the search and replace strings are of the same length
 
-mov rax,4          ;invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
-mov rbx,1          ;write to the STDOUT file
-mov rcx,byte_array ;pointer/address of string to write
-mov rdx,1          ;number of bytes to write == 1
-int 80h            ;system call to write the message
+mov rdx,1            ;number of bytes to write == 1
+mov rsi,byte_array   ;pointer/address of string to write
+mov rdi,1            ;write to the STDOUT file
+mov rax,1            ;invoke SYS_WRITE (kernel opcode 1 on 64 bit systems)
+syscall              ;system call to write the message
 
 add [file_address],1 ;add 1 to the file address so we don't read this same position again
 
@@ -209,11 +209,11 @@ textdump_end:
 ;mov rax,byte_array
 ;call putstring
 
-mov rax,4            ;invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
-mov rbx,1            ;write to the STDOUT file
-mov rcx,byte_array   ;pointer/address of string to write
 mov rdx,[bytes_read] ;number of bytes to write == last read call result
-int 80h              ;system call to write the message
+mov rsi,byte_array   ;pointer/address of string to write
+mov rdi,1            ;write to the STDOUT file
+mov rax,1            ;invoke SYS_WRITE (kernel opcode 1 on 64 bit systems)
+syscall              ;system call to write the message
 
 main_end:
 
@@ -222,13 +222,13 @@ main_end:
 
 ;Linux system call to close a file
 
-mov rbx,[filedesc] ;file number to close
-mov rax,6          ;invoke SYS_CLOSE (kernel opcode 6)
-int 80h            ;call the kernel
+mov rdi,[filedesc] ;file number to close
+mov rax,3          ;invoke SYS_CLOSE (kernel opcode 3 for 64 bit Intel)
+syscall            ;call the kernel
 
-mov rax, 1  ; invoke SYS_EXIT (kernel opcode 1)
-mov rbx, 0  ; return 0 status on exit - 'No Errors'
-int 80h
+mov rax, 0x3C ; invoke SYS_EXIT (kernel opcode 0x3C (60 decimal) on 64 bit systems)
+mov rdi,0   ; return 0 status on exit - 'No Errors'
+syscall
 
 ;the strlen and strcmp are named after the equivalent C functions
 ;but are written from scratch by me based on their expected behavior
