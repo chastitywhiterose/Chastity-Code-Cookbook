@@ -1,7 +1,4 @@
 format ELF64 executable
-entry main
-
-include 'chastelib64.asm'
 
 main:                     ;the main function of the assembly program
 
@@ -53,13 +50,15 @@ mov rax,0x3C              ;exit (kernel opcode 0x3C on 64 bit systems) (60 decim
 mov rdi,0                 ;return 0 status on exit - 'No Errors'
 syscall                   ;system call for 64-bit Linux kernel
 
-string0 db 'chastelib test suite for Intel 64-bit Assembly on Linux',0Ah,0
+include 'chastelib64.asm'
 
+string0 db 'chastelib test suite for Intel 64-bit Assembly on Linux',0Ah,0
 input_string_int db '100',0
 
-; This Assembly source file has been formatted for the FASM assembler.
-; The following 3 commands assemble, give executable permissions, and run the program
+;This Assembly source file has been formatted for the FASM assembler.
+;The following script will assemble, give executable permissions, and run the program.
 ;
-;	fasm main.asm
-;	chmod +x main
-;	./main
+;#!/bin/sh
+;fasm main.asm
+;chmod +x main
+;./main

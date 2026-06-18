@@ -1,7 +1,4 @@
 format ELF executable
-entry main
-
-include 'chastelib32.asm'
 
 main:                     ;the main function of the assembly program
 
@@ -49,19 +46,19 @@ jnz loop0
 mov eax,string0
 call putstring
 
-mov eax,1                ; invoke SYS_EXIT (kernel opcode 1)
-mov ebx,0                ; return 0 status on exit - 'No Errors'
-int 80h
+mov eax,1                 ;exit (kernel opcode 1 on 32 bit systems)
+mov ebx,0                 ;return 0 status on exit - 'No Errors'
+int 80h                   ;system call for 32-bit Linux kernel
 
-;A string to test if output works
+include 'chastelib32.asm'
+
 string0 db 'chastelib test suite for Intel 32-bit Assembly on Linux',0Ah,0
-
-;test string of integer for input
 input_string_int db '100',0
 
-; This Assembly source file has been formatted for the FASM assembler.
-; The following 3 commands assemble, give executable permissions, and run the program
+;This Assembly source file has been formatted for the FASM assembler.
+;The following script will assemble, give executable permissions, and run the program.
 ;
-;	fasm main.asm
-;	chmod +x main
-;	./main
+;#!/bin/sh
+;fasm main.asm
+;chmod +x main
+;./main
