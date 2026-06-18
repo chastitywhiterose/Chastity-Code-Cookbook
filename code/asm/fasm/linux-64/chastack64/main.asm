@@ -1,7 +1,7 @@
-format ELF64 executable
+format ELF executable
 entry main
 
-include 'chastelib64.asm'
+include 'chastelib32.asm'
 
 main:
 
@@ -10,97 +10,97 @@ mov dword[int_width],1 ;and the width of each integer for padded zeros
 
 mov ebp,chastack      ;mov the address of the beginning of the stack to ebp registers
 
-pop rax                ;pop the number of arguments from the stack
-mov [argc],rax         ;save the argument count for later
+pop eax                ;pop the number of arguments from the stack
+mov [argc],eax         ;save the argument count for later
 
-pop rax                ;pop argument 0 (name of the program)
+pop eax                ;pop argument 0 (name of the program)
 dec [argc]             ;subtract 1 from argument count
 
-mov rax,[argc]
+mov eax,[argc]
 ;call putint_and_line
-cmp rax,0
+cmp eax,0
 jnz usearg ;if arguments are available, use the main loop
 
-mov rax, string_help
+mov eax, string_help
 call putstring
 
 usearg:
 
 cmp [argc],0          ;check for remaining arguments
 jz usearg_end         ;if none, end the loop and stop printing
-pop rax               ;pop the next argument off the stack
+pop eax               ;pop the next argument off the stack
 ;call putstr_and_line ;print the string and a new line
 
-mov rsi,rax ;save this string address in rsi for string comparisons later
+mov esi,eax ;save this string address in esi for string comparisons later
 
 ;Now we process the string we got from the stack
 ;first, we will try testing for commands
 command:
 
 try_add:
-mov rdi,string_add
+mov edi,string_add
 call strcmp
 jnz try_sub
-mov rax,[ebp]
-sub ebp,4 ;subtract 4 bytes for 32 bit value
-add [ebp],rax
+mov eax,[ebp]
+sub ebp,4
+add [ebp],eax
 jmp num_push_end ;skip number push because command happened
 
 try_sub:
-mov rdi,string_sub
+mov edi,string_sub
 call strcmp
 jnz try_mul
-mov rax,[ebp]
-sub ebp,4 ;subtract 4 bytes for 32 bit value
-sub [ebp],rax
+mov eax,[ebp]
+sub ebp,4
+sub [ebp],eax
 jmp num_push_end ;skip number push because command happened
 
 try_mul:
-mov rdi,string_mul
+mov edi,string_mul
 call strcmp
 jnz try_div
-mov rbx,[ebp]
-sub ebp,4 ;subtract 4 bytes for 32 bit value
-mov rax,[ebp]
-mov rdx,0 ;zero rdx before multiply
-mul rbx   ;multiply rax with value in rbx
-mov [ebp],rax
+mov ebx,[ebp]
+sub ebp,4
+mov eax,[ebp]
+mov edx,0 ;zero edx before multiply
+mul ebx   ;multiply eax with value in ebx
+mov [ebp],eax
 jmp num_push_end ;skip number push because command happened
 
 try_div:
-mov rdi,string_div
+mov edi,string_div
 call strcmp
 jnz try_rem
-mov rbx,[ebp]
-sub ebp,4 ;subtract 4 bytes for 32 bit value
-mov rax,[ebp]
-mov rdx,0 ;zero rdx before divide
-div rbx   ;divide rax with value in rbx
-mov [ebp],rax ;store quotient on stack
+mov ebx,[ebp]
+sub ebp,4
+mov eax,[ebp]
+mov edx,0 ;zero edx before divide
+div ebx   ;divide eax with value in ebx
+mov [ebp],eax ;store quotient on stack
 jmp num_push_end ;skip number push because command happened
 
 try_rem:
-mov rdi,string_rem
+mov edi,string_rem
 call strcmp
 jnz command_end
-mov rbx,[ebp]
-sub ebp,4 ;subtract 4 bytes for 32 bit value
-mov rax,[ebp]
-mov rdx,0 ;zero rdx before divide
-div rbx   ;divide rax with value in rbx
-mov [ebp],rdx ;store remainder on stack
+mov ebx,[ebp]
+sub ebp,4
+mov eax,[ebp]
+mov edx,0 ;zero edx before divide
+div ebx   ;divide eax with value in ebx
+mov [ebp],edx ;store remainder on stack
 jmp num_push_end ;skip number push because command happened
 
 command_end:
 
-mov rax,rsi ;mov the string back to rax for processing numbers
-call strint ;try to get a number from the string pointed to by rax
+mov eax,esi ;mov the string back to eax for processing numbers
+call strint ;try to get a number from the string pointed to by eax
 cmp [strint_error],0 ;did we have zero errors in the strint function?
 jz num_push         ;if there were no errors, push this to stack
 
-mov rax,string_err
+mov eax,string_err
 call putstring
-mov rax,rsi
+mov eax,esi
 call putstring
 call putline
 jmp num_push_end ;skip the push because this can't be used
@@ -108,8 +108,8 @@ jmp num_push_end ;skip the push because this can't be used
 num_push:
 
 ;push the number to the fake stack
-add ebp,4     ;add 4 bytes for 32 bit value
-mov [ebp],rax
+add ebp,4
+mov [ebp],eax
 
 num_push_end:
 
@@ -124,19 +124,19 @@ putstack:
 cmp ebp,chastack ;is ebp equal to the address of stack start?
 jz putstack_end  ;if it is, end the putstack loop
 
-mov rax,[ebp]
-sub ebp,4 ;subtract 4 bytes for 32 bit value
+mov eax,[ebp]
+sub ebp,4
 
 call putint_and_line
 
 jmp putstack
 putstack_end:
 
-mov rax, 1           ; invoke SYS_EXIT (kernel opcode 1)
-mov rbx, 0           ; return 0 status on exit - 'No Errors'
+mov eax,1           ; invoke SYS_EXIT (kernel opcode 1)
+mov ebx,0           ; return 0 status on exit - 'No Errors'
 int 0x80
 
-argc dq 0
+argc dd 0
 
 string_err db 'Error: invalid number or command: ',0 ;Generic error message
 string_add db 'add',0
@@ -150,11 +150,11 @@ string_help db 'chastack is a stack based command line calculator',0xA
             db 'Commands are add,sub,mul,div,rem',0xA
             db 'Example: "chastack 3 4 5 add mul"',0xA,0,0
 
-;strcmp compares the string at rsi to the one at rdi
-;rax returns 0 if the strings are the same and 1 if different
+;strcmp compares the string at esi to the one at edi
+;eax returns 0 if the strings are the same and 1 if different
 ;the algorithm is simple but I will explain it for those who are confused
 
-;rax is initialized to zero
+;eax is initialized to zero
 ;a byte from each string is loaded into the al and bl registers
 ;the bytes are compared. if they are different, then we jump to the end
 ;However, if they are the same, then we check if one of them is zero
@@ -164,40 +164,40 @@ string_help db 'chastack is a stack based command line calculator',0xA
 ;If neither jump took place, then we jump to the start of the loop
 ;but when the function finally ends bl will be subtracted from al
 ;this ensures that the function returns zero if the final characters are the same
-;rbx,rsi,and rdi are preserved but rax is the return value
+;ebx,esi,and edi are preserved but eax is the return value
 ;also, the sub instruction at the end of the function also updates the flags
 ;so you can "jz" or "jnz" to a label after calling this function based on results
 
 strcmp:
 
-push rbx
-push rsi
-push rdi
+push ebx
+push esi
+push edi
 
-mov rax,0
+mov eax,0
 
 strcmp_start:
 
 ;read a byte from each string
-mov al,[rdi]
-mov bl,[rsi]
+mov al,[edi]
+mov bl,[esi]
 cmp al,bl
 jnz strcmp_end
 
 cmp al,0
 jz strcmp_end
 
-inc rdi
-inc rsi
+inc edi
+inc esi
 
 jmp strcmp_start
 
 strcmp_end:
 sub al,bl
 
-pop rdi
-pop rsi
-pop rbx
+pop edi
+pop esi
+pop ebx
 
 ret
 
@@ -205,4 +205,4 @@ ret
 ;I allocate memory for a virtual stack that we can index as if it was the real stack
 ;I name it "chastack" for Chastity's stack.
 
-chastack: rq 0x100
+chastack: rd 0x100

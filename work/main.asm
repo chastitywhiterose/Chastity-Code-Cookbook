@@ -42,7 +42,7 @@ mov edi,string_add
 call strcmp
 jnz try_sub
 mov eax,[ebp]
-sub ebp,4 ;subtract 4 bytes for 32 bit value
+sub ebp,4
 add [ebp],eax
 jmp num_push_end ;skip number push because command happened
 
@@ -51,7 +51,7 @@ mov edi,string_sub
 call strcmp
 jnz try_mul
 mov eax,[ebp]
-sub ebp,4 ;subtract 4 bytes for 32 bit value
+sub ebp,4
 sub [ebp],eax
 jmp num_push_end ;skip number push because command happened
 
@@ -60,7 +60,7 @@ mov edi,string_mul
 call strcmp
 jnz try_div
 mov ebx,[ebp]
-sub ebp,4 ;subtract 4 bytes for 32 bit value
+sub ebp,4
 mov eax,[ebp]
 mov edx,0 ;zero edx before multiply
 mul ebx   ;multiply eax with value in ebx
@@ -72,7 +72,7 @@ mov edi,string_div
 call strcmp
 jnz try_rem
 mov ebx,[ebp]
-sub ebp,4 ;subtract 4 bytes for 32 bit value
+sub ebp,4
 mov eax,[ebp]
 mov edx,0 ;zero edx before divide
 div ebx   ;divide eax with value in ebx
@@ -84,7 +84,7 @@ mov edi,string_rem
 call strcmp
 jnz command_end
 mov ebx,[ebp]
-sub ebp,4 ;subtract 4 bytes for 32 bit value
+sub ebp,4
 mov eax,[ebp]
 mov edx,0 ;zero edx before divide
 div ebx   ;divide eax with value in ebx
@@ -108,7 +108,7 @@ jmp num_push_end ;skip the push because this can't be used
 num_push:
 
 ;push the number to the fake stack
-add ebp,4     ;add 4 bytes for 32 bit value
+add ebp,4
 mov [ebp],eax
 
 num_push_end:
@@ -125,15 +125,15 @@ cmp ebp,chastack ;is ebp equal to the address of stack start?
 jz putstack_end  ;if it is, end the putstack loop
 
 mov eax,[ebp]
-sub ebp,4 ;subtract 4 bytes for 32 bit value
+sub ebp,4
 
 call putint_and_line
 
 jmp putstack
 putstack_end:
 
-mov eax, 1           ; invoke SYS_EXIT (kernel opcode 1)
-mov ebx, 0           ; return 0 status on exit - 'No Errors'
+mov eax,1           ; invoke SYS_EXIT (kernel opcode 1)
+mov ebx,0           ; return 0 status on exit - 'No Errors'
 int 0x80
 
 argc dd 0

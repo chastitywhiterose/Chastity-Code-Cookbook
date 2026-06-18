@@ -8,7 +8,7 @@ main:
 mov dword[radix],10    ;I can choose the radix for integer output!
 mov dword[int_width],1 ;and the width of each integer for padded zeros
 
-mov ebp,chastack      ;mov the address of the beginning of the stack to ebp registers
+mov rbp,chastack      ;mov the address of the beginning of the stack to rbp registers
 
 pop rax                ;pop the number of arguments from the stack
 mov [argc],rax         ;save the argument count for later
@@ -41,54 +41,54 @@ try_add:
 mov rdi,string_add
 call strcmp
 jnz try_sub
-mov rax,[ebp]
-sub ebp,4 ;subtract 4 bytes for 32 bit value
-add [ebp],rax
+mov rax,[rbp]
+sub rbp,8
+add [rbp],rax
 jmp num_push_end ;skip number push because command happened
 
 try_sub:
 mov rdi,string_sub
 call strcmp
 jnz try_mul
-mov rax,[ebp]
-sub ebp,4 ;subtract 4 bytes for 32 bit value
-sub [ebp],rax
+mov rax,[rbp]
+sub rbp,8
+sub [rbp],rax
 jmp num_push_end ;skip number push because command happened
 
 try_mul:
 mov rdi,string_mul
 call strcmp
 jnz try_div
-mov rbx,[ebp]
-sub ebp,4 ;subtract 4 bytes for 32 bit value
-mov rax,[ebp]
+mov rbx,[rbp]
+sub rbp,8
+mov rax,[rbp]
 mov rdx,0 ;zero rdx before multiply
 mul rbx   ;multiply rax with value in rbx
-mov [ebp],rax
+mov [rbp],rax
 jmp num_push_end ;skip number push because command happened
 
 try_div:
 mov rdi,string_div
 call strcmp
 jnz try_rem
-mov rbx,[ebp]
-sub ebp,4 ;subtract 4 bytes for 32 bit value
-mov rax,[ebp]
+mov rbx,[rbp]
+sub rbp,8
+mov rax,[rbp]
 mov rdx,0 ;zero rdx before divide
 div rbx   ;divide rax with value in rbx
-mov [ebp],rax ;store quotient on stack
+mov [rbp],rax ;store quotient on stack
 jmp num_push_end ;skip number push because command happened
 
 try_rem:
 mov rdi,string_rem
 call strcmp
 jnz command_end
-mov rbx,[ebp]
-sub ebp,4 ;subtract 4 bytes for 32 bit value
-mov rax,[ebp]
+mov rbx,[rbp]
+sub rbp,8
+mov rax,[rbp]
 mov rdx,0 ;zero rdx before divide
 div rbx   ;divide rax with value in rbx
-mov [ebp],rdx ;store remainder on stack
+mov [rbp],rdx ;store remainder on stack
 jmp num_push_end ;skip number push because command happened
 
 command_end:
@@ -108,8 +108,8 @@ jmp num_push_end ;skip the push because this can't be used
 num_push:
 
 ;push the number to the fake stack
-add ebp,4     ;add 4 bytes for 32 bit value
-mov [ebp],rax
+add rbp,4
+mov [rbp],rax
 
 num_push_end:
 
@@ -121,20 +121,20 @@ jmp usearg           ;jump to the beginning of the loop
 usearg_end:
 
 putstack:
-cmp ebp,chastack ;is ebp equal to the address of stack start?
+cmp rbp,chastack ;is rbp equal to the address of stack start?
 jz putstack_end  ;if it is, end the putstack loop
 
-mov rax,[ebp]
-sub ebp,4 ;subtract 4 bytes for 32 bit value
+mov rax,[rbp]
+sub rbp,8
 
 call putint_and_line
 
 jmp putstack
 putstack_end:
 
-mov rax, 1           ; invoke SYS_EXIT (kernel opcode 1)
-mov rbx, 0           ; return 0 status on exit - 'No Errors'
-int 0x80
+mov rax,0x3C           ; invoke SYS_EXIT (kernel opcode 1)
+mov rdi,0           ; return 0 status on exit - 'No Errors'
+syscall
 
 argc dq 0
 
