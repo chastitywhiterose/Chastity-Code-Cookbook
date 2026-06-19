@@ -150,7 +150,7 @@ strint:
 
 mov bx,ax ;copy string address from ax to bx because ax will be replaced soon!
 mov ax,0
-mov [strint_error],0 ;set errors to 0 at the start of this function
+mov byte[strint_error],0 ;set errors to 0 at the start of this function
 
 read_strint:
 mov cx,0 ; zero cx so only lower 8 bits are used
@@ -216,7 +216,7 @@ add ax,cx
 jmp read_strint ;jump back and continue the loop if nothing has exited it
 
 strint_end_error:  ;we jump here if there was an error with one of the chars
-inc [strint_error] ;increment error counter because char invalid
+inc byte[strint_error] ;increment error counter because char invalid
 
 strint_end: ;we jump here when no errors happened
 

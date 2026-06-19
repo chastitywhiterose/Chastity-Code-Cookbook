@@ -49,7 +49,7 @@ call putstring
 mov ax,4C00h ;DOS system call number ah=0x4C to exit program with ah=0x00 as return value
 int 21h      ;DOS interrupt to exit the program with numbers on previous line
 
-include 'chastelib16.asm' ; use %include if assembling with NASM instead of FASM.
+%include 'chastelib16.asm' ; use %%include if assembling with NASM instead of FASM.
 
 string0 db 'chastelib test suite for Intel 16-bit Assembly on DOS',0Ah,0
 input_string_int db '100',0
