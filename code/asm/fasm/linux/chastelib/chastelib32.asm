@@ -21,12 +21,12 @@ push ebx
 push ecx
 push edx
 
-mov ebx,eax                ;copy eax to ebx to be used as index to the string
+mov ebx,eax             ;copy eax to ebx to be used as index to the string
 
-putstring_strlen_start:    ;this loop finds the length of the string as part of the putstring function
+putstring_strlen_start: ;this loop finds the length of the string as part of the putstring function
 
-cmp [ebx],byte 0           ;compare byte at address ebx with 0
-jz putstring_strlen_end    ;if comparison was zero, jump to loop end because we have found the length
+cmp [ebx],byte 0        ;compare byte at address ebx with 0
+jz putstring_strlen_end ;if comparison was zero, jump to loop end because we have found the length
 inc ebx
 jmp putstring_strlen_start
 
@@ -153,10 +153,10 @@ mov eax,0
 mov [strint_error],0 ;set errors to 0 at the start of this function
 
 read_strint:
-mov ecx,0 ; zero ecx so only lower 8 bits are used
+mov ecx,0   ;zero ecx so only lower 8 bits are used
 mov cl,[ebx]
 inc ebx
-cmp cl,0 ;compare this byte with 0
+cmp cl,0    ;compare this byte with 0
 jz strint_end ; if comparison was zero, this is the end of string
 
 ;if char is below '0' or above '9', it is outside the range of these and is not a digit

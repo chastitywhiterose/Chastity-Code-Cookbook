@@ -21,12 +21,12 @@ push rbx
 push rcx
 push rdx
 
-mov rbx,rax ;copy eax to ebx to be used as index to the string
+mov rbx,rax             ;copy eax to ebx to be used as index to the string
 
-putstring_strlen_start: ; this loop finds the length of the string as part of the putstring function
+putstring_strlen_start: ;this loop finds the length of the string as part of the putstring function
 
-cmp [rbx],byte 0 ; compare byte at address rbx with 0
-jz putstring_strlen_end ; if comparison was zero, jump to loop end because we have found the length
+cmp [rbx],byte 0        ;compare byte at address rbx with 0
+jz putstring_strlen_end ;if comparison was zero, jump to loop end because we have found the length
 inc rbx
 jmp putstring_strlen_start
 
@@ -48,7 +48,7 @@ pop rcx
 pop rbx
 pop rax
 
-ret ; this is the end of the putstring function return to calling location
+ret ;this is the end of the putstring function return to calling location
 
 ; This is the location in memory where digits are written to by the intstr function
 ; The string of bytes and settings such as the radix and width are global variables defined below.
@@ -57,7 +57,7 @@ int_string db 64 dup '?' ;reserve bytes for characters string for 64-bit binary 
 
 int_string_end db 0 ;zero byte terminator for the integer string
 
-radix dq 2 ;radix or base for integer output. 2=binary, 8=octal, 10=decimal, 16=hexadecimal
+radix dq 2     ;radix or base for integer output. 2=binary, 8=octal, 10=decimal, 16=hexadecimal
 int_width dq 8 ;default width of integers. Extra zeros prefixed if more than 1
 
 ;this function creates a string of the integer in rax
@@ -110,12 +110,12 @@ mov rax,rbx ;point eax register to this string for putstring
 
 ret
 
-; function to print string form of whatever integer is in rax
-; The radix determines which number base the string form takes.
-; Anything from 2 to 36 is a valid radix
-; in practice though, only bases 2,8,10,and 16 will make sense to other programmers
-; this function does not process anything by itself but calls the combination of my other
-; functions in the order I intended them to be used.
+;function to print string form of whatever integer is in rax
+;The radix determines which number base the string form takes.
+;Anything from 2 to 36 is a valid radix
+;in practice though, only bases 2,8,10,and 16 will make sense to other programmers
+;this function does not process anything by itself but calls the combination of my other
+;functions in the order I intended them to be used.
 
 putint: 
 
@@ -125,7 +125,6 @@ push rcx
 push rdx
 
 call intstr
-
 call putstring
 
 pop rdx
@@ -154,10 +153,10 @@ mov rax,0
 mov [strint_error],0 ;set errors to 0 at the start of this function
 
 read_strint:
-mov rcx,0 ; zero rcx so only lower 8 bits are used
+mov rcx,0   ;zero rcx so only lower 8 bits are used
 mov cl,[rbx]
 inc rbx
-cmp cl,0 ; compare byte at address rdx with 0
+cmp cl,0    ;compare this byte with 0
 jz strint_end ; if comparison was zero, this is the end of string
 
 ;if char is below '0' or above '9', it is outside the range of these and is not a digit
@@ -172,7 +171,9 @@ sub cl,'0'
 jmp process_char
 
 not_digit:
-;it isn't a digit, but it could an alphabet character which is a digit in a higher base
+;it isn't a decimal digit, but it could be perhaps an alphabet character
+;which could be a digit in a higher base like hexadecimal
+;we will check for that possibility next
 
 ;if char is below 'A' or above 'Z', it is outside the range of these and is not capital letter
 cmp cl,'A'
@@ -214,7 +215,7 @@ add rax,rcx
 
 jmp read_strint ;jump back and continue the loop if nothing has exited it
 
-strint_end_error: ;we jump here if there was an error with one of the chars
+strint_end_error:  ;we jump here if there was an error with one of the chars
 inc [strint_error] ;increment error counter because char invalid
 
 strint_end: ;we jump here when no errors happened
@@ -259,7 +260,7 @@ call putstring
 pop rax
 ret
 
-;a small function just for the common operation
+;a small function just for the common operation of
 ;printing an integer followed by a space
 ;this saves a few bytes in the assembled code
 ;by reducing the number of function calls in the main program
@@ -269,7 +270,7 @@ call putint
 call putspace
 ret
 
-;a small function just for the common operation
+;a small function just for the common operation of
 ;printing an integer followed by a line feed
 ;this saves a few bytes in the assembled code
 ;by reducing the number of function calls in the main program
@@ -279,7 +280,7 @@ call putint
 call putline
 ret
 
-;a small function just for the common operation
+;a small function just for the common operation of
 ;printing a string followed by a line feed
 ;this saves a few bytes in the assembled code
 ;by reducing the number of function calls in the main program
