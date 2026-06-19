@@ -2,12 +2,11 @@ org 100h
 
 main:
 
-mov eax,main_string
+mov eax,string0
 call putstring
 
 mov word[radix],16           ; can choose radix for integer output!
 mov word[int_width],1
-mov byte[int_newline],0
 
 mov ax,input_string_int  ;address of input string to convert to integer using current radix
 call strint              ;call strint to return the string in eax register
@@ -44,16 +43,16 @@ inc ax
 cmp ax,bx;
 jnz loop1
 
+mov eax,string0
+call putstring
+
 mov ax,4C00h ;DOS system call number ah=0x4C to exit program with ah=0x00 as return value
 int 21h      ;DOS interrupt to exit the program with numbers on previous line
 
-;A string to test if output works
-main_string db 'Official test suite for the DOS Assembly version of chastelib.',0Dh,0Ah,0
-
-;test string of integer for input
-input_string_int db '100',0
-
 include 'chastelib16.asm' ; use %include if assembling with NASM instead of FASM.
+
+string0 db 'chastelib test suite for Intel 16-bit Assembly on DOS',0Ah,0
+input_string_int db '100',0
 
 ; This 16 bit DOS Assembly source has been formatted for the FASM assembler.
 ; In order to run it, you will need the DOSBOX emulator or something similar.
