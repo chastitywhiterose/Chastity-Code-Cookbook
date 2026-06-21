@@ -8,95 +8,58 @@ main:
 mov dword[radix],10    ;I can choose the radix for integer output!
 mov dword[int_width],1 ;and the width of each integer for padded zeros
 
-mov ebp,chastack      ;mov the address of the beginning of the stack to ebp registers
+mov ebp,chastack       ;mov the address of the beginning of the stack to ebp registers
 
 pop eax                ;pop the number of arguments from the stack
+dec eax                ;subtract 1 because the program name will be unused
 mov [argc],eax         ;save the argument count for later
-
-pop eax                ;pop argument 0 (name of the program)
-dec [argc]             ;subtract 1 from argument count
-
-mov eax,[argc]
-;call putint_and_line
+pop ebx                ;pop argument 0 (name of the program, we don't use it)
 cmp eax,0
-jnz usearg ;if arguments are available, use the main loop
+jnz usearg             ;if arguments are available, use the main loop
 
-mov eax, string_help
+mov eax,string_help
 call putstring
 
 usearg:
 
 cmp [argc],0          ;check for remaining arguments
 jz usearg_end         ;if none, end the loop and stop printing
-pop eax               ;pop the next argument off the stack
-;call putstr_and_line ;print the string and a new line
-
-mov esi,eax ;save this string address in esi for string comparisons later
+pop esi               ;pop the next argument off the stack to esi for string comparison
+dec [argc]            ;subtract 1 from argument count
 
 ;Now we process the string we got from the stack
-;first, we will try testing for commands
-command:
+;First, we will try testing for commands
+;If any of the predefined strings match the string in esi
+;We jump to the label for that command
 
-try_add:
 mov edi,string_add
 call strcmp
-jnz try_sub
-mov eax,[ebp]
-sub ebp,4
-add [ebp],eax
-jmp num_push_end ;skip number push because command happened
+jz command_add
 
-try_sub:
 mov edi,string_sub
 call strcmp
-jnz try_mul
-mov eax,[ebp]
-sub ebp,4
-sub [ebp],eax
-jmp num_push_end ;skip number push because command happened
+jz command_sub
 
-try_mul:
 mov edi,string_mul
 call strcmp
-jnz try_div
-mov ebx,[ebp]
-sub ebp,4
-mov eax,[ebp]
-mov edx,0 ;zero edx before multiply
-mul ebx   ;multiply eax with value in ebx
-mov [ebp],eax
-jmp num_push_end ;skip number push because command happened
+jz command_mul
 
-try_div:
 mov edi,string_div
 call strcmp
-jnz try_rem
-mov ebx,[ebp]
-sub ebp,4
-mov eax,[ebp]
-mov edx,0 ;zero edx before divide
-div ebx   ;divide eax with value in ebx
-mov [ebp],eax ;store quotient on stack
-jmp num_push_end ;skip number push because command happened
+jz command_div
 
-try_rem:
 mov edi,string_rem
 call strcmp
-jnz command_end
-mov ebx,[ebp]
-sub ebp,4
-mov eax,[ebp]
-mov edx,0 ;zero edx before divide
-div ebx   ;divide eax with value in ebx
-mov [ebp],edx ;store remainder on stack
-jmp num_push_end ;skip number push because command happened
+jz command_rem
 
-command_end:
+;The default command is to turn the argument into a number and push to stack
 
-mov eax,esi ;mov the string back to eax for processing numbers
-call strint ;try to get a number from the string pointed to by eax
+command_num:
+
+mov eax,esi          ;mov the string to eax for processing numbers
+call strint          ;try to get a number from the string pointed to by eax
 cmp [strint_error],0 ;did we have zero errors in the strint function?
-jz num_push         ;if there were no errors, push this to stack
+jz num_push          ;if there were no errors, push this to stack
 
 mov eax,string_err
 call putstring
@@ -105,18 +68,54 @@ call putstring
 call putline
 jmp num_push_end ;skip the push because this can't be used
 
-num_push:
-
-;push the number to the fake stack
+num_push:        ;push the number to the fake stack
 add ebp,4
 mov [ebp],eax
-
 num_push_end:
 
-;end of command processing
+jmp usearg
 
-dec [argc]           ;subtract 1 from argument count
-jmp usearg           ;jump to the beginning of the loop
+;These are the labels and code for each of the commands
+;When a command is done, we jump back to the beginning of the loop
+
+command_add:
+mov eax,[ebp]
+sub ebp,4
+add [ebp],eax
+jmp usearg
+
+command_sub:
+mov eax,[ebp]
+sub ebp,4
+sub [ebp],eax
+jmp usearg
+
+command_mul:
+mov ebx,[ebp]
+sub ebp,4
+mov eax,[ebp]
+mov edx,0     ;zero edx before multiply
+mul ebx       ;multiply eax with value in ebx
+mov [ebp],eax
+jmp usearg
+
+command_div:
+mov ebx,[ebp]
+sub ebp,4
+mov eax,[ebp]
+mov edx,0 ;zero edx before divide
+div ebx   ;divide eax with value in ebx
+mov [ebp],eax ;store quotient on stack
+jmp usearg
+
+command_rem:
+mov ebx,[ebp]
+sub ebp,4
+mov eax,[ebp]
+mov edx,0 ;zero edx before divide
+div ebx   ;divide eax with value in ebx
+mov [ebp],edx ;store remainder on stack
+jmp usearg
 
 usearg_end:
 
@@ -205,4 +204,5 @@ ret
 ;I allocate memory for a virtual stack that we can index as if it was the real stack
 ;I name it "chastack" for Chastity's stack.
 
+db 6 dup 0 ;extra padding bytes
 chastack: rd 0x100
