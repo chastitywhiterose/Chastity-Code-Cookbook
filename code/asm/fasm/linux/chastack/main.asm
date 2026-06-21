@@ -131,9 +131,9 @@ call putint_and_line
 jmp putstack
 putstack_end:
 
-mov eax,1           ; invoke SYS_EXIT (kernel opcode 1)
-mov ebx,0           ; return 0 status on exit - 'No Errors'
-int 0x80
+mov eax,1        ;exit (kernel opcode 1 on 32 bit systems)
+mov ebx,0        ;return 0 status on exit - 'No Errors'
+int 80h          ;system call for 32-bit Linux kernel
 
 argc dd 0
 
