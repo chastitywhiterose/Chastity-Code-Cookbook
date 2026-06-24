@@ -18,12 +18,12 @@ int 80h          ;call the kernel
 cmp eax,0
 jns cat_upper ;if eax is not negative/signed there was no error
 
-;Otherwise, if it was signed, then this code will display an error message.
+;Otherwise, if it was signed/negative, display an error message.
 
-neg eax
-call putint_and_space
-mov eax,open_error
-call putstr_and_line
+neg eax               ;turn the negative in eax positive
+call putint_and_space ;print the number in eax (error code) and space
+mov eax,open_error    ;get the error message I defined
+call putstr_and_line  ;print the error message and newline
 
 jmp main_end ;end the program because we failed at opening the file
 
