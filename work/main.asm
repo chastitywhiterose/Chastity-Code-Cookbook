@@ -50,6 +50,8 @@ int 80h            ;call the kernel
 mov al,[buf]       ;move the byte we just read and wrote to al register
 
 ;if char is below 'a' or above 'z', it is not a lowercase letter
+;if outside this range, we skep to the "al_is_not_lower" label
+
 cmp al,'a'
 jb al_is_not_lower
 cmp al,'z'
@@ -62,6 +64,8 @@ ja al_is_not_lower
 ;int 80h            ;call the kernel
 
 al_is_not_lower:
+
+inc dword[offset]   ;increment offset
 
 jmp cat_upper
 
