@@ -41,10 +41,27 @@ jz cat_upper_end   ;if yes, then end the loop
 
 ;otherwise we assume 1 byte was read like we requested
 ;we print it to standard output so we can see what was in the file
+;ecx and edx remain the same as in the read call above
 
 mov eax,4          ;invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
 mov ebx,1          ;write to stdout
 int 80h            ;call the kernel
+
+mov al,[buf]       ;move the byte we just read and wrote to al register
+
+;if char is below 'a' or above 'z', it is not a lowercase letter
+cmp al,'a'
+jb al_is_not_lower
+cmp al,'z'
+ja al_is_not_lower
+
+;mov edx,0          ;whence argument (SEEK_SET)
+;mov ecx,[offset]   ;move the file cursor to this address
+;mov ebx,[fd]       ;move the opened file descriptor into EBX
+;mov eax,19         ;invoke SYS_LSEEK (kernel opcode 19)
+;int 80h            ;call the kernel
+
+al_is_not_lower:
 
 jmp cat_upper
 
@@ -65,5 +82,6 @@ include 'chastelib32.asm'
 filename db 'openthis.txt',0 ;name of the file
 fd dd 0                      ;a place for the file descriptor
 buf db 0                     ;a buffer containing 1 byte
+offset dd 0                  ;offset to be used in lseek
 
 open_error db 'error opening file',0
