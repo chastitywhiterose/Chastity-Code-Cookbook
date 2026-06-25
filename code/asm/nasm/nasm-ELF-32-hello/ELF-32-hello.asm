@@ -60,21 +60,21 @@ dd file_size  ;p_memsz: Size of memory image of the segment, which may be equal 
 dd 7           ;p_flags: permission flags: 7=4(Read)+2(Write)+1(Execute)
 dd 0x1000      ;p_align; Alignment (same page alignment that FASM uses of 4096 bytes)
 
-;important Assembler directives
+;important NASM directives
 
 use32          ;tell assembler that 32 bit code is being used
 org p_vaddr    ;origin of new code begins here
 
 ;Now, the actual hello world program
 
-mov eax,4   ; invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
-mov ebx,1   ; write to the STDOUT file
-mov ecx,msg ; pointer/address of string to write
-mov edx,13  ; number of bytes to write
+mov eax,4   ;invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
+mov ebx,1   ;write to the STDOUT file
+mov ecx,msg ;pointer/address of string to write
+mov edx,13  ;number of bytes to write
 int 80h
 
-mov eax,1   ; function SYS_EXIT (kernel opcode 1 on 32 bit systems)
-mov ebx,0   ; return 0 status on exit - 'No Errors'
+mov eax,1   ;function SYS_EXIT (kernel opcode 1 on 32 bit systems)
+mov ebx,0   ;return 0 status on exit - 'No Errors'
 int 80h
 
 msg db 'Hello World!',0Ah,0

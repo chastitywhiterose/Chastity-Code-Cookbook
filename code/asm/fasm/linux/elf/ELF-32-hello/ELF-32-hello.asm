@@ -5,8 +5,8 @@
 ;It is great that FASM can create an executable file automatically. (Thanks Tomasz Grysztar, you are a true warrior!)
 
 ;However, I wanted to understand the format for theoretical use in other assemblers like NASM.
-
-
+;However, the syntax of FASM and NASM is still different enough that this will work only in FASM.
+;I do have a NASM version in a separate file in my repository though.
 
 ;The Github repository with the spec I used is here.
 ;<https://github.com/xinuos/gabi>
@@ -47,35 +47,46 @@ dd 0          ;p_offset: Base address from file (zero)
 dd p_vaddr    ;p_vaddr: Virtual address in memory where the file will be.
 dd p_vaddr    ;p_paddr: Physical address. Same as previous
 
-image_size=0x1000 ;Chosen size for file and memory size. At minimum this must be as big as the actual binary file (code after header included)
-                  ;By choosing a default size of 0x1000, I am assuming all assembly programs I write will be less than 4 kilobytes
+;The file_size variable I have defined uses some trickery to get the size of the file.
+;An EOF constant (End Of File) is defined at the end of the program code
+;By subtracting the program virtual address from that address,
+;I get the actual number of bytes of this entire program
 
-dd image_size  ;p_filesz: Size of file image of the segment. Must be equal to the file size or greater
-dd image_size  ;p_memsz: Size of memory image of the segment, which may be equal to or greater than file image.
+file_size equ EOF-p_vaddr ;Place the actual size of the file using NASM address constants
+
+dd file_size  ;p_filesz: Size of file image of the segment. Must be equal to the file size or greater
+dd file_size  ;p_memsz: Size of memory image of the segment, which may be equal to or greater than file image.
 
 dd 7           ;p_flags: permission flags: 7=4(Read)+2(Write)+1(Execute)
-dd 0           ;p_align; Alignment (none)
+dd 0x1000      ;p_align; Alignment (same page alignment that FASM uses of 4096 bytes)
 
 ;important FASM directives
-use32          ;tell assembler that 32 bit code is being used
-org e_entry    ;origin of new code begins at the entry point
 
-;now, the actual hello world program
-mov eax,4      ;invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
-mov ebx,1      ;write to the STDOUT file
-mov ecx,msg    ;pointer/address of string to write
-mov edx,13     ;number of bytes to write
+use32          ;tell assembler that 32 bit code is being used
+org e_entry    ;origin of new code begins here
+
+;Now, the actual hello world program
+
+mov eax,4   ;invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
+mov ebx,1   ;write to the STDOUT file
+mov ecx,msg ;pointer/address of string to write
+mov edx,13  ;number of bytes to write
 int 80h
 
-mov eax,1 ;function SYS_EXIT (kernel opcode 1 on 32 bit systems)
-mov ebx,0 ;return 0 status on exit - 'No Errors'
-int 80h   ;call Linux kernel with interrupt
+mov eax,1   ;function SYS_EXIT (kernel opcode 1 on 32 bit systems)
+mov ebx,0   ;return 0 status on exit - 'No Errors'
+int 80h
 
 msg db 'Hello World!',0Ah,0
 
-;This is the makefile I use when assembling and running this program
+EOF  =  $ ; define a label for the end of file. This is used in the ELF header
+
+;To Assemble and run this program on Linux, you can use the following makefile.
+;You can also disassemble it with ndisasm because the exact address of code is known
 
 ;main-fasm:
 ;	fasm ELF-32-hello.asm
 ;	chmod +x ELF-32-hello.bin
 ;	./ELF-32-hello.bin
+;ndisasm:
+;	ndisasm -b 32 -o 0x8048054 -e 0x54 ELF-32-hello.bin
