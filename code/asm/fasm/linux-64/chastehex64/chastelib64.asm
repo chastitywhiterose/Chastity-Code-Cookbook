@@ -150,7 +150,7 @@ strint:
 
 mov rbx,rax ;copy string address from rax to rbx because rax will be replaced soon!
 mov rax,0
-mov [strint_error],0 ;set errors to 0 at the start of this function
+mov byte[strint_error],0 ;set errors to 0 at the start of this function
 
 read_strint:
 mov rcx,0   ;zero rcx so only lower 8 bits are used
@@ -216,7 +216,7 @@ add rax,rcx
 jmp read_strint ;jump back and continue the loop if nothing has exited it
 
 strint_end_error:  ;we jump here if there was an error with one of the chars
-inc [strint_error] ;increment error counter because char invalid
+inc byte[strint_error] ;increment error counter because char invalid
 
 strint_end: ;we jump here when no errors happened
 
