@@ -8,3 +8,5 @@ main-yasm:
 	./main
 dump:
 	objdump -D main.o > objdump.txt
+dump-intel:
+	objdump -D main.o > objdump.txt -M intel
