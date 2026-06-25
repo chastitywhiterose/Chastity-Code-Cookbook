@@ -5,8 +5,8 @@
 ;It is great that FASM can create an executable file automatically. (Thanks Tomasz Grysztar, you are a true warrior!)
 
 ;However, I wanted to understand the format for theoretical use in other assemblers like NASM.
-;Therefore, what you see here is a complete Hello World program that should work within NASM
-;to create an executable file without using a linker. It worked perfectly on my machine running Debian Linux and NASM version 2.16.01.
+;However, the syntax of FASM and NASM is still different enough that this will work only in FASM.
+;I do have a NASM version in a separate file in my repository though.
 
 ;The Github repository with the spec I used is here.
 ;<https://github.com/xinuos/gabi>
@@ -27,8 +27,8 @@ dw 2          ;e_type: 2=ET_EXEC (executable instead of object file)
 dw 3          ;e_machine : 3=EM_386 (Intel 80386) 0x3E (AMD x86-64 architecture)
 dd 1          ;e_version: 1=EV_CURRENT (ELF object file version.)
 
-p_vaddr equ 0x8048000 ;the absolute base address where the file is loaded into memory
-e_entry equ 0x8048054 ;program starts running at this address (right after header)
+p_vaddr  =  0x8048000 ;the absolute base address where the file is loaded into memory
+e_entry  =  0x8048054 ;program starts running at this address (right after header)
 
 dd e_entry    ;e_entry: the address at which the program starts running
 dd 0x34       ;e_phoff: where in the file the program header offset is
@@ -60,8 +60,33 @@ dd file_size  ;p_memsz: Size of memory image of the segment, which may be equal 
 dd 7           ;p_flags: permission flags: 7=4(Read)+2(Write)+1(Execute)
 dd 0x1000      ;p_align; Alignment (same page alignment that FASM uses of 4096 bytes)
 
-;important NASM directives
+;important FASM directives
 
 use32          ;tell assembler that 32 bit code is being used
-org p_vaddr    ;origin of new code begins here
+org e_entry    ;origin of new code begins here
 
+;Now, the actual hello world program
+
+mov eax,4   ;invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
+mov ebx,1   ;write to the STDOUT file
+mov ecx,msg ;pointer/address of string to write
+mov edx,13  ;number of bytes to write
+int 80h
+
+mov eax,1   ;function SYS_EXIT (kernel opcode 1 on 32 bit systems)
+mov ebx,0   ;return 0 status on exit - 'No Errors'
+int 80h
+
+msg db 'Hello World!',0Ah,0
+
+EOF  =  $ ; define a label for the end of file. This is used in the ELF header
+
+;To Assemble and run this program on Linux, you can use the following makefile.
+;You can also disassemble it with ndisasm because the exact address of code is known
+
+;main-fasm:
+;	fasm ELF-32-hello.asm
+;	chmod +x ELF-32-hello.bin
+;	./ELF-32-hello.bin
+;ndisasm:
+;	ndisasm -b 32 -o 0x8048054 -e 0x54 ELF-32-hello.bin

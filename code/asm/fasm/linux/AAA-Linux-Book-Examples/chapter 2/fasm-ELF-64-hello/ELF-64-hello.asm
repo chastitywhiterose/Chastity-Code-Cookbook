@@ -5,8 +5,8 @@
 ;It is great that FASM can create an executable file automatically. (Thanks Tomasz Grysztar, you are a true warrior!)
 
 ;However, I wanted to understand the format for theoretical use in other assemblers like NASM.
-;Therefore, what you see here is a complete Hello World program that should work within NASM
-;to create an executable file without using a linker. It worked perfectly on my machine running Debian Linux and NASM version 2.16.01.
+;However, the syntax of FASM and NASM is still different enough that this will work only in FASM.
+;I do have a NASM version in a separate file in my repository though.
 
 ;The Github repository with the spec I used is here.
 ;<https://github.com/xinuos/gabi>
@@ -27,8 +27,8 @@ dw 2          ;e_type: 2=ET_EXEC (executable instead of object file)
 dw 0x3E       ;e_machine : 3=EM_386 (Intel 80386) 0x3E (AMD x86-64 architecture)
 dd 1          ;e_version: 1=EV_CURRENT (ELF object file version.)
 
-p_vaddr equ 0x400000 ;the absolute base address where the file is loaded into memory
-e_entry equ 0x400078 ;program starts running at this address (right after header)
+p_vaddr  =  0x400000 ;the absolute base address where the file is loaded into memory
+e_entry  =  0x400078 ;program starts running at this address (right after header)
 
 dq e_entry    ;e_entry: the virtual address at which the program starts
 dq 0x40       ;e_phoff: where in the file the program header offset is
@@ -60,10 +60,10 @@ dq file_size  ;p_memsz: Size of memory image of the segment, which may be equal 
 
 dq 0x1000     ;p_align; Alignment (same page alignment that FASM uses of 4096 bytes)
 
-;important NASM directives
+;important FASM directives
 
 use64          ;tell assembler that 64 bit code is being used
-org p_vaddr    ;origin of new code begins here
+org e_entry    ;origin of new code begins here
 
 ;Now, the actual hello world program can begin!
 
@@ -79,14 +79,14 @@ syscall
 
 msg db 'Hello World!',0Ah,0
 
-EOF equ $ ; define a label for the end of file. This is used in the ELF header
+EOF  =  $ ; define a label for the end of file. This is used in the ELF header
 
 ;To Assemble and run this program on Linux, you can use the following makefile.
 ;You can also disassemble it with ndisasm because the exact address of code is known
 
-;main-nasm:
-;	nasm ELF-64-hello.asm
-;	chmod +x ELF-64-hello
-;	./ELF-64-hello
+;main-fasm:
+;	fasm ELF-64-hello.asm
+;	chmod +x ELF-64-hello.bin
+;	./ELF-64-hello.bin
 ;ndisasm:
-;	ndisasm -b 64 -o 0x400078 -e 0x78 ELF-64-hello
+;	ndisasm -b 64 -o 0x400078 -e 0x78 ELF-64-hello.bin
