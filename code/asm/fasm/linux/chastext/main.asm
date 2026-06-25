@@ -3,7 +3,7 @@
 format ELF executable
 entry main
 
-include 'chastelib32.asm'
+include 'chastelib32-1.asm'
 
 main:
 
