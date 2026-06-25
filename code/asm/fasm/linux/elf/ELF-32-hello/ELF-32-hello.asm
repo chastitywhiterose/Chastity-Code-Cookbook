@@ -6,6 +6,8 @@
 
 ;However, I wanted to understand the format for theoretical use in other assemblers like NASM.
 
+
+
 ;The Github repository with the spec I used is here.
 ;<https://github.com/xinuos/gabi>
 ;And this is the wikipedia article which linked me to the specification document
@@ -22,13 +24,13 @@ db 1          ;EI_DATA: The endianness of the data. 1=ELFDATA2LSB 2=ELFDATA2MSB 
 db 1          ;EI_VERSION: 1=EV_CURRENT (ELF identity version 1) (which is current at time of specification Version 4.2 I was using)
 db 9 dup 0    ;padding zeros to bring us to address 0x10
 dw 2          ;e_type: 2=ET_EXEC (executable instead of object file)
-dw 3          ;e_machine : 3=EM_386 (Intel 80386)
+dw 3          ;e_machine : 3=EM_386 (Intel 80386) 0x3E (AMD x86-64 architecture)
 dd 1          ;e_version: 1=EV_CURRENT (ELF object file version.)
 
-p_vaddr=0x8048000
-e_entry=0x8048054 ;we will be reusing this constant later 
+p_vaddr  =  0x8048000 ;the absolute base address where the file is loaded into memory
+e_entry  =  0x8048054 ;program starts running at this address (right after header)
 
-dd e_entry    ;e_entry: the virtual address at which the program starts
+dd e_entry    ;e_entry: the address at which the program starts running
 dd 0x34       ;e_phoff: where in the file the program header offset is
 db 8 dup 0    ;e_shoff and e_flags are unused in this example,therefore all zeros
 dw 0x34       ;e_ehsize: size of the ELF header
@@ -69,7 +71,7 @@ mov eax,1 ;function SYS_EXIT (kernel opcode 1 on 32 bit systems)
 mov ebx,0 ;return 0 status on exit - 'No Errors'
 int 80h   ;call Linux kernel with interrupt
 
-msg db 'Hello World!',0Ah
+msg db 'Hello World!',0Ah,0
 
 ;This is the makefile I use when assembling and running this program
 
