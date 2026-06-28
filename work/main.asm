@@ -29,7 +29,6 @@ mov [filename],eax ; save the name of the file we will open to read
 call putstr_and_line
 
 ;Linux system call to open a file
-
 mov ecx,2   ;open file in read and write mode 
 mov ebx,eax ;filename should be in eax before this function was called
 mov eax,5   ;invoke SYS_OPEN (kernel opcode 5)
@@ -39,7 +38,6 @@ cmp eax,0
 jns file_open_no_errors ;if eax is not negative/signed there was no error
 
 ;Otherwise, if it was signed, then this code will display an error message.
-
 neg eax
 call putint_and_space
 mov eax,open_error_message
@@ -179,7 +177,7 @@ add [offset],ecx
 next_byte:
 mov eax,0
 mov al,[ebx]
-;mov dword [int_width],2
+mov dword [int_width],2
 call putint_and_space
 
 inc ebx
@@ -287,4 +285,4 @@ open_error_message db 'error opening file',0
 ;used for the text printing function
 buf db 17 dup '?'
 
-db 5 dup 0 ;fill with extra space to match 1280 executable size
+db 0x31 dup 0 ;fill with extra space to match 1280 executable size
