@@ -151,11 +151,11 @@ main_end:
 ;Linux system call to close a file
 
 mov ebx,[fd] ;file number to close
-mov eax,6          ;invoke SYS_CLOSE (kernel opcode 6)
-int 80h            ;call the kernel
+mov eax,6    ;invoke SYS_CLOSE (kernel opcode 6)
+int 80h      ;call the kernel
 
-mov eax, 1  ; invoke SYS_EXIT (kernel opcode 1)
-mov ebx, 0  ; return 0 status on exit - 'No Errors'
+mov eax, 1   ;invoke SYS_EXIT (kernel opcode 1)
+mov ebx, 0   ;return 0 status on exit - 'No Errors'
 int 80h
 
 include 'chastelib32.asm'
@@ -239,7 +239,6 @@ mov [ebx],byte 0 ;make sure string is zero terminated
 
 mov eax,buf
 call putstring
-
 ret
 
 ;function to display EOF with address
@@ -269,8 +268,8 @@ end_of_file_string db 'EOF',0
 
 help_message db 'chastehex by Chastity White Rose',0Ah
 db 'hexdump a file:',0Ah,9,'chastehex file',0Ah
-db 'read a byte:',0Ah,9,'chastehex file address',0Ah
-db 'write a byte:',0Ah,9,'chastehex file address value',0Ah
+db 'read a byte:',0Ah,9,'chastehex file offset',0Ah
+db 'write a byte:',0Ah,9,'chastehex file offset value',0Ah
 db 'The file must exist',0Ah,0
 
 ;variables for managing arguments and files
