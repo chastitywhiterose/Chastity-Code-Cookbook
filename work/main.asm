@@ -28,7 +28,7 @@ mov [filename1],eax ; save the name of the file we will open to read
 call putstring ;print the name of the file we will try opening
 
 mov ecx,0   ;open file in read mode 
-mov ebx,eax ;filename should be in eax before this function was called
+mov ebx,eax ;move filename for system call
 mov eax,5   ;invoke SYS_OPEN (kernel opcode 5)
 int 80h     ;call the kernel
 
@@ -45,7 +45,7 @@ mov [filename2],eax ; save the name of the file we will open to read
 call putstring ;print the name of the file we will try opening
 
 mov ecx,0   ;open file in read mode 
-mov ebx,eax ;filename should be in eax before this function was called
+mov ebx,eax ;move filename for system call
 mov eax,5   ;invoke SYS_OPEN (kernel opcode 5)
 int 80h     ;call the kernel
 
@@ -166,7 +166,7 @@ file_open db ' opened',0
 file_error db ' error',0
 end_of_file_string db ' EOF',0
 
-db 8 dup 0 ;fill with extra space to match 1280 executable size
+db 23 dup 0 ;fill with extra space to match 1280 executable size
 
 ;variables for managing arguments and files
 filename1 dd ? ; name of the file to be opened
