@@ -1,8 +1,5 @@
 ;Linux 32-bit Assembly Source for chastecmp
 format ELF executable
-entry main
-
-include 'chastelib32.asm'
 
 main:
 
@@ -10,15 +7,11 @@ main:
 mov dword[radix],16 ; can choose radix for integer input/output!
 mov dword[int_width],1
 
-pop eax
-mov [argc],eax ;save the argument count for later
+pop eax ;get the number of arguments
+dec eax ;subtract 1 because we will ignore the name of the program
+pop ebx ;pop program name into a register to delete it from stack
 
-;first arg is the name of the program. we skip past it
-pop eax
-dec dword[argc]
-mov eax,[argc]
-
-cmp eax,2
+cmp eax,2 ;do we have two arguments to be used as filenames?
 jb help
 mov dword[offset],0 ;assume the offset is 0,beginning of file
 jmp arg_open_file_1
@@ -160,13 +153,14 @@ mov eax, 1  ; invoke SYS_EXIT (kernel opcode 1)
 mov ebx, 0  ; return 0 status on exit - 'No Errors'
 int 80h
 
+include 'chastelib32.asm'
+
 ;variables for displaying information
 
 help_message db 'chastecmp by Chastity White Rose',0Ah,0Ah
 db 9,'chastecmp file1 file2',0Ah,0Ah
 db 'Differing bytes are shown in hexadecimal',0Ah
 db 'until the EOF has been reached.',0Ah,0
-
 
 file_open db ' opened',0
 file_error db ' error',0
@@ -175,7 +169,6 @@ end_of_file_string db ' EOF',0
 db 8 dup 0 ;fill with extra space to match 1280 executable size
 
 ;variables for managing arguments and files
-argc dd ?
 filename1 dd ? ; name of the file to be opened
 filename2 dd ? ; name of the file to be opened
 fd1 dd ? ; file descriptor
