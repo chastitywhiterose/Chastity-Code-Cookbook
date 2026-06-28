@@ -20,7 +20,7 @@ mov eax,[argc]
 
 cmp eax,2
 jb help
-mov dword[file_offset],0 ;assume the offset is 0,beginning of file
+mov dword[offset],0 ;assume the offset is 0,beginning of file
 jmp arg_open_file_1
 
 help:
@@ -41,7 +41,7 @@ int 80h     ;call the kernel
 
 cmp eax,0
 js file_error_display ;end program if the file can't be opened
-mov [filedesc1],eax ; save the file descriptor number for later use
+mov [fd1],eax ; save the file descriptor number for later use
 mov eax,file_open
 call putstr_and_line
 
@@ -58,7 +58,7 @@ int 80h     ;call the kernel
 
 cmp eax,0
 js file_error_display ;end program if the file can't be opened
-mov [filedesc2],eax ; save the file descriptor number for later use
+mov [fd2],eax ; save the file descriptor number for later use
 mov eax,file_open
 call putstr_and_line
 
@@ -66,15 +66,15 @@ files_compare:
 
 file_1_read_one_byte:
 mov edx,1          ;number of bytes to read
-mov ecx,byte1 ;address to store the bytes
-mov ebx,[filedesc1] ;move the opened file descriptor into EBX
+mov ecx,buf1       ;address to store the bytes
+mov ebx,[fd1]      ;move the opened file descriptor into EBX
 mov eax,3          ;invoke SYS_READ (kernel opcode 3)
 int 80h            ;call the kernel
 
-;eax will have the number of bytes read after system call
-mov [file_1_bytes_read],eax ;we save the number of bytes read for later
+;eax will have the number of byte read after system call
+mov [count1],eax ;we save the number of byte read for later
 cmp eax,0
-jnz file_2_read_one_byte ;unless zero bytes were read, proceed to read from next file
+jnz file_2_read_one_buf ;unless zero byte were read, proceed to read from next file
 
 mov eax,[filename1]
 call putstring
@@ -85,17 +85,17 @@ call putstr_and_line
 ;we still proceed to read a byte from the second file
 ;to see if it also ends at the same address
 
-file_2_read_one_byte:
-mov edx,1          ;number of bytes to read
-mov ecx,byte2 ;address to store the bytes
-mov ebx,[filedesc2] ;move the opened file descriptor into EBX
+file_2_read_one_buf:
+mov edx,1          ;number of byte to read
+mov ecx,buf2 ;address to store the bytes
+mov ebx,[fd2] ;move the opened file descriptor into EBX
 mov eax,3          ;invoke SYS_READ (kernel opcode 3)
 int 80h            ;call the kernel
 
 ;eax will have the number of bytes read after system call
-mov [file_2_bytes_read],eax ;we save the number of bytes read for later
+mov [count2],eax ;we save the number of bufs read for later
 cmp eax,0
-jnz check_both_bytes ;unless zero bytes were read, proceed to compare bytes from both files
+jnz check_both_bytes ;unless zero bufs were read, proceed to compare bufs from both files
 
 mov eax,[filename2]
 call putstring
@@ -106,35 +106,35 @@ jmp main_end ;we have reach end of one file and should end program
 
 check_both_bytes:
 
-;we add the number of bytes read from both files
-mov eax,[file_1_bytes_read]
-add eax,[file_2_bytes_read]
+;we add the number of bufs read from both files
+mov eax,[count1]
+add eax,[count2]
 cmp eax,2
 jnz main_end
 
 compare_bytes:
 
-mov al,[byte1]
-mov bl,[byte2]
+mov al,[buf1]
+mov bl,[buf2]
 
-;compare the two bytes and skip printing them if they are the same
+;compare the two bufs and skip printing them if they are the same
 cmp al,bl
-jz bytes_are_same
+jz bufs_are_same
 
 ;print the address and the bytes at that address
-mov eax,[file_offset]
+mov eax,[offset]
 mov dword[int_width],8
 call putint_and_space
 mov dword[int_width],2
 mov eax,0
-mov al,[byte1]
+mov al,[buf1]
 call putint_and_space
-mov al,[byte2]
+mov al,[buf2]
 call putint_and_line
 
-bytes_are_same:
+bufs_are_same:
 
-inc dword[file_offset]
+inc dword[offset]
 
 jmp files_compare
 
@@ -148,11 +148,11 @@ main_end:
 ;this is the end of the program
 ;we close the open files and then use the exit call
 
-mov ebx,[filedesc1] ;file number to close
+mov ebx,[fd1] ;file number to close
 mov eax,6   ;invoke SYS_CLOSE (kernel opcode 6)
 int 80h     ;call the kernel
 
-mov ebx,[filedesc2] ;file number to close
+mov ebx,[fd2] ;file number to close
 mov eax,6   ;invoke SYS_CLOSE (kernel opcode 6)
 int 80h     ;call the kernel
 
@@ -178,11 +178,11 @@ db 8 dup 0 ;fill with extra space to match 1280 executable size
 argc dd ?
 filename1 dd ? ; name of the file to be opened
 filename2 dd ? ; name of the file to be opened
-filedesc1 dd ? ; file descriptor
-filedesc2 dd ? ; file descriptor
-byte1 db ?
-byte2 db ?
-file_1_bytes_read dd ?
-file_2_bytes_read dd ?
-file_offset dd ?
+fd1 dd ? ; file descriptor
+fd2 dd ? ; file descriptor
+buf1 db ?
+buf2 db ?
+count1 dd ?
+count2 dd ?
+offset dd ?
 
