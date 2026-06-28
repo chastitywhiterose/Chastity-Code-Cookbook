@@ -160,12 +160,18 @@ int 80h
 
 include 'chastelib32.asm'
 
-;this function prints a row of hex bytes
-;each row is 16 bytes
-print_bytes_row:
+;a function just for printing the address
+;this saves space because all 3 modes use this
+print_offset:
 mov eax,[offset]
 mov dword [int_width],8
 call putint_and_space
+ret
+
+;this function prints a row of hex bytes
+;each row is 16 bytes
+print_bytes_row:
+call print_offset
 
 mov ebx,buf
 mov ecx,[count]
@@ -244,9 +250,7 @@ ret
 ;function to display EOF with address
 show_eof:
 
-mov eax,[offset]
-mov dword [int_width],8
-call putint_and_space
+call print_offset
 mov eax,end_of_file_string
 call putstr_and_line
 
@@ -254,9 +258,7 @@ ret
 
 ;print the address and the byte at that address
 print_byte_info:
-mov eax,[offset]
-mov dword [int_width],8
-call putint_and_space
+call print_offset
 mov eax,0
 mov al,[buf]
 mov dword [int_width],2
