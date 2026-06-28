@@ -24,7 +24,6 @@ jmp main_end
 arg_open_file_1:
 pop eax
 mov [filename1],eax ; save the name of the file we will open to read
-
 call putstring ;print the name of the file we will try opening
 
 mov ecx,0   ;open file in read mode 
@@ -58,16 +57,16 @@ call putstr_and_line
 files_compare:
 
 file_1_read_one_byte:
-mov edx,1          ;number of bytes to read
-mov ecx,buf1       ;address to store the bytes
-mov ebx,[fd1]      ;move the opened file descriptor into EBX
-mov eax,3          ;invoke SYS_READ (kernel opcode 3)
-int 80h            ;call the kernel
+mov edx,1       ;number of bytes to read
+mov ecx,buf1    ;address to store the bytes
+mov ebx,[fd1]   ;move the opened file descriptor into EBX
+mov eax,3       ;invoke SYS_READ (kernel opcode 3)
+int 80h         ;call the kernel
 
 ;eax will have the number of byte read after system call
 mov [count1],eax ;we save the number of byte read for later
 cmp eax,0
-jnz file_2_read_one_buf ;unless zero byte were read, proceed to read from next file
+jnz file_2_read_one_byte ;unless zero byte were read, proceed to read from next file
 
 mov eax,[filename1]
 call putstring
@@ -78,17 +77,17 @@ call putstr_and_line
 ;we still proceed to read a byte from the second file
 ;to see if it also ends at the same address
 
-file_2_read_one_buf:
-mov edx,1          ;number of byte to read
-mov ecx,buf2 ;address to store the bytes
-mov ebx,[fd2] ;move the opened file descriptor into EBX
-mov eax,3          ;invoke SYS_READ (kernel opcode 3)
-int 80h            ;call the kernel
+file_2_read_one_byte:
+mov edx,1       ;number of byte to read
+mov ecx,buf2    ;address to store the bytes
+mov ebx,[fd2]   ;move the opened file descriptor into EBX
+mov eax,3       ;invoke SYS_READ (kernel opcode 3)
+int 80h         ;call the kernel
 
 ;eax will have the number of bytes read after system call
-mov [count2],eax ;we save the number of bufs read for later
+mov [count2],eax ;we save the number of bytes read for later
 cmp eax,0
-jnz check_both_bytes ;unless zero bufs were read, proceed to compare bufs from both files
+jnz check_both_bytes ;unless zero bytes were read, proceed to compare bytes from both files
 
 mov eax,[filename2]
 call putstring
@@ -99,7 +98,7 @@ jmp main_end ;we have reach end of one file and should end program
 
 check_both_bytes:
 
-;we add the number of bufs read from both files
+;we add the number of bytes read from both files
 mov eax,[count1]
 add eax,[count2]
 cmp eax,2
@@ -110,9 +109,9 @@ compare_bytes:
 mov al,[buf1]
 mov bl,[buf2]
 
-;compare the two bufs and skip printing them if they are the same
+;compare the two bytes and skip printing them if they are the same
 cmp al,bl
-jz bufs_are_same
+jz bytes_are_same
 
 ;print the address and the bytes at that address
 mov eax,[offset]
@@ -125,7 +124,7 @@ call putint_and_space
 mov al,[buf2]
 call putint_and_line
 
-bufs_are_same:
+bytes_are_same:
 
 inc dword[offset]
 
@@ -156,7 +155,6 @@ int 80h
 include 'chastelib32.asm'
 
 ;variables for displaying information
-
 help_message db 'chastecmp by Chastity White Rose',0Ah,0Ah
 db 9,'chastecmp file1 file2',0Ah,0Ah
 db 'Differing bytes are shown in hexadecimal',0Ah
@@ -168,14 +166,13 @@ end_of_file_string db ' EOF',0
 
 db 23 dup 0 ;fill with extra space to match 1280 executable size
 
-;variables for managing arguments and files
-filename1 dd ? ; name of the file to be opened
-filename2 dd ? ; name of the file to be opened
-fd1 dd ? ; file descriptor
-fd2 dd ? ; file descriptor
-buf1 db ?
-buf2 db ?
-count1 dd ?
+;variables for managing files
+filename1 dd ? ;name of the file to be opened
+filename2 dd ? ;name of the file to be opened
+fd1 dd ?       ;file descriptor 1
+fd2 dd ?       ;file descriptor 2
+buf1 db ?      ;store byte from file 1 here
+buf2 db ?      ;store byte from file 2 here
+count1 dd ?    
 count2 dd ?
 offset dd ?
-
