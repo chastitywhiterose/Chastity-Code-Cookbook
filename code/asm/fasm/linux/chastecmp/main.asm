@@ -66,7 +66,7 @@ int 80h         ;call the kernel
 ;eax will have the number of byte read after system call
 mov [count1],eax ;we save the number of byte read for later
 cmp eax,0
-jnz file_2_read_one_byte ;unless zero byte were read, proceed to read from next file
+jnz file_2_read_one_byte ;unless zero bytes were read, proceed to read from next file
 
 mov eax,[filename1]
 call putstring
