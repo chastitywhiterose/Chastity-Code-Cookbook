@@ -4,7 +4,9 @@
 ;I first looked at the type of file created by FASM's "format ELF executable" directive.
 ;It is great that FASM can create an executable file automatically. (Thanks Tomasz Grysztar, you are a true warrior!)
 
-;However, I wanted to understand the format for theoretical use in other assemblers like NASM. Therefore, what you see here is a complete Hello World program that should work within NASM to create an executable file without using a linker. It worked perfectly on my machine running Debian Linux and NASM version 2.16.01.
+;However, I wanted to understand the format for theoretical use in other assemblers like NASM.
+;Therefore, what you see here is a complete Hello World program that should work within NASM
+;to create an executable file without using a linker. It worked perfectly on my machine running Debian Linux and NASM version 2.16.01.
 
 ;The Github repository with the spec I used is here.
 ;<https://github.com/xinuos/gabi>
@@ -26,7 +28,7 @@ dw 0x3E       ;e_machine : 3=EM_386 (Intel 80386) 0x3E (AMD x86-64 architecture)
 dd 1          ;e_version: 1=EV_CURRENT (ELF object file version.)
 
 p_vaddr equ 0x400000 ;the absolute base address where the file is loaded into memory
-e_entry equ 0x400078 ;program start running at this address (right after header)
+e_entry equ 0x400078 ;program starts running at this address (right after header)
 
 dq e_entry    ;e_entry: the virtual address at which the program starts
 dq 0x40       ;e_phoff: where in the file the program header offset is
@@ -58,7 +60,7 @@ dq file_size  ;p_memsz: Size of memory image of the segment, which may be equal 
 
 dq 0x1000     ;p_align; Alignment (same page alignment that FASM uses of 4096 bytes)
 
-;important Assembler directives
+;important NASM directives
 
 use64          ;tell assembler that 64 bit code is being used
 org p_vaddr    ;origin of new code begins here
