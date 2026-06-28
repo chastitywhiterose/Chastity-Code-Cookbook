@@ -58,32 +58,26 @@ jnz next_arg_address ;but if there are more, jump to the next argument to proces
 
 hexdump:
 
-mov edx,0x10         ;number of bytes to read
-mov ecx,byte_array   ;address to store the bytes
-mov ebx,[fd]   ;move the opened file descriptor into EBX
-mov eax,3            ;invoke SYS_READ (kernel opcode 3)
-int 80h              ;call the kernel
+mov edx,0x10    ;number of bytes to read
+mov ecx,buf     ;address to store the bytes
+mov ebx,[fd]    ;move the opened file descriptor into EBX
+mov eax,3       ;invoke SYS_READ (kernel opcode 3)
+int 80h         ;call the kernel
 
 mov [count],eax
 
 cmp eax,0
 jnz file_success ;if more than zero bytes read, proceed to display
 
-;display EOF to indicate we have reached the end of file
-
+;otherwise, display EOF to indicate we have reached the end of file
 mov eax,end_of_file_string
 call putstr_and_line
 
 jmp main_end
 
-; this point is reached if file was read from successfully
-
+;this point is reached if file was read from successfully
 file_success:
-
 call print_bytes_row
-
-cmp dword [count],1 
-jl main_end ;if less than one bytes read, there is an error
 jmp hexdump
 
 ;address argument section
@@ -110,7 +104,7 @@ jnz next_arg_write ; if there are still arguments, skip this read section and en
 
 read_one_byte:
 mov edx,1          ;number of bytes to read
-mov ecx,byte_array ;address to store the bytes
+mov ecx,buf ;address to store the bytes
 mov ebx,[fd] ;move the opened file descriptor into EBX
 mov eax,3          ;invoke SYS_READ (kernel opcode 3)
 int 80h            ;call the kernel
@@ -138,10 +132,10 @@ call strint ;try to convert string to a hex number
 
 ;write that number as a byte value to the file
 
-mov [byte_array],al
+mov [buf],al
 
 mov edx,1          ;write 1 byte
-mov ecx,byte_array ;pointer/address of byte to write
+mov ecx,buf ;pointer/address of byte to write
 mov ebx,[fd] ;write to this file descriptor
 mov eax,4          ;invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
 int 80h            ;system call to write the message
@@ -175,7 +169,7 @@ mov eax,[offset]
 mov dword [int_width],8
 call putint_and_space
 
-mov ebx,byte_array
+mov ebx,buf
 mov ecx,[count]
 add [offset],ecx
 next_byte:
@@ -218,7 +212,7 @@ space_three db '   ',0
 ;It also replaces characters that can't be printed with periods -> .
 
 print_bytes_row_text:
-mov ebx,byte_array
+mov ebx,buf
 mov ecx,[count]
 next_char:
 mov eax,0
@@ -245,7 +239,7 @@ cmp ecx,0
 jnz next_char
 mov [ebx],byte 0 ;make sure string is zero terminated
 
-mov eax,byte_array
+mov eax,buf
 call putstring
 
 ret
@@ -267,7 +261,7 @@ mov eax,[offset]
 mov dword [int_width],8
 call putint_and_space
 mov eax,0
-mov al,[byte_array]
+mov al,[buf]
 mov dword [int_width],2
 call putint_and_line
 
@@ -292,6 +286,6 @@ open_error_message db 'error opening file',0
 ;where we will store data from the file
 ;17 bytes because 16 bytes read per row plus the terminating 0
 ;used for the text printing function
-byte_array db 17 dup '?'
+buf db 17 dup '?'
 
 db 5 dup 0 ;fill with extra space to match 1280 executable size
