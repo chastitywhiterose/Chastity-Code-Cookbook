@@ -132,11 +132,11 @@ call strint ;try to convert string to a hex number
 
 mov [buf],al
 
-mov edx,1          ;write 1 byte
-mov ecx,buf ;pointer/address of byte to write
+mov edx,1    ;write 1 byte
+mov ecx,buf  ;pointer/address of byte to write
 mov ebx,[fd] ;write to this file descriptor
-mov eax,4          ;invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
-int 80h            ;system call to write the message
+mov eax,4    ;invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
+int 80h      ;system call to write the message
 
 call print_byte_info
 inc dword [offset]
