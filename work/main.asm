@@ -54,7 +54,7 @@ mov dword [offset],0 ;assume the offset is 0,beginning of file
 
 ;check next arg
 cmp dword [argc],0 ;if there are no more args after filename, just hexdump it
-jnz next_arg_address ;but if there are more, jump to the next argument to process it as address
+jnz seek_offset    ;otherwise use next argument as an offset for lseek
 
 hexdump:
 
@@ -80,21 +80,19 @@ file_success:
 call print_bytes_row
 jmp hexdump
 
-;address argument section
-next_arg_address:
+;convert argument with strint and lseek to that offset
+seek_offset:
 
-;if there is at least one more arg
 pop eax ;pop the argument into eax and process it as a hex number
 dec dword [argc]
 call strint
 
 ;use the hex number as an address to seek to in the file
-
-mov edx,0          ;whence argument (SEEK_SET)
-mov ecx,eax        ;move the file cursor to this address
-mov ebx,[fd] ;move the opened file descriptor into EBX
-mov eax,19         ;invoke SYS_LSEEK (kernel opcode 19)
-int 80h            ;call the kernel
+mov edx,0        ;whence argument (SEEK_SET)
+mov ecx,eax      ;move the file cursor to this address
+mov ebx,[fd]     ;move the opened file descriptor into EBX
+mov eax,19       ;invoke SYS_LSEEK (kernel opcode 19)
+int 80h          ;call the kernel
 
 mov [offset],eax ;move the new offset
 
@@ -103,11 +101,11 @@ cmp dword [argc],0
 jnz next_arg_write ; if there are still arguments, skip this read section and enter writing mode
 
 read_one_byte:
-mov edx,1          ;number of bytes to read
-mov ecx,buf ;address to store the bytes
+mov edx,1    ;number of bytes to read
+mov ecx,buf  ;address to store the bytes
 mov ebx,[fd] ;move the opened file descriptor into EBX
-mov eax,3          ;invoke SYS_READ (kernel opcode 3)
-int 80h            ;call the kernel
+mov eax,3    ;invoke SYS_READ (kernel opcode 3)
+int 80h      ;call the kernel
 
 ;eax will have the number of bytes read after system call
 cmp eax,1
