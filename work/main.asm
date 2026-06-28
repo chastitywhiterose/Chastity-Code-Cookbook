@@ -179,7 +179,7 @@ add [offset],ecx
 next_byte:
 mov eax,0
 mov al,[ebx]
-mov dword [int_width],2
+;mov dword [int_width],2
 call putint_and_space
 
 inc ebx
