@@ -20,7 +20,11 @@ main_loop:
 mov eax,string_prompt ;show the arrow indicating we wait for the user to enter something
 call putstring
 
+test_input:
 call getstring ;get string and return address in eax
+cmp [count],0  ;were there valid characters in the string?
+jz  test_input
+call putline
 mov esi,eax    ;mov string to esi for string comparison
 
 ;Now we process the string the user entered
