@@ -20,11 +20,7 @@ main_loop:
 mov eax,string_prompt ;show the arrow indicating we wait for the user to enter something
 call putstring
 
-test_input:
 call getstring ;get string and return address in eax
-cmp [count],0  ;were there valid characters in the string?
-jz  test_input
-call putline
 mov esi,eax    ;mov string to esi for string comparison
 
 ;Now we process the string the user entered
@@ -160,8 +156,10 @@ string_prompt db '-> ',0
 string_help db 'chastdin is a stack based interactive calculator',0xA
             db 'Numbers are pushed on the stack and commands can do math.',0xA
             db 'It is a fork of chastack that reads from stdin instead of arguments.',0xA
-            db 'Commands are add,sub,mul,div,rem',0xA
-            db 'Example: "3 4 5 add mul"',0xA,0,0
+            db 'Each line must contain a single number or command.',0xA
+            db 'Math commands are add,sub,mul,div,rem',0xA
+            db 'The exit command ends the program',0xA
+            db 'The ? command prints the entire stack',0xA,0xA,0
 
 ;the getstring function is the reverse function of putstring
 ;instead of printing a string to standard output
@@ -188,9 +186,8 @@ jnz getstring_end ; if not, then end this loop
 mov al,[ecx]  ;mov last character read into al register
 
 ;check if this character is in the proper range to be part of the string
-;anything printable and non-whitespace is valid
 
-cmp al,0x21      ;compare with 0x21 (exclamation point)
+cmp al,0x20      ;compare with 0x20 (space)
 jb getstring_end ;jump if below to getstring_end label
 cmp al,0x7E      ;compare with 0x7E (tilde)
 ja getstring_end ;jump if above to getstring_end label
