@@ -40,9 +40,16 @@ pub fn putstring(s:[]const u8) void
 }
 
 const usl=0x100; //Universal String Length
-var int_string: [usl]u8=undefined;
+var int_string: [usl+1]u8=undefined; //array of bytes of size usl+1 for terminating zero
+
+var radix:usize=2; //radix used for integer conversion
+var int_width:usize=1; //default minimum digits for printing integers
 
 pub fn intstr() []const u8
 {
+ var width:usize=0; //the current width of this string start at 0 characters
+ var index:usize=usl; 
+
+ int_string[index]=0;
  
 }
