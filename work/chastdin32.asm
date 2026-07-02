@@ -1,6 +1,10 @@
 ;Chastity's Standard Input header file
 ;The functions here are designed to read strings and numbers from standard input.
 
+;the getstring function is designed to get a string of text
+;which is terminated by whitespace or any non printable character
+;the idea is that multiple strings can be passed on one line
+;separated by spaces, similar to command line arguments
 
 getstring:
 
@@ -21,7 +25,7 @@ mov al,[ecx]  ;mov last character read into al register
 
 ;check if this character is in the proper range to be part of the string
 
-cmp al,0x20      ;compare with 0x20 (space)
+cmp al,0x21      ;compare with 0x21 (!=exclamation)
 jb getstring_end ;jump if below to getstring_end label
 cmp al,0x7E      ;compare with 0x7E (tilde)
 ja getstring_end ;jump if above to getstring_end label
@@ -42,6 +46,9 @@ ret
 
 ;the getline function gets an entire line of text from the keyboard
 ;calling this function allows for a string that can contain spaces
+;it considers as anything outside the range of 0x20 to 0x7E as the end of line character
+;this is because the end of the line might be 0x0A on Linux
+;or it might be 0x0D,0x0A on DOS or Windows.
 
 getline:
 
