@@ -33,6 +33,7 @@ int pop()
 
 int main(int argc, char **argv)
 {
+ char *s; /*character pointer for user input*/
  int x=1;
 
  /*set the radix used for integer display*/
@@ -47,16 +48,36 @@ int main(int argc, char **argv)
  Now the fun begins. Each argument is processed as a number or command
  */
 
- while(x!=argc)
+ while(1)
  {
+ 
+  s=getstring();
   /*
-  putstr(argv[x]);
+  putstr(s);
   putstr("\n");
   */
   
   /*first, we check for commands before we check for integers*/
   
-  if(!strcmp(argv[x],"add"))
+  if(!strcmp(s,"exit"))
+  {
+   break;
+  }
+
+  /*print whole stack*/  
+  if(!strcmp(s,"?"))
+  {
+   int *tmp=esp;
+   while(esp<ebp)
+   {
+    putint(*esp);
+    putstr("\n");
+    esp++;
+   }
+   esp=tmp;
+  }
+  
+  if(!strcmp(s,"add"))
   {
    /*putstr("The add command adds using the top two numbers on the stack.\n");*/
    ebx=pop();
@@ -65,7 +86,7 @@ int main(int argc, char **argv)
    push(eax);
   }
   
-  else if(!strcmp(argv[x],"mul"))
+  else if(!strcmp(s,"mul"))
   {
    /*putstr("The mul command multiplies using the top two numbers on the stack.\n");*/
    ebx=pop();
@@ -74,7 +95,7 @@ int main(int argc, char **argv)
    push(eax);
   }
 
-  else if(!strcmp(argv[x],"sub"))
+  else if(!strcmp(s,"sub"))
   {
    /*putstr("The sub command subtracts using the top two numbers on the stack.\n");*/
    ebx=pop();
@@ -83,7 +104,7 @@ int main(int argc, char **argv)
    push(eax);
   }
 
-  else if(!strcmp(argv[x],"div"))
+  else if(!strcmp(s,"div"))
   {
    /*putstr("The div command divides using the top two numbers on the stack and leaves the quotient\n");*/
    ebx=pop();
@@ -92,7 +113,7 @@ int main(int argc, char **argv)
    push(eax);
   }
   
-  else if(!strcmp(argv[x],"rem"))
+  else if(!strcmp(s,"rem"))
   {
    /*putstr("The rem command divides using the top two numbers on the stack and leaves the remainder.\n");*/
    ebx=pop();
@@ -104,7 +125,7 @@ int main(int argc, char **argv)
   else /*try to get a number and push it to the stack*/
   {
    
-  eax=strint(argv[x]); /*get a number from the string*/
+  eax=strint(s); /*get a number from the string*/
   if(strint_errors)
   {
    putstr("Last argument was not a number, but it could be a command!\n");
@@ -112,7 +133,7 @@ int main(int argc, char **argv)
   else
   {
    /*
-   putstr("number returned by strint(argv[x]) is: ");
+   putstr("number returned by strint(s) is: ");
    putint(eax);
    putstr("\n");
    putstr("It will be pushed to the stack.");
@@ -122,15 +143,9 @@ int main(int argc, char **argv)
   
   }
   
-  x++;
  }
  
- while(esp<ebp)
- {
-  putint(*esp);
-  putstr("\n");
-  esp++;
- }
+
 
  return 0;
 }
