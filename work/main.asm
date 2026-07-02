@@ -21,9 +21,9 @@ main_loop:
 mov eax,string_prompt ;show the arrow indicating we wait for the user to enter something
 call putstring
 
-call getline ;get string and return address in eax
+call getstring ;get string and return address in eax
 
-;we must restard the loop in case of an empty string
+;we must restart the loop in case of an empty string
 ;if we didn't, strint would read the empty string and return 0
 ;then zero would be pushed to the stack, which is not what we want
 
@@ -176,12 +176,7 @@ string_help db 'chastdin is a stack based interactive calculator',0xA
             db 'The exit command ends the program',0xA
             db 'The ? command prints the entire stack',0xA,0xA,0
 
-;the getstring function is the reverse function of putstring
-;instead of printing a string to standard output
-;it reads a string from standard input (AKA the keyboard)
 
-buf db 0x100 dup '?'
-count dd 0
 
 
 

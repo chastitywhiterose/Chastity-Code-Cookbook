@@ -1,6 +1,23 @@
 ;Chastity's Standard Input header file
 ;The functions here are designed to read strings and numbers from standard input.
 
+;these variables are used as the default controllers
+;for the getstring and getline functions
+;buf stores keyboard input during those functions
+;count stores how many bytes were read
+;last_char stores the last character read
+;usually this will be a space, tab, or newline
+
+buf db 0x100 dup '?'
+count dd 0
+last_char db 0
+
+;summary
+;the getstring function is the reverse function of putstring
+;instead of printing a string to standard output
+;it reads a string from standard input (AKA the keyboard)
+
+;details
 ;the getstring function is designed to get a string of text
 ;which is terminated by whitespace or any non printable character
 ;the idea is that multiple strings can be passed on one line
@@ -38,6 +55,7 @@ jmp getstring_chars ;jump back to start of loop and keep reading
 
 getstring_end:
 
+mov [last_char],al ;save the last character read
 mov byte[ecx],0 ;terminate this string with a zero
 
 mov eax,buf ;mov the buffer address to eax for returning the string
