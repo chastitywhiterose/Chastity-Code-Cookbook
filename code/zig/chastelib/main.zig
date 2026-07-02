@@ -1,9 +1,7 @@
 const std = @import("std");
 
-var a:[0x10]u8=undefined; //array of fixed size and type u8 (unsigned 8-bit integer)
-
-var x:usize=0;
-var y:usize=a.len; //set y to length of array
+var a:usize=0;
+var b:usize=0x10;
 
 
 
@@ -11,23 +9,14 @@ pub fn main() void
 {
  putstring("Hello World!\n");
 
- //set all elements of array to 0 with a loop
- x=0;
- while(x<y)
- {
-  a[x]=0;
-  x+=1;
- }
-
- a[4]=8; //set this index to 8
-
  //print all elements with a loop to see results
- x=0;
- while(x<y)
+ a=0;
+ while(a<b)
  {
-  //std.debug.print("a[{}]={}\n", .{x,a[x]});
-  std.debug.print("{s}\n", .{intstr(x)});
-  x=x+1;
+  radix=2;
+  int_width=8;
+  std.debug.print("{s}\n", .{intstr(a)});
+  a+=1;
  }
 }
 
@@ -65,5 +54,8 @@ pub fn intstr(n:usize) []const u8
   else{int_string[index]=int_string[index]+'A'-10;}
   width+=1;
  }
+
+ const slice: []const u8=int_string[index..int_string.len]; //slice containing whole string
  
+ return slice;
 }
