@@ -20,19 +20,16 @@ mov [last_char],0xA ;set newline as last_char so prompt will display
 
 main_loop:
 
-;mov eax,0
-mov al,[last_char]
-;call putint_and_line
-
-cmp [last_char],10
+;show the arrow indicating we wait for the user to enter something
+;but only show it when the last character is a newline
+;otherwise it will print too many if multiple commands were entered on the same line
+cmp [last_char],0xA
 jnz skip_prompt
-mov eax,string_prompt ;show the arrow indicating we wait for the user to enter something
+mov eax,string_prompt
 call putstring
 skip_prompt:
 
 call getstring ;get string and return address in eax
-
-
 
 ;we must restart the loop in case of an empty string
 ;if we didn't, strint would read the empty string and return 0
@@ -40,7 +37,6 @@ call getstring ;get string and return address in eax
 
 cmp dword[count],0 ;were there zero characters read?
 jz main_loop ;if yes, this was an empty string, retry input
-
 
 mov esi,eax    ;mov string to esi for string comparison
 
@@ -201,10 +197,6 @@ string_help db 'chastdin is a stack based interactive calculator',0xA
             db 'Math commands are add,sub,mul,div,rem',0xA
             db 'The exit command ends the program',0xA
             db 'The ? command prints the entire stack',0xA,0xA,0
-
-
-
-
 
 ;This program uses a virtual stack for convenience and portability
 ;I allocate memory for a virtual stack that we can index as if it was the real stack

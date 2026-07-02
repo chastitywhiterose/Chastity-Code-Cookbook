@@ -1,6 +1,10 @@
 ;Chastity's Standard Input header file
 ;The functions here are designed to read strings and numbers from standard input.
 
+;getstring ;read characters from stdin until the first whitespace
+;getline   ;read characters from stdin until the first newline,EOF,tab,etc.
+;strcmp    ;compare two strings similar to the same function in C
+
 ;these variables are used as the default controllers
 ;for the getstring and getline functions
 ;buf stores keyboard input during those functions
@@ -22,6 +26,8 @@ last_char db 0
 ;which is terminated by whitespace or any non printable character
 ;the idea is that multiple strings can be passed on one line
 ;separated by spaces, similar to command line arguments
+;this function was written for the specific purpose of converting any of
+;my programs that used command line arguments to read from stdin instead
 
 getstring:
 
@@ -67,6 +73,9 @@ ret
 ;it considers as anything outside the range of 0x20 to 0x7E as the end of line character
 ;this is because the end of the line might be 0x0A on Linux
 ;or it might be 0x0D,0x0A on DOS or Windows.
+;technically, it means tab will also terminate a line
+;the intended use of this function is to read a filename
+;filenames can contain spaces
 
 getline:
 
@@ -106,12 +115,12 @@ mov eax,buf ;mov the buffer address to eax for returning the string
 
 ret
 
-
-
+;summary
 ;strcmp compares the string at esi to the one at edi
 ;eax returns 0 if the strings are the same and 1 if different
 ;the algorithm is simple but I will explain it for those who are confused
 
+;details
 ;eax is initialized to zero
 ;a byte from each string is loaded into the al and bl registers
 ;the bytes are compared. if they are different, then we jump to the end
