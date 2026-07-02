@@ -2,6 +2,7 @@ format ELF executable
 entry main
 
 include 'chastelib32.asm'
+include 'chastdin32.asm'
 
 main:
 
@@ -15,12 +16,28 @@ mov ebp,chastack       ;mov the address of the beginning of the stack to ebp reg
 mov eax,string_help
 call putstring
 
+mov [last_char],0xA ;set newline as last_char so prompt will display
+
 main_loop:
 
-mov eax,string_prompt ;show the arrow indicating we wait for the user to enter something
+;show the arrow indicating we wait for the user to enter something
+;but only show it when the last character is a newline
+;otherwise it will print too many if multiple commands were entered on the same line
+cmp [last_char],0xA
+jnz skip_prompt
+mov eax,string_prompt
 call putstring
+skip_prompt:
 
 call getstring ;get string and return address in eax
+
+;we must restart the loop in case of an empty string
+;if we didn't, strint would read the empty string and return 0
+;then zero would be pushed to the stack, which is not what we want
+
+cmp dword[count],0 ;were there zero characters read?
+jz main_loop ;if yes, this was an empty string, retry input
+
 mov esi,eax    ;mov string to esi for string comparison
 
 ;Now we process the string the user entered
@@ -52,6 +69,10 @@ mov edi,string_query
 call strcmp
 jz command_query
 
+mov edi,string_clear
+call strcmp
+jz command_clear
+
 mov edi,string_exit
 call strcmp
 jz command_exit
@@ -82,18 +103,21 @@ jmp main_loop
 
 command_add:
 mov eax,[ebp]
+mov dword[ebp],0
 sub ebp,4
 add [ebp],eax
 jmp main_loop
 
 command_sub:
 mov eax,[ebp]
+mov dword[ebp],0
 sub ebp,4
 sub [ebp],eax
 jmp main_loop
 
 command_mul:
 mov ebx,[ebp]
+mov dword[ebp],0
 sub ebp,4
 mov eax,[ebp]
 mov edx,0     ;zero edx before multiply
@@ -103,6 +127,7 @@ jmp main_loop
 
 command_div:
 mov ebx,[ebp]
+mov dword[ebp],0
 sub ebp,4
 mov eax,[ebp]
 mov edx,0 ;zero edx before divide
@@ -112,6 +137,7 @@ jmp main_loop
 
 command_rem:
 mov ebx,[ebp]
+mov dword[ebp],0
 sub ebp,4
 mov eax,[ebp]
 mov edx,0 ;zero edx before divide
@@ -132,6 +158,16 @@ command_query_end:
 pop ebp ;restore ebp to what it was before this command
 jmp main_loop
 
+command_clear: ;erase all numbers on the stack
+command_clear_loop:
+cmp ebp,chastack ;is ebp equal to the address of stack start?
+jz command_clear_end  ;if it is, end the putstack loop
+mov dword[ebp],0
+sub ebp,4
+jmp command_clear_loop
+command_clear_end:
+jmp main_loop
+
 command_exit: ;end the program
 
 main_loop_end:
@@ -150,114 +186,19 @@ string_div db 'div',0
 string_rem db 'rem',0
 string_exit db 'exit',0
 string_query db '?',0
+string_clear db 'clear',0
 
 string_prompt db '-> ',0
 
 string_help db 'chastdin is a stack based interactive calculator',0xA
             db 'Numbers are pushed on the stack and commands can do math.',0xA
             db 'It is a fork of chastack that reads from stdin instead of arguments.',0xA
-            db 'Each line must contain a single number or command.',0xA
+            db 'Each line can contain multiple numbers or commands.',0xA
             db 'Math commands are add,sub,mul,div,rem',0xA
             db 'The exit command ends the program',0xA
             db 'The ? command prints the entire stack',0xA,0xA,0
 
-;the getstring function is the reverse function of putstring
-;instead of printing a string to standard output
-;it reads a string from standard input (AKA the keyboard)
-
-buf db 0x100 dup '?'
-count dd 0
-
-getstring:
-
-mov [count],0 ;set count of characters read during this function to zero
-mov edx,1     ;number of bytes to read
-mov ecx,buf   ;address to store the bytes
-
-getstring_chars:
-
-mov ebx,0     ;read from stdin
-mov eax,3     ;invoke SYS_READ (kernel opcode 3)
-int 80h       ;call the kernel
-
-cmp eax,1     ;was 1 character read?
-jnz getstring_end ; if not, then end this loop
-
-mov al,[ecx]  ;mov last character read into al register
-
-;check if this character is in the proper range to be part of the string
-
-cmp al,0x20      ;compare with 0x20 (space)
-jb getstring_end ;jump if below to getstring_end label
-cmp al,0x7E      ;compare with 0x7E (tilde)
-ja getstring_end ;jump if above to getstring_end label
-
-;if neither jump happened, keep the character and
-
-inc [count]   ;increment how many characters we have read
-inc ecx       ;increment address where next byte is read from
-jmp getstring_chars ;jump back to start of loop and keep reading
-
-getstring_end:
-
-mov byte[ecx],0 ;terminate this string with a zero
-
-mov eax,buf ;mov the buffer address to eax for returning the string
-
-ret
-
-;strcmp compares the string at esi to the one at edi
-;eax returns 0 if the strings are the same and 1 if different
-;the algorithm is simple but I will explain it for those who are confused
-
-;eax is initialized to zero
-;a byte from each string is loaded into the al and bl registers
-;the bytes are compared. if they are different, then we jump to the end
-;However, if they are the same, then we check if one of them is zero
-;for this purpose it doesn't matter whether we compare al or bl with zero
-;because it is known that they are the same if the jnz did not take place
-;if it is zero, this also jumps to the end of the function
-;If neither jump took place, then we jump to the start of the loop
-;but when the function finally ends bl will be subtracted from al
-;this ensures that the function returns zero if the final characters are the same
-;ebx,esi,and edi are preserved but eax is the return value
-;also, the sub instruction at the end of the function also updates the flags
-;so you can "jz" or "jnz" to a label after calling this function based on results
-
-strcmp:
-
-push ebx
-push esi
-push edi
-
-mov eax,0
-
-strcmp_start:
-
-;read a byte from each string
-mov al,[edi]
-mov bl,[esi]
-cmp al,bl
-jnz strcmp_end
-
-cmp al,0
-jz strcmp_end
-
-inc edi
-inc esi
-
-jmp strcmp_start
-
-strcmp_end:
-sub al,bl
-
-pop edi
-pop esi
-pop ebx
-
-ret
-
-;because the actual hardware stack is used to process the command line arguments.
+;This program uses a virtual stack for convenience and portability
 ;I allocate memory for a virtual stack that we can index as if it was the real stack
 ;I name it "chastack" for Chastity's stack.
 
