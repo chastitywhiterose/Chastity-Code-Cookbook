@@ -16,12 +16,23 @@ mov ebp,chastack       ;mov the address of the beginning of the stack to ebp reg
 mov eax,string_help
 call putstring
 
+mov [last_char],0xA ;set newline as last_char so prompt will display
+
 main_loop:
 
+;mov eax,0
+mov al,[last_char]
+;call putint_and_line
+
+cmp [last_char],10
+jnz skip_prompt
 mov eax,string_prompt ;show the arrow indicating we wait for the user to enter something
 call putstring
+skip_prompt:
 
 call getstring ;get string and return address in eax
+
+
 
 ;we must restart the loop in case of an empty string
 ;if we didn't, strint would read the empty string and return 0
@@ -61,6 +72,10 @@ jz command_rem
 mov edi,string_query
 call strcmp
 jz command_query
+
+mov edi,string_clear
+call strcmp
+jz command_clear
 
 mov edi,string_exit
 call strcmp
@@ -147,6 +162,16 @@ command_query_end:
 pop ebp ;restore ebp to what it was before this command
 jmp main_loop
 
+command_clear: ;erase all numbers on the stack
+command_clear_loop:
+cmp ebp,chastack ;is ebp equal to the address of stack start?
+jz command_clear_end  ;if it is, end the putstack loop
+mov dword[ebp],0
+sub ebp,4
+jmp command_clear_loop
+command_clear_end:
+jmp main_loop
+
 command_exit: ;end the program
 
 main_loop_end:
@@ -165,13 +190,14 @@ string_div db 'div',0
 string_rem db 'rem',0
 string_exit db 'exit',0
 string_query db '?',0
+string_clear db 'clear',0
 
 string_prompt db '-> ',0
 
 string_help db 'chastdin is a stack based interactive calculator',0xA
             db 'Numbers are pushed on the stack and commands can do math.',0xA
             db 'It is a fork of chastack that reads from stdin instead of arguments.',0xA
-            db 'Each line must contain a single number or command.',0xA
+            db 'Each line can contain multiple numbers or commands.',0xA
             db 'Math commands are add,sub,mul,div,rem',0xA
             db 'The exit command ends the program',0xA
             db 'The ? command prints the entire stack',0xA,0xA,0
