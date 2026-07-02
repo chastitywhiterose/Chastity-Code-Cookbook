@@ -1,10 +1,17 @@
-/* chastlib_input.h */
+/* chastdin.h */
+
+/*
+this is a new library for getting keyboard input from a user
+traditionally my programs accept command line arguments as their input,
+but keyboard input during a running program will be easier for some users to understand
+*/
 
 #define input_string_length 0x100 /*the length that I expect will be enough for user input from keyboard*/
 char main_string[input_string_length+1]; /*global string which will be used to store user input Size is usl+1 for terminating zero*/
 
 /*variable to store how many characters were read into the string last time*/
 int read_count=0;
+char last_char=0;
 
 /*
 this is my basic function for recieving input from the keyboard
@@ -33,6 +40,7 @@ char *getstring()
   c=*p; /*character equals the last character read*/
   p++; /*increment the pointer to the next byte*/
  }
+ last_char=c;
  *--p=0; /*go back to last character (space,newline,tab) and replace with zero*/
  read_count=p-s;
  return s;

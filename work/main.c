@@ -40,7 +40,6 @@ int pop()
  return i;
 }
 
-
 int main(int argc, char **argv)
 {
  char *s; /*character pointer for user input*/
@@ -61,20 +60,21 @@ putstr("chastdin is a stack based interactive calculator\n"
 "The exit command ends the program\n"
 "The ? command prints the entire stack\n\n");
 
+ last_char='\n'; /*set last_char to newline so prompt will print at start*/
+
  /*
- Now the fun begins. Each argument is processed as a number or command
+ Each argument is processed as a number or command. The loop only ends when the "exit" command is entered.
  */
 
  while(1)
  {
+  if(last_char=='\n')
+  {
+   putstr("-> ");
+  }  
   s=getstring();
-  /*
-  putstr(s);
-  putstr("\n");
-  */
-  
+    
   /*first, we check for commands before we check for integers*/
-  
   if(!strcmp(s,"exit"))
   {
    break;
@@ -82,7 +82,6 @@ putstr("chastdin is a stack based interactive calculator\n"
 
   if(!strcmp(s,"add"))
   {
-   /*putstr("The add command adds using the top two numbers on the stack.\n");*/
    ebx=pop();
    eax=pop();
    eax+=ebx;
@@ -91,7 +90,6 @@ putstr("chastdin is a stack based interactive calculator\n"
   
   else if(!strcmp(s,"mul"))
   {
-   /*putstr("The mul command multiplies using the top two numbers on the stack.\n");*/
    ebx=pop();
    eax=pop();
    eax*=ebx;
@@ -100,7 +98,6 @@ putstr("chastdin is a stack based interactive calculator\n"
 
   else if(!strcmp(s,"sub"))
   {
-   /*putstr("The sub command subtracts using the top two numbers on the stack.\n");*/
    ebx=pop();
    eax=pop();
    eax-=ebx;
@@ -109,7 +106,6 @@ putstr("chastdin is a stack based interactive calculator\n"
 
   else if(!strcmp(s,"div"))
   {
-   /*putstr("The div command divides using the top two numbers on the stack and leaves the quotient\n");*/
    ebx=pop();
    eax=pop();
    eax/=ebx;
@@ -118,60 +114,46 @@ putstr("chastdin is a stack based interactive calculator\n"
   
   else if(!strcmp(s,"rem"))
   {
-   /*putstr("The rem command divides using the top two numbers on the stack and leaves the remainder.\n");*/
    ebx=pop();
    eax=pop();
    eax%=ebx;
    push(eax);
   }
   
-  /*print whole stack*/  
   else if(!strcmp(s,"?"))
   {
    int *tmp=esp;
    while(esp<ebp)
    {
-    putint(*esp);
+    putint(*esp); /*print whole stack in this loop*/  
     putstr("\n");
     esp++;
    }
    esp=tmp;
   }
   
-  /*erase whole stack*/  
   else if(!strcmp(s,"clear"))
   {
    while(esp<ebp)
    {
-    *esp=0;
-    esp++;
+    pop(); /*erase whole stack in this loop*/  
    }
   }
 
   else /*try to get a number and push it to the stack*/
   {
-   
-  eax=strint(s); /*get a number from the string*/
-  if(strint_errors)
-  {
-   putstr("Last argument was not a number, but it could be a command!\n");
-  }
-  else
-  {
-   /*
-   putstr("number returned by strint(s) is: ");
-   putint(eax);
-   putstr("\n");
-   putstr("It will be pushed to the stack.");
-   */
-   push(eax);
-  }
-  
+   eax=strint(s); /*get a number from the string*/
+   if(strint_errors)
+   {
+    putstr("Last argument was not a number, but it could be a command!\n");
+   }
+   else
+   {
+    push(eax);
+   }
   }
   
  }
 
  return 0;
 }
-
-
