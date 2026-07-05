@@ -92,6 +92,46 @@ pub fn putint(n:usize) void
  putstr(intstr(n));
 }
 
+
+//this variable used to count errors in the strint function
+var strint_errors:usize=0;
+
+//pub fn putstr(s:[]const u8) void
+//{
+// const slice: []const u8=s[0..s.len]; //slice containing whole string
+// std.debug.print("{s}",.{slice});
+//}
+
+pub fn strint(s:[]const u8) usize
+{
+ var i:usize=0;
+ var c:u8=0;
+ strint_errors = 0; //set zero errors before we parse the string
+ if( radix<2 or radix>36 ){ strint_errors+=1; std.debug.print("Error: radix {s} is out of range!\n",.{radix}); }
+ while( *s == ' ' or *s == '\n' or *s == '\t' ){s+=1;} //skip whitespace at beginning
+ while(*s!=0)
+ {
+  c=*s;
+  if( c >= '0' and c <= '9' ){c-='0';}
+  else if( c >= 'A' and c <= 'Z' ){c-='A';c+=10;}
+  else if( c >= 'a' and c <= 'z' ){c-='a';c+=10;}
+  else if( c == ' ' or c == '\n' or c == '\t' ){break;}
+  else{ strint_errors+=1; std.debug.print("Error: %c is not an alphanumeric character!\n",*s);break;}
+  if(c>=radix){ strint_errors+=1; std.debug.print("Error: %c is not a valid character for radix %i\n",*s,radix);break;}
+  i*=radix;
+  i+=c;
+  s+=1;
+ }
+ return i;
+}
+
+
+
+
+
+
+
+
 //a putchar function for Zig using std.debug.print
 //it casts the number to a constant u8 byte named c by truncating it
 //this function is useful for porting C programs that make extensive use of putchar
