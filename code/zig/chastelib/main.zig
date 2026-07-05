@@ -32,6 +32,9 @@ pub fn main() void
   a+=1;
  }
  putstr(string0);
+
+ a=strint("578");
+
 }
 
 //putstr prints a string to standard output
@@ -102,25 +105,29 @@ var strint_errors:usize=0;
 // std.debug.print("{s}",.{slice});
 //}
 
+//using array syntax rather than pointer syntax is required
+//therefore, si is used as index to the s string
+
 pub fn strint(s:[]const u8) usize
 {
- var i:usize=0;
+ var i:usize=0; //the integer that will be returned from this function
+ var si:usize=0; //the index to the s string
  var c:u8=0;
  strint_errors = 0; //set zero errors before we parse the string
- if( radix<2 or radix>36 ){ strint_errors+=1; std.debug.print("Error: radix {s} is out of range!\n",.{radix}); }
- while( *s == ' ' or *s == '\n' or *s == '\t' ){s+=1;} //skip whitespace at beginning
- while(*s!=0)
+ if( radix<2 or radix>36 ){ strint_errors+=1; std.debug.print("Error: radix {} is out of range!\n",.{radix}); }
+ while( s[si] == ' ' or s[si] == '\n' or s[si] == '\t' ){si+=1;} //skip whitespace at beginning
+ while(si<s.len)
  {
-  c=*s;
+  c=s[si];
   if( c >= '0' and c <= '9' ){c-='0';}
   else if( c >= 'A' and c <= 'Z' ){c-='A';c+=10;}
   else if( c >= 'a' and c <= 'z' ){c-='a';c+=10;}
   else if( c == ' ' or c == '\n' or c == '\t' ){break;}
-  else{ strint_errors+=1; std.debug.print("Error: %c is not an alphanumeric character!\n",*s);break;}
-  if(c>=radix){ strint_errors+=1; std.debug.print("Error: %c is not a valid character for radix %i\n",*s,radix);break;}
+  else{ strint_errors+=1; std.debug.print("Error: {c} is not an alphanumeric character!\n",.{s[si]});break;}
+  if(c>=radix){ strint_errors+=1; std.debug.print("Error: {} is not a valid character for radix {}\n",.{s[si],radix});break;}
   i*=radix;
   i+=c;
-  s+=1;
+  si+=1;
  }
  return i;
 }
