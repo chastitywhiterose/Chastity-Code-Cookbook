@@ -53,12 +53,19 @@ var int_string: [usl+1]u8=undefined; //array of bytes of size usl+1 for terminat
 var radix:usize=2; //radix used for integer conversion
 var int_width:usize=1; //default minimum digits for printing integers
 
+//This function is written to match the same algorithm as my C version
+//Therefore, it adds one extra zero byte to the string
+//This could make a difference if it were passed to a C function
+//but is not required for zig because we only pass the slice
+//also, function arguments are immutable by default in Zig
+//that is why it is required to copy n to mutable i variable
+
 pub fn intstr(n:usize) []const u8
 {
  var i:usize=n; //copy argument into this mutable variable 
  var width:usize=0; //the current width of this string start at 0 characters
  var index:usize=usl; 
- int_string[index]=0;
+ int_string[index]=0; //zero terminator not required by Zig but is for C code
 
  while(i!=0 or width<int_width) //loop to fill the string with every required digit plus prefixed zeros
  {
@@ -71,7 +78,7 @@ pub fn intstr(n:usize) []const u8
  }
 
  //create a slice containing only bytes we have written to
- const slice: []const u8=int_string[index..int_string.len];
+ const slice: []const u8=int_string[index..usl];
  
  return slice;
 }

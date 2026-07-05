@@ -6,3 +6,5 @@ main-simple:
 	gcc main.c -o main && ./main
 main-tcc:
 	tcc main.c -o main && ./main
+main-zig:
+	zig cc -Wall -ansi -pedantic main.c -o main && ./main
