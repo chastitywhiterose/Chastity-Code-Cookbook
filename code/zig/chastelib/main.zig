@@ -162,6 +162,7 @@ pub fn strint(s:[]const u8) usize
 //if an error happened. The fact that std.debug.print goes to stderr
 //is quite important to my design for this function.
 //Find out more here:
+//https://ziglang.org/documentation/master/#Primitive-Types
 //https://zig.guide/standard-library/formatting-specifiers
 
 
