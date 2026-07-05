@@ -1,11 +1,12 @@
 const std = @import("std");
 
-var a:usize=0;
-var b:usize=0x100;
-
 pub fn main() void
 {
- putstr("Official test suite for the Zig version of chastelib.\n");
+ const string0:[]const u8="Official test suite for the Zig version of chastelib.\n";
+ var a:usize=0;
+ const b:usize=0x100;
+
+ putstr(string0);
  a=0;
  while(a<b)
  {
@@ -30,7 +31,7 @@ pub fn main() void
   putstr("\n");
   a+=1;
  }
- putstr("Official test suite for the Zig version of chastelib.\n");
+ putstr(string0);
 }
 
 //putstr prints a string to standard output
