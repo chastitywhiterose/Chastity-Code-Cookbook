@@ -4,7 +4,10 @@ pub fn main() void
 {
  const string0:[]const u8="Official test suite for the Zig version of chastelib.\n";
  var a:usize=0;
- const b:usize=0x100;
+ var b:usize=0;
+
+ radix=0x10; //set radix before we get input with strint   
+ b=strint("100"); //convert strint to integer with strint
 
  putstr(string0);
  a=0;
@@ -33,9 +36,22 @@ pub fn main() void
  }
  putstr(string0);
 
- a=strint("578");
 
+ a=strint("515");
+ putint(a);
+ putstr("\n");
 }
+
+//This file is a library of functions written by Chastity White Rose.
+//Written for the Zig programming language
+
+//putstr prints a string AKA u8 slice of bytes in zig
+//intstr converts an integer to a string for putstr
+//putint calls both functions above to print an integer
+//strint converts a string to an integer
+
+//intstr and strint are the two functions upon which the library centers
+//they both use a global variable for the radix
 
 //putstr prints a string to standard output
 //it uses the std.debug.print function
@@ -96,14 +112,17 @@ pub fn putint(n:usize) void
 }
 
 
-//this variable used to count errors in the strint function
-var strint_errors:usize=0;
+//The strint_errors variable is used to keep track of how many errors happened in the strint function.
+//The following errors can occur:
 
-//pub fn putstr(s:[]const u8) void
-//{
-// const slice: []const u8=s[0..s.len]; //slice containing whole string
-// std.debug.print("{s}",.{slice});
-//}
+//Radix is not in range 2 to 36
+//Character is not a number 0 to 9 or alphabet A to Z (in either case)
+//Character is alphanumeric but is not valid for current radix
+
+//If any of these errors happen, error messages are printed to let the programmer or user know what went wrong in the string that was passed to the function.
+//If getting input from the keyboard, the strint_errors variable can be used in a conditional statement to tell them to try again and recall the code that grabs user input.
+
+var strint_errors:usize=0;
 
 //using array syntax rather than pointer syntax is required
 //therefore, si is used as index to the s string
@@ -124,7 +143,7 @@ pub fn strint(s:[]const u8) usize
   else if( c >= 'a' and c <= 'z' ){c-='a';c+=10;}
   else if( c == ' ' or c == '\n' or c == '\t' ){break;}
   else{ strint_errors+=1; std.debug.print("Error: {c} is not an alphanumeric character!\n",.{s[si]});break;}
-  if(c>=radix){ strint_errors+=1; std.debug.print("Error: {} is not a valid character for radix {}\n",.{s[si],radix});break;}
+  if(c>=radix){ strint_errors+=1; std.debug.print("Error: {c} is not a valid character for radix {d}\n",.{s[si],radix});break;}
   i*=radix;
   i+=c;
   si+=1;
@@ -132,9 +151,18 @@ pub fn strint(s:[]const u8) usize
  return i;
 }
 
-
-
-
+//One of the things I learned about Zig is that the function
+//std.debug.print is basically printf for Zig
+//Format specifiers
+//{c} for character
+//{d} for decimal integer
+//{s} for string
+//Therefore, it was very easy to port the C version of strint over to Zig
+//It is especially relevant because strint should only print something
+//if an error happened. The fact that std.debug.print goes to stderr
+//is quite important to my design for this function.
+//Find out more here:
+//https://zig.guide/standard-library/formatting-specifiers
 
 
 
