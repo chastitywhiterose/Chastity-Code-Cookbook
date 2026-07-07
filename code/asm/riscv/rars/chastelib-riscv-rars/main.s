@@ -311,7 +311,7 @@ addi t1, t1, 1                  # go to next byte
 j putstr_strlen_start           # jump to start of the loop
 putstr_strlen_end:              
 
-li a0 1                         # STDOUT file number
+li a0, 1                        # STDOUT file number
 mv a1, s0                       # address of string 
 sub a2, t1, s0                  # length of string
 li a7, 64                       # write call number
