@@ -1,2 +1,2 @@
 main-riscemu:
-	riscemu main.asm
+	riscemu main.s
