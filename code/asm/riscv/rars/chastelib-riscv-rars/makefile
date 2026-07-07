@@ -1,4 +1,4 @@
-main-rars:
+rars:
 	java -jar ~/rars.jar main.s
-main-riscemu:
+riscemu:
 	riscemu main.s

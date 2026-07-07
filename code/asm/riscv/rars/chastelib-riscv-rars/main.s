@@ -23,7 +23,7 @@ char:  .byte 0, 0
 # These variables are for outputting specific messages
 # or to simulate user input as integers in the strint function
 
-string0: .asciz "chastelib test suite for RISC-V Assembly in RARS simulator\n"
+string0: .asciz "chastelib test suite for RISC-V Assembly\n"
 
 input_int_0: .asciz "0"
 input_int_1: .asciz "100"
@@ -37,7 +37,7 @@ jal putstr
 # this program doesn't use real user input but simulates it with global strings we will interpret
 # as if they are hexadecimal integers
 
-# change radix to decimal
+# change radix to hexadecimal
 li t0, 16    #load t0 register with the new radix
 la t1, radix #load t1 register with the address the radix will go to
 sb t0, 0(t1) #save t0 register (byte) to address t1
@@ -63,40 +63,40 @@ mv s1, s3
 loop:
 
 # change radix to binary
-li t0, 2     #load t0 register with the new radix
-la t1, radix #load t1 register with the address the radix will go to
-sb t0, 0(t1) #save t0 register (byte) to address t1
+li t0, 2         #load t0 register with the new radix
+la t1, radix     #load t1 register with the address the radix will go to
+sb t0, 0(t1)     #save t0 register (byte) to address t1
 
 # change width to 8 to represent an 8 bit binary value
-li t0, 8     #load t0 register with the new width
+li t0, 8         #load t0 register with the new width
 la t1, int_width #load t1 register with the address the width will go to
-sb t0, 0(t1) #save t0 register (byte) to address t1
+sb t0, 0(t1)     #save t0 register (byte) to address t1
 
 jal putint
 jal putspace
 
 # change radix to hexadecimal
-li t0, 16     #load t0 register with the new radix
-la t1, radix #load t1 register with the address the radix will go to
-sb t0, 0(t1) #save t0 register (byte) to address t1
+li t0, 16        #load t0 register with the new radix
+la t1, radix     #load t1 register with the address the radix will go to
+sb t0, 0(t1)     #save t0 register (byte) to address t1
 
 # change width to 2 to represent an 8 bit binary value as a two digit hex value
-li t0, 2     #load t0 register with the new width
+li t0, 2         #load t0 register with the new width
 la t1, int_width #load t1 register with the address the width will go to
-sb t0, 0(t1) #save t0 register (byte) to address t1
+sb t0, 0(t1)     #save t0 register (byte) to address t1
 
 jal putint
 jal putspace
 
 # change radix to decimal
-li t0, 10     #load t0 register with the new radix
-la t1, radix #load t1 register with the address the radix will go to
-sb t0, 0(t1) #save t0 register (byte) to address t1
+li t0, 10        #load t0 register with the new radix
+la t1, radix     #load t1 register with the address the radix will go to
+sb t0, 0(t1)     #save t0 register (byte) to address t1
 
 # change width to 3 to represent an 8 bit binary value decimal value of up to 3 digits
-li t0, 3       #load t0 register with the new width
+li t0, 3         #load t0 register with the new width
 la t1, int_width #load t1 register with the address the width will go to
-sb t0, 0(t1) #save t0 register (byte) to address t1
+sb t0, 0(t1)     #save t0 register (byte) to address t1
 
 jal putint
 
@@ -108,7 +108,7 @@ blt t1, s0, not_char
 jal putspace
 jal putchar
 
-not_char:                # jump here if character is outside range to print
+not_char:        #jump here if character is outside range to print
 
 jal putline
 
@@ -118,8 +118,9 @@ blt s0, s1, loop
 la s0, string0
 jal putstr
 
-li   a7, 10     # exit syscall
-ecall
+li a0, 0  #status
+li a7, 93 #exit
+ecall     #environment call
 
 #################################################################################
 # The following functions are independent of a specific RISC-V Operating System #
@@ -140,26 +141,26 @@ ecall
 
 intstr:
 
-la t1, radix     # load address of radix into t1
-lb t2, 0(t1)     # load value of radix into t2
-la t1, int_width # load address of width into t1
-lb t4, 0(t1)     # load value of int_width into t4
-li t3, 1         # load current number of digits, always 1
+la t1, radix     #load address of radix into t1
+lb t2, 0(t1)     #load value of radix into t2
+la t1, int_width #load address of width into t1
+lb t4, 0(t1)     #load value of int_width into t4
+li t3, 1         #load current number of digits, always 1
 
-la t1, int_end # t1=address of terminating zero in string
-addi t1, t1, -1        # t1-- to go to lowest digit
+la t1, int_end   #t1=address of terminating zero in string
+addi t1, t1, -1  #t1-- to go to lowest digit
 
 digits_start:
 
-remu t0, s0, t2 # t0=remainder of the previous division
-divu s0, s0, t2 # s0=s0/t2 (divide s0 by the radix value in t2)
+remu t0, s0, t2  #t0=remainder of the previous division
+divu s0, s0, t2  #s0=s0/t2 (divide s0 by the radix value in t2)
 
-li t5, 10 # load t5 with 10 because RISC-V does not allow constants for branches
+li t5, 10        #load t5 with 10 because RISC-V does not allow constants for branches
 
 blt t0, t5, decimal_digit
 bge t0, t5, hexadecimal_digit
 
-decimal_digit: # we go here if it is only a digit 0 to 9
+decimal_digit:   #we go here if it is only a digit 0 to 9
 
 addi t0, t0, 0x30
 
@@ -170,7 +171,7 @@ addi t0, t0, -10
 addi t0, t0, 0x41
 
 save_digit:
-sb t0, 0(t1) # store byte from t0 at address t1
+sb t0, 0(t1)     #store byte from t0 at address t1
 beq s0, zero, intstr_end
 addi t1, t1, -1
 addi t3, t3, 1
@@ -221,10 +222,10 @@ ret
 
 strint:
 
-la t1, radix     # load address of radix into t1
-lb t2, 0(t1)     # load value of radix into t2
+la t1, radix     #load address of radix into t1
+lb t2, 0(t1)     #load value of radix into t2
 
-mv t1, s0 # copy string address from s0 to t1
+mv t1, s0        #copy string address from s0 to t1
 li s0, 0
 
 read_strint:
@@ -232,20 +233,20 @@ lb t0, 0(t1)
 addi t1, t1, 1
 beq t0, zero, strint_end
 
-# if char is below '0' or above '9', it is outside the range of these and is not a digit
+#if char is below '0' or above '9', it is outside the range of these and is not a digit
 li t5, 0x30
 blt t0, t5, not_digit
 li t5, 0x39
 blt t5, t0, not_digit
 
-# but if it is a digit, then correct and process the character
+#but if it is a digit, then correct and process the character
 is_digit:
 andi t0, t0, 0xF
 j process_char
 
 not_digit:
-# it isn't a digit, but it could be perhaps and alphabet character
-# which is a digit in a higher base
+#it isn't a digit, but it could be an alphabet character
+#which counts as a digit in a higher base
 
 # if char is below 'A' or above 'Z', it is outside the range of these and is not capital letter
 li t5, 0x41
@@ -283,7 +284,6 @@ process_char:
 
 blt t2, t0 strint_end #;if this value is above or equal to radix, it is too high despite being a valid digit/alpha
 
-
 mul s0, s0, t2 # multiply s0 by the radix
 add s0, s0, t0 # add the correct value of this digit
 
@@ -294,7 +294,7 @@ strint_end:
 ret
 
 ###############################################################################
-# This putstr function is the most portable function for RISC-V simulators    #
+# This putstr function is my  most portable function for RISC-V simulators    #
 # It calculates the length of a zero terminated string before printing it     #
 # This is the same way used in my Intel Assembly programs for DOS and Linux   #
 # This function was written to operate the same in both RARS and riscemu      #
@@ -312,11 +312,11 @@ j putstr_strlen_start           # jump to start of the loop
 putstr_strlen_end:              
 
 
-addi a0, zero, 1  # a0=1     (STDOUT file number)
-addi a1, s0, 0    # a1=s0    (address of string )
-sub  a2, t1, s0   # a2=t1-s0 (length of string  )
-addi a7, zero, 64 # a7=64    (write system call )
-ecall             #          (environment call  )
+addi a0, zero, 1  #a0=1     (STDOUT file number)
+addi a1, s0, 0    #a1=s0    (address of string )
+sub  a2, t1, s0   #a2=t1-s0 (length of string  )
+addi a7, zero, 64 #a7=64    (write system call )
+ecall             #         (environment call  )
 
 ret
 
