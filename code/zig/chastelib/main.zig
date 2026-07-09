@@ -36,10 +36,6 @@ pub fn main() void
  }
  putstr(string0);
 
-
- a=strint("515");
- putint(a);
- putstr("\n");
 }
 
 //This file is a library of functions written by Chastity White Rose.
