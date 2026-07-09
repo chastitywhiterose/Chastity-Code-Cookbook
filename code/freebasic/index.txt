@@ -1,0 +1,42 @@
+My list of small programs while learning FreeBasic.
+
+
+' fbc main.bas && main.exe
+Print "Hello World!"
+
+
+' fbc main.bas && main.exe
+dim as integer x
+x=0
+while(x<10)
+print x
+x+=1
+wend
+
+
+' fbc main.bas && main.exe
+' array test
+dim as integer x,length=16
+dim as integer a(length)
+
+a(1)=100:
+a(2)=200:
+a(4)=300:
+a(8)=400:
+
+x=0
+while(x<length)
+ print "a(";x;"):",a(x):
+ x+=1:
+wend
+
+
+
+
+---
+
+It's actually quite easy to translate between C programs and FreeBasic programs because the manual contains a page detailing what the differences are.
+
+https://www.freebasic.net/wiki/wikka.php?wakka=TblComparisonC
+
+Of course it doesn't mention everything but it does cover important details such as the way variables are declared. Also a regular colon : is used to separate statements in FreeBasic instead of semicolon ; as in C. The other notable difference is that for, while, and if flow control structures are slightly different.
