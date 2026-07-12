@@ -292,6 +292,35 @@ int sdl_putchar_pixel(char c) /*direct pixel access edition for SDL2*/
  return c;
 }
 
+/*
+frames per second is global so that different animations can change the speed
+*/
+int fps=60; /*frames per second*/
+
+/*
+a function which calls another putchar function to render a character
+but does a clever timing delay.
+*/
+int sdl_putchar_slow(char c)
+{
+ int sdl_time,sdl_time1; /*define the timing integers*/
+ int delay=1000/fps;
+ 
+ sdl_time = SDL_GetTicks(); /*get the current time in milliseconds*/
+ sdl_time1 = sdl_time+delay; /*make copy of time with delay added*/
+ 
+ sdl_putchar_pixel(c);
+ SDL_UpdateWindowSurface(window); /*update window to show the results*/
+ 
+ /*time loop used to slow the game down so users can see it*/
+ while(sdl_time<sdl_time1)
+ {
+  sdl_time=SDL_GetTicks();
+ }
+ 
+ return c;
+}
+
 int (*sdl_putchar)(char )=sdl_putchar_pixel;
 
 /*

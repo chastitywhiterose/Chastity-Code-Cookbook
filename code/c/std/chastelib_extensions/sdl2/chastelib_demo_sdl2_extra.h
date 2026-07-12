@@ -35,6 +35,7 @@ int demo_power2()
  
  main_font.char_scale=3; 
 
+ sdl_putchar=sdl_putchar_slow; /*use the slow drawing function*/
  
    sdl_clear();  /*clear the screen before we begin writing*/
 
