@@ -25,15 +25,32 @@ int demo_galatians()
 
 int demo_power2()
 {
- int a=0,b=30;
+ int a=0,b=0x80;
  int x,y;
  #define length 1000
- int length2=20;
+ int length2=40;
  char c[length];
+ 
+ /*first, display the intro to the demo video*/
+  sdl_clear();  /*clear the screen before we begin writing*/
+
+  cursor_left=128;
+
+  main_font.char_scale=8; 
+
+  putstr("\n\nPowers of 2\n\n");
+
+  main_font.char_scale=4; 
+
+  putstr("An SDL2 animation made in the\n\nC Programming Language\n\nby Chastity White Rose\n");
+
+  SDL_UpdateWindowSurface(window); /*update window to show the results*/
+  sdl_wait_escape(); /*wait till escape key pressed*/
  
  radix=10; /*set the radix we will use*/
  
- main_font.char_scale=3; 
+ main_font.char_scale=3; /*set the font size for animation*/
+ cursor_left=0; /*reset the left side position to 0*/
 
  sdl_putchar=sdl_putchar_slow; /*use the slow drawing function*/
  

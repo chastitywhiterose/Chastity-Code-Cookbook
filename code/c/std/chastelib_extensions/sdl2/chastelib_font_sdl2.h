@@ -388,7 +388,7 @@ int sdl_putstring_wrapped(const char *s)
    cursor_y+=line_spacing_pixels; /*add space between lines for readability*/
    putchar('\n'); /*insert newline to terminal*/
   }
-  if(cursor_y>=height)
+  if(cursor_y+main_font.char_height*main_font.char_scale>=height)
   {
    sdl_clear(); /*call the function that clears the screen and resets the cursor x and y to 0;*/
   }
