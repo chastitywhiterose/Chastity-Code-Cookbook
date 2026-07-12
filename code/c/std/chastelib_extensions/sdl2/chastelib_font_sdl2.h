@@ -344,6 +344,24 @@ int sdl_putstring(const char *s)
 }
 
 /*
+A function to clear the screen and reset the cursor to the top left
+This makes sense because the Linux clear command does the same thing
+*/
+
+void sdl_clear()
+{
+ cursor_x=0;cursor_y=0;
+ SDL_FillRect(surface,NULL,0x000000);
+ 
+ /*
+ these next lines use escape sequences to also clear the terminal
+ and reset the terminal cursor so it matches the SDL cursor by this library
+*/
+ putstring("\x1B[2J"); /*clear the terminal with an escape sequence*/
+ putstring("\x1B[H"); /*reset terminal cursor to home*/
+}
+
+/*
  This function writes a string but wraps the text to always fit the screen.
 */
 
@@ -370,6 +388,10 @@ int sdl_putstring_wrapped(const char *s)
    cursor_y+=line_spacing_pixels; /*add space between lines for readability*/
    putchar('\n'); /*insert newline to terminal*/
   }
+  if(cursor_y>=height)
+  {
+   sdl_clear(); /*call the function that clears the screen and resets the cursor x and y to 0;*/
+  }
   sdl_putchar(*p); /*print this character to the SDL window using a function I wrote*/
   putchar(*p);     /*print to stdout with libc putchar*/
   p++;             /*increment the pointer*/
@@ -378,23 +400,7 @@ int sdl_putstring_wrapped(const char *s)
  return count;                   /*return how many bytes were written*/
 }
 
-/*
-A function to clear the screen and reset the cursor to the top left
-This makes sense because the Linux clear command does the same thing
-*/
 
-void sdl_clear()
-{
- cursor_x=0;cursor_y=0;
- SDL_FillRect(surface,NULL,0x000000);
- 
- /*
- these next lines use escape sequences to also clear the terminal
- and reset the terminal cursor so it matches the SDL cursor by this library
-*/
- putstring("\x1B[2J"); /*clear the terminal with an escape sequence*/
- putstring("\x1B[H"); /*reset terminal cursor to home*/
-}
 
 /*
  a function with a loop which will only end if we click the X or press escape

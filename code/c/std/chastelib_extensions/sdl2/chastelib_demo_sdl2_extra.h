@@ -37,7 +37,7 @@ int demo_power2()
 
  sdl_putchar=sdl_putchar_slow; /*use the slow drawing function*/
  
-   sdl_clear();  /*clear the screen before we begin writing*/
+ sdl_clear();  /*clear the screen before we begin writing*/
 
  x=0;
  while(x<length)
