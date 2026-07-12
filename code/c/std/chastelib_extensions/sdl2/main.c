@@ -70,16 +70,19 @@ int main(int argc, char **argv)
   sdl_wait_escape(); /*wait till escape key pressed*/
  }
  
-  /*demo_galatians();*/
 
  /*now call a demo function I wrote*/
  /*sdl_chastelib_test_suite();*/
+ 
+ /*demo_galatians();*/
+ 
+ demo_power2();
 
  /*sdl_chastelib_hexram();*/
  
  /*sdl_chastelib_hexplore(argc,argv);*/ /*call this function and pass the command args to it*/
  
- sdl_chastelib_imagehex(argc,argv);
+ /*sdl_chastelib_imagehex(argc,argv);*/
 
  if(0)
  {

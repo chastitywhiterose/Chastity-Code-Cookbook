@@ -39,14 +39,52 @@ char *intstr(unsigned int i)    /*Chastity's supreme integer to string conversio
  *s=0;                          /*set the zero that terminates the string in the C language*/
  while(i!=0 || width<int_width) /*loop to fill the string with every required digit plus prefixed zeros*/
  {
-  s--;                          /*decrement the pointer to go left for corrent digit placing*/
+  s--;                          /*decrement the pointer to go left for correct digit placing*/
   *s=i%radix;                   /*get the remainder of division by the radix or base*/
   i/=radix;                     /*divide the input by radix*/
-  if(*s<10){*s+='0';}           /*fconvert digits 0 to 9 to the ASCII character for that digit*/
+  if(*s<10){*s+='0';}           /*convert digits 0 to 9 to the ASCII character for that digit*/
   else{*s=*s+'A'-10;}           /*for digits higher than 9, convert to letters starting at A*/
   width++;                      /*increment the width so we know when enough digits are saved*/
  }
  return s;                      /*return this string to be used by putstr,printf,std::cout or whatever*/
+}
+
+/*
+ This function prints a string using fwrite.
+ This algorithm is the best C representation of how my Assembly programs also work.
+ Its true purpose is to be used in the putint function for conveniently printing integers, 
+ but it can print any valid string.
+*/
+
+int putstring(const char *s)
+{
+ int count=0;              /*used to count how many bytes will be written*/
+ const char *p=s;          /*pointer used to find terminating zero of string*/
+ while(*p){p++;}           /*loop until zero found and immediately exit*/
+ count=p-s;                /*count is the difference of pointers p and s*/
+ fwrite(s,1,count,stdout); /*https://cppreference.com/w/c/io/fwrite.html*/
+ return count;             /*return how many bytes were written*/
+}
+
+/*
+ A function pointer named putstr which is a shorter name for calling putstring
+ But this doesn't exist just to save bytes of source files. Otherwise I wouldn't have these huge comments!
+ This exists so that all strings can be redirected to another function for output.
+ For example, if the strings were written to a log file during a game which didn't use a terminal.
+ 
+ But the most common use case is "putstr=addstr" when using the ncurses library to manage
+ terminal control functions for a text based game. Having the putstr pointer allows me to 
+ include this same source file and use it for ncurses based projects.
+*/
+int (*putstr)(const char *)=putstring;
+
+/*
+ This function uses both intstr and putstring to print an integer in the currently selected radix and width.
+*/
+
+void putint(unsigned int i)
+{
+ putstr(intstr(i));
 }
 
 /*
@@ -84,7 +122,7 @@ int strint(const char *s)
   else if( c >= 'A' && c <= 'Z' ){c-='A';c+=10;}
   else if( c >= 'a' && c <= 'z' ){c-='a';c+=10;}
   else if( c == ' ' || c == '\n' || c == '\t' ){break;}
-  else{ strint_errors++; printf("Error: %c is not an alphanumeric character!\n",c);break;}
+  else{ strint_errors++; printf("Error: %c is not an alphanumeric character!\n",*s);break;}
   if(c>=radix){ strint_errors++; printf("Error: %c is not a valid character for radix %i\n",*s,radix);break;}
   i*=radix;
   i+=c;
@@ -93,43 +131,6 @@ int strint(const char *s)
  return i;
 }
 
-/*
- This function prints a string using fwrite.
- This algorithm is the best C representation of how my Assembly programs also work.
- Its true purpose is to be used in the putint function for conveniently printing integers, 
- but it can print any valid string.
-*/
-
-int putstring(const char *s)
-{
- int count=0;              /*used to calcular how many bytes will be written*/
- const char *p=s;          /*pointer used to find terminating zero of string*/
- while(*p){p++;}           /*loop until zero found and immediately exit*/
- count=p-s;                /*count is the difference of pointers p and s*/
- fwrite(s,1,count,stdout); /*https://cppreference.com/w/c/io/fwrite.html*/
- return count;             /*return how many bytes were written*/
-}
-
-/*
- A function pointer named putstr which is a shorter name for calling putstring
- But this doesn't exist just to save bytes of source files. Otherwise I wouldn't have these huge comments!
- This exists so that all strings can be redirected to another function for output.
- For example, if the strings were written to a log file during a game which didn't use a terminal.
- 
- But the most common use case is "putstr=addstr" when using the ncurses library to manage
- terminal control functions for a text based game. Having the putstr pointer allows me to 
- include this same source file and use it for ncurses based projects.
-*/
-int (*putstr)(const char *)=putstring;
-
-/*
- This function uses both intstr and putstring to print an integer in the currently selected radix and width.
-*/
-
-void putint(unsigned int i)
-{
- putstr(intstr(i));
-}
 
 /*
  Those four functions above are the core of chastelib.
