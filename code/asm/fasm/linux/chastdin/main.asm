@@ -86,17 +86,17 @@ cmp [strint_error],0 ;did we have zero errors in the strint function?
 jz num_push          ;if there were no errors, push this to stack
 
 mov eax,string_err
-call putstring
+call putstring       ;print error message
 mov eax,esi
-call putstring
+call putstring       ;print which command failed
 call putline
 jmp num_push_end ;skip the push because this can't be used
 
 num_push:        ;push the number to the fake stack
-add ebp,4
-mov [ebp],eax
+add ebp,4        ;increment the pointer by the size of the native int for this mode
+mov [ebp],eax    ;mov the value we converted from the string with strint
 num_push_end:
-jmp main_loop
+jmp main_loop    ;once value is pushed, continue the program
 
 ;These are the labels and code for each of the commands
 ;When a command is done, we jump back to the beginning of the loop
@@ -106,56 +106,63 @@ jmp main_loop
 ;add number on top of stack to the one below it
 command_add:
 mov eax,[ebp]
-mov dword[ebp],0
 sub ebp,4
 add [ebp],eax
-jmp main_loop
+jmp memory_check ;check stack for errors after this command
 
 ;subtract number on top of stack from the one below it
 command_sub:
 mov eax,[ebp]
-mov dword[ebp],0
 sub ebp,4
 sub [ebp],eax
-jmp main_loop
+jmp memory_check ;check stack for errors after this command
 
 ;multiply number on top of stack by the one below it
 command_mul:
 mov ebx,[ebp]
-mov dword[ebp],0
 sub ebp,4
 mov eax,[ebp]
 mov edx,0     ;zero edx before multiply
 mul ebx       ;multiply eax with value in ebx
 mov [ebp],eax
-jmp main_loop
+jmp memory_check ;check stack for errors after this command
 
 ;divide number on top of stack into the one below it
 command_div:
 mov ebx,[ebp]
-mov dword[ebp],0
 sub ebp,4
 mov eax,[ebp]
 mov edx,0 ;zero edx before divide
 div ebx   ;divide eax with value in ebx
 mov [ebp],eax ;store quotient on stack
-jmp main_loop
+jmp memory_check ;check stack for errors after this command
 
 ;divide number on top of stack into the one below it
 ;but leave remainder instead of quotient
 command_rem:
 mov ebx,[ebp]
-mov dword[ebp],0
 sub ebp,4
 mov eax,[ebp]
 mov edx,0 ;zero edx before divide
 div ebx   ;divide eax with value in ebx
 mov [ebp],edx ;store remainder on stack
-jmp main_loop
+jmp memory_check ;check stack for errors after this command
 
-;check if the stack has
+;check if the stack has enough space for the last command
+;this will print an error if only one number was on the stack
+;when using one of the math commands above
 memory_check:
-
+cmp ebp,chastack ;is ebp equal to the address of stack start?
+jbe print_stack_error 
+mov dword[ebp+4],0 ;if no error, erase the old top of stack
+jmp main_loop      ;and continue main_loop as normal
+print_stack_error:
+mov eax,string_err1  ;get error message for lack of numbers on stack
+call putstring       ;print error message
+mov eax,esi
+call putstring       ;print which command failed
+call putline
+add ebp,4            ;increment the pointer to what it was before the failed command
 jmp main_loop
 
 command_query: ;print all numbers on the stack
@@ -191,7 +198,6 @@ int 80h          ;system call for 32-bit Linux kernel
 
 argc dd 0
 
-string_err db 'Error: invalid number or command: ',0 ;Generic error message
 string_add db 'add',0
 string_sub db 'sub',0
 string_mul db 'mul',0
@@ -202,6 +208,9 @@ string_query db '?',0
 string_clear db 'clear',0
 
 string_prompt db '-> ',0
+
+string_err db 'Error: invalid number or command: ',0 ;Generic error message
+string_err1 db 'Error: need two numbers on stack for command: ',0 ;math fail error when less than two numbers on the stack
 
 string_help db 'chastdin is a stack based interactive calculator',0xA
             db 'Numbers are pushed on the stack and commands can do math.',0xA
