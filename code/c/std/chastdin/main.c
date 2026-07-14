@@ -50,13 +50,16 @@ int main(int argc, char **argv)
  /*set the base pointer to where it should start*/
   ebp=stack;
   
-putstr("chastdin is a stack based interactive calculator\n"
-"Numbers are pushed on the stack and commands can do math.\n"
-"It is a fork of chastack that reads from stdin instead of arguments.\n"
-"Each line can contain multiple numbers or commands.\n"
-"Math commands are add,sub,mul,div,rem\n"
-"The exit command ends the program\n"
-"The ? command prints the entire stack\n\n");
+ putstr
+ (
+  "chastdin is a stack based interactive calculator\n"
+  "Numbers are pushed on the stack and commands can do math.\n"
+  "It is a fork of chastack that reads from stdin instead of arguments.\n"
+  "Each line can contain multiple numbers or commands.\n"
+  "Math commands are add,sub,mul,div,rem\n"
+  "The exit command ends the program\n"
+  "The ? command prints the entire stack\n\n"
+ );
 
  last_char='\n'; /*set last_char to newline so prompt will print at start*/
 
