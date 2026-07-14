@@ -109,6 +109,7 @@ jmp getline_chars ;jump back to start of loop and keep reading
 
 getline_end:
 
+mov [last_char],al ;save the last character read
 mov byte[ecx],0 ;terminate this string with a zero
 
 mov eax,buf ;mov the buffer address to eax for returning the string
