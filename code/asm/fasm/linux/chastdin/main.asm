@@ -100,7 +100,10 @@ jmp main_loop
 
 ;These are the labels and code for each of the commands
 ;When a command is done, we jump back to the beginning of the loop
+;the add,sub,mul,div,rem commands are pretty self explanatory
+;by their names alone, but I will provide comments too
 
+;add number on top of stack to the one below it
 command_add:
 mov eax,[ebp]
 mov dword[ebp],0
@@ -108,6 +111,7 @@ sub ebp,4
 add [ebp],eax
 jmp main_loop
 
+;subtract number on top of stack from the one below it
 command_sub:
 mov eax,[ebp]
 mov dword[ebp],0
@@ -115,6 +119,7 @@ sub ebp,4
 sub [ebp],eax
 jmp main_loop
 
+;multiply number on top of stack by the one below it
 command_mul:
 mov ebx,[ebp]
 mov dword[ebp],0
@@ -125,6 +130,7 @@ mul ebx       ;multiply eax with value in ebx
 mov [ebp],eax
 jmp main_loop
 
+;divide number on top of stack into the one below it
 command_div:
 mov ebx,[ebp]
 mov dword[ebp],0
@@ -135,6 +141,8 @@ div ebx   ;divide eax with value in ebx
 mov [ebp],eax ;store quotient on stack
 jmp main_loop
 
+;divide number on top of stack into the one below it
+;but leave remainder instead of quotient
 command_rem:
 mov ebx,[ebp]
 mov dword[ebp],0
@@ -143,6 +151,11 @@ mov eax,[ebp]
 mov edx,0 ;zero edx before divide
 div ebx   ;divide eax with value in ebx
 mov [ebp],edx ;store remainder on stack
+jmp main_loop
+
+;check if the stack has
+memory_check:
+
 jmp main_loop
 
 command_query: ;print all numbers on the stack
