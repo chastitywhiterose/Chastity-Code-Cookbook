@@ -149,17 +149,17 @@ mov [ebp],edx ;store remainder on stack
 jmp memory_check ;check stack for errors after this command
 
 ;check if the stack has enough space for the last command
-;this will print an error if only one number was on the stack
+;this will print an error if less than two numbers were on the stack
 ;when using one of the math commands above
 memory_check:
-cmp ebp,chastack ;is ebp equal to the address of stack start?
-jbe print_stack_error 
-mov dword[ebp+4],0 ;if no error, erase the old top of stack
-jmp main_loop      ;and continue main_loop as normal
+cmp ebp,chastack      ;is ebp above the address of stack start?
+jna print_stack_error ;if not above, explain error to user
+mov dword[ebp+4],0    ;if no error, erase the old top of stack
+jmp main_loop         ;and continue main_loop as normal
 print_stack_error:
 mov eax,string_err1  ;get error message for lack of numbers on stack
 call putstring       ;print error message
-mov eax,esi
+mov eax,esi          ;get name of the command used
 call putstring       ;print which command failed
 call putline
 add ebp,4            ;increment the pointer to what it was before the failed command
@@ -224,5 +224,4 @@ string_help db 'chastdin is a stack based interactive calculator',0xA
 ;I allocate memory for a virtual stack that we can index as if it was the real stack
 ;I name it "chastack" for Chastity's stack.
 
-db 6 dup 0 ;extra padding bytes
 chastack: rd 0x100
