@@ -192,9 +192,9 @@ command_exit: ;end the program
 
 main_loop_end:
 
-mov rax,1        ;exit (kernel opcode 1 on 32 bit systems)
-mov rbx,0        ;return 0 status on exit - 'No Errors'
-int 80h          ;system call for 32-bit Linux kernel
+mov rax,0x3C              ;exit (kernel opcode 0x3C on 64 bit systems) (60 decimal)
+mov rdi,0                 ;return 0 status on exit - 'No Errors'
+syscall                   ;system call for 64-bit Linux kernel
 
 argc dd 0
 
