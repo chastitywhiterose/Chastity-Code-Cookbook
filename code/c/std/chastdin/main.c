@@ -18,9 +18,30 @@ this is one reason C is limited compared to Assembly.
 */
 int eax,ebx,ecx,edx,esi,edi,*ebp,*esp;
 
+char *s; /*character pointer for user input*/
+
+/*
+ this function is called by all math commands that requires two or more numbers
+ to be on the stack when they are used.
+*/ 
+void stack_check()
+{
+ if(ebp>stack)
+ {
+  *(ebp+1)=0; /*erase old top of stack because command was successful*/
+ }
+ else
+ {
+  putstr("Error: two numbers required for command: ");
+  putstr(s);
+  putstr("\n");
+  ebp++; /*increment the pointer to what it was before the failed command*/
+ }
+}
+
 int main(int argc, char **argv)
 {
- char *s; /*character pointer for user input*/
+
 
  /*set the radix used for integer display*/
  radix=10;
@@ -64,6 +85,7 @@ putstr("chastdin is a stack based interactive calculator\n"
    eax=*ebp;
    eax+=ebx;
    *ebp=eax;
+   stack_check();
   }
   
   else if(!strcmp(s,"sub"))
@@ -73,6 +95,7 @@ putstr("chastdin is a stack based interactive calculator\n"
    eax=*ebp;
    eax-=ebx;
    *ebp=eax;
+   stack_check();
   }
   
   else if(!strcmp(s,"mul"))
@@ -82,6 +105,7 @@ putstr("chastdin is a stack based interactive calculator\n"
    eax=*ebp;
    eax*=ebx;
    *ebp=eax;
+   stack_check();
   }
 
   else if(!strcmp(s,"div"))
@@ -91,6 +115,7 @@ putstr("chastdin is a stack based interactive calculator\n"
    eax=*ebp;
    eax/=ebx;
    *ebp=eax;
+   stack_check();
   }
   
   else if(!strcmp(s,"rem"))
@@ -100,18 +125,19 @@ putstr("chastdin is a stack based interactive calculator\n"
    eax=*ebp;
    eax%=ebx;
    *ebp=eax;
+   stack_check();
   }
   
   else if(!strcmp(s,"?"))
   {
-   int *tmp=esp;
-   while(esp<ebp)
+   int *tmp=ebp;
+   while(ebp>stack)
    {
-    putint(*esp); /*print whole stack in this loop*/  
+    putint(*ebp); /*print whole stack in this loop*/  
     putstr("\n");
-    esp++;
+    ebp--;
    }
-   esp=tmp;
+   ebp=tmp;
   }
   
   else if(!strcmp(s,"clear"))
@@ -129,6 +155,10 @@ putstr("chastdin is a stack based interactive calculator\n"
    {
     putstr("Last argument was not a number, but it could be a command!\n");
    }
+   else if(read_count==0)
+   {
+    /*nothing happens because no characters were read*/
+   }
    else
    {
     ebp++;
@@ -140,3 +170,4 @@ putstr("chastdin is a stack based interactive calculator\n"
 
  return 0;
 }
+
