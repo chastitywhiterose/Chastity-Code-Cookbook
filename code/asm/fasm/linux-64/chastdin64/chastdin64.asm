@@ -32,19 +32,19 @@ last_char db 0
 getstring:
 
 mov [count],0 ;set count of characters read during this function to zero
-mov edx,1     ;number of bytes to read
-mov ecx,buf   ;address to store the bytes
+mov rdx,1     ;number of bytes to read
+mov rsi,buf   ;address to store the bytes
 
 getstring_chars:
 
-mov ebx,0     ;read from stdin
-mov eax,3     ;invoke SYS_READ (kernel opcode 3)
-int 80h       ;call the kernel
+mov rdi,0     ;read from stdin
+mov rax,0     ;invoke SYS_READ (kernel opcode 0 on 64 bit Intel)
+syscall       ;call the kernel
 
-cmp eax,1     ;was 1 character read?
+cmp rax,1     ;was 1 character read?
 jnz getstring_end ; if not, then end this loop
 
-mov al,[ecx]  ;mov last character read into al register
+mov al,[rsi]  ;mov last character read into al register
 
 ;check if this character is in the proper range to be part of the string
 
@@ -56,15 +56,15 @@ ja getstring_end ;jump if above to getstring_end label
 ;if neither jump happened, keep the character and
 
 inc [count]   ;increment how many characters we have read
-inc ecx       ;increment address where next byte is read from
+inc rsi       ;increment address where next byte is read from
 jmp getstring_chars ;jump back to start of loop and keep reading
 
 getstring_end:
 
 mov [last_char],al ;save the last character read
-mov byte[ecx],0 ;terminate this string with a zero
+mov byte[rsi],0 ;terminate this string with a zero
 
-mov eax,buf ;mov the buffer address to eax for returning the string
+mov rax,buf ;mov the buffer address to eax for returning the string
 
 ret
 
@@ -80,19 +80,19 @@ ret
 getline:
 
 mov [count],0 ;set count of characters read during this function to zero
-mov edx,1     ;number of bytes to read
-mov ecx,buf   ;address to store the bytes
+mov rdx,1     ;number of bytes to read
+mov rsi,buf   ;address to store the bytes
 
 getline_chars:
 
-mov ebx,0     ;read from stdin
-mov eax,3     ;invoke SYS_READ (kernel opcode 3)
-int 80h       ;call the kernel
+mov rdi,0     ;read from stdin
+mov rax,0     ;invoke SYS_READ (kernel opcode 0 on 64 bit Intel)
+syscall       ;call the kernel
 
-cmp eax,1     ;was 1 character read?
-jnz getline_end ; if not, then end this loop
+cmp rax,1     ;was 1 character read?
+jnz getstring_end ; if not, then end this loop
 
-mov al,[ecx]  ;mov last character read into al register
+mov al,[rsi]  ;mov last character read into al register
 
 ;check if this character is in the proper range to be part of the string
 
@@ -103,15 +103,16 @@ ja getline_end ;jump if above to getstring_end label
 
 ;if neither jump happened, keep the character and
 
-inc [count]       ;increment how many characters we have read
-inc ecx           ;increment address where next byte is read from
+inc [count]   ;increment how many characters we have read
+inc rsi       ;increment address where next byte is read from
 jmp getline_chars ;jump back to start of loop and keep reading
 
 getline_end:
 
-mov byte[ecx],0 ;terminate this string with a zero
+mov [last_char],al ;save the last character read
+mov byte[rsi],0 ;terminate this string with a zero
 
-mov eax,buf ;mov the buffer address to eax for returning the string
+mov rax,buf ;mov the buffer address to eax for returning the string
 
 ret
 
