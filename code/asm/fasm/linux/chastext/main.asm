@@ -88,7 +88,7 @@ cat:
 
 mov edx,1           ;number of bytes to read
 mov ecx,buf         ;address to store the bytes
-mov ebx,[fd]        ;move the opened file descriptor into EBX
+mov ebx,[fd]        ;move the opened file descriptor into ebx
 mov eax,3           ;invoke SYS_READ (kernel opcode 3 on 32 bit systems)
 int 80h             ;call the kernel
 
@@ -120,7 +120,7 @@ search_mode:
 
 mov edx,0           ;whence argument (SEEK_SET)
 mov ecx,[offset]    ;move the file cursor to this address
-mov ebx,[fd]        ;move the opened file descriptor into EBX
+mov ebx,[fd]        ;move the opened file descriptor into ebx
 mov eax,19          ;invoke SYS_LSEEK (kernel opcode 19)
 int 80h             ;call the kernel
 
@@ -132,7 +132,7 @@ call strlen         ;get the length of the search string
 
 mov edx,eax         ;number of bytes to read
 mov ecx,buf         ;address to store the bytes
-mov ebx,[fd]        ;move the opened file descriptor into EBX
+mov ebx,[fd]        ;move the opened file descriptor into ebx
 mov eax,3           ;invoke SYS_READ (kernel opcode 3)
 int 80h             ;call the kernel
 
@@ -234,12 +234,21 @@ int 80h
 ;the strlen and strcmp are named after the equivalent C functions
 ;but are written from scratch by me based on their expected behavior
 
-;Short Description of strcmp:
+;Short Description of strlen:
 ;The strlen function gets the length of string in eax and returns it in eax
 ;This is the same algorithm used in my putstring function but is independent of an operating system.
 
-;Long Description of strcmp:
-;The strlen function is rarely used but there are
+;Long Description of strlen:
+;The strlen function is rarely used but there are time when knowing the length of a string is helpful.
+;First, I needed it for my chastext program when I wanted to compare strings
+;To search for text in a file, I had to first get the length of the string which was being searched for.
+;By knowing the string length, I can read that many bytes from the file.
+;That way, if fewer bytes were read from the file than required, I can end the program without requiring strcmp to be called.
+;Comparing incomplete data would give untrackable results.
+;The second time I might need string length is when I am converting a number to a string in a specific radix using intstr.
+;If I know how many characters are in the highest number in an integer sequence,
+;I can then customize the integer width so that all digits are lined up.
+;My chastelib library was designed with integer sequences as the priority.
 
 strlen:
 
