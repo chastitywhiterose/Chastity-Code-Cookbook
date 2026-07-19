@@ -1,5 +1,13 @@
 # 3 Programming Languages for Beginners
 
+After writing my books on Assembly language, I was thinking to myself just how much work it takes to get something working in Assembly compared to the programming languages I learned with.
+
+I would like to take you on a journey of how programmers like me learned things in the 20th century. To do this, I will be briefly describing my top 3 favorite historical programming languages in the order they were first created.
+
+- 1964 BASIC
+- 1970 Pascal
+- 1972 C
+
 ## Basic Hello World
 
 ```
