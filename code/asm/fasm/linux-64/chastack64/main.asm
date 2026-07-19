@@ -256,5 +256,4 @@ ret
 ;I allocate memory for a virtual stack that we can index as if it was the real stack
 ;I name it "chastack" for Chastity's stack.
 
-db 6 dup 0 ;extra padding bytes
 chastack: rq 0x100
