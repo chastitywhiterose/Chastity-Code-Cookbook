@@ -15,12 +15,12 @@ dec eax                ;subtract 1 because the program name will be unused
 mov [argc],eax         ;save the argument count for later
 pop ebx                ;pop argument 0 (name of the program, we don't use it)
 cmp eax,0
-jnz usearg             ;if arguments are available, use the main loop
+jnz main_loop          ;if arguments are available, use the main loop
 
 mov eax,string_help
 call putstring
 
-usearg:
+main_loop:
 
 cmp [argc],0          ;check for remaining arguments
 jz usearg_end         ;if none, end the loop and stop printing
@@ -52,6 +52,10 @@ mov edi,string_rem
 call strcmp
 jz command_rem
 
+mov edi,string_setradix
+call strcmp
+jz command_setradix
+
 ;The default command is to turn the argument into a number and push to stack
 
 command_num:
@@ -62,34 +66,58 @@ cmp [strint_error],0 ;did we have zero errors in the strint function?
 jz num_push          ;if there were no errors, push this to stack
 
 mov eax,string_err
-call putstring
+call putstring       ;print error message
 mov eax,esi
-call putstring
+call putstring       ;print which command failed
 call putline
-jmp num_push_end ;skip the push because this can't be used
+jmp num_push_end     ;skip the push because this can't be used
 
-num_push:        ;push the number to the fake stack
-add ebp,4
-mov [ebp],eax
+num_push:            ;push the number to the fake stack
+add ebp,4            ;increment the pointer by the size of the native int for this mode
+mov [ebp],eax        ;mov the value we converted from the string with strint
 num_push_end:
-
-jmp usearg
+jmp main_loop        ;once value is pushed, continue the program
 
 ;These are the labels and code for each of the commands
 ;When a command is done, we jump back to the beginning of the loop
+;the add,sub,mul,div,rem commands are pretty self explanatory
+;but I will provide comments for these and other commands
 
+;pop top of stack and set the current radix to it
+;it has error checking and leaves the radix as is
+;unless at least one number is on the stack
+command_setradix:
+cmp ebp,chastack      ;is ebp above the address of stack start?
+jna change_radix_no   ;if not above, we cannot use it to set the radix
+change_radix_yes:
+mov eax,[ebp]         ;get the top of stack
+mov [radix],eax       ;change the radix
+mov dword[ebp],0      ;erase the top of stack
+sub ebp,4             ;subtract pointer
+jmp main_loop         ;and continue main_loop as normal
+change_radix_no:
+mov eax,string_err1   ;get error message for less than 1 numbers on stack
+call putstring        ;print error message
+mov eax,esi           ;get name of the command used
+call putstring        ;print which command failed
+call putline
+jmp main_loop
+
+;add number on top of stack to the one below it
 command_add:
 mov eax,[ebp]
 sub ebp,4
 add [ebp],eax
-jmp usearg
+jmp memory_check ;check stack for errors after this command
 
+;subtract number on top of stack from the one below it
 command_sub:
 mov eax,[ebp]
 sub ebp,4
 sub [ebp],eax
-jmp usearg
+jmp memory_check ;check stack for errors after this command
 
+;multiply number on top of stack by the one below it
 command_mul:
 mov ebx,[ebp]
 sub ebp,4
@@ -97,8 +125,9 @@ mov eax,[ebp]
 mov edx,0     ;zero edx before multiply
 mul ebx       ;multiply eax with value in ebx
 mov [ebp],eax
-jmp usearg
+jmp memory_check ;check stack for errors after this command
 
+;divide number on top of stack into the one below it
 command_div:
 mov ebx,[ebp]
 sub ebp,4
@@ -106,8 +135,10 @@ mov eax,[ebp]
 mov edx,0 ;zero edx before divide
 div ebx   ;divide eax with value in ebx
 mov [ebp],eax ;store quotient on stack
-jmp usearg
+jmp memory_check ;check stack for errors after this command
 
+;divide number on top of stack into the one below it
+;but leave remainder instead of quotient
 command_rem:
 mov ebx,[ebp]
 sub ebp,4
@@ -115,7 +146,24 @@ mov eax,[ebp]
 mov edx,0 ;zero edx before divide
 div ebx   ;divide eax with value in ebx
 mov [ebp],edx ;store remainder on stack
-jmp usearg
+jmp memory_check ;check stack for errors after this command
+
+;check if the stack has enough space for the last command
+;this will print an error if less than two numbers were on the stack
+;when using one of the math commands above
+memory_check:
+cmp ebp,chastack      ;is ebp above the address of stack start?
+jna print_stack_error ;if not above, explain error to user
+mov dword[ebp+4],0    ;if no error, erase the old top of stack
+jmp main_loop         ;and continue main_loop as normal
+print_stack_error:
+mov eax,string_err2  ;get error message for less than 2 numbers on stack
+call putstring       ;print error message
+mov eax,esi          ;get name of the command used
+call putstring       ;print which command failed
+call putline
+add ebp,4            ;increment the pointer to what it was before the failed command
+jmp main_loop
 
 usearg_end:
 
@@ -138,11 +186,14 @@ int 80h          ;system call for 32-bit Linux kernel
 argc dd 0
 
 string_err db 'Error: invalid number or command: ',0 ;Generic error message
+string_err1 db 'Error: need one number on stack for command: ',0 ;math fail error when less than one number on the stack
+string_err2 db 'Error: need two numbers on stack for command: ',0 ;math fail error when less than two numbers on the stack
 string_add db 'add',0
 string_sub db 'sub',0
 string_mul db 'mul',0
 string_div db 'div',0
 string_rem db 'rem',0
+string_setradix db 'setradix',0
 
 string_help db 'chastack is a stack based command line calculator',0xA
             db 'Numbers are pushed on the stack and commands can do math.',0xA
@@ -204,5 +255,4 @@ ret
 ;I allocate memory for a virtual stack that we can index as if it was the real stack
 ;I name it "chastack" for Chastity's stack.
 
-db 6 dup 0 ;extra padding bytes
 chastack: rd 0x100

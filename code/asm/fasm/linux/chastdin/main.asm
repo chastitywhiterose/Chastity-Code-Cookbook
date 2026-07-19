@@ -90,13 +90,13 @@ call putstring       ;print error message
 mov eax,esi
 call putstring       ;print which command failed
 call putline
-jmp num_push_end ;skip the push because this can't be used
+jmp num_push_end     ;skip the push because this can't be used
 
-num_push:        ;push the number to the fake stack
-add ebp,4        ;increment the pointer by the size of the native int for this mode
-mov [ebp],eax    ;mov the value we converted from the string with strint
+num_push:            ;push the number to the fake stack
+add ebp,4            ;increment the pointer by the size of the native int for this mode
+mov [ebp],eax        ;mov the value we converted from the string with strint
 num_push_end:
-jmp main_loop    ;once value is pushed, continue the program
+jmp main_loop        ;once value is pushed, continue the program
 
 ;These are the labels and code for each of the commands
 ;When a command is done, we jump back to the beginning of the loop
