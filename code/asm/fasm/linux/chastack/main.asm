@@ -32,6 +32,10 @@ dec [argc]            ;subtract 1 from argument count
 ;If any of the predefined strings match the string in esi
 ;We jump to the label for that command
 
+mov edi,string_setradix
+call strcmp
+jz command_setradix
+
 mov edi,string_add
 call strcmp
 jz command_add
@@ -51,10 +55,6 @@ jz command_div
 mov edi,string_rem
 call strcmp
 jz command_rem
-
-mov edi,string_setradix
-call strcmp
-jz command_setradix
 
 ;The default command is to turn the argument into a number and push to stack
 
@@ -188,12 +188,13 @@ argc dd 0
 string_err db 'Error: invalid number or command: ',0 ;Generic error message
 string_err1 db 'Error: need one number on stack for command: ',0 ;math fail error when less than one number on the stack
 string_err2 db 'Error: need two numbers on stack for command: ',0 ;math fail error when less than two numbers on the stack
+
+string_setradix db 'setradix',0
 string_add db 'add',0
 string_sub db 'sub',0
 string_mul db 'mul',0
 string_div db 'div',0
 string_rem db 'rem',0
-string_setradix db 'setradix',0
 
 string_help db 'chastack is a stack based command line calculator',0xA
             db 'Numbers are pushed on the stack and commands can do math.',0xA

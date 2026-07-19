@@ -45,6 +45,10 @@ mov esi,eax    ;mov string to esi for string comparison
 ;If any of the predefined strings match the string in esi
 ;We jump to the label for that command
 
+mov edi,string_setradix
+call strcmp
+jz command_setradix
+
 mov edi,string_add
 call strcmp
 jz command_add
@@ -101,7 +105,27 @@ jmp main_loop        ;once value is pushed, continue the program
 ;These are the labels and code for each of the commands
 ;When a command is done, we jump back to the beginning of the loop
 ;the add,sub,mul,div,rem commands are pretty self explanatory
-;by their names alone, but I will provide comments too
+;but I will provide comments for these and other commands
+
+;pop top of stack and set the current radix to it
+;it has error checking and leaves the radix as is
+;unless at least one number is on the stack
+command_setradix:
+cmp ebp,chastack      ;is ebp above the address of stack start?
+jna change_radix_no   ;if not above, we cannot use it to set the radix
+change_radix_yes:
+mov eax,[ebp]         ;get the top of stack
+mov [radix],eax       ;change the radix
+mov dword[ebp],0      ;erase the top of stack
+sub ebp,4             ;subtract pointer
+jmp main_loop         ;and continue main_loop as normal
+change_radix_no:
+mov eax,string_err1   ;get error message for less than 1 numbers on stack
+call putstring        ;print error message
+mov eax,esi           ;get name of the command used
+call putstring        ;print which command failed
+call putline
+jmp main_loop
 
 ;add number on top of stack to the one below it
 command_add:
@@ -157,7 +181,7 @@ jna print_stack_error ;if not above, explain error to user
 mov dword[ebp+4],0    ;if no error, erase the old top of stack
 jmp main_loop         ;and continue main_loop as normal
 print_stack_error:
-mov eax,string_err1  ;get error message for lack of numbers on stack
+mov eax,string_err2  ;get error message for less than 2 numbers on stack
 call putstring       ;print error message
 mov eax,esi          ;get name of the command used
 call putstring       ;print which command failed
@@ -198,11 +222,13 @@ int 80h          ;system call for 32-bit Linux kernel
 
 argc dd 0
 
+string_setradix db 'setradix',0
 string_add db 'add',0
 string_sub db 'sub',0
 string_mul db 'mul',0
 string_div db 'div',0
 string_rem db 'rem',0
+
 string_exit db 'exit',0
 string_query db '?',0
 string_clear db 'clear',0
@@ -210,7 +236,8 @@ string_clear db 'clear',0
 string_prompt db '-> ',0
 
 string_err db 'Error: invalid number or command: ',0 ;Generic error message
-string_err1 db 'Error: need two numbers on stack for command: ',0 ;math fail error when less than two numbers on the stack
+string_err1 db 'Error: need one number on stack for command: ',0 ;math fail error when less than one number on the stack
+string_err2 db 'Error: need two numbers on stack for command: ',0 ;math fail error when less than two numbers on the stack
 
 string_help db 'chastdin is a stack based interactive calculator',0xA
             db 'Numbers are pushed on the stack and commands can do math.',0xA
