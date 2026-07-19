@@ -23,7 +23,7 @@ call putstring
 main_loop:
 
 cmp [argc],0          ;check for remaining arguments
-jz usearg_end         ;if none, end the loop and stop printing
+jz main_loop_end         ;if none, end the loop and stop printing
 pop esi               ;pop the next argument off the stack to esi for string comparison
 dec [argc]            ;subtract 1 from argument count
 
@@ -165,7 +165,7 @@ call putline
 add ebp,4            ;increment the pointer to what it was before the failed command
 jmp main_loop
 
-usearg_end:
+main_loop_end:
 
 putstack:
 cmp ebp,chastack ;is ebp equal to the address of stack start?

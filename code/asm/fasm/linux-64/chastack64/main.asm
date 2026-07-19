@@ -15,15 +15,15 @@ dec rax                ;subtract 1 because the program name will be unused
 mov [argc],rax         ;save the argument count for later
 pop rbx                ;pop argument 0 (name of the program, we don't use it)
 cmp rax,0
-jnz usearg             ;if arguments are available, use the main loop
+jnz main_loop          ;if arguments are available, use the main loop
 
 mov rax,string_help
 call putstring
 
-usearg:
+main_loop:
 
 cmp [argc],0          ;check for remaining arguments
-jz usearg_end         ;if none, end the loop and stop printing
+jz main_loop_end         ;if none, end the loop and stop printing
 pop rsi               ;pop the next argument off the stack to rsi for string comparison
 dec [argc]            ;subtract 1 from argument count
 
@@ -31,6 +31,10 @@ dec [argc]            ;subtract 1 from argument count
 ;First, we will try testing for commands
 ;If any of the predefined strings match the string in rsi
 ;We jump to the label for that command
+
+mov rdi,string_setradix
+call strcmp
+jz command_setradix
 
 mov rdi,string_add
 call strcmp
@@ -62,34 +66,58 @@ cmp [strint_error],0 ;did we have zero errors in the strint function?
 jz num_push          ;if there were no errors, push this to stack
 
 mov rax,string_err
-call putstring
+call putstring       ;print error message
 mov rax,rsi
-call putstring
+call putstring       ;print which command failed
 call putline
-jmp num_push_end ;skip the push because this can't be used
+jmp num_push_end     ;skip the push because this can't be used
 
-num_push:        ;push the number to the fake stack
-add rbp,8
-mov [rbp],rax
+num_push:            ;push the number to the fake stack
+add rbp,8            ;increment the pointer by the size of the native int for this mode
+mov [rbp],rax        ;mov the value we converted from the string with strint
 num_push_end:
-
-jmp usearg
+jmp main_loop        ;once value is pushed, continue the program
 
 ;These are the labels and code for each of the commands
 ;When a command is done, we jump back to the beginning of the loop
+;the add,sub,mul,div,rem commands are pretty self explanatory
+;but I will provide comments for these and other commands
 
+;pop top of stack and set the current radix to it
+;it has error checking and leaves the radix as is
+;unless at least one number is on the stack
+command_setradix:
+cmp rbp,chastack      ;is ebp above the address of stack start?
+jna change_radix_no   ;if not above, we cannot use it to set the radix
+change_radix_yes:
+mov rax,[rbp]         ;get the top of stack
+mov [radix],rax       ;change the radix
+mov qword[rbp],0      ;erase the top of stack
+sub rbp,8             ;subtract pointer
+jmp main_loop         ;and continue main_loop as normal
+change_radix_no:
+mov rax,string_err1   ;get error message for less than 1 numbers on stack
+call putstring        ;print error message
+mov rax,rsi           ;get name of the command used
+call putstring        ;print which command failed
+call putline
+jmp main_loop
+
+;add number on top of stack to the one below it
 command_add:
 mov rax,[rbp]
 sub rbp,8
 add [rbp],rax
-jmp usearg
+jmp memory_check ;check stack for errors after this command
 
+;subtract number on top of stack from the one below it
 command_sub:
 mov rax,[rbp]
 sub rbp,8
 sub [rbp],rax
-jmp usearg
+jmp memory_check ;check stack for errors after this command
 
+;multiply number on top of stack by the one below it
 command_mul:
 mov rbx,[rbp]
 sub rbp,8
@@ -97,8 +125,9 @@ mov rax,[rbp]
 mov rdx,0     ;zero rdx before multiply
 mul rbx       ;multiply rax with value in rbx
 mov [rbp],rax
-jmp usearg
+jmp memory_check ;check stack for errors after this command
 
+;divide number on top of stack into the one below it
 command_div:
 mov rbx,[rbp]
 sub rbp,8
@@ -106,8 +135,10 @@ mov rax,[rbp]
 mov rdx,0 ;zero rdx before divide
 div rbx   ;divide rax with value in rbx
 mov [rbp],rax ;store quotient on stack
-jmp usearg
+jmp memory_check ;check stack for errors after this command
 
+;divide number on top of stack into the one below it
+;but leave remainder instead of quotient
 command_rem:
 mov rbx,[rbp]
 sub rbp,8
@@ -115,9 +146,26 @@ mov rax,[rbp]
 mov rdx,0 ;zero rdx before divide
 div rbx   ;divide rax with value in rbx
 mov [rbp],rdx ;store remainder on stack
-jmp usearg
+jmp memory_check ;check stack for errors after this command
 
-usearg_end:
+;check if the stack has enough space for the last command
+;this will print an error if less than two numbers were on the stack
+;when using one of the math commands above
+memory_check:
+cmp rbp,chastack      ;is ebp above the address of stack start?
+jna print_stack_error ;if not above, explain error to user
+mov qword[ebp+8],0    ;if no error, erase the old top of stack
+jmp main_loop         ;and continue main_loop as normal
+print_stack_error:
+mov rax,string_err2  ;get error message for less than 2 numbers on stack
+call putstring       ;print error message
+mov rax,rsi          ;get name of the command used
+call putstring       ;print which command failed
+call putline
+add rbp,8            ;increment the pointer to what it was before the failed command
+jmp main_loop
+
+main_loop_end:
 
 putstack:
 cmp rbp,chastack ;is rbp equal to the address of stack start?
@@ -138,6 +186,10 @@ syscall          ;system call for 64-bit Linux kernel
 argc dq 0
 
 string_err db 'Error: invalid number or command: ',0 ;Generic error message
+string_err1 db 'Error: need one number on stack for command: ',0 ;math fail error when less than one number on the stack
+string_err2 db 'Error: need two numbers on stack for command: ',0 ;math fail error when less than two numbers on the stack
+
+string_setradix db 'setradix',0
 string_add db 'add',0
 string_sub db 'sub',0
 string_mul db 'mul',0
