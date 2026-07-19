@@ -23,7 +23,7 @@ call putstring
 main_loop:
 
 cmp [argc],0          ;check for remaining arguments
-jz main_loop_end         ;if none, end the loop and stop printing
+jz main_loop_end      ;if none, end the loop and stop printing
 pop rsi               ;pop the next argument off the stack to rsi for string comparison
 dec [argc]            ;subtract 1 from argument count
 
