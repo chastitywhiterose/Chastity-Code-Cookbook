@@ -116,12 +116,12 @@ mov eax,buf ;mov the buffer address to eax for returning the string
 
 ret
 
-;summary
+;Short Description of strcmp:
 ;strcmp compares the string at esi to the one at edi
 ;eax returns 0 if the strings are the same and 1 if different
 ;the algorithm is simple but I will explain it for those who are confused
 
-;details
+;Long Description of strcmp:
 ;eax is initialized to zero
 ;a byte from each string is loaded into the al and bl registers
 ;the bytes are compared. if they are different, then we jump to the end
@@ -135,6 +135,7 @@ ret
 ;ebx,esi,and edi are preserved but eax is the return value
 ;also, the sub instruction at the end of the function also updates the flags
 ;so you can "jz" or "jnz" to a label after calling this function based on results
+;This makes strcmp as useful for strings as the Intel "cmp" instruction is for integers
 
 strcmp:
 
