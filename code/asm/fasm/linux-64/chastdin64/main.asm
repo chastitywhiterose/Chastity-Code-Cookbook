@@ -111,7 +111,7 @@ jmp main_loop        ;once value is pushed, continue the program
 ;it has error checking and leaves the radix as is
 ;unless at least one number is on the stack
 command_setradix:
-cmp rbp,chastack      ;is ebp above the address of stack start?
+cmp rbp,chastack      ;is rbp above the address of stack start?
 jna change_radix_no   ;if not above, we cannot use it to set the radix
 change_radix_yes:
 mov rax,[rbp]         ;get the top of stack
@@ -178,7 +178,7 @@ jmp memory_check ;check stack for errors after this command
 memory_check:
 cmp rbp,chastack      ;is rbp above the address of stack start?
 jna print_stack_error ;if not above, explain error to user
-mov qword[rbp+4],0    ;if no error, erase the old top of stack
+mov qword[rbp+8],0    ;if no error, erase the old top of stack
 jmp main_loop         ;and continue main_loop as normal
 print_stack_error:
 mov rax,string_err2  ;get error message for less than 2 numbers on stack
@@ -222,11 +222,13 @@ syscall                   ;system call for 64-bit Linux kernel
 
 argc dd 0
 
+string_setradix db 'setradix',0
 string_add db 'add',0
 string_sub db 'sub',0
 string_mul db 'mul',0
 string_div db 'div',0
 string_rem db 'rem',0
+
 string_exit db 'exit',0
 string_query db '?',0
 string_clear db 'clear',0
@@ -234,7 +236,8 @@ string_clear db 'clear',0
 string_prompt db '-> ',0
 
 string_err db 'Error: invalid number or command: ',0 ;Generic error message
-string_err1 db 'Error: need two numbers on stack for command: ',0 ;math fail error when less than two numbers on the stack
+string_err1 db 'Error: need one number on stack for command: ',0 ;math fail error when less than one number on the stack
+string_err2 db 'Error: need two numbers on stack for command: ',0 ;math fail error when less than two numbers on the stack
 
 string_help db 'chastdin is a stack based interactive calculator',0xA
             db 'Numbers are pushed on the stack and commands can do math.',0xA
@@ -248,4 +251,4 @@ string_help db 'chastdin is a stack based interactive calculator',0xA
 ;I allocate memory for a virtual stack that we can index as if it was the real stack
 ;I name it "chastack" for Chastity's stack.
 
-chastack: rd 0x100
+chastack: rq 0x100
