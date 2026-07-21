@@ -111,7 +111,7 @@ jmp getline_chars ;jump back to start of loop and keep reading
 getline_end:
 
 mov [last_char],al ;save the last character read
-mov byte[ecx],0 ;terminate this string with a zero
+mov byte[ecx],0    ;terminate this string with a zero
 
 mov eax,buf ;mov the buffer address to eax for returning the string
 
@@ -119,7 +119,7 @@ ret
 
 ;Short Description of strcmp:
 ;strcmp compares the string at esi to the one at edi
-;eax returns 0 if the strings are the same and 1 if different
+;eax returns 0 if the strings are the same and non zero if different
 ;the algorithm is simple but I will explain it for those who are confused
 
 ;Long Description of strcmp:
@@ -205,3 +205,5 @@ mov eax,ebx     ;copy the string length back to eax
 pop ebx
 
 ret
+
+
