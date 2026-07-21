@@ -7,7 +7,6 @@ main:
 
 mov [radix],16 ; Choose radix for integer output.
 mov [int_width],1
-mov [int_newline],0 ;disable automatic printing of newlines after putint
 
 ;get command line argument string
 call [GetCommandLineA]

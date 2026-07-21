@@ -1,9 +1,18 @@
-; This file is where I keep my function definitions.
-; These are usually my string and integer output routines.
+; chastelib assembly header file for 32 bit Linux
+; This file is where I keep the source of my most important Assembly functions
+; These are my string and integer output and conversion routines.
 
-; function to print zero terminated string pointed to by register eax
+; To simplify documentation. The Accumulator/Arithmetic register
+; (ax,eax,rax) depending on bit size shall be referred to as register A
+; for the description of these core functions because the A register
+; is treated special both by the Intel company and my code;
 
-stdout dd 1 ; variable for standard output so that it can theoretically be redirected
+; putstring; Prints a zero terminated string from the address pointer to by A register.
+; intstr;    Converts the number in A into a zero terminated string and points A to that address
+; putint;    Prints the integer in A by calling intstr and then putstring.
+; strint;    Converts the zero terminated string into an integer and sets A to that value
+   
+; Now, the source of the functions begins, with comments included for parts that I felt needed explanation.
 
 putstring:
 
@@ -12,44 +21,44 @@ push ebx
 push ecx
 push edx
 
-mov ebx,eax ; copy eax to ebx as well. Now both registers have the address of the main_string
+mov ebx,eax             ;copy eax to ebx to be used as index to the string
 
-putstring_strlen_start: ; this loop finds the lenge of the string as part of the putstring function
+putstring_strlen_start: ;this loop finds the length of the string as part of the putstring function
 
-cmp [ebx],byte 0 ; compare byte at address ebx with 0
-jz putstring_strlen_end ; if comparison was zero, jump to loop end because we have found the length
+cmp [ebx],byte 0        ;compare byte at address ebx with 0
+jz putstring_strlen_end ;if comparison was zero, jump to loop end because we have found the length
 inc ebx
 jmp putstring_strlen_start
 
 putstring_strlen_end:
-sub ebx,eax ;ebx will now have correct number of bytes
+sub ebx,eax ;subtract start pointer from current pointer to get length of string
 
-;write string using Linux Write system call
+;Write string using Linux Write system call.
+;Reference for 32 bit x86 syscalls is below.
 ;https://www.chromium.org/chromium-os/developer-library/reference/linux-constants/syscalls/#x86-32-bit
-
 
 mov edx,ebx      ;number of bytes to write
 mov ecx,eax      ;pointer/address of string to write
-mov ebx,[stdout] ;write to the STDOUT file
-mov eax, 4       ;invoke SYS_WRITE (kernel opcode 4 on 32 bit systems)
-int 80h          ;system call to write the message
-
+mov ebx,1        ;write to the STDOUT file
+mov eax,4        ;write (kernel opcode 4 on 32 bit systems)
+int 80h          ;system call for 32-bit Linux kernel
 
 pop edx
 pop ecx
 pop ebx
 pop eax
 
-ret ; this is the end of the putstring function return to calling location
+ret ;this is the end of the putstring function return to calling location
 
-;this is the location in memory where digits are written to by the putint function
-int_string     db 32 dup '?' ;enough bytes to hold maximum size 32-bit binary integer
-; this is the end of the integer string optional line feed and terminating zero
-; clever use of this label can change the ending to be a different character when needed 
-int_newline db 0Ah,0
+; This is the location in memory where digits are written to by the intstr function
+; The string of bytes and settings such as the radix and width are global variables defined below.
 
-radix dd 2 ;radix or base for integer output. 2=binary, 8=octal, 10=decimal, 16=hexadecimal
-int_width dd 8
+int_string db 32 dup '?' ;reserve bytes for characters string for 32-bit binary integer
+
+int_string_end db 0 ;zero byte terminator for the integer string
+
+radix dd 2     ;radix or base for integer output. 2=binary, 8=octal, 10=decimal, 16=hexadecimal
+int_width dd 8 ;default width of integers. Extra zeros prefixed if more than 1
 
 ;this function creates a string of the integer in eax
 ;it uses the above radix variable to determine base from 2 to 36
@@ -58,7 +67,7 @@ int_width dd 8
 
 intstr:
 
-mov ebx,int_newline-1 ;find address of lowest digit(just before the newline 0Ah)
+mov ebx,int_string_end-1 ;find address of lowest digit
 mov ecx,1
 
 digits_start:
@@ -67,7 +76,7 @@ mov edx,0;
 div dword [radix]
 cmp edx,10
 jb decimal_digit
-jge hexadecimal_digit
+jnb hexadecimal_digit
 
 decimal_digit: ;we go here if it is only a digit 0 to 9
 add edx,'0'
@@ -97,16 +106,16 @@ inc ecx
 jmp prefix_zeros
 end_zeros:
 
-mov eax,ebx ; now that the digits have been written to the string, display it!
+mov eax,ebx ;point eax register to this string for putstring
 
 ret
 
-; function to print string form of whatever integer is in eax
-; The radix determines which number base the string form takes.
-; Anything from 2 to 36 is a valid radix
-; in practice though, only bases 2,8,10,and 16 will make sense to other programmers
-; this function does not process anything by itself but calls the combination of my other
-; functions in the order I intended them to be used.
+;function to print string form of whatever integer is in eax
+;The radix determines which number base the string form takes.
+;Anything from 2 to 36 is a valid radix
+;in practice though, only bases 2,8,10,and 16 will make sense to other programmers
+;this function does not process anything by itself but calls the combination of my other
+;functions in the order I intended them to be used.
 
 putint: 
 
@@ -116,7 +125,6 @@ push ecx
 push edx
 
 call intstr
-
 call putstring
 
 pop edx
@@ -133,17 +141,22 @@ ret
 ;finally, it checks if that letter makes sense for the base.
 ;For example, G to Z cannot be used in hexadecimal, only A to F can
 ;The purpose of writing this function was to be able to accept user input as integers
+;This function is improved with error checking and uses the new strint_error variable
+;The program can check this value after the call and see how many errors happened.
+
+strint_error db 0 ;declare a byte variable that keeps track of errors
 
 strint:
 
 mov ebx,eax ;copy string address from eax to ebx because eax will be replaced soon!
 mov eax,0
+mov byte[strint_error],0 ;set errors to 0 at the start of this function
 
 read_strint:
-mov ecx,0 ; zero ecx so only lower 8 bits are used
+mov ecx,0   ;zero ecx so only lower 8 bits are used
 mov cl,[ebx]
 inc ebx
-cmp cl,0 ; compare byte at address edx with 0
+cmp cl,0    ;compare this byte with 0
 jz strint_end ; if comparison was zero, this is the end of string
 
 ;if char is below '0' or above '9', it is outside the range of these and is not a digit
@@ -158,8 +171,9 @@ sub cl,'0'
 jmp process_char
 
 not_digit:
-;it isn't a digit, but it could be perhaps and alphabet character
-;which is a digit in a higher base
+;it isn't a decimal digit, but it could be perhaps an alphabet character
+;which could be a digit in a higher base like hexadecimal
+;we will check for that possibility next
 
 ;if char is below 'A' or above 'Z', it is outside the range of these and is not capital letter
 cmp cl,'A'
@@ -187,29 +201,31 @@ jmp process_char
 
 not_lower:
 
-;if we have reached this point, result invalid and end function
-jmp strint_end
+;if we have reached this point, result invalid and end function with error
+jmp strint_end_error
 
 process_char:
 
 cmp ecx,[radix] ;compare char with radix
-jae strint_end ;if this value is above or equal to radix, it is too high despite being a valid digit/alpha
+jnb strint_end_error ;if this value is above or equal to radix, it is too high despite being a valid digit/alpha
 
 mov edx,0 ;zero edx because it is used in mul sometimes
-mul [radix]    ;mul eax with radix
+mul dword [radix] ;mul eax with radix
 add eax,ecx
 
 jmp read_strint ;jump back and continue the loop if nothing has exited it
 
-strint_end:
+strint_end_error:  ;we jump here if there was an error with one of the chars
+inc byte[strint_error] ;increment error counter because char invalid
+
+strint_end: ;we jump here when no errors happened
 
 ret
 
-;the next utility functions simply print a space or a newline
-;these help me save code when printing lots of things for debugging
+;The utility functions below simply print a space or a newline.
+;these help me save code when printing lots of strings and integers.
 
-space db ' ',0
-line db 0Dh,0Ah,0
+space db ' ',0 ;a string containing only a space
 
 putspace:
 push eax
@@ -218,6 +234,13 @@ call putstring
 pop eax
 ret
 
+line db 0Ah,0 ;a string containing only a newline
+
+;the next function which pushes eax to the stack
+;moves the address of the line string and prints it with putstring
+;then it pops the original value of eax back from the stack before the function returns
+;this allows me to print a newline anywhere in the code without a single register changing
+
 putline:
 push eax
 mov eax,line
@@ -225,3 +248,45 @@ call putstring
 pop eax
 ret
 
+;a function for printing a single character that is the value of al
+
+char: db 0,0
+
+putchar:
+push eax
+mov [char],al
+mov eax,char
+call putstring
+pop eax
+ret
+
+;a small function just for the common operation of
+;printing an integer followed by a space
+;this saves a few bytes in the assembled code
+;by reducing the number of function calls in the main program
+
+putint_and_space:
+call putint
+call putspace
+ret
+
+;a small function just for the common operation of
+;printing an integer followed by a line feed
+;this saves a few bytes in the assembled code
+;by reducing the number of function calls in the main program
+
+putint_and_line:
+call putint
+call putline
+ret
+
+;a small function just for the common operation of
+;printing a string followed by a line feed
+;this saves a few bytes in the assembled code
+;by reducing the number of function calls in the main program
+;it also means we don't need to include a newline in every string!
+
+putstr_and_line:
+call putstring
+call putline
+ret
