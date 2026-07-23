@@ -251,21 +251,23 @@ include 'getarg.asm'
 
 strlen:
 
-mov bx,ax ; copy ax to bx. bx will be used as index to the string
+push bx
+mov bx,ax     ;copy ax to bx. bx will be used as index to the string
 
-strlen_start: ; this loop finds the length of the string as part of the putstring function
+strlen_start:   ;this loop finds the length of the string
 
-cmp [bx],byte 0 ; compare byte at address bx with 0
-jz strlen_end ; if comparison was zero, jump to loop end because we have found the length
+cmp byte[bx],0 ;compare byte at address bx with 0
+jz strlen_end   ;if comparison was zero, jump to loop end
 inc bx
 jmp strlen_start
 
 strlen_end:
-sub bx,ax ;subtract start pointer from current pointer to get length of string
-
-mov ax,bx ;copy the string length back to ax
+sub bx,ax     ;subtract start pointer from current pointer to get length of string
+mov ax,bx     ;copy the string length back to ax
+pop bx
 
 ret
+
 
 ;strcmp compares the string at si to the one at di
 ;ax returns 0 if the strings are the same and 1 if different
@@ -283,6 +285,10 @@ ret
 ;this ensures that the function returns zero if the final characters are the same
 
 strcmp:
+
+push bx
+push si
+push di
 
 mov ax,0
 
@@ -304,6 +310,10 @@ jmp strcmp_start
 
 strcmp_end:
 sub al,bl
+
+pop di
+pop si
+pop bx
 
 ret
 
