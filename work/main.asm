@@ -107,82 +107,82 @@ jmp main_loop        ;once value is pushed, continue the program
 ;it has error checking and leaves the radix as is
 ;unless at least one number is on the stack
 command_setradix:
-cmp ebp,chastack      ;is ebp above the address of stack start?
+cmp bp,chastack       ;is ebp above the address of stack start?
 jna change_radix_no   ;if not above, we cannot use it to set the radix
 change_radix_yes:
-mov eax,[ebp]         ;get the top of stack
-mov [radix],eax       ;change the radix
-mov dword[ebp],0      ;erase the top of stack
-sub ebp,4             ;subtract pointer
+mov ax,[bp]           ;get the top of stack
+mov [radix],ax        ;change the radix
+mov word[bp],0      ;erase the top of stack
+sub bp,2             ;subtract pointer
 jmp main_loop         ;and continue main_loop as normal
 change_radix_no:
-mov eax,string_err1   ;get error message for less than 1 numbers on stack
+mov ax,string_err1   ;get error message for less than 1 numbers on stack
 call putstring        ;print error message
-mov eax,esi           ;get name of the command used
+mov ax,si           ;get name of the command used
 call putstring        ;print which command failed
 call putline
 jmp main_loop
 
 ;add number on top of stack to the one below it
 command_add:
-mov eax,[ebp]
-sub ebp,4
+mov ax,[bp]
+sub bp,2
 add [ebp],eax
 jmp memory_check ;check stack for errors after this command
 
 ;subtract number on top of stack from the one below it
 command_sub:
-mov eax,[ebp]
-sub ebp,4
-sub [ebp],eax
+mov ax,[bp]
+sub bp,2
+sub [bp],ax
 jmp memory_check ;check stack for errors after this command
 
 ;multiply number on top of stack by the one below it
 command_mul:
-mov ebx,[ebp]
-sub ebp,4
-mov eax,[ebp]
-mov edx,0     ;zero edx before multiply
-mul ebx       ;multiply eax with value in ebx
+mov bx,[bp]
+sub bp,2
+mov ax,[bp]
+mov dx,0     ;zero edx before multiply
+mul bx       ;multiply eax with value in ebx
 mov [ebp],eax
 jmp memory_check ;check stack for errors after this command
 
 ;divide number on top of stack into the one below it
 command_div:
-mov ebx,[ebp]
-sub ebp,4
-mov eax,[ebp]
-mov edx,0 ;zero edx before divide
-div ebx   ;divide eax with value in ebx
-mov [ebp],eax ;store quotient on stack
+mov bx,[bp]
+sub bp,2
+mov ax,[bp]
+mov dx,0 ;zero edx before divide
+div bx   ;divide eax with value in ebx
+mov [bp],ax ;store quotient on stack
 jmp memory_check ;check stack for errors after this command
 
 ;divide number on top of stack into the one below it
 ;but leave remainder instead of quotient
 command_rem:
-mov ebx,[ebp]
-sub ebp,4
-mov eax,[ebp]
-mov edx,0 ;zero edx before divide
-div ebx   ;divide eax with value in ebx
-mov [ebp],edx ;store remainder on stack
+mov bx,[bp]
+sub bp,2
+mov ax,[bp]
+mov dx,0 ;zero edx before divide
+div bx   ;divide eax with value in ebx
+mov [bp],dx ;store remainder on stack
 jmp memory_check ;check stack for errors after this command
 
 ;check if the stack has enough space for the last command
 ;this will print an error if less than two numbers were on the stack
 ;when using one of the math commands above
 memory_check:
-cmp ebp,chastack      ;is ebp above the address of stack start?
+cmp bp,chastack      ;is ebp above the address of stack start?
 jna print_stack_error ;if not above, explain error to user
-mov dword[ebp+4],0    ;if no error, erase the old top of stack
+mov word[bp+2],0    ;if no error, erase the old top of stack
 jmp main_loop         ;and continue main_loop as normal
 print_stack_error:
-mov eax,string_err2  ;get error message for less than 2 numbers on stack
+mov ax,string_err2  ;get error message for less than 2 numbers on stack
 call putstring       ;print error message
-mov eax,esi          ;get name of the command used
+mov ax,si          ;get name of the command used
 call putstring       ;print which command failed
 call putline
-add ebp,4            ;increment the pointer to what it was before the failed command
+add bp,2            ;increment the pointer to what it was before the failed command
 jmp main_loop
 
 command_query: ;print all numbers on the stack
