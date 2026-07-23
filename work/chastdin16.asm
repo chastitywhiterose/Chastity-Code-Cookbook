@@ -27,6 +27,10 @@ last_char db 0
 
 getchar:
 
+push bx
+push cx
+push dx
+
 mov ah,3Fh        ;DOS call number for read function
 mov bx,0          ;stdin is file handle 0
 mov cx,1          ;we are reading one byte
@@ -36,6 +40,10 @@ int 21h
 mov [count],ax    ;how many characters read (0 or 1)
 xor ax,ax          ;set ax to zero
 mov al,[last_char] ;set lowest part of ax to key read
+
+pop dx
+pop cx
+pop bx
 
 ret
 
@@ -54,7 +62,7 @@ ret
 
 getstring:
 
-mov ebx,buf       ;address to store the bytes
+mov bx,buf       ;address to store the bytes
 
 getstring_chars:
 
@@ -62,7 +70,7 @@ call getchar      ;reads one character and stores in al register
 cmp [count],1     ;was 1 character read?
 jnz getstring_end ;if not, then end this loop
 
-mov [ebx],al      ;mov last character read into buffer
+mov [bx],al       ;mov last character read into buffer
 
 ;check if this character is in the proper range to be part of the string
 
@@ -72,17 +80,17 @@ cmp al,0x7E       ;compare with 0x7E (tilde)
 ja getstring_end  ;jump if above to getstring_end label
 
 ;if neither jump happened, keep the character and
-inc ebx             ;increment address where next byte is stored
+inc bx              ;increment address where next byte is stored
 jmp getstring_chars ;jump back to start of loop and keep reading
 
 getstring_end:
 
-mov byte[ebx],0 ;terminate this string with a zero
+mov byte[bx],0 ;terminate this string with a zero
 
-sub ebx,buf     ;subtract buf from current ebx to get length
-mov [count],ebx ;store the length of string in count variable
+sub bx,buf     ;subtract buf from current bx to get length
+mov [count],bx ;store the length of string in count variable
 
-mov eax,buf ;mov the buffer address to eax for returning the string
+mov ax,buf ;mov the buffer address to ax for returning the string
 
 ret
 
@@ -97,7 +105,7 @@ ret
 
 getline:
 
-mov ebx,buf       ;address to store the bytes
+mov bx,buf        ;address to store the bytes
 
 getline_chars:
 
@@ -105,7 +113,7 @@ call getchar      ;reads one character and stores in al register
 cmp [count],1     ;was 1 character read?
 jnz getstring_end ;if not, then end this loop
 
-mov [ebx],al      ;mov last character read into buffer
+mov [bx],al       ;mov last character read into buffer
 
 ;check if this character is in the proper range to be part of the string
 
@@ -115,17 +123,17 @@ cmp al,0x7E    ;compare with 0x7E (tilde)
 ja getline_end ;jump if above to getstring_end label
 
 ;if neither jump happened, keep the character and
-inc ebx             ;increment address where next byte is stored
+inc bx             ;increment address where next byte is stored
 jmp getline_chars ;jump back to start of loop and keep reading
 
 getline_end:
 
-mov byte[ebx],0 ;terminate this string with a zero
+mov byte[bx],0 ;terminate this string with a zero
 
-sub ebx,buf     ;subtract buf from current ebx to get length
-mov [count],ebx ;store the length of string in count variable
+sub bx,buf     ;subtract buf from current bx to get length
+mov [count],bx ;store the length of string in count variable
 
-mov eax,buf ;mov the buffer address to eax for returning the string
+mov ax,buf ;mov the buffer address to ax for returning the string
 
 ret
 
@@ -145,7 +153,7 @@ ret
 ;If neither jump took place, then we jump to the start of the loop
 ;but when the function finally ends bl will be subtracted from al
 ;this ensures that the function returns zero if the final characters are the same
-;bx,si,and di are preserved but eax is the return value
+;bx,si,and di are preserved but ax is the return value
 ;also, the sub instruction at the end of the function also updates the flags
 ;so you can "jz" or "jnz" to a label after calling this function based on results
 ;This makes strcmp as useful for strings as the Intel "cmp" instruction is for integers
@@ -184,7 +192,7 @@ pop bx
 ret
 
 ;Short Description of strlen:
-;The strlen function gets the length of string in eax and returns it in eax
+;The strlen function gets the length of string in ax and returns it in ax
 ;This is the same algorithm used in my putstring function but is independent of an operating system.
 
 ;Long Description of strlen:
@@ -202,18 +210,18 @@ ret
 strlen:
 
 push bx
-mov bx,ax     ;copy ax to bx. bx will be used as index to the string
+mov bx,ax       ;copy ax to bx. bx will be used as index to the string
 
 strlen_start:   ;this loop finds the length of the string
 
-cmp byte[bx],0 ;compare byte at address bx with 0
+cmp byte[bx],0  ;compare byte at address bx with 0
 jz strlen_end   ;if comparison was zero, jump to loop end
 inc bx
 jmp strlen_start
 
 strlen_end:
-sub bx,ax     ;subtract start pointer from current pointer to get length of string
-mov ax,bx     ;copy the string length back to ax
+sub bx,ax       ;subtract start pointer from current pointer to get length of string
+mov ax,bx       ;copy the string length back to ax
 pop bx
 
 ret
