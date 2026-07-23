@@ -16,6 +16,20 @@ mov [last_char],0xA ;set newline as last_char so prompt will display
 
 main_loop:
 
+;pressing the enter key results in 0x0D,0x0A
+;being read from standard input
+;this conditional reads another char to get the newline of 0x0A
+;cmp [last_char],0xD
+;jz skip_D
+;jmp no_skip_D 
+;skip_D:
+;call getchar ;skip past the 0x0D byte by reading another character
+;no_skip_D:
+
+mov ax,0
+mov al,[last_char]
+call putint_and_line
+
 ;show the arrow indicating we wait for the user to enter something
 ;but only show it when the last character is a newline
 ;otherwise it will print too many if multiple commands were entered on the same line
@@ -80,7 +94,7 @@ jz command_exit
 ;The default command is to turn the argument into a number and push to stack
 command_num:
 
-mov ax,si          ;mov the string to ax for processing numbers
+mov ax,si            ;mov the string to ax for processing numbers
 call strint          ;try to get a number from the string pointed to by ax
 cmp [strint_error],0 ;did we have zero errors in the strint function?
 jz num_push          ;if there were no errors, push this to stack
@@ -93,8 +107,8 @@ call putline
 jmp num_push_end     ;skip the push because this can't be used
 
 num_push:            ;push the number to the fake stack
-add bp,2            ;increment the pointer by the size of the native int for this mode
-mov [bp],ax        ;mov the value we converted from the string with strint
+add bp,2             ;increment the pointer by the size of the native int for this mode
+mov [bp],ax          ;mov the value we converted from the string with strint
 num_push_end:
 jmp main_loop        ;once value is pushed, continue the program
 
@@ -235,16 +249,16 @@ string_err db 'Error: invalid number or command: ',0 ;Generic error message
 string_err1 db 'Error: need one number on stack for command: ',0 ;math fail error when less than one number on the stack
 string_err2 db 'Error: need two numbers on stack for command: ',0 ;math fail error when less than two numbers on the stack
 
-string_help db 'chastdin is a stack based interactive calculator',0xA
-            db 'Numbers are pushed on the stack and commands can do math.',0xA
-            db 'It is a fork of chastack that reads from stdin instead of arguments.',0xA
-            db 'Each line can contain multiple numbers or commands.',0xA
-            db 'Math commands are add,sub,mul,div,rem',0xA
-            db 'The exit command ends the program',0xA
-            db 'The ? command prints the entire stack',0xA,0xA,0
+string_help db 'chastdin is a stack based interactive calculator',0xD,0xA
+            db 'Numbers are pushed on the stack and commands can do math.',0xD,0xA
+            db 'It is a fork of chastack that reads from stdin instead of arguments.',0xD,0xA
+            db 'Each line can contain multiple numbers or commands.',0xD,0xA
+            db 'Math commands are add,sub,mul,div,rem',0xD,0xA
+            db 'The exit command ends the program',0xD,0xA
+            db 'The ? command prints the entire stack',0xD,0xA,0xD,0xA,0
 
 ;This program uses a virtual stack for convenience and portability
 ;I allocate memory for a virtual stack that we can index as if it was the real stack
 ;I name it "chastack" for Chastity's stack.
 
-chastack: rd 0x100
+chastack: rw 0x100
