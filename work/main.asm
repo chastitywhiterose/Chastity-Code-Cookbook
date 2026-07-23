@@ -12,28 +12,14 @@ mov bp,chastack       ;mov the address of the beginning of the stack to ebp regi
 mov ax,string_help
 call putstring
 
-mov [last_char],0xA ;set newline as last_char so prompt will display
+mov [last_char],0xD ;set carriage return as last_char so prompt will display
 
 main_loop:
 
-;pressing the enter key results in 0x0D,0x0A
-;being read from standard input
-;this conditional reads another char to get the newline of 0x0A
-;cmp [last_char],0xD
-;jz skip_D
-;jmp no_skip_D 
-;skip_D:
-;call getchar ;skip past the 0x0D byte by reading another character
-;no_skip_D:
-
-mov ax,0
-mov al,[last_char]
-call putint_and_line
-
 ;show the arrow indicating we wait for the user to enter something
-;but only show it when the last character is a newline
+;but only show it when the last character is a carriage return
 ;otherwise it will print too many if multiple commands were entered on the same line
-cmp [last_char],0xA
+cmp [last_char],0xD
 jnz skip_prompt
 mov ax,string_prompt
 call putstring
