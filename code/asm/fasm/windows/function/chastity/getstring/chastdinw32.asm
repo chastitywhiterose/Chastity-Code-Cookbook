@@ -17,6 +17,26 @@ buf db 0x100 dup '?'
 count dd 0
 last_char db 0
 
+;read only 1 byte using Win32 ReadFile system call.
+;this function is the only place in my source where I read from standard input
+;this keeps my code simple because even reading 1 character
+;requires this long series of stack commands
+;if I tried to use the ReadFile system call in multiple places,
+;it would lead to a lot of code bloat in both source and binary
+;getstring and getline both use this function for all input
+getchar:
+push 0              ;Optional Overlapped Structure 
+push count          ;Store Number of Bytes Read from this call
+push 1              ;Number of bytes to read
+push last_char      ;address to store bytes
+push -10            ;STD_INPUT_HANDLE = Negative Ten
+call [GetStdHandle] ;use the above handle
+push eax            ;eax is return value of previous function
+call [ReadFile]
+xor eax,eax         ;set eax to 0
+mov al,[last_char]  ;set lowest part of eax to key read
+ret
+
 ;summary
 ;the getstring function is the reverse function of putstring
 ;instead of printing a string to standard output
@@ -32,7 +52,7 @@ last_char db 0
 
 getstring:
 
-mov ebx,buf   ;address to store the bytes
+mov ebx,buf       ;address to store the bytes
 
 getstring_chars:
 
@@ -44,14 +64,13 @@ mov [ebx],al      ;mov last character read into buffer
 
 ;check if this character is in the proper range to be part of the string
 
-cmp al,0x21      ;compare with 0x21 (!=exclamation)
-jb getstring_end ;jump if below to getstring_end label
-cmp al,0x7E      ;compare with 0x7E (tilde)
-ja getstring_end ;jump if above to getstring_end label
+cmp al,0x21       ;compare with 0x21 (!=exclamation)
+jb getstring_end  ;jump if below to getstring_end label
+cmp al,0x7E       ;compare with 0x7E (tilde)
+ja getstring_end  ;jump if above to getstring_end label
 
 ;if neither jump happened, keep the character and
-
-inc ebx          ;increment address where next byte is stored
+inc ebx             ;increment address where next byte is stored
 jmp getstring_chars ;jump back to start of loop and keep reading
 
 getstring_end:
@@ -76,20 +95,15 @@ ret
 
 getline:
 
-mov [count],0 ;set count of characters read during this function to zero
-mov edx,1     ;number of bytes to read
-mov ecx,buf   ;address to store the bytes
+mov ebx,buf       ;address to store the bytes
 
 getline_chars:
 
-mov ebx,0     ;read from stdin
-mov eax,3     ;invoke SYS_READ (kernel opcode 3)
-int 80h       ;call the kernel
+call getchar      ;reads one character and stores in al register
+cmp [count],1     ;was 1 character read?
+jnz getstring_end ;if not, then end this loop
 
-cmp eax,1     ;was 1 character read?
-jnz getline_end ; if not, then end this loop
-
-mov al,[ecx]  ;mov last character read into al register
+mov [ebx],al      ;mov last character read into buffer
 
 ;check if this character is in the proper range to be part of the string
 
@@ -99,15 +113,15 @@ cmp al,0x7E    ;compare with 0x7E (tilde)
 ja getline_end ;jump if above to getstring_end label
 
 ;if neither jump happened, keep the character and
-
-inc [count]       ;increment how many characters we have read
-inc ecx           ;increment address where next byte is read from
+inc ebx             ;increment address where next byte is stored
 jmp getline_chars ;jump back to start of loop and keep reading
 
 getline_end:
 
-mov [last_char],al ;save the last character read
-mov byte[ecx],0    ;terminate this string with a zero
+mov byte[ebx],0 ;terminate this string with a zero
+
+sub ebx,buf     ;subtract buf from current ebx to get length
+mov [count],ebx ;store the length of string in count variable
 
 mov eax,buf ;mov the buffer address to eax for returning the string
 
@@ -202,22 +216,5 @@ pop ebx
 
 ret
 
-;read only 1 byte using Win32 ReadFile system call.
-;this function is the only place in my source where I read from standard input
-;this keeps my code simple because even reading 1 character
-;requires this long series of stack commands
-;if I tried to use the ReadFile system call in multiple places,
-;it would lead to a lot of code bloat in both source and binary
-getchar:
-push 0              ;Optional Overlapped Structure 
-push count          ;Store Number of Bytes Read from this call
-push 1              ;Number of bytes to read
-push last_char      ;address to store bytes
-push -10            ;STD_INPUT_HANDLE = Negative Ten
-call [GetStdHandle] ;use the above handle
-push eax            ;eax is return value of previous function
-call [ReadFile]
-xor eax,eax         ;set eax to 0
-mov al,[last_char]  ;set lowest part of eax to key read
-ret
+
 
