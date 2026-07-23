@@ -2,14 +2,14 @@ org 100h
 
 main:
 
-mov dword[radix],10    ;I can choose the radix for integer output!
-mov dword[int_width],1 ;and the width of each integer for padded zeros
+mov word[radix],10    ;I can choose the radix for integer output!
+mov word[int_width],1 ;and the width of each integer for padded zeros
 
-mov ebp,chastack       ;mov the address of the beginning of the stack to ebp registers
+mov bp,chastack       ;mov the address of the beginning of the stack to ebp registers
 
 ;this program does not read command line arguments
 ;it always displays a message to tell user what the program does
-mov eax,string_help
+mov ax,string_help
 call putstring
 
 mov [last_char],0xA ;set newline as last_char so prompt will display
@@ -21,80 +21,80 @@ main_loop:
 ;otherwise it will print too many if multiple commands were entered on the same line
 cmp [last_char],0xA
 jnz skip_prompt
-mov eax,string_prompt
+mov ax,string_prompt
 call putstring
 skip_prompt:
 
-call getstring ;get string and return address in eax
+call getstring ;get string and return address in ax
 
 ;we must restart the loop in case of an empty string
 ;if we didn't, strint would read the empty string and return 0
 ;then zero would be pushed to the stack, which is not what we want
 
-cmp dword[count],0 ;were there zero characters read?
+cmp word[count],0 ;were there zero characters read?
 jz main_loop ;if yes, this was an empty string, retry input
 
-mov esi,eax    ;mov string to esi for string comparison
+mov si,ax    ;mov string to si for string comparison
 
 ;Now we process the string the user entered
 ;First, we will try testing for commands
-;If any of the predefined strings match the string in esi
+;If any of the predefined strings match the string in si
 ;We jump to the label for that command
 
-mov edi,string_setradix
+mov di,string_setradix
 call strcmp
 jz command_setradix
 
-mov edi,string_add
+mov di,string_add
 call strcmp
 jz command_add
 
-mov edi,string_sub
+mov di,string_sub
 call strcmp
 jz command_sub
 
-mov edi,string_mul
+mov di,string_mul
 call strcmp
 jz command_mul
 
-mov edi,string_div
+mov di,string_div
 call strcmp
 jz command_div
 
-mov edi,string_rem
+mov di,string_rem
 call strcmp
 jz command_rem
 
-mov edi,string_query
+mov di,string_query
 call strcmp
 jz command_query
 
-mov edi,string_clear
+mov di,string_clear
 call strcmp
 jz command_clear
 
-mov edi,string_exit
+mov di,string_exit
 call strcmp
 jz command_exit
 
 ;The default command is to turn the argument into a number and push to stack
 command_num:
 
-mov eax,esi          ;mov the string to eax for processing numbers
-call strint          ;try to get a number from the string pointed to by eax
+mov ax,si          ;mov the string to ax for processing numbers
+call strint          ;try to get a number from the string pointed to by ax
 cmp [strint_error],0 ;did we have zero errors in the strint function?
 jz num_push          ;if there were no errors, push this to stack
 
-mov eax,string_err
+mov ax,string_err
 call putstring       ;print error message
-mov eax,esi
+mov ax,si
 call putstring       ;print which command failed
 call putline
 jmp num_push_end     ;skip the push because this can't be used
 
 num_push:            ;push the number to the fake stack
-add ebp,4            ;increment the pointer by the size of the native int for this mode
-mov [ebp],eax        ;mov the value we converted from the string with strint
+add bp,2            ;increment the pointer by the size of the native int for this mode
+mov [bp],ax        ;mov the value we converted from the string with strint
 num_push_end:
 jmp main_loop        ;once value is pushed, continue the program
 
@@ -127,7 +127,7 @@ jmp main_loop
 command_add:
 mov ax,[bp]
 sub bp,2
-add [ebp],eax
+add [bp],ax
 jmp memory_check ;check stack for errors after this command
 
 ;subtract number on top of stack from the one below it
@@ -142,9 +142,9 @@ command_mul:
 mov bx,[bp]
 sub bp,2
 mov ax,[bp]
-mov dx,0     ;zero edx before multiply
-mul bx       ;multiply eax with value in ebx
-mov [ebp],eax
+mov dx,0     ;zero dx before multiply
+mul bx       ;multiply ax with value in bx
+mov [bp],ax
 jmp memory_check ;check stack for errors after this command
 
 ;divide number on top of stack into the one below it
@@ -152,8 +152,8 @@ command_div:
 mov bx,[bp]
 sub bp,2
 mov ax,[bp]
-mov dx,0 ;zero edx before divide
-div bx   ;divide eax with value in ebx
+mov dx,0 ;zero dx before divide
+div bx   ;divide ax with value in bx
 mov [bp],ax ;store quotient on stack
 jmp memory_check ;check stack for errors after this command
 
@@ -163,8 +163,8 @@ command_rem:
 mov bx,[bp]
 sub bp,2
 mov ax,[bp]
-mov dx,0 ;zero edx before divide
-div bx   ;divide eax with value in ebx
+mov dx,0 ;zero dx before divide
+div bx   ;divide ax with value in bx
 mov [bp],dx ;store remainder on stack
 jmp memory_check ;check stack for errors after this command
 
@@ -186,24 +186,24 @@ add bp,2            ;increment the pointer to what it was before the failed comm
 jmp main_loop
 
 command_query: ;print all numbers on the stack
-push ebp ;save value of ebp
+push bp ;save value of ebp
 command_query_loop:
-cmp ebp,chastack ;is ebp equal to the address of stack start?
+cmp bp,chastack ;is ebp equal to the address of stack start?
 jz command_query_end  ;if it is, end the putstack loop
-mov eax,[ebp]
-sub ebp,4
+mov ax,[bp]
+sub bp,2
 call putint_and_line
 jmp command_query_loop
 command_query_end:
-pop ebp ;restore ebp to what it was before this command
+pop bp ;restore ebp to what it was before this command
 jmp main_loop
 
 command_clear: ;erase all numbers on the stack
 command_clear_loop:
-cmp ebp,chastack ;is ebp equal to the address of stack start?
+cmp bp,chastack ;is ebp equal to the address of stack start?
 jz command_clear_end  ;if it is, end the putstack loop
-mov dword[ebp],0
-sub ebp,4
+mov word[bp],0
+sub bp,2
 jmp command_clear_loop
 command_clear_end:
 jmp main_loop
@@ -217,8 +217,6 @@ int 21h      ;DOS interrupt to exit the program with numbers on previous line
 
 include 'chastelib16.asm' ; use %include if assembling with NASM instead of FASM.
 include 'chastdin16.asm'
-
-argc dd 0
 
 string_setradix db 'setradix',0
 string_add db 'add',0
