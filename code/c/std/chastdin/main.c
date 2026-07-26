@@ -16,12 +16,30 @@ all other registers are used as normal integers
 real assembly language allows registers to be used interchangeably as numbers or pointers
 this is one reason C is limited compared to Assembly.
 */
+
 int eax,ebx,ecx,edx,esi,edi,*ebp,*esp;
 
 char *s; /*character pointer for user input*/
 
+void help()
+{
+ putstr
+ (
+  "chastdin is a stack based interactive calculator\n"
+  "Numbers are pushed on the stack and commands can do math.\n"
+  "It is a fork of chastack that reads from stdin instead of arguments.\n"
+  "Each line can contain multiple numbers or commands.\n\n"
+  "Math commands are add,sub,mul,div,rem\n"
+  "And use the top two stack numbers for their operations\n\n"
+
+  "The setradix command uses the top of stack as the new radix\n"
+  "The exit command ends the program\n"
+  "The ? command prints the entire stack\n\n"
+ );
+}
+
 /*
- this function is called by all math commands that requires two or more numbers
+ This function is called by all math commands that require two or more numbers
  to be on the stack when they are used.
 */ 
 void stack_check()
@@ -50,16 +68,7 @@ int main(int argc, char **argv)
  /*set the base pointer to where it should start*/
   ebp=stack;
   
- putstr
- (
-  "chastdin is a stack based interactive calculator\n"
-  "Numbers are pushed on the stack and commands can do math.\n"
-  "It is a fork of chastack that reads from stdin instead of arguments.\n"
-  "Each line can contain multiple numbers or commands.\n"
-  "Math commands are add,sub,mul,div,rem\n"
-  "The exit command ends the program\n"
-  "The ? command prints the entire stack\n\n"
- );
+ help();
 
  last_char='\n'; /*set last_char to newline so prompt will print at start*/
 
@@ -69,19 +78,53 @@ int main(int argc, char **argv)
 
  while(1)
  {
+ 
   if(last_char=='\n')
   {
    putstr("-> ");
   }  
   s=getstring();
-    
+  
+  if(0) /*debug: see the length of last input string*/
+  {
+   putstr("strlen==");
+   putint(strlen(s));
+   putstr("\n");
+  }
+  if(0) /*debug: see the last character input that determined end of string*/
+  {
+   putint(last_char);
+   putstr("\n");
+  }
+      
   /*first, we check for commands before we check for integers*/
   if(!strcmp(s,"exit"))
   {
    break;
   }
+  
+  if(!strcmp(s,"help"))
+  {
+   help();
+  }
+  
+  else if(!strcmp(s,"setradix"))
+  {
+   if(ebp>stack)
+   {
+    radix=*ebp;
+    *ebp=0;
+    ebp--;
+   }
+   else
+   {
+    putstr("Error: need one number on stack for command: ");
+    putstr(s);
+    putstr("\n");
+   }
+  }
 
-  if(!strcmp(s,"add"))
+  else if(!strcmp(s,"add"))
   {
    ebx=*ebp;
    ebp--;
@@ -151,7 +194,12 @@ int main(int argc, char **argv)
    }
   }
 
-  else /*try to get a number and push it to the stack*/
+  /*
+   if the string matches none of the commands above
+   try to get a number and push it to the stack
+   using the current radix and the strint function
+  */
+  else
   {
    eax=strint(s); /*get a number from the string*/
    if(strint_errors)
