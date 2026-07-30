@@ -1,13 +1,24 @@
-program pow2;
+program life;
 
 var
- x:integer;
+ name:string;
+ year:integer;
+ age:integer;
 
 begin
- x:=1;
- while x<>0 do
+ name:='Chastity';
+ year:=1987;
+ age:=0;
+
+ while year<=2026 do
  begin
-  WriteLn(x);
-  x:=x+x;
+  WriteLn('name=',name,' age=',age,' year=',year);
+  year:=year+1;
+  age:=age+1;
  end;
+
 end.
+
+(*
+ fpc main.pas && ./main
+*)
