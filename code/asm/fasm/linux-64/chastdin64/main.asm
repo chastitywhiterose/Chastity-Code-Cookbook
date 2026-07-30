@@ -12,9 +12,10 @@ mov qword[int_width],1 ;and the width of each integer for padded zeros
 mov rbp,chastack       ;mov the address of the beginning of the stack to rbp registers
 
 ;this program does not read command line arguments
-;it always displays a message to tell user what the program does
-mov rax,string_help
-call putstring
+;it only reads from stdin (STanDard INput)
+;it is a complete Revese Polish Notation calculator
+
+call help ;display brief help message at the beginning of program
 
 mov [last_char],0xA ;set newline as last_char so prompt will display
 
@@ -31,11 +32,22 @@ skip_prompt:
 
 call getstring ;get string and return address in rax
 
+;if there were 0 characters read in the getstring function
+;it means that standard input was redirected from a file or another command
+;or that Ctrl+D was pressed on the keyboard
+;we must exit the program now to stop an infinite loop
+
+cmp qword[count],0 ;were there zero characters read?
+jz command_exit ;reached end of standard input, exit program
+
 ;we must restart the loop in case of an empty string
 ;if we didn't, strint would read the empty string and return 0
 ;then zero would be pushed to the stack, which is not what we want
+;we can check for an empty string by checking if
+;one character was read in the last call to getstring
+;on Linux, this will usually be 0x0A or the newline character
 
-cmp qword[count],0 ;were there zero characters read?
+cmp qword[count],1 ;was only one character (newline) read?
 jz main_loop ;if yes, this was an empty string, retry input
 
 mov rsi,rax    ;mov string to rsi for string comparison
