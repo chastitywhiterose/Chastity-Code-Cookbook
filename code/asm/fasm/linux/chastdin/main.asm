@@ -246,8 +246,8 @@ string_sub db 'sub',0
 string_mul db 'mul',0
 string_div db 'div',0
 string_rem db 'rem',0
-string_help db 'help',0
 
+string_help db 'help',0
 string_exit db 'exit',0
 string_putstack db '?',0
 string_clear db 'clear',0
