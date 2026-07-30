@@ -261,11 +261,12 @@ string_err2 db 'Error: need two numbers on stack for command: ',0 ;math fail err
 chastdin_help db 'chastdin is a stack based interactive calculator',0xA
               db 'that reads stdin for numbers and commands.',0xA
               db 'Numbers are pushed on the stack for all math.',0xA
-              db 'Each line can contain multiple numbers or commands.',0xA
+              db 'Each line can contain multiple numbers or commands.',0xA,0xA
               db 'Arithmetic commands are add,sub,mul,div,rem',0xA
               db 'The exit command ends the program',0xA
               db 'The ? command prints the entire stack',0xA
-              db 'The setradix command changes the radix for input and output',0xA,0xA,0
+              db 'The setradix command changes the radix for input and output',0xA,0xA
+              db 'See readme.md for full help',0xA,0
 
 ;a function to print the help message defined above
 ;for how to use this calculator program
