@@ -2,7 +2,7 @@
 int main()
 {
  int x,y;
- #define length 1000
+ #define length 1000000
  char c[length];
 
  x=0;
