@@ -15,6 +15,17 @@ begin
  write('decimal ',x);
 //  WriteLn('name=',name,' age=',age,' year=',year);
 
+  // start of hex section
+  i:=x;
+
+
+
+ //*s=i%radix;
+ // i/=radix;
+ // if(*s<10){*s+='0';}
+ // else{*s=*s+'A'-10;}
+
+
   writeln();
   x:=x+1;
  end;
