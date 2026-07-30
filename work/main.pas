@@ -1,20 +1,22 @@
-program life;
+program hexadecimal;
 
 var
  name:string;
- year:integer;
- age:integer;
+ x:integer;
+ y:integer;
 
 begin
  name:='Chastity';
- year:=1987;
- age:=0;
+ x:=0;
+ y:=16;
 
- while year<=2026 do
+ while x<y do
  begin
-  WriteLn('name=',name,' age=',age,' year=',year);
-  year:=year+1;
-  age:=age+1;
+ write('decimal ',x);
+//  WriteLn('name=',name,' age=',age,' year=',year);
+
+  writeln();
+  x:=x+1;
  end;
 
 end.
