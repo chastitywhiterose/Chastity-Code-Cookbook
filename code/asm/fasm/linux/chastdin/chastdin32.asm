@@ -9,7 +9,7 @@
 ;these variables are used as the default controllers
 ;for the getstring and getline functions
 ;buf stores keyboard input during those functions
-;count stores how many bytes were read
+;count stores how many bytes were read during system read calls
 ;last_char stores the last character read
 ;usually this will be a space, tab, or newline
 
@@ -42,10 +42,13 @@ mov ebx,0     ;read from stdin
 mov eax,3     ;invoke SYS_READ (kernel opcode 3)
 int 80h       ;call the kernel
 
-cmp eax,1     ;was 1 character read?
-jnz getstring_end ; if not, then end this loop
+cmp eax,1             ;was 1 character read?
+jz getstring_read_yes ;if yes, process this character and add to string
+ret                   ;otherwise exit the function now
 
-mov al,[ecx]  ;mov last character read into al register
+getstring_read_yes:
+add [count],eax   ;add how many characters we have read
+mov al,[ecx]      ;mov last character read into al register
 
 ;check if this character is in the proper range to be part of the string
 
@@ -56,7 +59,6 @@ ja getstring_end ;jump if above to getstring_end label
 
 ;if neither jump happened, keep the character and
 
-inc [count]   ;increment how many characters we have read
 inc ecx       ;increment address where next byte is read from
 jmp getstring_chars ;jump back to start of loop and keep reading
 
@@ -90,10 +92,13 @@ mov ebx,0     ;read from stdin
 mov eax,3     ;invoke SYS_READ (kernel opcode 3)
 int 80h       ;call the kernel
 
-cmp eax,1     ;was 1 character read?
-jnz getline_end ; if not, then end this loop
+cmp eax,1           ;was 1 character read?
+jz getline_read_yes ;if yes, process this character and add to string
+ret                 ;otherwise exit the function now
 
-mov al,[ecx]  ;mov last character read into al register
+getline_read_yes:
+add [count],eax  ;add how many characters we have read
+mov al,[ecx]     ;mov last character read into al register
 
 ;check if this character is in the proper range to be part of the string
 
@@ -104,7 +109,6 @@ ja getline_end ;jump if above to getstring_end label
 
 ;if neither jump happened, keep the character and
 
-inc [count]       ;increment how many characters we have read
 inc ecx           ;increment address where next byte is read from
 jmp getline_chars ;jump back to start of loop and keep reading
 
