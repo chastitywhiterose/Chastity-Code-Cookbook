@@ -1,30 +1,48 @@
 program hexadecimal;
 
 var
- name:string;
+ s:string;
  x:integer;
  y:integer;
+ i:integer;
+ c:integer;
+ ch:char;
+ radix:integer;
 
 begin
- name:='Chastity';
  x:=0;
- y:=16;
+ y:=256;
+
+ radix:=16;
 
  while x<y do
  begin
  write('decimal ',x);
-//  WriteLn('name=',name,' age=',age,' year=',year);
 
   // start of hex section
-  i:=x;
+  s:=''; //start with empty string
+  i:=x;  //set i to x
 
+  while i>0 do
+  begin
 
+   c:=i mod radix; //get integer division modulus or remainder
+   i:=i div radix; //get integer division quotient
 
- //*s=i%radix;
- // i/=radix;
- // if(*s<10){*s+='0';}
- // else{*s=*s+'A'-10;}
+   if c<10 then
+   begin
+    ch:=chr(c+48);
+   end
+   else
+   begin
+    ch:=chr(c+55);
+   end;
 
+   s:=ch+s; //prefix the string with this character
+
+  end;
+
+  write(' hexadecimal ',s);
 
   writeln();
   x:=x+1;
