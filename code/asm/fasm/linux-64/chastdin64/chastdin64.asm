@@ -42,10 +42,13 @@ mov rdi,0     ;read from stdin
 mov rax,0     ;invoke SYS_READ (kernel opcode 0 on 64 bit Intel)
 syscall       ;call the kernel
 
-cmp rax,1     ;was 1 character read?
-jnz getstring_end ; if not, then end this loop
+cmp rax,1             ;was 1 character read?
+jz getstring_read_yes ;if yes, process this character and add to string
+ret                   ;otherwise exit the function now
 
-mov al,[rsi]  ;mov last character read into al register
+getstring_read_yes:
+add [count],rax   ;add how many characters we have read
+mov al,[rsi]      ;mov last character read into al register
 
 ;check if this character is in the proper range to be part of the string
 
@@ -56,7 +59,6 @@ ja getstring_end ;jump if above to getstring_end label
 
 ;if neither jump happened, keep the character and
 
-inc [count]   ;increment how many characters we have read
 inc rsi       ;increment address where next byte is read from
 jmp getstring_chars ;jump back to start of loop and keep reading
 
@@ -90,10 +92,13 @@ mov rdi,0     ;read from stdin
 mov rax,0     ;invoke SYS_READ (kernel opcode 0 on 64 bit Intel)
 syscall       ;call the kernel
 
-cmp rax,1     ;was 1 character read?
-jnz getline_end ; if not, then end this loop
+cmp rax,1           ;was 1 character read?
+jz getline_read_yes ;if yes, process this character and add to string
+ret                 ;otherwise exit the function now
 
-mov al,[rsi]  ;mov last character read into al register
+getline_read_yes:
+add [count],rax  ;add how many characters we have read
+mov al,[rsi]     ;mov last character read into al register
 
 ;check if this character is in the proper range to be part of the string
 
@@ -104,7 +109,6 @@ ja getline_end ;jump if above to getstring_end label
 
 ;if neither jump happened, keep the character and
 
-inc [count]       ;increment how many characters we have read
 inc rsi           ;increment address where next byte is read from
 jmp getline_chars ;jump back to start of loop and keep reading
 
