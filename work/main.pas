@@ -5,7 +5,11 @@ var
  x:integer;
  y:integer;
  radix:integer;
- 
+
+(*
+A function to print a string.
+This just passes it to the write function.
+*)
 procedure putstr(s:string);
 begin
 write(s);
