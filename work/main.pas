@@ -86,18 +86,29 @@ begin
   if (c>=ord('0')) and (c<=ord('9')) then 
   begin
    c-=ord('0')
-  end;
-  if (c>=ord('A')) and (c<=ord('Z')) then
+  end
+  else if (c>=ord('A')) and (c<=ord('Z')) then
   begin
    c-=ord('A');
    c+=10;
-  end;
-  if (c>=ord('a')) and (c<=ord('a')) then
+  end
+  else if (c>=ord('a')) and (c<=ord('z')) then
   begin
    c-=ord('a');
    c+=10;
+  end
+  else
+  begin
+   strint_errors+=1;
+   writeln('Error: ',s[x],' is not an alphanumeric character!');break;
   end;
-
+  
+  if(c>=radix) then
+  begin
+   strint_errors+=1;
+   writeln('Error: ',s[x],' is not a valid character for radix ',radix);
+   break;
+  end;
   
   i*=radix; //multiply by the radix
   i+=c;     //add the digit from the character processed
@@ -106,11 +117,6 @@ begin
  end;
  strint:=i;
 end;
-
-
-
-
-
 
 
 
@@ -155,8 +161,8 @@ begin
  end;
  
  putstr(string0);
- 
- writeln(strint('249'))
+ radix:=16;
+ writeln(strint('15/G'))
 
 end.
 
