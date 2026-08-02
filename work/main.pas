@@ -61,6 +61,79 @@ begin
  putstr(intstr(i));
 end;
 
+function strint(s:string):integer;
+var
+ i:integer=0; //integer that will be built and returned from this function
+ x:integer=1; //index used to scan forward through the string
+ c:integer;
+begin
+ strint_errors := 0; (*set zero errors before we parse the string*)
+ if( radix<2 or radix>36 ) then
+ begin
+  strint_errors++;
+  writeln('Error: radix ',radix,' is out of range!');
+ end
+ while(x<=length(s))
+ begin
+  c=*s;
+  if( c >= '0' && c <= '9' ){c-='0';}
+  else if( c >= 'A' && c <= 'Z' ){c-='A';c+=10;}
+  else if( c >= 'a' && c <= 'z' ){c-='a';c+=10;}
+  else if( c == ' ' || c == '\n' || c == '\t' ){break;}
+  else{ strint_errors++; printf("Error: %c is not an alphanumeric character!\n",*s);break;}
+  if(c>=radix){ strint_errors++; printf("Error: %c is not a valid character for radix %i\n",*s,radix);break;}
+  i*=radix;
+  i+=c;
+  s++;
+ end;
+ return i;
+end;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 begin
  a:=0;
  b:=256;
