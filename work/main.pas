@@ -1,4 +1,4 @@
-program hexadecimal;
+program chastelib;
 
 const
  string0='Official test suite for the Pascal version of chastelib.'#10;
@@ -97,6 +97,12 @@ begin
    c-=ord('a');
    c+=10;
   end
+  
+  else if (c < $21 ) then
+  begin
+   break; (*end loop because we have found whitespace*)
+  end
+  
   else
   begin
    strint_errors+=1;
@@ -121,18 +127,11 @@ end;
 
 
 
-
-
-
-
-
-
-
 begin
- a:=0;
- b:=256;
+ radix:=16; //set the radix used by both intstr and strint functions
 
- radix:=16; //set the radix used by intstr to 16
+ a:=0;
+ b:=strint('100');
 
  putstr(string0);
 
@@ -161,11 +160,10 @@ begin
  end;
  
  putstr(string0);
- radix:=16;
- writeln(strint('15/G'))
 
 end.
 
 (*
  fpc main.pas && ./main
 *)
+
