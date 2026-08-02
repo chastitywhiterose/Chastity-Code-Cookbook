@@ -61,63 +61,51 @@ begin
  putstr(intstr(i));
 end;
 
+(*
+Because characters and integers are separate types in Pascal,
+it is required to get the ASCII value of characters in the string
+for the strint function so I can do the math the same way
+as I did in the C version of the function.
+*)
+
 function strint(s:string):integer;
 var
  i:integer=0; //integer that will be built and returned from this function
  x:integer=1; //index used to scan forward through the string
- c:integer;
+ c:integer=0;
 begin
  strint_errors := 0; (*set zero errors before we parse the string*)
- if( radix<2 or radix>36 ) then
+ if (radix<2) or (radix>36 ) then
  begin
-  strint_errors++;
+  strint_errors+=1;
   writeln('Error: radix ',radix,' is out of range!');
- end
- while(x<=length(s))
- begin
-  c=*s;
-  if( c >= '0' && c <= '9' ){c-='0';}
-  else if( c >= 'A' && c <= 'Z' ){c-='A';c+=10;}
-  else if( c >= 'a' && c <= 'z' ){c-='a';c+=10;}
-  else if( c == ' ' || c == '\n' || c == '\t' ){break;}
-  else{ strint_errors++; printf("Error: %c is not an alphanumeric character!\n",*s);break;}
-  if(c>=radix){ strint_errors++; printf("Error: %c is not a valid character for radix %i\n",*s,radix);break;}
-  i*=radix;
-  i+=c;
-  s++;
  end;
- return i;
+ while(x<=length(s)) do
+ begin
+  c:=ord(s[x]);
+  if (c>=ord('0')) and (c<=ord('9')) then 
+  begin
+   c-=ord('0')
+  end;
+  if (c>=ord('A')) and (c<=ord('Z')) then
+  begin
+   c-=ord('A');
+   c+=10;
+  end;
+  if (c>=ord('a')) and (c<=ord('a')) then
+  begin
+   c-=ord('a');
+   c+=10;
+  end;
+
+  
+  i*=radix; //multiply by the radix
+  i+=c;     //add the digit from the character processed
+
+  x:=x+1;
+ end;
+ strint:=i;
 end;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -167,6 +155,8 @@ begin
  end;
  
  putstr(string0);
+ 
+ writeln(strint('249'))
 
 end.
 
