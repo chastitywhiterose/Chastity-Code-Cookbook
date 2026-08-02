@@ -9,6 +9,7 @@ var //this is the global variable section
  
  radix:integer;       //current radix being used
  int_width:integer=1; //global integer width
+ strint_errors:integer=0; //error result for strint function
 
 (*
 A function to print a string using Pascal's write function.
