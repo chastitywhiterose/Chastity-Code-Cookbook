@@ -4,25 +4,26 @@ var
  s:string;
  x:integer;
  y:integer;
- i:integer;
+ radix:integer;
+ 
+procedure putstr(s:string);
+begin
+write(s);
+end;
+
+(*
+ a function to return a string form of an integer
+ using the global radix variable
+*)
+function intstr(i:integer):string;
+var
+ s:string;
  c:integer;
  ch:char;
- radix:integer;
-
 begin
- x:=0;
- y:=256;
-
- radix:=16;
-
- while x<y do
- begin
- write('decimal ',x);
-
   // start of hex section
   s:=''; //start with empty string
-  i:=x;  //set i to x
-
+  
   while i>0 do
   begin
 
@@ -42,13 +43,36 @@ begin
 
   end;
 
-  write(' hexadecimal ',s);
+intstr:=s;
+
+end;
+
+
+begin
+ x:=0;
+ y:=256;
+
+ radix:=16;
+
+s:='dudeman';
+
+ while x<y do
+ begin
+ write('decimal ',x);
+
+ putstr('I am gay');
+
+  //write(' hexadecimal ',intstr(x));
+  
+  putstr(intstr(x));
 
   writeln();
   x:=x+1;
  end;
 
 end.
+
+
 
 (*
  fpc main.pas && ./main
