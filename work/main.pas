@@ -1,8 +1,8 @@
 program hexadecimal;
 
 var //this is the global variable section
- x:integer;
- y:integer;
+ a:integer;
+ b:integer;
  
  radix:integer;       //current radix being used
  int_width:integer=1; //global integer width
@@ -51,19 +51,40 @@ begin
 
 end;
 
+(*use both putstr and intstr to print an integer*)
+procedure putint(i:integer);
+begin
+ putstr(intstr(i));
+end;
 
 begin
- x:=0;
- y:=256;
+ a:=0;
+ b:=256;
 
  radix:=16; //set the radix used by intstr to 16
 
- while x<y do
+ while a<b do
  begin
- write('decimal ',x); //print x in decimal. it is the default radix for Pascal.
- writeln(' hexadecimal ',intstr(x)); //print the hexadecimal string that intstr returns
- 
-  x:=x+1;
+  radix:=2;
+  int_width:=8;
+  putint(a);
+  putstr(' ');
+  radix:=16;
+  int_width:=2;
+  putint(a);
+  putstr(' ');
+  radix:=10;
+  int_width:=3;
+  putint(a);
+
+  if (a>=0x20) and (a<=0x7E) then
+  begin
+   putstr(" ");
+   putchar(a);
+  end;
+
+  putstr("\n");
+  a+=1;
  end;
  
  putstr('Program completed!'#10);
