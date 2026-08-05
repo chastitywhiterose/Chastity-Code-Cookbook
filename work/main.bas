@@ -4,7 +4,15 @@ dim as integer a,b,c
 a=0
 b=256
 
-print b
+dim as string t
+
+radix=10
+
+t="478"
+
+b=strint(t)
+
+print "b=";b
 end
 
 while a<b
