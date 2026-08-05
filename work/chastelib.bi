@@ -51,6 +51,19 @@ while x<y
  elseif c >= 97 and c <= 122 then
  c-=97
  c+=10
+ /' whitespace '/
+ elseif c >= 0 and c <= 32 then
+  exit while /' exit correctly at string end '/
+ else
+  strint_errors+=1
+  print "Error: ";chr(s[x]);" is not an alphanumeric character!"
+  exit while /' exit at invalid character '/
+ end if
+
+ if c>=radix then
+  strint_errors+=1
+  print "Error: ";chr(s[x]);" is not a valid character for radix ";radix
+  exit while /' exit at digit wrong for radix '/
  end if
 
  /'multiply by radix then add digit'/

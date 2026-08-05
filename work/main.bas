@@ -8,7 +8,7 @@ dim as string t
 
 radix=10
 
-t="478"
+t="497B8"
 
 b=strint(t)
 
