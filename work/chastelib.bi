@@ -1,9 +1,14 @@
 /'
-this is an early prototype of the intstr function for FreeBASIC
+ global variables to define radix and formatting
+ for the intstr function
 '/
 dim shared as integer radix=2
 dim shared as integer int_width=1
 
+/'
+ translation of intstr function for FreeBASIC
+ by original C programmer Chastity White Rose
+'/
 function intstr(i as integer) as string
  dim as string s=""
  dim as integer w=0
@@ -28,12 +33,22 @@ function intstr(i as integer) as string
 return s
 end function
 
+/'
+ global variable for error detection in strint function
+ check this variable to know if last string was a number
+'/
 dim shared as integer strint_errors=0
 
+/'
+ translation of strint function for FreeBASIC
+ by original C programmer Chastity White Rose
+'/
 function strint(s as string) as integer
 dim as integer i=0
 dim as integer x=0,y=len(s)
 dim as byte c
+
+strint_errors = 0 /' clear errors '/
 
 while x<y
 

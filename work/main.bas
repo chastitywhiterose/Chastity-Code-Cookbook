@@ -1,19 +1,13 @@
 #include "chastelib.bi"
 
 dim as integer a,b,c
+
+radix=16
+
 a=0
-b=256
-
-dim as string t
-
-radix=10
-
-t="497B8"
-
-b=strint(t)
+b=strint("100")
 
 print "b=";b
-end
 
 while a<b
 
