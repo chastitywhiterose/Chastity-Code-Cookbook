@@ -1,5 +1,0 @@
-  else if( c == ' ' or c == '\n' || c == '\t' ){break;}
-  else{ strint_errors++; printf("Error: %c is not an alphanumeric character!\n",*s);break;}
-  if(c>=radix){ strint_errors++; printf("Error: %c is not a valid character for radix %i\n",*s,radix);break;}
-
-  s++;
