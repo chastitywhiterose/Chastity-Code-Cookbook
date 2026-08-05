@@ -1,11 +1,11 @@
 #include "chastelib.bi"
 
-dim as integer a,b,c
-a=0
-b=256
+dim as integer a,b
 
-print b
-end
+radix=16
+
+a=0
+b=strint("100")
 
 while a<b
 

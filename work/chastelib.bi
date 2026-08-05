@@ -35,7 +35,7 @@ end function
 
 /'
  global variable for error detection in strint function
- check this variable to know if last string was a number
+ this variable will be zero if last string was a number
 '/
 dim shared as integer strint_errors=0
 
