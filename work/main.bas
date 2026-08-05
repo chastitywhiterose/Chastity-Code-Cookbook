@@ -36,7 +36,7 @@ a=0
 b=16
 c=8
 
-radix=16
+radix=10
 
 while a<b
 
