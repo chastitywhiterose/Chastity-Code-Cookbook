@@ -1,23 +1,29 @@
 /'
 this is an early prototype of the intstr function for FreeBASIC
 '/
-dim shared as integer radix=2
-dim shared as integer int_width=6
+dim shared as integer radix=10
+dim shared as integer int_width=1
 
 
 function intstr(i as integer) as string
-dim as string s="dudeman"
+dim as string s=""
 dim as integer w=0
 dim as byte c
 
-
+print i
 
  while i<>0 or w < int_width 
                       
   c=i mod radix                  
-  i/=radix                     
-'  if(*s<10){*s+='0';}           
-'  else{*s=*s+'A'-10;}           
+  i\=radix                     
+
+  if c<10 then 
+  c+=48
+  else
+  c+=55
+  end if
+  s=chr(c)+s
+
   w+=1                     
  wend
 
@@ -29,6 +35,8 @@ dim as integer a,b,c
 a=0
 b=16
 c=8
+
+radix=16
 
 while a<b
 
