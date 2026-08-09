@@ -9,6 +9,14 @@ radix=10
 dim as integer a,b
 dim as string s=""
 
+sub stack_check
+ if ebp>stack then
+  chastack(csi+1)=0; /'erase old top of stack because command was successful'/
+ else
+  print "Error: two numbers required for command: ";s
+  csi+=1 /'increment the pointer to what it was before the failed command'/
+ end sub
+
 print "Welcome to the BASIC input program!"
 print "This program asks for a string from the user and shows information."
 print "It ends as soon as the string is ""exit""."
@@ -18,10 +26,10 @@ while s<>"exit"
 
 s=getstr()
 
-print "Information about the string:"
-print
-print "string: ";s
-print "length: ";len(s)
+'print "Information about the string:"
+'print
+'print "string: ";s
+'print "length: ";len(s)
 
 
 'print entire stack
