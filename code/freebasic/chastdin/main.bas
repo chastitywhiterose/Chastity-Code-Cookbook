@@ -13,13 +13,12 @@ print
 
 while s<>"exit"
 
-s=getline
+input "enter a string from the keyboard: ",s
 
 print "Information about the string:"
 print
 print "string: ";s
 print "length: ";len(s)
-/'
 print
 print "Results from passing string to strint function:"
 print
@@ -27,7 +26,6 @@ a=strint(s)
 print "strint result number: ",a
 print "string errors: ";strint_errors
 print
-'/
 
 wend
 
