@@ -119,18 +119,6 @@ else
 
 end if
 
-
-
-/'
-print
-print "Results from passing string to strint function:"
-print
-a=strint(s)
-print "strint result number: ",a
-print "string errors: ";strint_errors
-print
-'/
-
 wend
 
 /'
