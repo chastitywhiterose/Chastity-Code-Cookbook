@@ -13,7 +13,7 @@ print
 
 while s<>"exit"
 
-s=getline
+s=getstr()
 
 print "Information about the string:"
 print
