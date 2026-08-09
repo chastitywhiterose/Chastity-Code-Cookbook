@@ -42,7 +42,7 @@ s=""
  s=getstr() 'read and ignore empty strings
 
 'print entire stack
-if s="?" then
+if s="?" or s="print" then
  b=csi
  while csi>0
   print intstr(chastack(csi))
@@ -55,6 +55,15 @@ exit while
 
 elseif s="help" then
 help()
+
+elseif s="setradix" then
+ if csi>0 then
+ radix=chastack(csi)
+ chastack(csi)=0
+ csi-=1
+ else
+  print "Error: need one number on stack for command: ";s
+ end if
 
 elseif s="add" then
 b=chastack(csi)
