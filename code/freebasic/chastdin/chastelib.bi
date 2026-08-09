@@ -9,7 +9,7 @@ dim shared as integer int_width=1
  translation of intstr function for FreeBASIC
  by original C programmer Chastity White Rose
 '/
-function intstr(i as integer) as string
+function intstr(i as uinteger) as string
  dim as string s=""
  dim as integer w=0
  dim as byte c
@@ -43,8 +43,8 @@ dim shared as integer strint_errors=0
  translation of strint function for FreeBASIC
  by original C programmer Chastity White Rose
 '/
-function strint(s as string) as integer
-dim as integer i=0
+function strint(s as string) as uinteger
+dim as uinteger i=0
 dim as integer x=0,y=len(s)
 dim as byte c
 
