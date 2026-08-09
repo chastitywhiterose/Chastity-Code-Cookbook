@@ -1,29 +1,25 @@
-dim as integer a,b,c
+#include "chastelib.bi"
 
-a=0
-b=20
-c=0
+dim as integer a,b
 
-while a<=b
+radix=10
 
-c+=1
-'print c
 
-a=2
-while a<=b
 
-if c mod a = 0 then
-'print "a";a;" divides into ";c
-else
-exit while
-end if
+dim as string s=""
 
-a+=1
-wend
+while s<>"exit"
+
+input "enter a string from the keyboard: ",s
+
+print "string: ";s
+print "length: ";len(s)
+
+a=strint(s)
+print "strint result number: ",a
+print "string errors: ";strint_errors
 
 wend
-
-print "c=";c
 
 /'
  This is a FreeBASIC program.
