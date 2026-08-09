@@ -7,15 +7,16 @@ dim shared as integer csi=0 'Chastity's Stack Index
 radix=10
 
 dim as integer a,b
-dim as string s=""
+dim shared as string s
 
 sub stack_check
- if ebp>stack then
-  chastack(csi+1)=0; /'erase old top of stack because command was successful'/
+ if csi>0 then
+  chastack(csi+1)=0 /'erase old top of stack because command was successful'/
  else
   print "Error: two numbers required for command: ";s
   csi+=1 /'increment the pointer to what it was before the failed command'/
- end sub
+ end if
+end sub
 
 print "Welcome to the BASIC input program!"
 print "This program asks for a string from the user and shows information."
@@ -24,7 +25,9 @@ print
 
 while s<>"exit"
 
-s=getstr()
+s=""
+
+ s=getstr() 'read and ignore empty strings
 
 'print "Information about the string:"
 'print
@@ -52,16 +55,14 @@ stack_check()
 else
 
 'try to interpret string as a number if not empty
-if len(s)<>0 then
-a=strint(s)
-if strint_errors<>0 then
-print s;" cannot be added to the stack because it is not a valid number"
-else
-print intstr(a);" was added to the stack"
-end if
-csi+=1
-chastack(csi)=a
-end if
+ a=strint(s)
+ if strint_errors<>0 or len(s)=0 then
+ 'print s;" cannot be added to the stack because it is not a valid number"
+ else
+ csi+=1
+ chastack(csi)=a
+ print intstr(a);" was added to the stack"
+ end if
 
 end if
 
