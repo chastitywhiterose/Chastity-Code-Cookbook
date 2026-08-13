@@ -1,10 +1,15 @@
 /'
-this is an early prototype of the intstr function for FreeBASIC
+ global variables to define radix and formatting
+ for the intstr function
 '/
 dim shared as integer radix=2
 dim shared as integer int_width=1
 
-function intstr(i as integer) as string
+/'
+ translation of intstr function for FreeBASIC
+ by original C programmer Chastity White Rose
+'/
+function intstr(i as uinteger) as string
  dim as string s=""
  dim as integer w=0
  dim as byte c
@@ -48,12 +53,12 @@ int_width=3
 print intstr(a);
 
 if(a>=32) and (a<=126) then
-print " "+chr(a);
+print " "+chr$(a);
 endif
 
 print
 
-a+=1
+a=a+1
 wend
 
 /'
