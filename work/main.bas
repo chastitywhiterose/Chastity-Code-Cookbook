@@ -4,50 +4,47 @@ DECLARE FUNCTION strint (s AS STRING)
 ' global variables to define radix and formatting
 ' for the intstr function
 
-Dim Shared radix As Integer
-Dim Shared intwidth As Integer
+DIM SHARED radix AS INTEGER
+DIM SHARED intwidth AS INTEGER
 
 radix = 2
 intwidth = 1
 
-' translation of intstr function for FreeBASIC
-' by original C programmer Chastity White Rose
-
-Dim a As Integer
-Dim b As Integer
+DIM a AS INTEGER
+DIM b AS INTEGER
 
 a = 0
 b = strint("100000000")
 
-While a < b
+WHILE a < b
 
     radix = 2
     intwidth = 8
-    Print intstr$(a); " ";
+    PRINT intstr$(a); " ";
 
     radix = 16
     intwidth = 2
-    Print intstr$(a); " ";
+    PRINT intstr$(a); " ";
 
     radix = 10
     intwidth = 3
-    Print intstr$(a);
+    PRINT intstr$(a);
 
-    If (a >= 32) And (a <= 126) Then
-        Print " " + Chr$(a);
-    End If
+    IF (a >= 32) AND (a <= 126) THEN
+        PRINT " " + CHR$(a);
+    END IF
 
-    Print
+    PRINT
 
     a = a + 1
-Wend
+WEND
 
 ' This is a QBASIC program.
 ' You can run it in the original QBASIC for DOS
 
-' It has also been tested in both QB64 and FreeBASIC with "-lang qb" option.
+' It has also been tested in FreeBASIC with "-lang qb" option.
 
-' Chastity's two surpreme functions are defined below.
+' Chastity's two supreme functions are defined below.
 ' Both of them operate using the shared global radix variable
 
 ' intstr converts an integer to a string
@@ -56,45 +53,45 @@ Wend
 ' translation of strint function for FreeBASIC
 ' by original C programmer Chastity White Rose
 
-Function intstr$ (i As Integer)
+' global variable for error detection in strint function
+' this variable will be zero if last string was a number
 
-    Dim s As String
-    Dim w As Integer
-    Dim c As Integer
-    Dim t As Integer
+DIM SHARED strinterror AS INTEGER
+
+FUNCTION intstr$ (i AS INTEGER)
+
+    DIM s AS STRING
+    DIM w AS INTEGER
+    DIM c AS INTEGER
+    DIM t AS INTEGER
 
     t = i
     s = ""
     w = 0
 
-    While i <> 0 Or w < intwidth
-        c = i Mod radix
+    WHILE i <> 0 OR w < intwidth
+        c = i MOD radix
         i = i \ radix
 
-        If c < 10 Then
+        IF c < 10 THEN
             c = c + 48
-        Else
+        ELSE
             c = c + 55
-        End If
+        END IF
 
-        s = Chr$(c) + s
+        s = CHR$(c) + s
 
         w = w + 1
-    Wend
+    WEND
 
     i = t
     intstr = s
-End Function
+END FUNCTION
 
-' global variable for error detection in strint function
-' this variable will be zero if last string was a number
-
-Dim Shared strinterror As Integer
-
-Function strint (s As String)
-    Dim i As Integer
-    Dim x, y As Integer
-    Dim c, c1 As Integer
+FUNCTION strint (s AS STRING)
+    DIM i AS INTEGER
+    DIM x, y AS INTEGER
+    DIM c, c1 AS INTEGER
 
 
     i = 0
@@ -102,44 +99,44 @@ Function strint (s As String)
     strinterror = 0
 
     x = 0
-    y = Len(s)
-    While x < y
+    y = LEN(s)
+    WHILE x < y
 
         ' read digit from string
-        c = Asc(Mid$(s, x + 1, 1))
+        c = ASC(MID$(s, x + 1, 1))
         c1 = c 'a second copy for printing error messages
 
         ' 0 to 9
-        If c >= 48 And c <= 57 Then
+        IF c >= 48 AND c <= 57 THEN
             c = c - 48
             ' A to Z
-        ElseIf c >= 65 And c <= 90 Then
+        ELSEIF c >= 65 AND c <= 90 THEN
             c = c - 65
             c = c + 10
             ' a to z
-        ElseIf c >= 97 And c <= 122 Then
+        ELSEIF c >= 97 AND c <= 122 THEN
             c = c - 97
             c = c + 10
             ' whitespace
-        ElseIf c >= 0 And c <= 32 Then
+        ELSEIF c >= 0 AND c <= 32 THEN
             x = y
-        Else
+        ELSE
             strinterror = strinterror + 1
-            Print "Error: "; Chr$(c1); " is not an alphanumeric character!"
-        End If
+            PRINT "Error: "; CHR$(c1); " is not an alphanumeric character!"
+        END IF
 
-        If c >= radix Then
+        IF c >= radix THEN
             strinterror = strinterror + 1
-            Print "Error: "; Chr$(c1); " is not a valid character for radix "; radix
-        End If
+            PRINT "Error: "; CHR$(c1); " is not a valid character for radix "; radix
+        END IF
 
         'multiply by radix then add digit
         i = i * radix
         i = i + c
 
         x = x + 1
-    Wend
+    WEND
 
     strint = i
-End Function
+END FUNCTION
 
