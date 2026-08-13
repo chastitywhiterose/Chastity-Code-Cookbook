@@ -1,5 +1,5 @@
 DECLARE FUNCTION intstr$ (i AS INTEGER)
-DECLARE FUNCTION strint (s AS string)
+DECLARE FUNCTION strint (s AS STRING)
 
 
 ' global variables to define radix and formatting
@@ -20,7 +20,9 @@ DIM b AS INTEGER
 a = 0
 b = 128
 
-b=strint("101")
+b = strint("10000000")
+
+CLS
 
 WHILE a < b
 
@@ -47,6 +49,16 @@ WEND
 
 ' This is a QBASIC program.
 ' run it in the original QBASIC for DOS
+
+
+
+' global variable for error detection in strint function
+' this variable will be zero if last string was a number
+
+DIM SHARED strinterror AS INTEGER
+
+' translation of strint function for FreeBASIC
+' by original C programmer Chastity White Rose
 
 FUNCTION intstr$ (i AS INTEGER)
 
@@ -78,66 +90,56 @@ i = t
 intstr = s
 END FUNCTION
 
-
-/'
- global variable for error detection in strint function
- this variable will be zero if last string was a number
 '/
-dim shared as integer strint_errors
+FUNCTION strint (s AS STRING)
+DIM i AS INTEGER
+DIM x, y AS INTEGER
+DIM c, c1 AS INTEGER
 
-/'
- translation of strint function for FreeBASIC
- by original C programmer Chastity White Rose
-'/
-function strint(s as string)
-dim as integer i
-dim as integer x,y
-dim as integer c
 
-i=0
+i = 0
 
-strint_errors = 0 /' clear errors '/
+strinterror = 0
 
-x=0
-y=len(s)
-while x<y
+x = 0
+y = LEN(s)
+WHILE x < y
 
- /' read digit from string '/
- c=s[x]
+ ' read digit from string
+ c = ASC(MID$(s, x + 1, 1))
+ c1 = c 'a second copy for printing error messages
 
- /' 0 to 9 '/
- if c >= 48 and c <= 57 then
- c-=48
- /' A to Z '/
- elseif c >= 65 and c <= 90 then
- c-=65
- c+=10
- /' a to z '/
- elseif c >= 97 and c <= 122 then
- c-=97
- c+=10
- /' whitespace '/
- elseif c >= 0 and c <= 32 then
-  exit while /' exit correctly at string end '/
- else
-  strint_errors+=1
-  print "Error: ";chr$(s[x]);" is not an alphanumeric character!"
-  exit while /' exit at invalid character '/
- end if
+ ' 0 to 9
+ IF c >= 48 AND c <= 57 THEN
+ c = c - 48
+ ' A to Z
+ ELSEIF c >= 65 AND c <= 90 THEN
+ c = c - 65
+ c = c + 10
+ ' a to z
+ ELSEIF c >= 97 AND c <= 122 THEN
+ c = c - 97
+ c = c + 10
+ ' whitespace
+ ELSEIF c >= 0 AND c <= 32 THEN
+  x = y
+ ELSE
+  strinterror = strinterror + 1
+  PRINT "Error: "; CHR$(c1); " is not an alphanumeric character!"
+ END IF
 
- if c>=radix then
-  strint_errors+=1
-  print "Error: ";chr$(s[x]);" is not a valid character for radix ";radix
-  exit while /' exit at digit wrong for radix '/
- end if
+ IF c >= radix THEN
+  strinterror = strinterror + 1
+  PRINT "Error: "; CHR$(c1); " is not a valid character for radix "; radix
+ END IF
 
- /'multiply by radix then add digit'/
- i*=radix
- i+=c
+ 'multiply by radix then add digit
+ i = i * radix
+ i = i + c
 
-x+=1
-wend
+x = x + 1
+WEND
 
-strint=i
-end function
+strint = i
+END FUNCTION
 
