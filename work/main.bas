@@ -19,9 +19,14 @@ color &h000000,&hFFFFFF 'set foreground and background text color using hex RGB 
 dim as integer cursor_x=3,cursor_y=2,y_top=7
 
 locate cursor_y,cursor_x
-print "Counting Program with FreeBASIC Graphics"
+print "FreeBASIC Graphics Counting and ASCII Character Program"
 
-cursor_x=3
+cursor_y+=2
+locate cursor_y,cursor_x
+print "Written by Chastity White Rose, the Pure Princess of Pixels, Polygons, and Ponies"
+
+
+cursor_x=2
 cursor_y=y_top
 locate cursor_y,cursor_x
 
