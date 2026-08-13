@@ -1,5 +1,4 @@
 #include "chastelib.bi"
-#include "chastelib-graphics.bi"
 
 dim as integer screen_width=1280,screen_height=720
 
