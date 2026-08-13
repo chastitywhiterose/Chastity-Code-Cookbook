@@ -1,7 +1,8 @@
 #include "chastelib.bi"
-#include "chastelib-graphics.bi"
 
-dim as integer screen_width=1280,screen_height=720
+'define screen size variables before the graphics header
+dim shared as integer screen_width=1280,screen_height=720
+#include "chastelib-graphics.bi"
 
 ' Set the screen mode to size I want and 32 bits true color
 ScreenRes 1280, 720, 32
@@ -11,16 +12,9 @@ ScreenRes 1280, 720, 32
 'width screen_width/8,screen_height\8  'use 8x8 font (default)
 width screen_width\8,screen_height\16 'use 8x16 font
 
-' Draw color bands in a diagonal pattern over the whole screen
-For y As Long = 0 To screen_height-1
-    For x As Long = 0 To screen_width-1
-        PSet (x,y),(x xor y ) shl 16
-    Next x
-Next y
+chaste_checker
 
-' Display the text "Hello World!!" over the lines we've drawn, in the top-left hand corner
-
-color &hFF00FF,&h00FF00 'set foreground and background text color using hex RGB codes
+color &h000000,&hFFFFFF 'set foreground and background text color using hex RGB codes
 
 dim as integer cursor_x=3,cursor_y=2,y_top=7
 
@@ -57,9 +51,9 @@ radix=10
 int_width=3
 print intstr(a);
 
-if(a>=32) and (a<=126) then
+'if(a>=32) and (a<=126) then
 print " "+chr(a);
-endif
+'endif
 
 'print
 
