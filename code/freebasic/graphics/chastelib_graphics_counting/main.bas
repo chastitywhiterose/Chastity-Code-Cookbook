@@ -73,6 +73,10 @@ end if
 
 wend
 
+' Save screen as BMP
+BSave "screen.bmp", 0
+
+' keep window open to view until keypress
 sleep
 
 /'
@@ -82,3 +86,4 @@ sleep
 
  fbc main.bas && ./main
 '/
+
