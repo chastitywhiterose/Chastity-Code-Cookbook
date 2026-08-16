@@ -9,7 +9,7 @@ sub chaste_checker()
 
  'draw filled rectangle with the line function
  'fill the whole screen
-  line (0,0)-(screen_width,screen_height), &HFF000000,bf
+  line (0,0)-(screen_width,screen_height), &H000000,bf
  
  index=0
  rect_x=0
@@ -25,7 +25,7 @@ sub chaste_checker()
   if(index=1) then
 
    'draw filled rectangle with the line function
-   line (x,y)-(x+rect_w,y+rect_h), &HFFFFFF, bf
+   line (x,y)-(x+rect_w-1,y+rect_h-1), &HFFFFFF, bf
 
    end if
    index=index xor 1
