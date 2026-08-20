@@ -139,6 +139,69 @@ wend
 end sub
 
 
+
+
+
+
+
+'global variables for character drawing
+dim shared as integer cursor_x=0,cursor_y=0
+dim shared as integer font_scale=8
+
+sub demo_putchar_gui(c as integer)
+
+dim as integer x,y,a
+
+x=c mod 16
+y=c\16
+
+dim as integer x1,y1,x2,y2,pixel
+dim as integer x3,y3,x4,y4
+
+y1=y*8
+y2=y1+8
+y3=cursor_y*font_scale
+while y1<y2
+
+y4=x3+font_scale
+
+x1=x*8
+x2=x1+8
+x3=cursor_x*font_scale
+while x1<x2
+
+pixel=point(x1,y1,font_image)
+
+x4=x3+font_scale
+line (x3,y3)-(x4,y4), pixel, bf
+x3+=font_scale
+
+
+'debug the pixel value using my chastelib functions
+'radix=16
+'print intstr(pixel)
+
+x1+=1
+wend
+
+y3+=font_scale
+
+
+y1+=1
+wend
+
+cursor_x+=font_scale
+
+end sub
+
+
+
+
+
+
+
+
+
 sub putstr_gui(s as string)
 
 dim as integer x=0,y=len(s),c
@@ -147,7 +210,7 @@ while x<y
 
  'read character from string
  c=s[x]
- demo_putchar_text(c)
+ demo_putchar_gui(c)
 'print c
 
 x+=1

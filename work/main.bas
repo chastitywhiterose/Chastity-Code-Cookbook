@@ -37,7 +37,9 @@ put (screen_width/2-64,screen_height/2-64), font_image
 
 'demo_putchar_text(asc("2"))
 
-putstr_gui("chandler")
+'putstr_gui("chandler")
+
+demo_putchar_gui(65)
 
 'keep the window open until a key is pressed
 Sleep
