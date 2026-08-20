@@ -7,8 +7,8 @@ ScreenRes 128, 128, 32
 
 'optionally change font
 
-'width screen_width/8,screen_height\8  'use 8x8 font (default)
-width screen_width\8,screen_height\16 'use 8x16 font
+'width screen_width\8,screen_height\8  'use 8x8 font (default)
+'width screen_width\8,screen_height\16 'use 8x16 font
 
 
 'set foreground and background text color using hex RGB codes
@@ -99,7 +99,7 @@ sub demo_putchar_text(c as integer)
 dim as integer x,y,a
 
 x=c mod 16
-y=c/16
+y=c\16
 
 'print x;y
 
