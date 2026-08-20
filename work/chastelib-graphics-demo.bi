@@ -160,14 +160,14 @@ dim as integer x3,y3,x4,y4
 
 y1=y*8
 y2=y1+8
-y3=cursor_y*font_scale
+y3=cursor_y*font_scale*8
 while y1<y2
 
-y4=x3+font_scale
+y4=y3+font_scale
 
 x1=x*8
 x2=x1+8
-x3=cursor_x*font_scale
+x3=cursor_x*font_scale*8
 while x1<x2
 
 pixel=point(x1,y1,font_image)
@@ -186,11 +186,10 @@ wend
 
 y3+=font_scale
 
-
 y1+=1
 wend
 
-cursor_x+=font_scale
+cursor_x+=1
 
 end sub
 

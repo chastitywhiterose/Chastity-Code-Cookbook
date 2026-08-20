@@ -20,6 +20,9 @@ font_image=ImageCreate( 128, 128 )
 
 bload "font-8.bmp", font_image
 
+'draw the font picture to the center of screen to make sure it works
+put (screen_width/2-64,screen_height/2-64), font_image
+
 'everything above is necessary because the following included files
 'use the shared screen and font image variables
 
@@ -32,14 +35,26 @@ bload "font-8.bmp", font_image
 'demo_font_8 'display the chars to screen
 'demo_font_8_save() 'display but also save the file
 
-'draw the font picture to the center of screen
-put (screen_width/2-64,screen_height/2-64), font_image
 
-'demo_putchar_text(asc("2"))
 
-'putstr_gui("chandler")
+'demo_putchar_text(asc("A"))
+'demo_putchar_gui(asc("%"))
 
-demo_putchar_gui(65)
+'draw filled rectangle with the line function
+'fill the whole screen
+ 'line (0,0)-(screen_width,screen_height), &H00FF00,bf
+
+font_scale=7
+
+cursor_x=1
+cursor_y=1
+
+putstr_gui("Chastity White Rose")
+
+cursor_x=1
+cursor_y+=2
+
+putstr_gui("Text with FreeBASIC")
 
 'keep the window open until a key is pressed
 Sleep
