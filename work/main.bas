@@ -26,22 +26,18 @@ bload "font-8.bmp", font_image
 #include "chastelib-graphics.bi"
 #include "chastelib-graphics-demo.bi"
 
-print "screen_width";screen_width
-print "screen_height";screen_height
+'print "screen_width";screen_width
+'print "screen_height";screen_height
 
 'demo_font_8 'display the chars to screen
 'demo_font_8_save() 'display but also save the file
 
-
-
-
-
-
 'draw the font picture to the center of screen
 put (screen_width/2-64,screen_height/2-64), font_image
 
+'demo_putchar_text(asc("2"))
 
-demo_putchar(65)
+putstr_gui("chandler")
 
 'keep the window open until a key is pressed
 Sleep
