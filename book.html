@@ -171,8 +171,8 @@ Nerds</p>
 programming as a hobby since I was 14 years old. My first programming
 language was QBASIC. It was a language and a program for interpreting
 that language that ran on MS-DOS. However, the usage of this language
-has diminished in use over time because it does not run without an
-emulator or modern BASIC language dialects meant to mimic it.</p>
+has diminished over time because it does not run without an emulator or
+modern BASIC language dialects meant to mimic it.</p>
 <p>However, I moved to the C Programming Language as my main computer
 language. I have dabbled in Java, JavaScript, Lua, Perl, Python, and the
 beast known as C++. However, of all these languages, C remains my native
@@ -252,17 +252,19 @@ second part</p>
 <p>Tells it to run the executable file. On Windows, this would run a
 program named “main.exe”. On Linux, the file is likely to be named
 simply “main”. Also, on Linux, you would need to write it as “./main” to
-execute it. This signals that the file you are trying to run is in the
-current directory.</p>
+execute it. The dot signals that the file you are trying to run is in
+the current directory. A single dot usually refers to the current
+directory, while two dots refer to the directory above the current one
+you are in.</p>
 <h2 id="how-it-works">How it works</h2>
-<p>Now that you have successfully ran the Hello World program, you might
+<p>Now that you have successfully run the Hello World program, you might
 be wondering what it all means. Here is the same program with comments
 included.</p>
 <pre><code>#include &lt;stdio.h&gt; /*include the standard input and output library*/
 int main() /*beginning of a function named main which returns an integer*/
 { /*opening bracket starting the function block*/
  printf(&quot;Hello, World!\n&quot;); /*calling printf, the most useful function in the C Programming Language.*/
- return 0; /*Return the number zero to the operating system. This means no errors occurred.*/
+ return 0; /*Return the number zero to the operating system. A return value of zero means that no errors occurred.*/
 } /*closing bracket ending the function block*/
 </code></pre>
 <p>Once you can get this program working, then the rest of the C source
@@ -2651,7 +2653,7 @@ do a specific task using Bash.</p>
 class="uri">https://www.gnu.org/software/bash/manual/bash.html</a></p>
 <p><a href="https://tldp.org/LDP/abs/html/abs-guide.html"
 class="uri">https://tldp.org/LDP/abs/html/abs-guide.html</a></p>
-<h2 id="chapter-7-web-development">Chapter 7: Web Development</h2>
+<h1 id="chapter-7-web-development">Chapter 7: Web Development</h1>
 <p>So far in this book, I have shown examples of creating compiled
 programs with the C Programming Language. I even showed a few examples
 of using SDL in combination with C to make graphical animations or
@@ -2675,6 +2677,1242 @@ websites using these languages is not very hard compared to writing
 programs with C or Bash. In fact, that’s because you are not writing
 programs so much as you are writing description languages for how some
 kind of text, link, or image should look like. This will all make sense
-once you see some examples.</p>
+once you see some examples. Copy the following text and save it as an
+HTML file (.html extension).</p>
+<h2 id="web-page-example">Web Page Example</h2>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Web Page Example by Chastity White Rose&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h1 id=&quot;this-is-a-web-page&quot;&gt;This is a Web Page&lt;/h1&gt;
+&lt;p&gt;This is a small example of what a one page website can look like. Text can also be &lt;em&gt;italic&lt;/em&gt;, &lt;strong&gt;bold&lt;/strong&gt;, or
+&lt;strong&gt;&lt;em&gt;even a combination of both&lt;/em&gt;&lt;/strong&gt;. A
+website can contain links to other pages or websites. For example, below
+is a link to one of my YouTube videos.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=1CLDbnesnEg&quot;&gt;Chaste Chess:
+Undo Feature Added&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Even pictures can be included in a web page.&lt;/p&gt;
+&lt;img
+src=&quot;https://chastitychesschallenge.com/wp-content/uploads/2025/03/chess_start.png&quot;
+alt=&quot;chess_start.png&quot; /&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<p>That example uses just enough HTML tags to show some of the
+capability that is most important for the web. Text, images, and links
+are mostly what websites are built with. You can open it with Firefox,
+Google Chrome, and many other browsers. It is not that fancy and should
+work with everything.</p>
+<p>Most web browsers will display the page as black text on a white
+background. This is similar to a paperback book with white paper and
+black ink. But what if we wanted to reverse the colors and then also
+make the text bigger and easier to read? For that we can use just a
+little bit of CSS. See the edited example below where I added the style
+into the head section.</p>
+<h2 id="reverse-colors-web-page-example">Reverse Colors Web Page
+Example</h2>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Reverse Colors Web Page Example by Chastity White Rose&lt;/title&gt;
+&lt;style&gt;
+    html
+    {
+    font-size: 40px;
+    color: #ffffff;
+    background-color: #000000;
+    }
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h1 id=&quot;this-is-a-web-page&quot;&gt;This is a Web Page&lt;/h1&gt;
+&lt;p&gt;This is a small example of what a one page website can look like. Text can also be &lt;em&gt;italic&lt;/em&gt;, &lt;strong&gt;bold&lt;/strong&gt;, or
+&lt;strong&gt;&lt;em&gt;even a combination of both&lt;/em&gt;&lt;/strong&gt;. A
+website can contain links to other pages or websites. For example, below
+is a link to one of my YouTube videos.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=1CLDbnesnEg&quot;&gt;Chaste Chess:
+Undo Feature Added&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Even pictures can be included in a web page.&lt;/p&gt;
+&lt;img
+src=&quot;https://chastitychesschallenge.com/wp-content/uploads/2025/03/chess_start.png&quot;
+alt=&quot;chess_start.png&quot; /&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<p>CSS is the modern way of changing the style of text and images on the
+page, but let me tell you, back in the 90s it was not that way and there
+were much harder and time consuming methods used to modify the color of
+text per element. Because of this, HTML got a bad reputation for being
+hard to write, but really it’s not so bad, if you are a complete nerd
+with no social life like I am!</p>
+<p>JavaScript is another language which fits into the mix of HTML and
+CSS for making web pages easier to navigate. However, I must warn you,
+JavaScript is powerful and is sometimes used for evil. Some people
+disable JavaScript in their browser settings because it is used to load
+all kinds of advertisements that ruin the experience.</p>
+<p>But JavaScript is as powerful as C or Bash is as a programming
+language. However, there are some restrictions placed on it when run as
+part of a web page.</p>
+<ul>
+<li>JavaScript can’t create or delete files on your computer nor run
+programs on your computer the same way a Bash script can. It is meant to
+be used only within the context of the web browser. When you close
+Google Chrome or whatever you use, the HTML, CSS, and JavaScript should
+all cease. Consider it a small jail where it can’t harm the rest of your
+computer. Personally I am glad for this because I am not a very good
+JavaScript programmer and I would not want to accidentally do something
+stupid!</li>
+</ul>
+<p>In fact, this makes JavaScript a great first programming language if
+you are new to the idea of computer programming.</p>
+<p>To introduce JavaScript and white it might be helpful, I will use an
+example script which displays the square numbers. I will explain the
+meaning of the square numbers later after you see the sequence.</p>
+<h2 id="square-numbers-demo-1">Square Numbers Demo 1</h2>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Square Numbers Demo 1&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h1&gt;The Square Numbers Sequence&lt;/h1&gt;
+
+&lt;p id=&quot;main&quot;&gt;This is the main paragraph!&lt;/p&gt;
+
+&lt;script&gt;
+
+var s=&quot;&quot;
+var a=0,b=1,c=0;
+
+while(a&lt;=16)
+{
+ s+=c+&quot; &quot;;
+ a++;
+ c+=b;
+ b+=2;
+}
+
+document.getElementById(&quot;main&quot;).innerHTML = s;
+
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<p>If you open that web page, you will see the number sequence</p>
+<pre><code>0 1 4 9 16 25 36 49 64 81 100 121 144 169 196 225 256</code></pre>
+<p>The <a href="https://en.wikipedia.org/wiki/Square_number">square
+numbers</a> are the integers that are the perfect square of each
+integer. For example, 5 rows of 5 objects can be used to form a square
+of those objects. There would be 25 total objects. Notice that my code
+does not use multiplication to multiply the numbers by themselves.
+Instead, I used the pattern of addition because if you just start at 0
+and keep adding the next odd integer (1,3,5,7, etc) then you will get
+the next square number without the need for multiplication.</p>
+<p>But as far as the JavaScript code in the above example, there is
+actually a lot happening. I defined a paragraph with an id of “main”.
+The text in the paragraph said “This is the main paragraph!”. Chances
+are, if you actually loaded this script, you never saw this message
+because it was overwritten by the script.</p>
+<h3 id="how-does-the-script-work">How does the script work?</h3>
+<p>First, we define a variable named “s” which is short for string. We
+set it to “” which is an empty string.</p>
+<p>Then we define variables a,b,and c which are integers. Notices that
+all the variables are defined with the “var” keyword. This is because
+JavaScript knows the type of variables by what you set them equal to. It
+knows that s is a string because of the quotes in the assignment. Since
+a, b, and c are set to integers, they are understood as integers and can
+be used in arithmetic assignments exactly as you would see in a C
+program.</p>
+<p>Finally, each time the loop goes, the integer c variable is appended
+to the s string as well as a space. The result is that the string builds
+all the numbers and then later is assigned to the main paragraph.</p>
+<p>Pay close attention to the <strong>document.getElementById</strong>
+function. It is used to access an element by using the id of an HTML
+element. That means that as the programmer, you are responsible for
+setting the correct id in the HTML as well as the JavaScript code.</p>
+<p>There is one problem with the script above. Because the user can’t
+see the initial value of the paragraph, wouldn’t it be neat if there was
+a way to see it and then execute the script when the user clicks a
+button? Actually there is! See the next example!</p>
+<h2 id="square-numbers-demo-2">Square Numbers Demo 2</h2>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Square Numbers Demo 2&lt;/title&gt;
+
+&lt;script&gt;
+
+function square_numbers()
+{
+ var s=&quot;&quot;
+ var a=0,b=1,c=0;
+
+ while(a&lt;=16)
+ {
+  s+=c+&quot; &quot;;
+  a++;
+  c+=b;
+  b+=2;
+ }
+
+ document.getElementById(&quot;main&quot;).innerHTML = s;
+}
+
+&lt;/script&gt;
+
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h1&gt;The Square Numbers Sequence&lt;/h1&gt;
+
+&lt;p id=&quot;main&quot;&gt;This is the main paragraph!&lt;/p&gt;
+
+&lt;button type=&quot;button&quot; onclick=&quot;square_numbers()&quot;&gt;Click this button, I dare you!&lt;/button&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<h2 id="code-in-the-head-vs-the-body">Code in the “head” vs the
+“body”</h2>
+<p>In demo 1, the script was part of the body and was placed after the
+main paragraph. It overwrote the paragraph before anyone could see it.
+In demo 2, the script was in the head of the document and defined as a
+function.</p>
+<p>The second method of defining functions in the head of the HTML
+document is the same way as is usually done in C. We define functions
+that will be called later, and not necessarily in a linear order. The
+second method is better for pages that expect the user to click
+something. The first method is fine when we are just trying to confirm
+that JavaScript is working by seeing some output.</p>
+<p>By now you might be wondering, what is the point of outputting a
+bunch of numbers and text? Can’t we already do that faster with the C or
+Bash languages? The answer is yes, there are already better methods for
+such simple examples, but this is only the beginning! JavaScript is also
+capable of creating graphics using the canvas element! The next example
+is not just a demo but is a full web application contained in a single
+page which lets the user create any size of checkerboard they want
+depending on how they fill out the numbers in the text fields before
+clicking a button.</p>
+<h2 id="chastitys-javascript-checkerboard">Chastity’s JavaScript
+Checkerboard</h2>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Chastity&#39;s JavaScript Checkerboard&lt;/title&gt;
+&lt;script&gt;
+
+function chastity_checker()
+{
+
+//this gets the data from the text
+var rows    = parseInt( document.getElementById(&quot;text_rows&quot;).value );
+var columns = parseInt( document.getElementById(&quot;text_columns&quot;).value );
+var scale   = parseInt( document.getElementById(&quot;text_scale&quot;).value );
+
+document.getElementById(&quot;p&quot;).innerHTML=&#39;&lt;canvas id=&quot;canvas&quot; width=&quot;0&quot; height=&quot;0&quot; &quot;&gt;Your browser does not support the HTML5 canvas tag.&lt;/canvas&gt;&#39;;
+var c=document.getElementById(&quot;canvas&quot;);
+
+c.width=rows*scale;
+c.height=columns*scale;
+
+var ctx=c.getContext(&quot;2d&quot;);
+
+var colors=new Array(&quot;#000000&quot;,&quot;#FFFFFF&quot;);
+//var colors=new Array(&quot;#FF0000&quot;,&quot;#00FF00&quot;,&quot;#0000FF&quot;);
+//var colors=new Array(&quot;#FF0000&quot;,&quot;#FFFF00&quot;,&quot;#00FF00&quot;,&quot;#00FFFF&quot;,&quot;#0000FF&quot;,&quot;#FF00FF&quot;);
+
+var i=0;
+var x=0;
+while(x&lt;c.width)
+{
+ var i1=i;i=(i+1)%colors.length;
+ var y=0;
+ while(y&lt;c.height)
+ {
+  ctx.fillStyle=colors[i1];i1=(i1+1)%colors.length;
+  ctx.fillRect(x,y,scale,scale);
+  y+=scale;
+ }
+ 
+ x+=scale;
+}
+
+ return;
+}
+
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;h1&gt;Chastity&#39;s JavaScript Checkerboard&lt;/h1&gt;
+&lt;p id=&quot;p&quot;&gt;Enter the integers of your choice and then click the button below to run! You can define how many rows and columns are in this checkerboard and also how large in pixels each one is by changing the scale!&lt;/p&gt;
+
+&lt;input type=&quot;text&quot; id=&quot;text_rows&quot; value=&quot;8&quot; &gt; rows&lt;br&gt;
+&lt;input type=&quot;text&quot; id=&quot;text_columns&quot; value=&quot;8&quot; &gt; columns&lt;br&gt;
+&lt;input type=&quot;text&quot; id=&quot;text_scale&quot; value=&quot;90&quot; &gt; scale&lt;br&gt;
+&lt;button type=&quot;button&quot; onclick=&quot;chastity_checker()&quot;&gt;make checkerboard&lt;/button&gt;&lt;br&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<p>Fun fact, that checkerboard making web page was actually created in
+the year 2013. I used to write a lot of JavaScript but forgot most of
+it. Luckily I have books I bought to remind me how to do the things I
+have forgotten.</p>
+<p>The fact that the modern web browsers support the canvas element
+allows images to be arbitrarily created inside web pages based on user
+input. This means that theoretically, JavaScript can be used to make
+games that play in a web browser. I am not that skilled yet but the
+potential is there.</p>
+<h1 id="chapter-8-big-numbers">Chapter 8: Big Numbers</h1>
+<p>Most of the time, the default 32-bit or 64-bit integer size of your
+cpu is enough to represent most numbers you would use in actual
+programs. However, some people are math nerds obsessed with extremely
+large numbers. Some people want thousands or even millions of digits.
+The complexity involved in generating these numbers might scare you if
+you don’t know how they work.</p>
+<p>However, these methods are based on the same way I do addition or
+multiplication with paper and pencil as I was taught by school books as
+a child. I have no idea what they are teaching kids in school these
+days, and even my mother was not the one who taught me math. I had a
+natural gift at arithmetic that works well in my computer programming
+today. Every number is in fact an array of digits.</p>
+<p>In chapter 1, the “Advanced Powers of Two” program showed my method
+for displaying powers of two by using arrays of bytes as if they were
+decimal digits. In this chapter, I will be presenting a modified version
+of this same program which allocates memory on the heap using the C
+malloc function. This may not be that essential for a simple program
+like this, but keep in mind that this is the “proper” way to create
+arrays in C when you intend to have arrays of millions of bytes. Your
+computer needs to have a way of stopping if there is not enough memory
+in the system.</p>
+<p>After that, I will also be presenting more programs which generate
+large numbers quickly. All of these use only the standard C library and
+my own math routines. Therefore, they work on any C compiler and can
+also easily be translated to any programming language.</p>
+<h2 id="big-number-powers-of-two">Big Number Powers of Two</h2>
+<pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+int main()
+{
+ /*most important variable: number of digits*/
+ int length=64;
+
+
+ char *a;
+ int alength=1,x,y;
+
+ a=(char*)malloc(length*sizeof(*a));if(a==NULL){printf(&quot;Failed to create array a\n&quot;);return(1);}
+
+ x=0;
+ while(x&lt;length)
+ {
+  a[x]=0;
+  x++;
+ }
+ a[0]=1;
+
+ while(alength&lt;length)
+ {
+
+  x=alength;
+  while(x&gt;0)
+  {
+   x--;
+   printf(&quot;%d&quot;,a[x]);
+  }
+  printf(&quot;\n&quot;);
+
+  y=0;
+  x=0;
+  while(x&lt;=alength)
+  {
+   a[x]+=a[x];
+   a[x]+=y;
+   if(a[x]&gt;9){y=1;a[x]-=10;}else{y=0;}
+   x++;
+  }
+  if(a[alength]&gt;0){alength++;}
+
+ }
+
+ if(a!=NULL){free(a); a=NULL;}
+
+ return 0;
+}</code></pre>
+<h2 id="the-negative-powers-of-two">The Negative Powers of Two</h2>
+<p>The negative powers of two are what happens when you start at 1 and
+keep dividing by 2. Although normally fractional numbers of this sort
+can’t exist for the integer type, I can simulate it using an array of
+decimal digits and my pattern recognition to write the small program
+below which gives the correct digits.</p>
+<pre><code>/*negative powers of two*/
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+int main()
+{
+ /*most important variable: number of digits*/
+ int length=64;
+
+ char *a;
+ int alength=2,x,y,temp;
+
+ a=(char*)malloc(length*sizeof(*a));if(a==NULL){printf(&quot;Failed to create array a\n&quot;);return(1);}
+
+ x=0;
+ while(x&lt;length)
+ {
+  a[x]=0;
+  x++;
+ }
+ a[0]=1;
+
+ while(alength&lt;length)
+ {
+  printf(&quot;%i.&quot;,a[0]);
+
+  x=1;
+  while(x&lt;alength)
+  {
+   printf(&quot;%d&quot;,a[x]);
+   x++;
+  }
+  printf(&quot;\n&quot;);
+
+  y=0;
+  x=0;
+  while(x&lt;length)
+  {
+   if( (a[x]&amp;1)==1 ){temp=5;}else{temp=0;} 
+   a[x]&gt;&gt;=1;
+   a[x]+=y;
+   y=temp;
+   x++;
+  }
+  if(a[alength]&gt;0){alength++;}
+
+ }
+
+ if(a!=NULL){free(a); a=NULL;}
+
+ return 0;
+}</code></pre>
+<h2 id="fibonacci-sequence">Fibonacci Sequence</h2>
+<pre><code>/*program to generate the fibonacci sequence*/
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+int main()
+{
+ /*most important variable: number of digits*/
+ int length=64;
+ 
+ char *a,*b,*c;
+ int alength,x,i;
+ 
+ /*allocate memory for 3 arrays of equal size AKA length*/
+ a=(char*)malloc(length*sizeof(*a));if(a==NULL){printf(&quot;Failed to create array a\n&quot;);return(1);}
+ b=(char*)malloc(length*sizeof(*b));if(b==NULL){printf(&quot;Failed to create array b\n&quot;);return(1);}
+ c=(char*)malloc(length*sizeof(*c));if(c==NULL){printf(&quot;Failed to create array c\n&quot;);return(1);}
+ 
+ /*set all digits of these arrays to zero*/
+ x=0;while(x&lt;length){a[x]=0;b[x]=0;c[x]=0;x++;}
+ a[0]=1; /*set lowest digit of a array to 1*/
+ 
+ alength=1;
+ while(alength&lt;length)
+ {
+  i=0;
+  x=0; while(x&lt;alength)
+  {
+   c[x]=a[x]+b[x];
+   c[x]+=i;
+   i=c[x]/10;
+   c[x]%=10;
+   x++;
+  }
+  if(i&gt;0){c[x]=i;alength++;}
+  
+  x=0;while(x&lt;length){b[x]=a[x]; a[x]=c[x];   x++;}
+  x=alength; while(x&gt;0){x--;printf(&quot;%i&quot;,a[x]);} printf(&quot;\n&quot;);
+ }
+ 
+ if(a!=NULL){free(a); a=NULL;}
+ if(b!=NULL){free(b); b=NULL;}
+ if(c!=NULL){free(c); c=NULL;}
+ 
+ return 0;
+}</code></pre>
+<h2 id="factorials">Factorials</h2>
+<p>The factorials are what happens when you start at 1 and keep
+multiplying by the next number, for example, these are the first 6
+factorials.</p>
+<p>1 2 6 24 120 720</p>
+<p>The number 720 is the factorial of 6 because 1x2x3x4x5x6==720. In
+fact, this number is what I based most of my Inkscape art on because I
+could divide many different numbers into 720. Factorials are highly
+composite which means they have many factors due to how they are
+generated.</p>
+<pre><code>/*program to generate the factorial sequence*/
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+int main()
+{
+ /*most important variable: number of digits*/
+ int length=64;
+ 
+ char *a,*b,*c; /*pointers to arrays*/
+ int alength,blength,clength; /*variable to keep track of the current length of the c array*/
+ int x,ax,bx,cx,i; /* extra variables that are required for my personal multiplication system */
+ 
+ /*allocate memory for 3 arrays of equal size AKA length*/
+ a=(char*)malloc(length*sizeof(*a));if(a==NULL){printf(&quot;Failed to create array a\n&quot;);return(1);}
+ b=(char*)malloc(length*sizeof(*b));if(b==NULL){printf(&quot;Failed to create array b\n&quot;);return(1);}
+ c=(char*)malloc(length*sizeof(*c));if(c==NULL){printf(&quot;Failed to create array c\n&quot;);return(1);}
+
+ /*set all digits of these arrays to zero*/
+ x=0;while(x&lt;length){a[x]=0;b[x]=0;c[x]=0;x++;}
+ a[0]=1; /*set lowest digit of a array to 1*/
+ b[0]=2; /*set lowest digit of b array to 2*/
+
+ /*
+  Keep track of the currently used length of each array.
+  At the start, use only one digit
+ */
+ alength=1;
+ blength=1;
+ clength=1;
+ 
+ while(clength!=length) /* main loop that repeats the process! */
+ {
+  /*stage 1: display the a array*/
+  x=alength; while(x&gt;0){x--;printf(&quot;%i&quot;,a[x]);} printf(&quot;\n&quot;);
+
+  /*
+   stage 2: multiply the a and b arrays together and store the result
+   in the c array
+  */
+  bx=0;
+  while(bx&lt;blength)/*multiplication code begin*/
+  {
+   ax=0;
+   while(ax&lt;alength)
+   {
+    i=a[ax]*b[bx];
+    cx=ax+bx; 
+    while(cx&lt;length &amp;&amp; i&gt;0)
+    {
+     c[cx]+=i;
+     i=c[cx]/10;
+     c[cx]%=10;
+     cx++;
+     if(cx&gt;clength){clength=cx;}
+    }
+    ax++;
+   }
+   bx++;
+
+  } /*multiplication code end*/
+
+
+
+  /*stage 3: add 1 to the b array */
+  i=1;
+  bx=0;
+  while(bx&lt;length &amp;&amp; i&gt;0)
+  {
+   b[bx]+=i;
+   i=b[bx]/10;
+   b[bx]%=10;
+   bx++;
+  }
+  if(bx&gt;blength){blength=bx;}
+
+  /* copy bytes of c[] to a[] then turn c to all zeroes again */
+  /* then set alength to clength */
+  x=0;while(x&lt;length){a[x]=c[x];c[x]=0;x++;}alength=clength;
+  
+ }
+ 
+ /*free all of the memory allocated for the three arrays*/
+ if(a!=NULL){free(a); a=NULL;}
+ if(b!=NULL){free(b); b=NULL;}
+ if(c!=NULL){free(c); c=NULL;}
+ 
+ return 0;
+}</code></pre>
+<h1 id="chapter-9-assembly-language">Chapter 9: Assembly Language</h1>
+<p>No book on programming would be complete without at least a mention
+of Assembly language. I will describe Assembly language in the most
+basic of terms and at least give you a “Hello World” example that runs
+under Linux.</p>
+<p>You see, assembly language is platform specific. This means that the
+language itself only runs on one brand of CPUs (Central Processing
+Units). On top of that, code is not portable between Windows and Linux
+because these operating systems each work in a different way and you are
+expected to call the kernel through the API of that system.</p>
+<p>If you want to write programs for their general usage, you probably
+don’t want to learn Assembly Language. However, if you are a nerd who
+likes more control over your computer, you may find that assembly can
+actually be quite fun.</p>
+<p>I am certainly no expert on assembly, but I have an example that will
+give you a small taste of what it looks like on an Intel CPU (this is
+the most commonly used brand of CPU.) This example will work on any
+modern 32 or 64 bit Intel CPU.</p>
+<h2 id="linux-example">Linux Example</h2>
+<pre><code>format ELF executable
+entry main
+
+main:
+
+mov edx, 13  ; number of bytes to write including 0Ah (line feed)
+mov ecx, msg ; move the memory address of our message string into ecx
+mov ebx, 1   ; write to the STDOUT file
+mov eax, 4   ; invoke SYS_WRITE (kernel opcode 4)
+int 80h
+
+mov ebx, 0   ; return 0 status on exit - &#39;No Errors&#39;
+mov eax, 1   ; invoke SYS_EXIT (kernel opcode 1)
+int 80h
+
+msg db &#39;Hello World!&#39;, 0Ah     ; assign msg variable with your message string</code></pre>
+<p>In order to assemble and run this example, you will need the FASM
+assembler, which can be found here:</p>
+<p><a href="https://flatassembler.net/"
+class="uri">https://flatassembler.net/</a></p>
+<p>I recommend the FASM assembler mostly because I am used to it,
+however you can also try NASM and see if you like it better. The method
+for assembling and running it might look different though.</p>
+<p>Save the example source code above into a file named “main.asm” and
+then run these three commands.</p>
+<pre><code>fasm main.asm
+chmod +x main
+./main</code></pre>
+<p>If you have the Gnu Make program installed on your PC, then the
+following makefile is a convenient way to run those three commands
+automatically without having to type them every time.</p>
+<pre><code>main-fasm:
+    fasm main.asm
+    chmod +x main
+    ./main</code></pre>
+<p>If you did everything right, you will see a “Hello World!” message in
+the terminal. Obviously this example isn’t fancy and it would have been
+easier just to write a C program for this, but this is only a test for
+making sure it works.</p>
+<p>You might be wondering what eax,ebx,ecx, and edx are in the source.
+They are general purpose hardware registers on 32 bit Intel CPUs. Think
+of them as being variables like a,b,c,d. In any case, these registers
+are used as arguments passed to the Linux Kernel. Interrupt 80h which is
+0x80 hexadecimal or 128 decimal is how you call the kernel in 32 bit
+code.</p>
+<p>The previous program simply loaded these registers for the call to
+“write” a series of bytes and the call to “exit” which of course ends
+the program. There is a convenient table of Linux system calls and which
+registers must be filled with what type of data to work.</p>
+<p><a
+href="https://www.chromium.org/chromium-os/developer-library/reference/linux-constants/syscalls/"
+class="uri">https://www.chromium.org/chromium-os/developer-library/reference/linux-constants/syscalls/</a></p>
+<p>I am not as experienced with Assembly and am not qualified to teach
+the details about how it works, but one thing I do know is that it has
+the same features as you would expect in C. Memory locations can be
+accessed through pointers if a register is loaded with that location.
+Much like C, text strings are just a series of bytes. The system call
+for write must be specifically told how many bytes it needs to write
+from pointer register ecx. Register edx is loaded with 13 so that it
+will write 13 bytes. The ebx register is set to 1 because this is
+standard output. It can also write to open files if they are set up with
+other system calls.</p>
+<p>One thing that is common no matter the system call is that eax
+decides which function will be run. Therefore, eax will probably be your
+most used register if you decide to program Assembly under Linux.</p>
+<h2 id="windows-example">Windows Example</h2>
+<p>It is also possible to use Assembly under Windows, but I have found
+that it is not as easy as it is in Linux. I have a working example that
+works for me on Windows 11 using the header files provided by the
+Windows version of FASM.</p>
+<pre><code>format PE console
+include &#39;win32ax.inc&#39;
+
+main:
+
+;Write 13 bytes from a string to standard output
+push 0              ;Optional Overlapped Structure 
+push 0              ;Optionally Store Number of Bytes Written
+push 13             ;Number of bytes to write
+push main_string    ;address of string to print
+push -11            ;STD_OUTPUT_HANDLE = Negative Eleven
+call [GetStdHandle] ;use the above handle
+push eax            ;eax is return value of previous function
+call [WriteFile]    ;all the data is in place, do the write thing!
+
+;Exit the process with code 0
+push 0
+call [ExitProcess]
+
+.end main
+
+main_string db &#39;Hello World!&#39;,0Ah</code></pre>
+<p>Although it may look quite different, it does the exact same thing as
+the Linux version. However, arguments to the WriteFile and ExitProcess
+functions required their arguments to be pushed to the stack. Also, the
+reason that they are in [ ] brackets is because the Windows headers
+dynamically load these functions from DLL files using the headers
+included from “win32ax.inc”.</p>
+<p>To tell you the truth, I really don’t know much about the Windows
+API. I also think the Linux way is superior because the system of
+calling an interrupt to access predefined functions in the Linux kernel
+means that nothing needs to be “linked” into the program.</p>
+<p>This means that Windows executables are on average twice the size of
+the equivalent program in Linux.</p>
+<h2 id="dos-example">DOS Example</h2>
+<p>You might find it surprising that Linux isn’t even my favorite
+operating system to program in Assembly. DOS makes it even easier than
+Linux does. The following works the same as the Linux and Windows
+versions above.</p>
+<pre><code>org 100h
+
+main:
+
+mov ah,40h         ;select DOS function 40h write 
+mov bx,1           ;file handle 1=stdout
+mov cx,13          ;number of bytes to write including 0Ah (line feed)
+mov dx,main_string ;dx will have address of string to write
+int 21h            ;call the DOS kernel to complete the write
+
+mov ax,4C00h       ;function to end the program
+int 21h            ;call the DOS kernel to exit the program
+
+main_string db &#39;Hello World!&#39;, 0Ah </code></pre>
+<p>If you assemble that file with FASM, you will get a 31 byte com file
+that is a valid DOS program! Here is a hexadecimal dump of it.</p>
+<pre><code>main.com
+00000000 B4 40 BB 01 00 B9 0D 00 BA 12 01 CD 21 B8 00 4C 
+00000010 CD 21 48 65 6C 6C 6F 20 57 6F 72 6C 64 21 0A</code></pre>
+<p>DOS files with the .com extension are programs that have no header.
+DOS operating systems like MS-DOS or FreeDOS load them an execute 16 bit
+Intel Assembly code with no error checking or validation to see if the
+file is safe. But because of this, programs for DOS are smaller and
+faster than those run on modern operating systems in general.</p>
+<p>The only downside is, you will need an emulator to run them like
+DOSBox unless you have a spare computer to install FreeDOS on or that
+still has MS-DOS from back in the twentieth century!</p>
+<p>As it so happens, I have slowly been working on a book for
+programming in DOS using Assembly Language. However, for now, Assembly
+is too big of a topic to cover in this book, as is the C Programming
+Language.</p>
+<p>But hopefully this chapter will have introduced you to information
+that will help you decide if you want to pursue writing code in Assembly
+for one of these 3 operating systems.</p>
+<p>And don’t forget, there are other operating systems like FreeBSD,
+Chromium, MenuetOS, Minix, ReactOS many countless others that I have
+never used and couldn’t tell you much bout.</p>
+<p>But one approach that has worked well for me is to write a program in
+C first to make sure the logic is correct and that it works before
+trying to translate it into Assembly Language for a particular
+platform.</p>
+<h1 id="chapter-10-software-licenses">Chapter 10: Software Licenses</h1>
+<p>Perhaps it could be said that once you have written a program, what
+you do with it is even more important. For most of my life, I never
+considered the concept of copyright or ownership of the toy programs I
+wrote. I figured that unless I made a great game or operating system, I
+would not need to consider writing the terms and conditions about what
+people can or should do with my work.</p>
+<p>And even now, I don’t think my programs have enough of an impact for
+anyone to care about software licenses. However, I have found some
+software licenses that are compatible with my personal philosophy for
+how software should be shared and distributed.</p>
+<p>Generally, I only recommend software that is considered “Free
+Software” by the definitions of the <a href="https://fsf.org/">Free
+Software Foundation</a>.</p>
+<p>I have been an advocate of Free Software as it is directly tied to
+Freedom of speech. I am well aware that Software Freedom and Open source
+are usually, but not always, the same thing. This page by the FSF on the
+GNU project links to licenses where you can read the full text. However,
+I will also provide my summaries based on my understanding.</p>
+<p><a href="https://www.gnu.org/licenses/license-list.html"
+class="uri">https://www.gnu.org/licenses/license-list.html</a></p>
+<h2 id="gnu-general-public-license-version-3">GNU GENERAL PUBLIC LICENSE
+Version 3</h2>
+<p><a href="https://www.gnu.org/licenses/gpl-3.0.html"
+class="uri">https://www.gnu.org/licenses/gpl-3.0.html</a></p>
+<p>This section is the abridged and simplified version by Chastity White
+Rose. In case of confusion, see the original text.</p>
+<p>The General Public License guarantees your Freedom to change a
+program licensed under it and to share it with others. However, when you
+share it with others, they must have the same Freedom you do. Therefore,
+you must give others access to your source code if you choose to
+distribute your own modified version.</p>
+<p>Part of this Freedom is to include the source code when you
+distribute it. Source code is the preferred form of the program that
+makes it possible and/or easy to modify, provided you know the
+programming language being used. Examples include source files for
+languages such as C, C++, Assembly, Pascal, or Java. Also included in
+this definition are build scripts written in Bash, Windows Batch, GNU
+Make, or any similar system.</p>
+<p>In my opinion, the benefit of the GPL3, as well as past and future
+versions of it, is that it declares the author does not intend it to be
+used in proprietary programs. As a programmer and author, I would not
+want a big tech company to come along and use my code for evil purposes
+or to restrict others from accessing what I intended to be free.</p>
+<p>At the time of this writing, I don’t think anything I have written is
+in danger of being misused. Still, I hope that people use my programs if
+they find them useful, modify them to make them more useful to their
+purposes, and share their work with others who go on to do the same.</p>
+<p>The reason for restricting proprietary use is so that another person
+or company can’t take my code, claim to be the original owner, and turn
+it into something opposed to what I intended. More importantly, I never
+want someone to charge money for my software. Specifically in the case
+of software written by me, Chastity White Rose, Free Software is free as
+in Free Speech and Free Price.</p>
+<p>Considering all this, I place all my code in this book under the GPL3
+license so that the Free Software Foundation and entire world of Open
+Source and Free Software nerds can take action on my behalf if someone
+ever tries to restrict my work after my death. These words are my
+statement that you can’t steal what was made to be free.</p>
+<h2 id="gnu-lesser-general-public-license-version-3">GNU Lesser General
+Public License Version 3</h2>
+<p><a href="https://www.gnu.org/licenses/lgpl-3.0.html"
+class="uri">https://www.gnu.org/licenses/lgpl-3.0.html</a></p>
+<p>The Lesser GPL is very much like the regular GPL, with an important
+exception. It is to allow proprietary programs to use a library. At
+first, I didn’t see the point of this; however, when I read the
+following article, I came to understand better.</p>
+<p><a href="https://www.gnu.org/licenses/why-not-lgpl.html"
+class="uri">https://www.gnu.org/licenses/why-not-lgpl.html</a></p>
+<p>The reason it was to the advantage of the Free Software community to
+allow the GNU C library to be linked by proprietary programs is that it
+prevents the need for those developers to rely on other proprietary
+software.</p>
+<p>When I think about it, would I really want someone to have to rely on
+a C compiler or library made by Microsoft or Apple because they couldn’t
+use GNU Libc for the proprietary game they made? No, I wouldn’t want
+that. I will explain my reasons for this.</p>
+<p>Basically, complying with the normal GPL3 prevents someone from
+profiting from their work. If you are required to provide the source
+code, then anyone smart enough to compile it on their system can copy
+and modify your game infinitely without paying you.</p>
+<p>The Lesser GPL3 allows someone, for example, to use a free library to
+implement the graphics, sound, etc., for their game or utility program
+without providing the source code to their own program, which uses these
+libraries, but does not copy code from it.</p>
+<p>In short, if you want to make money, you probably want the Lesser
+GPL, but if you just want to be a nice person and make your code free
+for the education and entertainment of all people without promise of
+reward, the normal GPL serves the purpose best in my opinion.</p>
+<p>There are hundreds of other software licenses to be considered if you
+have written a program and want to decide which terms to release it
+under. You can, of course, create your own from scratch, but it might be
+worth reading about those that already exist to see if they match your
+ideals.</p>
+<h2 id="free-vs.-proprietary">Free vs. Proprietary</h2>
+<p>I am not against proprietary programs when they are video games for
+entertainment only. I also believe the programmers should be paid for
+their work, like any other job, to help them survive.</p>
+<p>But my personal ideals are different from those of most programmers.
+My goal is to write books to share my code and to teach people how to do
+things, but I don’t plan to profit off the code because I value
+individual Freedom more than I do money. I hope that even after my
+death, others will still learn the joy of computer programming and use
+it to make great things.</p>
+<p>Writing computer software isn’t just a hobby or a business; it is a
+ministry. Think about all the software that has been written to create
+the internet and allow people to write books and share them with the
+world. Think about the programmers who made video and audio recording,
+encoding, and formatting possible.</p>
+<p>This book is about computer programming, not religion, but I must
+say, if you had a message that would save the lives or the souls of
+others, would you really want to be restricted in the manner in which
+you share that information? Therefore, I propose that Free Software is a
+necessity in light of Digital Rights Management and companies like
+Amazon removing ebooks from people’s devices that they have already paid
+for.</p>
+<p>Traditional books are dying, and bookstores are closing. If we don’t
+work together to stop digital book burning, then we lose the final
+method of sharing words of eternal value.</p>
+<p>What do I mean by words of eternal value? I believe that it is
+different for everyone, but that is because we are all different and we
+understand God in our special gifts. For example, I have come to see God
+as the life force of mathematics, the electricity that flows in my body,
+as well as the computer I use to write and format this book. However, I
+have also come to understand God through non-human animals because of
+their innocence in comparison to the corruption that humans are often
+ruined with. God also came to me in the form of a unicorn in a series of
+dreams I had. Over time, I came to understand that my writing in both
+English and computer programming languages was a gift from God.</p>
+<p>Someone else may see God in music, colors, books, movies, etc. Many
+people find their faith in the holy books of major world religions. Just
+like the C and C++ programming languages, not all parts are relevant to
+their lives, but they generally have only a few books available to them,
+and are raised in a specific religion and told that a specific book is
+the only way to understand God or to live their lives based on.</p>
+<p>But at the same time, humans also try to claim ownership of words
+through copyright, patent, and trademark laws. As a Christian, I believe
+that efforts to make things Copyleft, Open Source, Free/Libre, and
+generally available to all are in line with what Jesus taught in the New
+Testament.</p>
+<p>Whatever words or numbers speak to you are too valuable for any
+human, even me, to claim control or ownership over. You will come to
+understand this philosophy more as I continue to make my books available
+in many formats in licenses such as the GNU General Public License or
+Creative Commons, depending on what makes the most sense and
+communicates to others that they are free to use the information. You
+will understand this even better after you read the next chapter in this
+book.</p>
+<h1 id="chapter-11-the-prayer-of-saint-chastity">Chapter 11: The Prayer
+of Saint Chastity</h1>
+<p>For this chapter of Chastity’s Code Cookbook, I am including a poem I
+wrote one night as God told me to go home and rest. I tend to work
+myself to death, even when I am too sick to function. Part of it is
+worry that my bosses will get angry and fire me. Part of it is worrying
+about money. But that night, God spoke to me while I worked in the
+Frozen department at Walmart. Every time I am too sick to work, I
+remember this poem I wrote about my experience that night. It is an
+important part of my philosophy about software, the love of money, and
+questioning the concept of copyright and ownership entirely.</p>
+<hr />
+<p>Dear God,</p>
+<p>I don’t know how long I have to live And I don’t have much left to
+give But while I am here, let me say Thank you for giving me today</p>
+<p>Give me the strength to do what I must do And remind me always to
+speak what is true Not hold back because of my fear Of what people will
+do to me if they hear</p>
+<p>I am sorry that I put money over you And I forgot that you gave me a
+job to do I see what the gift you gave me is, now I understand What I am
+worried about is not what you have planned</p>
+<p>You made me special; that is no lie And I will serve you before and
+after I die My voice is weak now, and I can’t sing a song But still, my
+honest heart is equally strong</p>
+<p>I walked to Walmart on my night off to make up for the shift I missed
+But I coughed and spread germs on the boxes I punched with my fist I was
+too sick to be working, and I worked myself to death I had no energy and
+couldn’t catch my breath</p>
+<p>I thought money would save me That my job was my source And forgot
+that even money It is not the strongest force</p>
+<p>Yes, I tried to come to work tonight and do the best I can But in my
+pure heart, I knew it wasn’t right, and it was not my plan Maybe the
+point wasn’t how much work I did or how much I earned It was to be
+reminded of the lesson I had learned</p>
+<p>Money was all I desired But it only crushed what you inspired My
+income was what I believed Would be the only way to set me free</p>
+<p>But when it disappeared and I lost the path ahead That’s when you
+came to see me And I remember the words you said</p>
+<p>When we first met, I didn’t know you were God Because you looked
+extremely odd You were a horse with a shiny silver horn But, of course,
+a unicorn always comes to heal what has been torn</p>
+<p>Forgive me for the fact that I forgot That even the rich will someday
+rot That truth always wins in the end But we will remember the kindness
+of a friend</p>
+<p>I have seen what happens when people value money over life That’s why
+there is so much murder, theft, hypocrisy, and strife Life is not about
+getting what we think we deserve And if someone wants to be the best,
+then others they must serve</p>
+<p>But not serve those who promise us financial gain Because their words
+are deceptive and will only give us pain They don’t actually mean or
+deliver the things they claim And when their world crumbles, they always
+shift the blame</p>
+<p>But if I abort myself by chasing a pot of gold Then I forgot the
+meaning of the rainbow, as you told For a second, I forgot, but I
+remember now That my life matters just like a horse, chicken, or cow</p>
+<p>I can’t think straight, and it seems I lost my mind But you are the
+one who gives sight to the blind So give me the eyes to see the inner
+heart of all So I do the right thing when you give me the call</p>
+<p>And now I know my gift is Something only I can do Because I can’t
+refrain from speaking the things I learn from you I will see you even if
+you take a different form Because you will come when I need you to save
+me from the storm</p>
+<p>Sometimes faith is hard because the world can be so loud And what you
+speak to me is drowned out by the crowd But I heard you speak to me, and
+that’s enough To keep me going even when life is rough</p>
+<p>You told me to go home because there is writing I must do To remind
+myself the experience I had with you You’ve done so much for me, but let
+me ask for one more thing That you will heal my voice so I can praise
+you as I sing</p>
+<p>And tell others that you will find them both inside and outside of
+church And that they will find the answers if they don’t give up the
+search And to those who can’t believe because they are full of doubt
+Just like with Thomas, you’ll show up, and they’ll know what you’re
+about</p>
+<p>Some call you Jesus, the light, truth, or the way But that was not
+how you showed up to save my day To me, you are always my unicorn named
+Honesty Because I remember your words with every rainbow I see</p>
+<p>You said rainbows are made when the light touches my tears That’s why
+when I see the rainbow, it opens up my ears And I listen to what my
+favorite unicorn has to say Because you speak words to me in a most
+unusual way</p>
+<p>I don’t understand exactly what you’ve planned And there is still so
+much I don’t understand But I need your horn of truth to guide me along
+the way Because my God is a unicorn, even though it sounds totally
+gay</p>
+<hr />
+<p>Matthew 6:19: “Do not store up for yourselves treasures on earth,
+where moths and vermin destroy, and where thieves break in and steal. 20
+But store up for yourselves treasures in heaven, where moths and vermin
+do not destroy, and where thieves do not break in and steal. 21 For
+where your treasure is, there your heart will be also. 22”The eye is the
+lamp of the body. If your eyes are healthy, your whole body will be full
+of light. 23 But if your eyes are unhealthy, your whole body will be
+full of darkness. If then the light within you is darkness, how great is
+that darkness! 24 “No one can serve two masters. Either you will hate
+the one and love the other, or you will be devoted to the one and
+despise the other. You cannot serve both God and money.</p>
+<hr />
+<p>Matthew 19:16 Now someone came up to him and said, “Teacher, what
+good thing must I do to gain eternal life?” 17 He said to him, “Why do
+you ask me about what is good? There is only one who is good. But if you
+want to enter into life, keep the commandments.” 18 “Which ones?” he
+asked. Jesus replied, “Do not murder, do not commit adultery, do not
+steal, do not give false testimony, 19 honor your father and mother, and
+love your neighbor as yourself.” 20 The young man said to him, “I have
+wholeheartedly obeyed all these laws. What do I still lack?” 21 Jesus
+said to him, “If you wish to be perfect, go sell your possessions and
+give the money to the poor, and you will have treasure in heaven. Then
+come, follow me.” 22 But when the young man heard this he went away
+sorrowful, for he was very rich. 23 Then Jesus said to his disciples, “I
+tell you the truth, it will be hard for a rich person to enter the
+kingdom of heaven! 24 Again I say, it is easier for a camel to go
+through the eye of a needle than for a rich person to enter into the
+kingdom of God.” 25 The disciples were greatly astonished when they
+heard this and said, “Then who can be saved?” 26 Jesus looked at them
+and replied, “This is impossible for mere humans, but for God all things
+are possible.” 27</p>
+<hr />
+<p>If you read my poem and these Bible verses from the book of Matthew,
+perhaps you will better understand my commitment to keeping software
+free and teaching people how to create and share software for the
+benefit of everyone. You never know, I might just write something that
+saves someone’s life, or enable one of my readers to do greater works
+than I can, and they may save the lives of many animals (that includes
+humans BTW).</p>
+<p>Perhaps it might interest you to know that the origin of my
+commitment to free software came one day, as I realized that several
+versions of the Christian Bible were copyrighted. In some cases, people
+had to pay royalties or license fees to the copyright owner of specific
+Bible versions before they were allowed to use them in their books.</p>
+<p>It was at that moment that I realized that anyone who claims to say
+the Bible is God’s word but that you have to pay specific humans money
+in order to use their <strong><em>translation</em></strong> from the
+Hebrew and Greek, because now that they have translated it, they think
+they own it.</p>
+<p>And as I pondered on that, I realized that for them to make the Bible
+proprietary by claiming ownership of a translation, yet at the same time
+claim that it is the word of God, is a contradiction. Clearly, one of
+these statements is a lie.</p>
+<p>In a similar way, how can I claim to be the owner of even the
+computer code I wrote? Did I invent electricity? Can I own a number and
+the electrical signals of the bits in a computer that represent that
+number? Can I own letters of the alphabet, or the punctuation symbols?
+No, I didn’t bring these things into the world, nor can I take them out
+of it.</p>
+<hr />
+<p>1 Timothy 6:7 For we have brought nothing into this world and so we
+cannot take a single thing out either. 8 But if we have food and
+shelter, we will be satisfied with that. 9 Those who long to be rich,
+however, stumble into temptation and a trap and many senseless and
+harmful desires that plunge people into ruin and destruction. 10 For the
+love of money is the root of all evils. Some people in reaching for it
+have strayed from the faith and stabbed themselves with many pains. 11
+But you, as a person dedicated to God, keep away from all that. Instead
+pursue righteousness, godliness, faithfulness, love, endurance, and
+gentleness.</p>
+<hr />
+<p>So you see, Free and Open Source Software is based on the idea that
+freely we have received, and so we must freely give. Moreover, although
+hardware is physical in nature and requires money to produce and
+distribute, software can be copied infinitely from one computer to
+another without loss in quality. So when you copy software, you are not
+taking it from anyone because they still have the original.</p>
+<p>So to sum it up briefly. Free software matches the teachings of Jesus
+and is the Christian thing to do.</p>
+<p>But beyond that, it also accomplishes for the first time in history a
+communist system that is classless, stateless, and moneyless. The
+unlimited nature of bits and bytes of computer software means that
+people are writing code because they want to, even when they are not
+getting paid.</p>
+<p>Of course, some people do go on to earn lots of money with their
+technical skills because they were discovered through their famous Open
+Source Software projects. Look up Linus Torvalds for a great example of
+this. In fact, this very book, which was written on Linux and uploaded
+to GitHub to make the website, was only possible because he wrote the
+original Linux Kernel and the Git version control system.</p>
+<p>But of course, money is a means to an end, not an end in itself. That
+is why my highest priority has been to write my books and my software
+with the highest quality so that people benefit from them after I am
+dead. If only earning money were the final goal, then I would be on a
+very different path instead of being a writer who works at Walmart for
+their only income.</p>
+<p>This chapter is only meant to help people understand where my
+priorities are. It also perfectly explains why I am dedicated to
+teaching people things like Chess and Computer programming through my
+books. In a hundred years, it will be more important to remember what I
+taught you than to agree on who or what I was. I can only imagine how
+Jesus must feel the same so much more about his teachings.</p>
+<h1 id="chapter-12-why-are-there-so-many-programming-languages">Chapter
+12: Why are There so Many Programming Languages?</h1>
+<p>In this book alone, I have briefly touched on C, Bash, JavaScript,
+HTML, SVG, Markdown, and even Assembly. You might be wondering why there
+are so many programming languages to choose from. For some people, this
+sends them into analysis paralysis. Someone can be so overwhelmed by the
+variety of languages that they just give up and never learn to code.</p>
+<p>But I think this is a mistake. The point of having so many languages
+is so that each person can choose the language that works best for them.
+There is no objectively best programming language that works for all
+people, but there IS a best language for each person. To help someone
+choose a programming language for getting started, I recommend either C
+or C++ as a first language. In this chapter, not only will I give you
+some advice for choosing between these two languages, but I will also
+explain why one of these is a good starting choice.</p>
+<h2 id="c-and-c">C and C++</h2>
+<p>First, C and C++ are separate languages, yet C++ contains all of C
+and more. C came first and was the foundation for C++. This history
+means that declaring integer and floating point variables will be
+identical in both languages. However, C++ requires more time to write
+code because the language and its standard libraries keep getting larger
+as new standards are ratified. You will need to spend time reading
+larger books, visit references for specific functions or class names,
+and generally have to use more English words that are names of those
+methods, classes, and header files.</p>
+<p>C is a fine choice if you want a language that is small and easy to
+memorize. Even in this book, I have used a tiny subset of the C
+language. Still, it is enough for a beginner to get by. C also doesn’t
+limit you from using open source libraries such as SDL, which was
+included in many examples.</p>
+<p>C++ is a better choice than C if you want to work as a professional
+programmer who works for a company and gets paid. I can promise you,
+though, that you will be working for managers and clients who don’t
+understand programming and will make your life hell. Still, because of
+C++ being used more in the game development world, it is essential for
+those truly dedicated to learn this beast of a language and the proper
+use of all its features.</p>
+<h2 id="why-learn-assembly">Why Learn Assembly?</h2>
+<p>Of course, there are many more languages than those two, but I
+believe that using one of these two languages is essential for a
+beginner. If you first learn the fundamentals of programming and want
+more of a challenge, I recommend learning Assembly language for retro
+computers. The reason I recommend learning about the 6502(used by the
+Nintendo Entertainment System) and Z80(used by the Nintendo Game Boy) is
+because once you have written a game or other program for them, then
+what you have made can be used on literally any computer because there
+are so many emulators for these systems even though you cannot buy the
+original hardware anymore.</p>
+<p>But if you prefer to stay with modern developments, I recommend
+learning about the RISC-V processors and the Instruction Set
+Architecture that is becoming more popular at the time I am writing this
+book. I have even had success in writing a few programs in it using an
+emulator called RARS.</p>
+<p><a href="https://github.com/TheThirdOne/rars"
+class="uri">https://github.com/TheThirdOne/rars</a></p>
+<p>All of the programming languages I recommend to people are those that
+support low-level programming. A good programming language should not
+try to hide that everything is a number. It is still bits of zeros and
+ones when you look at the way software and hardware actually work.</p>
+<p>But more importantly, you must know that programming is an endless
+pursuit. There is always more to learn, and by the time you think you
+understand one language, twenty more will have been created, and your
+friends will each have their opinion on why you should use the language
+they like instead of what you just spent 5 years mastering.</p>
+<h2 id="just-kidding">Just Kidding!</h2>
+<p>Those with experience know that real programmers don’t have friends.
+Nobody can have a social life once they get deeply into the world of
+computers because most people hate math and can’t imagine someone doing
+it for fun!</p>
+<p>I have been programming for 24 years at this point, and never did I
+receive approval from anyone for my skills, even when I made and
+published my Tetris game; people all had nothing but criticism, and for
+a while, I thought that maybe I should just give it up, but then
+something reminded me of why I love computers so much.</p>
+<p>Unlike in humans, math has no evil. Everything is known to be true or
+false. Numbers never reject me, and they never lie. Despite hardware
+failure, numbers and electricity themselves never die. I don’t know if
+you can understand, but computers and the math I can do with them have
+been the emotional support I needed when I had nothing else to live for.
+That is why I dedicate this book to the future autistic outcasts who can
+learn something from my code and do greater things than I can.</p>
+<p>In fact, I even wrote a poem about how I feel about computers and
+programming. Perhaps if you read it, you will understand what I mean
+when I say it is the war I can win.</p>
+<h1 id="chapter-13-the-war-i-can-win">Chapter 13: The War I can Win</h1>
+<p>I am a programmer who knows clever tricks I convert integers to bases
+two to thirty six By using character arrays as strings I can show you
+amazing math things</p>
+<p>While others talk about politics and sports I read about computers of
+all sorts Programming languages are all the same When you see arithmetic
+as a game</p>
+<p>I don’t write code for a job to be paid But to understand the video
+games I played To see what works and find out why To create, use, study,
+share, and modify</p>
+<p>I support Free Software and Open Source It is a philosophy that I can
+endorse Who can own a number, even a single bit? Or tell me what I am
+allowed to do with it?</p>
+<p>I fight for users who love the games of old Who rebel and don’t do
+what we are told I made a Tetris game and they said it was no good And
+that I broke copyright like no one should</p>
+<p>But who decides which person can play a game In math and
+entertainment there is no shame Can anyone own a letter color or a
+square? I will fight and debate you if you even dare</p>
+<p>Because integer math is the one war I can win I wrote the code myself
+and committed no sin And I can tell you that for every byte array There
+is a game hidden that only a hacker can play</p>
+<p>To humans I am nothing but just a transgender freak And evil men can
+kill my body because it is weak But the computer has no bias and means
+me no harm. In this digital world I am safe and I feel no alarm</p>
+<p>No matter what compiler, language, or tool When I code the people see
+I am not a fool If you take my computer, I am still in control Because
+the numbers are part of me deep in my soul</p>
+<p>This world is often sad but I still have a great dream Where we all
+work together as part of the same team And that every person can
+experience the ultimate thrill Of the binary code that flows where no
+man can ever kill</p>
+<h1 id="chapter-14-gratis-versus-libre">Chapter 14: Gratis versus
+Libre</h1>
+<p>If you are still reading this, you probably understand that although
+computers run everything on zeros and ones, through enough combinations
+and understanding of them, new software is constantly created.
+Therefore, no programming language is complete. By extension, no book
+about computer programming is ever complete, either.</p>
+<p>I have decided to make this book available in its current form
+completely Free, in both senses of the word: Gratis and Libre.</p>
+<h2 id="gratis">Gratis</h2>
+<p>Gratis means that you can have something without paying money for it.
+Therefore, I have made this entire book into a website by use of Github
+pages so that everyone can learn from it without requiring them to pay
+money. For example, the next 14-year-old programmer who doesn’t have
+money and learns computer programming entirely from free online
+materials. I was that kid, and I want to pass my knowledge to the next
+generation.</p>
+<p><a href="https://chastitywhiterose.github.io/Chastity-Code-Cookbook/"
+class="uri">https://chastitywhiterose.github.io/Chastity-Code-Cookbook/</a></p>
+<h2 id="libre">Libre</h2>
+<p>Libre means freedom, as in the sense of liberty. This word is about
+what you are allowed to say or do. Think of Freedom of Speech, or the
+pursuit of Life, Liberty, and the Pursuit of Happiness. Libre is a much
+more important kind of “free” than gratis is. The English language does
+not do justice when it comes to this distinction.</p>
+<p>I would also like to take this money to say that while I completely
+agree with Richard Stallman that Free Software is a better term than
+merely Open Source, I think that people can and will continue to confuse
+these two meanings of the English word “free”. We should use whichever
+words people are most likely to understand in the context of what they
+need. At every opportunity, we need to explain the difference between
+Gratis and Libre, but more importantly, why Libre is the better Latin
+word to describe what our vision is when it comes to enabling people to
+write their own software and control their computer.</p>
+<p>I also personally prefer the word “libre” because it sounds similar
+to “libro”, the Spanish word for book. Books are all about information
+and were the only means of learning information for most of human
+history because video and audio recordings had not been invented
+yet.</p>
+<h2 id="conclusion-1">Conclusion</h2>
+<p>Because this book is freely available, many people will read it, and
+perhaps it will need to be updated for correction or clarification.
+Therefore, I hope you have enjoyed it, but I also hope to hear from you
+about something I can add or explain better when I update it.</p>
+<p>You can always email me at the following address.</p>
+<p><a
+href="mailto:chastitywhiterose@gmail.com">chastitywhiterose@gmail.com</a></p>
+<p>If I have not replied to your email, keep in mind that I am not being
+rude, but that I get hundreds of emails each week, and most of them are
+spam that I can’t get rid of. These scammers have especially been
+problematic since I tried to start my Chess teaching business, which
+nobody cared about, and only scammers call and email me about how I can
+<strong>pay them</strong> to promote my business or my books. I am not
+interested in their scams, nor do I need their help, because people have
+ways of accessing my books and videos scattered all over the
+internet.</p>
 </body>
 </html>
