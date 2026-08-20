@@ -10,8 +10,6 @@ ScreenRes 128, 128, 32
 'width screen_width/8,screen_height\8  'use 8x8 font (default)
 width screen_width\8,screen_height\16 'use 8x16 font
 
-rect_size=16    'size of each square in checkerboard
-'chaste_checker
 
 'set foreground and background text color using hex RGB codes
 
@@ -89,17 +87,47 @@ sleep
 
 end sub
 
+'function to draw a character from the pre-existing font that must be
+'loaded before calling this function
 
 sub demo_putchar(c as integer)
 
-print c 'print to text mode before switching to graphics mode
-
-screenRes screen_width, screen_height, 32
-
 print c 'print again but to the graphics window
 
+dim as integer x,y,a
+
+x=c mod 16
+y=c/16
+
+print x;y
+
+dim as integer x1,y1,x2,y2,pixel
+
+x1=x*8
+y1=y*8
+
+x2=x1+8
+y2=y1+8
+
+while x1<x2
+
+pixel=point(x1,y1,font_image)
+
+if pixel=&hFF000000 then
+print 0
+else
+print 1
+end if
+
+'debug the pixel value using my chastelib functions
+'radix=16
+'print intstr(pixel)
+
+x1+=1
+wend
 
 
-sleep
+
+
 
 end sub
