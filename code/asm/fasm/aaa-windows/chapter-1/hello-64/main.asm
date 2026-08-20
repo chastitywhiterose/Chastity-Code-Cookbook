@@ -5,12 +5,12 @@ include 'win64ax.inc' ; Includes standard Windows 64-bit definitions and macros
 
 main:
 
-sub rsp, 40 ;alignment
+
 ; 1. Set up the stack frame (FASM win64ax convention handles alignment)
 mov rax,main_string
 call putstring
 
-;sub rsp,8
+sub rsp,40
 mov rcx,0
 call [ExitProcess]
 
@@ -20,10 +20,10 @@ write_count dq 0
 
 putstring:              ;print string pointed to by rax register
 
-;push rax
-;push rbx
-;push rcx
-;push rdx
+push rax
+push rbx
+push rcx
+push rdx
 
 mov rbx,rax             ;copy eax to ebx to be used as index to the string
 
@@ -46,15 +46,13 @@ mov rcx,rax         ; copy handle to ecx
 mov r8,rbx  ;message length
 mov r9,write_count ;store how many bytes are written
 
-
-
 mov qword [rsp + 32], 0 ; Parameter 5: Must be placed on the stack
 call [WriteFile]
 
-;pop rdx
-;pop rcx
-;pop rbx
-;pop rax
+pop rdx
+pop rcx
+pop rbx
+pop rax
 
 ret ;this is the end of the putstring function return to calling location
 
