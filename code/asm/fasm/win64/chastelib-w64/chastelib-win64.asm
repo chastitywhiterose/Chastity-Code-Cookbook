@@ -21,6 +21,8 @@ jmp putstring_strlen_start
 putstring_strlen_end:
 sub rbx,rax ;subtract start pointer from current pointer to get length of string
 
+sub rsp,40
+
 mov rdx,rax ;pointer to message
 
 mov rcx, -11        ; STD_OUTPUT_HANDLE
@@ -34,6 +36,7 @@ mov r9,write_count ;store how many bytes are written
 mov qword [rsp + 32], 0 ; Parameter 5: Must be placed on the stack
 call [WriteFile]
 
+add rsp,40
 
 pop rdx
 pop rcx
@@ -128,4 +131,161 @@ pop rcx
 pop rbx
 pop rax
 
+ret
+
+;this function converts a string pointed to by rax into an integer returned in rax instead
+;it is a little complicated because it has to account for whether the character in
+;a string is a decimal digit 0 to 9, or an alphabet character for bases higher than ten
+;it also checks for both uppercase and lowercase letters for bases 11 to 36
+;finally, it checks if that letter makes sense for the base.
+;For example, G to Z cannot be used in hexadecimal, only A to F can
+;The purpose of writing this function was to be able to accept user input as integers
+;This function is improved with error checking and uses the new strint_error variable
+;The program can check this value after the call and see how many errors happened.
+
+strint_error db 0 ;declare a byte variable that keeps track of errors
+
+strint:
+
+mov rbx,rax ;copy string address from rax to rbx because rax will be replaced soon!
+mov rax,0
+mov byte[strint_error],0 ;set errors to 0 at the start of this function
+
+read_strint:
+mov rcx,0   ;zero rcx so only lower 8 bits are used
+mov cl,[rbx]
+inc rbx
+cmp cl,0    ;compare this byte with 0
+jz strint_end ; if comparison was zero, this is the end of string
+
+;if char is below '0' or above '9', it is outside the range of these and is not a digit
+cmp cl,'0'
+jb not_digit
+cmp cl,'9'
+ja not_digit
+
+;but if it is a digit, then correct and process the character
+is_digit:
+sub cl,'0'
+jmp process_char
+
+not_digit:
+;it isn't a decimal digit, but it could be perhaps an alphabet character
+;which could be a digit in a higher base like hexadecimal
+;we will check for that possibility next
+
+;if char is below 'A' or above 'Z', it is outside the range of these and is not capital letter
+cmp cl,'A'
+jb not_upper
+cmp cl,'Z'
+ja not_upper
+
+is_upper:
+sub cl,'A'
+add cl,10
+jmp process_char
+
+not_upper:
+
+;if char is below 'a' or above 'z', it is outside the range of these and is not lowercase letter
+cmp cl,'a'
+jb not_lower
+cmp cl,'z'
+ja not_lower
+
+is_lower:
+sub cl,'a'
+add cl,10
+jmp process_char
+
+not_lower:
+
+;if we have reached this point, result invalid and end function with error
+jmp strint_end_error
+
+process_char:
+
+cmp rcx,[radix] ;compare char with radix
+jnb strint_end_error ;if this value is above or equal to radix, it is too high despite being a valid digit/alpha
+
+mov rdx,0 ;zero rdx because it is used in mul sometimes
+mul qword [radix] ;mul rax with radix
+add rax,rcx
+
+jmp read_strint ;jump back and continue the loop if nothing has exited it
+
+strint_end_error:  ;we jump here if there was an error with one of the chars
+inc byte[strint_error] ;increment error counter because char invalid
+
+strint_end: ;we jump here when no errors happened
+
+ret
+
+;The utility functions below simply print a space or a newline.
+;these help me save code when printing lots of strings and integers.
+
+space db ' ',0 ;a string containing only a space
+
+putspace:
+push rax
+mov rax,space
+call putstring
+pop rax
+ret
+
+line db 0Ah,0 ;a string containing only a newline
+
+;the next function which pushes rax to the stack
+;moves the address of the line string and prints it with putstring
+;then it pops the original value of rax back from the stack before the function returns
+;this allows me to print a newline anywhere in the code without a single register changing
+
+putline:
+push rax
+mov rax,line
+call putstring
+pop rax
+ret
+
+;a function for printing a single character that is the value of al
+
+char: db 0,0
+
+putchar:
+push rax
+mov [char],al
+mov rax,char
+call putstring
+pop rax
+ret
+
+;a small function just for the common operation of
+;printing an integer followed by a space
+;this saves a few bytes in the assembled code
+;by reducing the number of function calls in the main program
+
+putint_and_space:
+call putint
+call putspace
+ret
+
+;a small function just for the common operation of
+;printing an integer followed by a line feed
+;this saves a few bytes in the assembled code
+;by reducing the number of function calls in the main program
+
+putint_and_line:
+call putint
+call putline
+ret
+
+;a small function just for the common operation of
+;printing a string followed by a line feed
+;this saves a few bytes in the assembled code
+;by reducing the number of function calls in the main program
+;it also means we don't need to include a newline in every string!
+
+putstr_and_line:
+call putstring
+call putline
 ret

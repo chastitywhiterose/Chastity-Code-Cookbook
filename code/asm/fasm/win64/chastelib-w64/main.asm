@@ -21,7 +21,6 @@ call putstring
 ;mov rsp,r15 ;restore backup from r15 to rsp
 
 
-;sub rsp,40
 mov rcx,0
 call [ExitProcess]
 
