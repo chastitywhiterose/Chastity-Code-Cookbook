@@ -1,10 +1,10 @@
 format PE console
+entry main
 
 include 'win32ax.inc'
 include 'chastelib-w32.asm'
 
 main:
-
 
 
 
@@ -19,7 +19,7 @@ call strint               ;call strint to return the string in eax register
 mov ebx,eax               ;ebx=eax (copy the converted value returned in eax to ebx)
 
 mov eax,0
-loop1:
+loop0:
 
 mov dword[radix],2        ;set radix to binary
 mov dword[int_width],8    ;width of 8 bits
@@ -47,7 +47,7 @@ call putline              ;print newline before the next loop
 
 inc eax
 cmp eax,ebx;
-jnz loop1
+jnz loop0
 
 mov eax,main_string
 call putstring
@@ -56,9 +56,16 @@ call putstring
 push 0
 call [ExitProcess]
 
-.end main
-
 ;A string to test if output works
 main_string db 'test suite for 32 bit Windows Assembly version of chastelib.',0x0D,0x0A,0
 ;test string of integer for input
 input_string_int db '100',0
+
+;FASM builds the Import Address Table (IAT) directly in the source file
+section '.idata' import data readable writeable
+    library kernel32, 'KERNEL32.DLL'
+
+    import kernel32,\
+           GetStdHandle, 'GetStdHandle',\
+           WriteFile, 'WriteFile',\
+           ExitProcess, 'ExitProcess'

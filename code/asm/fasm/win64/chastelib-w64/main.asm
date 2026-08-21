@@ -52,6 +52,7 @@ jnz loop0
 mov rax,main_string
 call putstring
 
+;Exit the process with code 0
 mov rcx,0
 call [ExitProcess]
 
@@ -60,7 +61,7 @@ main_string db 'test suite for 64 bit Windows Assembly version of chastelib.',0x
 ;test string of integer for input
 input_string_int db '100',0
 
-; FASM builds the Import Address Table (IAT) directly in the source file
+;FASM builds the Import Address Table (IAT) directly in the source file
 section '.idata' import data readable writeable
     library kernel32, 'KERNEL32.DLL'
 
