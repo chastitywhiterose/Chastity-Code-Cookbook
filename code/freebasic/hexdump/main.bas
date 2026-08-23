@@ -4,10 +4,8 @@ dim filename as string="testfile.txt"
 Dim f As Long 'the file handle
 
 dim shared as ubyte bytedata(0 to 15)
-dim count_read as integer=1
 
-dim as integer x
-dim as integer offset=0
+dim as integer a,x,offset=0,count_read=1
 
 ' Find the first free file number.
 f = FreeFile
@@ -38,7 +36,6 @@ end if
 int_width=8
 print intstr(offset);" ";
 
-
 int_width=2
 
 x=0
@@ -46,7 +43,26 @@ while x<count_read
 print intstr(bytedata(x));" ";
 x+=1
 wend
+
+'after the previous loop, we will print the characters
+'if they are valid printable characters in range
+'otherwise replace them with dots
+x=0
+while x<count_read
+
+a=bytedata(x)
+if(a>=32) and (a<=126) then
+print chr(a);
+else
+print ".";
+endif
+x+=1
+wend
 print
+
+
+
+
 
 offset+=count_read
 
