@@ -1,12 +1,10 @@
 format PE console
 entry main
 
-include 'win32ax.inc'
-include 'chastelib-w32.asm'
+include 'win32ax.inc'       ;includes standard Windows 32-bit definitions and macros
+include 'chastelib-w32.asm' ;include standard functions by Chastity
 
 main:
-
-
 
 mov eax,main_string
 call putstring
@@ -33,13 +31,13 @@ mov dword[radix],10       ;set radix to decimal (what humans read)
 mov dword[int_width],3    ;width of 3 decimal digits
 call putint
 
-cmp al,0x20
-jb not_char
+cmp al,0x20               ;check if al is in printable range
+jb not_char               ;if not then jump to not_char label
 cmp al,0x7E
 ja not_char
 
 call putspace
-call putchar
+call putchar              ;print the character if it is in the range 0x20 to 0x7E
 
 not_char:                 ;jump here if character is outside range to print
 
@@ -52,9 +50,9 @@ jnz loop0
 mov eax,main_string
 call putstring
 
-;Exit the process with code 0
-push 0
-call [ExitProcess]
+
+push 0             ;exit code for operating system
+call [ExitProcess] ;Exit the process with code 0
 
 ;A string to test if output works
 main_string db 'test suite for 32 bit Windows Assembly version of chastelib.',0x0D,0x0A,0
@@ -63,9 +61,10 @@ input_string_int db '100',0
 
 ;FASM builds the Import Address Table (IAT) directly in the source file
 section '.idata' import data readable writeable
-    library kernel32, 'KERNEL32.DLL'
 
-    import kernel32,\
-           GetStdHandle, 'GetStdHandle',\
-           WriteFile, 'WriteFile',\
-           ExitProcess, 'ExitProcess'
+library kernel32, 'KERNEL32.DLL'
+
+import kernel32,\
+ GetStdHandle, 'GetStdHandle',\
+ WriteFile, 'WriteFile',\
+ ExitProcess, 'ExitProcess'

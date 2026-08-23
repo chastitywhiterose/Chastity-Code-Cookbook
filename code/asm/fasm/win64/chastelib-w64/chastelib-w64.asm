@@ -1,4 +1,20 @@
-write_count dq 0
+; chastelib assembly header file for 64 bit Windows
+; This file is where I keep the source of my most important Assembly functions
+; These are my string and integer output and conversion routines.
+
+; To simplify documentation. The Accumulator/Arithmetic register
+; (ax,eax,rax) depending on bit size shall be referred to as register A
+; for the description of these core functions because the A register
+; is treated special both by the Intel company and my code;
+
+; putstring; Prints a zero terminated string from the address pointer to by A register.
+; intstr;    Converts the number in A into a zero terminated string and points A to that address
+; putint;    Prints the integer in A by calling intstr and then putstring.
+; strint;    Converts the zero terminated string into an integer and sets A to that value
+   
+; Now, the source of the functions begins, with comments included for parts that I felt needed explanation.
+
+write_count dq 0        ;variable to store how many bytes were written
 
 putstring:              ;print string pointed to by rax register
 
@@ -6,8 +22,6 @@ push rax
 push rbx
 push rcx
 push rdx
-
-
 
 mov rbx,rax             ;copy eax to ebx to be used as index to the string
 
@@ -21,7 +35,7 @@ jmp putstring_strlen_start
 putstring_strlen_end:
 sub rbx,rax ;subtract start pointer from current pointer to get length of string
 
-sub rsp,40
+sub rsp,40  ;align stack before Win API functions(required in windows 64-bit)
 
 mov rdx,rax ;pointer to message
 
@@ -29,25 +43,20 @@ mov rcx, -11        ; STD_OUTPUT_HANDLE
 call [GetStdHandle] ; Get Standard Output Handle
 mov rcx,rax         ; copy handle to ecx
 
-mov r8,rbx  ;message length
-mov r9,write_count ;store how many bytes are written
-
+mov r8,rbx          ;message length
+mov r9,write_count  ;address to store how many bytes are written
 
 mov qword [rsp + 32], 0 ; Parameter 5: Must be placed on the stack
 call [WriteFile]
 
-add rsp,40
+add rsp,40  ;restore stack now that WinAPI calls are done
 
 pop rdx
 pop rcx
 pop rbx
 pop rax
 
-
-
 ret ;this is the end of the putstring function return to calling location
-
-
 
 ; This is the location in memory where digits are written to by the intstr function
 ; The string of bytes and settings such as the radix and width are global variables defined below.
@@ -233,7 +242,7 @@ call putstring
 pop rax
 ret
 
-line db 0Ah,0 ;a string containing only a newline
+line db 0x0D,0x0A,0 ;a string containing only a newline
 
 ;the next function which pushes rax to the stack
 ;moves the address of the line string and prints it with putstring
