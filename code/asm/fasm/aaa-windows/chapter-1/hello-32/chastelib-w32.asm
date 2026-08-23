@@ -14,6 +14,8 @@
    
 ; Now, the source of the functions begins, with comments included for parts that I felt needed explanation.
 
+write_count dd 0        ;variable to store how many bytes were written
+
 putstring:
 
 push eax
@@ -34,8 +36,8 @@ putstring_strlen_end:
 sub ebx,eax ;subtract start pointer from current pointer to get length of string
 
 ;Write string using Win32 WriteFile system call.
-push 0              ;Optional Overlapped Structure 
-push 0              ;Optionally Store Number of Bytes Written
+push 0              ;Optional Overlapped Structure
+push write_count    ;address to store how many bytes are written
 push ebx            ;Number of bytes to write
 push eax            ;address of string to print
 push -11            ;STD_OUTPUT_HANDLE = Negative Eleven
@@ -234,7 +236,7 @@ call putstring
 pop eax
 ret
 
-line db 0Dh,0Ah,0 ;a string containing only a newline
+line db 0x0D,0x0A,0 ;a string containing only a newline
 
 ;the next function which pushes eax to the stack
 ;moves the address of the line string and prints it with putstring

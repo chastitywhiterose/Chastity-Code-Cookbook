@@ -1,29 +1,23 @@
 format PE64 console
 entry main
 
-include 'win64ax.inc' ; Includes standard Windows 64-bit definitions and macros
+include 'win64ax.inc'       ;includes standard Windows 64-bit definitions and macros
 
 main:
 
-sub rsp, 40 ;alignment
-; 1. Set up the stack frame (FASM win64ax convention handles alignment)
 mov rax,main_string
 call putstring
 
-sub rsp, 40 ;alignment
+sub rsp,40         ;align stack (required in windows 64-bit)
+mov rcx,0          ;exit code for operating system
+call [ExitProcess] ;Exit the process with code 0
 
-call putstring
+;A string to test if output works
+main_string db 'Hello World',0x0D,0x0A,0
 
-mov rcx,0
-call [ExitProcess]
-
-main_string db 'Hello World!',0x0D,0x0A,0
-
-write_count dq 0
+write_count dq 0        ;variable to store how many bytes were written
 
 putstring:              ;print string pointed to by rax register
-
-
 
 push rax
 push rbx
@@ -42,19 +36,21 @@ jmp putstring_strlen_start
 putstring_strlen_end:
 sub rbx,rax ;subtract start pointer from current pointer to get length of string
 
+sub rsp,40  ;align stack before Win API functions(required in windows 64-bit)
+
 mov rdx,rax ;pointer to message
 
 mov rcx, -11        ; STD_OUTPUT_HANDLE
 call [GetStdHandle] ; Get Standard Output Handle
 mov rcx,rax         ; copy handle to ecx
 
-mov r8,rbx  ;message length
-mov r9,write_count ;store how many bytes are written
-
-
+mov r8,rbx          ;message length
+mov r9,write_count  ;address to store how many bytes are written
 
 mov qword [rsp + 32], 0 ; Parameter 5: Must be placed on the stack
 call [WriteFile]
+
+add rsp,40  ;restore stack now that WinAPI calls are done
 
 pop rdx
 pop rcx
@@ -63,13 +59,14 @@ pop rax
 
 ret ;this is the end of the putstring function return to calling location
 
-
-
-; FASM builds the Import Address Table (IAT) directly in the source file
+;FASM builds the Import Address Table (IAT) directly in the source file
 section '.idata' import data readable writeable
-    library kernel32, 'KERNEL32.DLL'
 
-    import kernel32,\
-           GetStdHandle, 'GetStdHandle',\
-           WriteFile, 'WriteFile',\
-           ExitProcess, 'ExitProcess'
+library kernel32, 'KERNEL32.DLL'
+
+import kernel32,\
+ GetStdHandle, 'GetStdHandle',\
+ WriteFile, 'WriteFile',\
+ ExitProcess, 'ExitProcess'
+
+
