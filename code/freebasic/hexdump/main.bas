@@ -1,10 +1,13 @@
-' Create a string and fill it.
-Dim buffer As String, f As Long
-dim filename as string="testfile.txt"
-buffer = "Hello World within a file."
+#include "chastelib.bi"
 
-dim shared as ubyte bytedata(16)
+dim filename as string="testfile.txt"
+Dim f As Long 'the file handle
+
+dim shared as ubyte bytedata(0 to 15)
 dim count_read as integer=1
+
+dim as integer x
+dim as integer offset=0
 
 ' Find the first free file number.
 f = FreeFile
@@ -18,15 +21,41 @@ else
 print filename; " is open for reading"
 end if
 
-get #f,,bytedata()
+radix=16
+
+while count_read>0
+
+'read from file #f into the bytedata array 16 byes, store amount read in count_read
+
+get #f,,bytedata(),,count_read
+
+'if count_read is 0, end this loop
+if count_read=0 then
+exit while
+end if
+
+'print 8 hex digit for the offset
+int_width=8
+print intstr(offset);" ";
 
 
+int_width=2
 
-' Place our string inside the file, using file number "f".
-'Put #f, , buffer
+x=0
+while x<count_read
+print intstr(bytedata(x));" ";
+x+=1
+wend
+print
+
+offset+=count_read
+
+wend
 
 ' Close the file.
 Close #f
+
+print "EOF"
 
 ' End the program. (Check the file "file.ext" upon running to see the output.)
 End
