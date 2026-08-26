@@ -3,6 +3,12 @@ chastity font SDL2 surface version
 
 SDL surfaces are easy to work with and this was the original way I implemented my own text writing library.
 There is an incomplete version that uses an SDL renderer but offers no advantages over this one.
+
+This header specifically deals with a custom built font where each character is 8x8 pixels in size.
+The image file it is loaded from is 128x128 pixels with 16 characters on each row.
+This makes the image a perfect square and also makes the math easier. Therefore, although these functions share the same names
+as the 95 character font library, they have been rewritten and are not compatible.
+
 */
 
 

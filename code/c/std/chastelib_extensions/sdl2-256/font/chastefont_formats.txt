@@ -8,3 +8,6 @@ For example, I converted the file to a PBM (Portable Bitmap File).
 
 convert "FreeBASIC Font 8.bmp" font8.pbm
 
+To convert the new file containing 256 characters, I do this:
+
+convert 256chars.bmp 256chars.pbm
