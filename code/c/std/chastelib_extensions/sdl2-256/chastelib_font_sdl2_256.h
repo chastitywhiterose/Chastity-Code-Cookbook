@@ -158,8 +158,9 @@ int sdl_putchar_blit(char c)
   }
   else
   {
-   x=(c-' ')*main_font.char_width; /*the x position of where this char is stored in the font source bitmap*/
-   y=0*main_font.char_height;      /*the y position of where this char is stored in the font source bitmap*/
+   /*16 chars in each row and column determines the math*/
+   x=(c%16)*main_font.char_width;  /*the x position of where this char is stored in the font source bitmap*/
+   y=(c/16)*main_font.char_height; /*the y position of where this char is stored in the font source bitmap*/
 
    rect_source.x=x;
    rect_source.y=y;
@@ -232,8 +233,9 @@ int sdl_putchar_pixel(char c) /*direct pixel access edition for SDL2*/
   }
   else
   {
-   x=(c-' ')*main_font.char_width; /*the x position of where this char is stored in the font source bitmap*/
-   y=0*main_font.char_height;      /*the y position of where this char is stored in the font source bitmap*/
+   /*16 chars in each row and column determines the math*/
+   x=(c%16)*main_font.char_width;  /*the x position of where this char is stored in the font source bitmap*/
+   y=(c/16)*main_font.char_height; /*the y position of where this char is stored in the font source bitmap*/
 
    rect_source.x=x;
    rect_source.y=y;

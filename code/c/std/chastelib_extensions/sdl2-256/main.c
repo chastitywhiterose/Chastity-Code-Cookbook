@@ -44,6 +44,22 @@ int main(int argc, char **argv)
  
  main_font=chaste_font_load_pbm("./font/256chars.pbm");
  
+/*
+ the next step is choosing a rendering function for each character
+ I wrote them both and can explain the difference.
+ 
+ The "blit" version copies the characters with scaling directly from the font source image
+ this means white characters on a black background as in the original loaded picture
+ 
+ The "pixel" version reads each pixel in the source area for that specific character and 
+ draws rectangles of color defined by "main_font.color". This means it is more beautiful but slower.
+*/
+
+/*sdl_putchar=sdl_putchar_blit;*/
+sdl_putchar=sdl_putchar_pixel;
+
+main_font.color=0xFF0000;
+ 
  /*change the scale of each character*/
  main_font.char_scale=4; 
  
