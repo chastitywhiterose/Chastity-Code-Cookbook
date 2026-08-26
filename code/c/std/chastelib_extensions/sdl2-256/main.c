@@ -18,7 +18,7 @@ because it depends on them.
 */
 
 #include "chastelib_format_pbm_sdl2.h"
-#include "chastelib_font_sdl2.h"
+#include "chastelib_font_sdl2_256.h"
 
 int main(int argc, char **argv)
 {
