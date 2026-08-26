@@ -19,6 +19,7 @@ because it depends on them.
 
 #include "chastelib_format_pbm_sdl2.h"
 #include "chastelib_font_sdl2_256.h"
+#include "chastelib_demo_sdl2_extra.h" /*contains demo examples of using this library*/
 
 int main(int argc, char **argv)
 {
@@ -86,7 +87,7 @@ main_font.color=0xFF0000;
  }
  
  /*now call a demo function I wrote*/
- /*sdl_chastelib_test_suite();*/
+ sdl_chastelib_test_suite();
  
  
  if(0)
