@@ -59,7 +59,7 @@ int main(int argc, char **argv)
 /*sdl_putchar=sdl_putchar_blit;*/
 sdl_putchar=sdl_putchar_pixel;
 
-main_font.color=0xFF0000;
+main_font.color=0xFFFFFF;
  
  /*change the scale of each character*/
  main_font.char_scale=4; 
@@ -74,7 +74,7 @@ main_font.color=0xFF0000;
  below is an eight line test program to check if everything is correct!
  */
 
- if(1)
+ if(0)
  {
   sdl_clear();  /*clear the screen before we begin writing*/
   x=putstr("Hello World\n"); /*draw a string of text to the surface*/
@@ -87,7 +87,10 @@ main_font.color=0xFF0000;
  }
  
  /*now call a demo function I wrote*/
- sdl_chastelib_test_suite();
+ /*sdl_chastelib_test_suite();*/
+ 
+ /*demo_galatians();*/
+ /*demo_power2();*/
  
  
  if(0)

@@ -103,6 +103,42 @@ int demo_power2()
 }
 
 
+
+int demo_primes()
+{
+ int x,y;
+ #define prime_length 1000000
+ char c[prime_length];
+
+ x=0;
+ while(x<prime_length)
+ {
+  c[x]=0;
+  x++;
+ }
+ c[0]=1;
+
+ printf("2 ");
+ x=3;
+ while(x<prime_length)
+ {
+  printf("%d ",x);
+  y=x;
+  while(y<prime_length)
+  {
+   c[y]=1;
+   y+=x;
+  }
+  while(x<prime_length && c[x]>0){x+=2;}
+ }
+ 
+ return 0;
+}
+
+
+
+
+
 /*global palette of colors for my demo functions to use*/
  int palette[]={0xFF0000,0xFFFF00,0x00FF00,0x00FFFF,0x0000FF,0xFF00FF};
  int colors=sizeof(palette)/sizeof(*palette);
@@ -166,14 +202,12 @@ int sdl_chastelib_test_suite()
    int_width=3;
    putint(a);
 
-   /*if(a>=0x20 && a<=0x7E)
+   if(a>=0x20 && a<=0x7E)
    {
-   */
     putstr(" ");
     putchar(a);
     sdl_putchar(a);
-    
-/*   }*/
+   }
 
    putstr("\n");
    a+=1;

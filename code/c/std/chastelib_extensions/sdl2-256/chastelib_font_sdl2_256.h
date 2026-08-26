@@ -401,7 +401,7 @@ int sdl_putstring_wrapped(const char *s)
   sdl_putchar(*p); /*print this character to the SDL window using a function I wrote*/
   putchar(*p);     /*print to stdout with libc putchar*/
   p++;             /*increment the pointer*/
- } 
+ }
  count=p-s;                      /*count is the difference of pointers p and s*/
  return count;                   /*return how many bytes were written*/
 }
