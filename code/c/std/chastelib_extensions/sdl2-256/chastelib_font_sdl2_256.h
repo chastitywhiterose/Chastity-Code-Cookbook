@@ -100,12 +100,12 @@ struct chaste_font chaste_font_load_pbm(char *s)
  if(new_font.surface==NULL){printf( "SDL could not load image! SDL_Error: %s\n",SDL_GetError());return new_font;}
 
  /*
-  by default,font height is detected by original image height
-  but the font width is the width of the image divided by 95
-  because there are exactly 95 characters in the font format that I created.
+this section sets the width and height of a single character based on the width and height of the image loaded
+therefore, my 128x128 image font which has 16 characters per row will set the width and height of a character to 8
+because 128/16==8
  */
- new_font.char_width=new_font.surface->w/95; /*there are 95 characters in my font files*/
- new_font.char_height=new_font.surface->h;
+ new_font.char_width=new_font.surface->w/16; /*there are 16 characters per row in source image*/
+ new_font.char_height=new_font.surface->h/16; /* and 16 chars per column*/
 
  if(new_font.char_height==0)
  {
@@ -123,8 +123,6 @@ struct chaste_font chaste_font_load_pbm(char *s)
 
  return new_font;
 }
-
-
 
 
 
