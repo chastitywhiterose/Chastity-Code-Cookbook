@@ -6,8 +6,8 @@ void game()
  int player_x_move=0;
  int player_y_move=0;
  
- player_rect.x=100;
- player_rect.y=100;
+ player_rect.x=width/2;
+ player_rect.y=height/2;
  player_rect.w=64;
  player_rect.h=64;
 
