@@ -1,0 +1,70 @@
+void game()
+{
+ int loop=1,key=0;
+ SDL_Rect player_rect;
+ 
+ player_rect.x=100;
+ player_rect.y=100;
+ player_rect.w=32;
+ player_rect.h=64;
+
+ int player_x_move=0;
+ int player_y_move=0;
+ 
+  /*a loop which will only end if we click the X or press escape*/
+ while(loop)
+ {
+  SDL_FillRect(surface,NULL,0x0000FF);
+ 
+  SDL_FillRect(surface,&player_rect,0xFF00FF);
+
+  /*update player x and/or y position based on movement variables*/
+  player_rect.x+=player_x_move;
+  player_rect.y+=player_y_move;
+   
+  SDL_UpdateWindowSurface(window); /*update window to show the results*/
+  
+  /*loop to capture and process input that happens*/
+  while(SDL_PollEvent(&e))
+  {
+   if(e.type == SDL_QUIT){loop=0;}
+
+   /*use Escape as a key that can also end this loop*/
+   if(e.type == SDL_KEYUP)
+   {
+    if(e.key.keysym.sym==SDLK_ESCAPE){loop=0;}
+   }
+
+   if(e.type == SDL_KEYDOWN /*&& e.key.repeat==0*/)
+   {
+    putstr("SDL_KEYDOWN\n");
+    key=e.key.keysym.sym;
+    switch(key)
+    {
+     /*use q as a key that can also end this loop*/
+     case SDLK_q:
+      loop=0;
+     break;
+   
+     /*the main 4 directions*/
+     case SDLK_UP:
+      player_y_move=-1;
+     break;
+     case SDLK_DOWN:
+      player_y_move=1;
+     break;
+     case SDLK_LEFT:
+      player_x_move=-1;
+     break;
+     case SDLK_RIGHT:
+      player_x_move=1;
+     break;
+    }
+   }
+
+ 
+  }
+  
+ } /*end of game while loop*/
+ 
+} /*end of game function*/
