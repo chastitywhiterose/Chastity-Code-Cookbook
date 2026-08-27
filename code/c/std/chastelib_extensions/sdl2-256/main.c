@@ -92,6 +92,7 @@ main_font.color=0xFFFFFF;
  /*demo_galatians();*/
  /*demo_power2();*/
  
+ demo_primes();
  
  if(0)
  {

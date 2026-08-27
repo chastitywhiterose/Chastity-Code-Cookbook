@@ -131,6 +131,7 @@ because 128/16==8
 int cursor_x=0,cursor_y=0;
 int line_spacing_pixels=1; /*optionally space lines of text by this many pixels*/
 int cursor_left=0;
+int cursor_top=0;
 
 /*
 This function is designed to print a single character to the current surface of the main window
@@ -356,7 +357,7 @@ This makes sense because the Linux clear command does the same thing
 
 void sdl_clear()
 {
- cursor_x=0;cursor_y=0;
+ cursor_x=cursor_left;cursor_y=cursor_top;
  SDL_FillRect(surface,NULL,0x000000);
  
  /*

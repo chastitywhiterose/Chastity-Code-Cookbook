@@ -53,7 +53,6 @@ int demo_power2()
  cursor_left=0; /*reset the left side position to 0*/
 
  sdl_putchar=sdl_putchar_slow; /*use the slow drawing function*/
- 
  sdl_clear();  /*clear the screen before we begin writing*/
 
  x=0;
@@ -106,9 +105,39 @@ int demo_power2()
 
 int demo_primes()
 {
- int x,y;
- #define prime_length 1000000
- char c[prime_length];
+ int x,y,key;
+ 
+ int prime_length=1<<8;
+ char *c=malloc(prime_length*sizeof(*c));
+ 
+  /*first, display the intro to the demo video*/
+  sdl_clear();  /*clear the screen before we begin writing*/
+
+  cursor_left=192;
+  cursor_top=32;
+ 
+  putstr("\n\nPrime Sieve\n\n");
+
+  main_font.char_scale=4; 
+
+  putstr("An SDL2 animation made in the\n\nC Programming Language\n\nby Chastity White Rose\n");
+
+  SDL_UpdateWindowSurface(window); /*update window to show the results*/
+  sdl_wait_escape(); /*wait till escape key pressed*/
+ 
+ radix=10;
+ int_width=5;
+ 
+ sdl_putchar=sdl_putchar_slow; /*use the slow drawing function*/
+ 
+ putstr=sdl_putstring_wrapped;
+ 
+ main_font.char_scale=20; /*set the font size for animation*/
+ sdl_clear();  /*clear the screen before we begin writing*/
+
+ fps=60; /*frames per second*/
+ 
+ loop=1;
 
  x=0;
  while(x<prime_length)
@@ -118,11 +147,13 @@ int demo_primes()
  }
  c[0]=1;
 
- printf("2 ");
+ putint(2);
+ putstr(" ");
  x=3;
- while(x<prime_length)
+ while(x<prime_length&&loop)
  {
-  printf("%d ",x);
+  putint(x);
+  putstr(" ");
   y=x;
   while(y<prime_length)
   {
@@ -130,7 +161,40 @@ int demo_primes()
    y+=x;
   }
   while(x<prime_length && c[x]>0){x+=2;}
+  
+  
+   key=0; /*key of zero means no input right now*/
+
+  /*loop to capture and process input that happens*/
+  while(SDL_PollEvent(&e))
+  {
+   if(e.type == SDL_QUIT){loop=0;}
+
+   /*use Escape as a key that can also end this loop*/
+   if(e.type == SDL_KEYUP)
+   {
+    if(e.key.keysym.sym==SDLK_ESCAPE){loop=0;}
+   }
+
+   if(e.type == SDL_KEYDOWN /*&& e.key.repeat==0*/)
+   {
+    key=e.key.keysym.sym;
+    switch(key)
+    {
+     /*use q as a key that can also end this loop*/
+     case SDLK_q:
+      loop=0;
+     break;
+    }
+   }
+  }
+  
  }
+ 
+ free(c);
+ 
+ SDL_UpdateWindowSurface(window); /*update window to show the results*/
+ sdl_wait_escape(); /*wait till escape key pressed*/
  
  return 0;
 }
