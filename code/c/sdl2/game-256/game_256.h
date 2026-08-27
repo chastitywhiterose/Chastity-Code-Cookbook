@@ -220,7 +220,7 @@ int game()
   if(frame%fpb==0) /*create a deathbox every so many frames*/
   {
   
-   printf("fpb==%d\n",fpb);
+   
 
 
    /*find the first available box which has a rectange x value of 0 or less*/
@@ -237,7 +237,17 @@ int game()
      break; /*break from the loop now that this box is created*/
     }
     
-    fpb--; /*subtract from this to make boxes appear faster over time*/
+    if(fpb>100) /*if frames per box is above this value*/
+    {
+     fpb--; /*subtract from this to make boxes appear faster over time*/
+     printf("fpb==%d\n",fpb);
+    }
+    else /*otherwise changes frame speed for boxes and the player!*/
+    {
+     fps++; /*increase the frame per second instead*/
+     printf("fps==%d\n",fps);
+     delay=1000/fps; /*recalculate the delay for the slowdown routine*/
+    }
    
     x++;
    }
