@@ -4,6 +4,8 @@ a global character pointer
 this will be filled with a power of two in decimal
 */
 char *p=NULL;
+int pi=0; /*pointer index to level data*/
+int pim=0; /*pointer_index_max*/
 
 int load_power2(int e)
 {
@@ -58,6 +60,9 @@ int load_power2(int e)
 
   putstr("\n");
 
+  pim=length2;
+  printf("pim==%d\n",pim);
+  pi=pim;
 
  
  /*
@@ -86,6 +91,12 @@ void game()
  int sdl_time,sdl_time1; /*define the timing integers*/
  int delay=1000/fps;
 
+ /*
+ there will be a maximum of ten death boxes on the screen at one time
+ the size of each box will be the height of the screen divided by ten
+ */
+ SDL_Rect deathbox[10];
+
  SDL_Rect player_rect;
  
  int player_x_move=0;
@@ -93,16 +104,12 @@ void game()
  
  player_rect.x=width/2;
  player_rect.y=height/2;
- player_rect.w=64;
- player_rect.h=64;
+ player_rect.w=32;
+ player_rect.h=32;
  
- load_power2(64);
+ load_power2(32);
 
- /*
- there will be a maximum of ten death boxes on the screen at one time
- the size of each box will be the height of the screen divided by ten
- */
- SDL_Rect deathbox[10];
+
 
  x=0;
  y=10;
@@ -175,29 +182,45 @@ void game()
   
   SDL_FillRect(surface,&player_rect,0xFF00FF); /*draw the player*/
 
-  cursor_x=10;
+  /*cursor_x=10;
   cursor_y=10;
   putint(frame);
-  putstr("\n");
+  putstr("\n");*/
   frame++;
 
-  /*find the first available box which has a rectange x value of 0 or less*/
-  x=0;
-  while(x<y)
+  if(frame%1000==0) /*create a deathbox every so many frames*/
   {
-   if(deathbox[x].x==0) /*if the x of this box is 0*/
-   {deathbox[x].x=width;} /*set to width so it shows up on the right*/
-   else
+
+   /*find the first available box which has a rectange x value of 0 or less*/
+   x=0;
+   while(x<y)
    {
-    deathbox[x].x-=1; /*otherwise subtract 1 to move left*/
-   }
+    if(deathbox[x].x==0) /*if the x of this box is 0*/
+    {
+     deathbox[x].x=width; /*set to width so it shows up on the right*/
+     pi--; /*subtract 1 from pointer for array boundaries*/
+     deathbox[x].y=height-((p[pi]+1)*deathbox[x].h); /*set box y based on box height and next digit of power of two*/
+     printf("this digit==%d\n",p[pi]);
+     if(pi==0){pi=pim;} /*if index 0 already reached, reset to pointer index max*/
+     break; /*break from the loop now that this box is created*/
+    }
    
-   deathbox[x].y=0;
-   deathbox[x].w=height/10;
-   deathbox[x].h=height/10;
-   x++;
+    x++;
+   }
+
   }
 
+   /*but every frame we must process the boxes and draw them if valid*/
+   x=0;
+   while(x<y)
+   {
+    if(deathbox[x].x!=0) /*if this box is not x of 0*/
+    {
+     SDL_FillRect(surface,&deathbox[x],0x00FF00); /*draw the deathbox*/
+     deathbox[x].x-=1; /*otherwise subtract 1 to move left*/
+    }
+    x++;
+   }
    
   SDL_UpdateWindowSurface(window); /*update window to show the results*/
 
