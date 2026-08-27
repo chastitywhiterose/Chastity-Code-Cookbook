@@ -117,7 +117,9 @@ void game()
 {
  int x,y;
  int loop=1,key=0;
- int frame=0,fps=360; /*frames per second*/
+ int frame=0; /*frame counter*/
+ int fps=360; /*frames per second*/
+ int fpb=1000; /*frames per deathbox*/
  int sdl_time,sdl_time1; /*define the timing integers*/
  int delay=1000/fps;
 
@@ -218,7 +220,7 @@ void game()
   putstr("\n");*/
   frame++;
 
-  if(frame%100==0) /*create a deathbox every so many frames*/
+  if(frame%fpb==0) /*create a deathbox every so many frames*/
   {
 
    /*find the first available box which has a rectange x value of 0 or less*/
@@ -234,6 +236,8 @@ void game()
      if(pi==0){pi=pim;} /*if index 0 already reached, reset to pointer index max*/
      break; /*break from the loop now that this box is created*/
     }
+    
+    fpb--; /*subtract from this to make boxes appear faster over time*/
    
     x++;
    }
@@ -290,18 +294,22 @@ void game()
     {
      /*the main 4 directions*/
      case SDLK_UP:
+     case SDLK_w:
       /*putstr("SDLK_UP\n");*/
       player_y_move=0;
      break;
      case SDLK_DOWN:
+     case SDLK_s:
       /*putstr("SDLK_DOWN\n");*/
       player_y_move=0;
      break;
      case SDLK_LEFT:
+     case SDLK_a:
       /*putstr("SDLK_LEFT\n");*/
       player_x_move=0;
      break;
      case SDLK_RIGHT:
+     case SDLK_d:
       /*putstr("SDLK_RIGHT\n");*/
       player_x_move=0;
      break;
@@ -321,18 +329,22 @@ void game()
    
      /*the main 4 directions*/
      case SDLK_UP:
+     case SDLK_w:
       /*putstr("SDLK_UP\n");*/
       player_y_move=-1;
      break;
      case SDLK_DOWN:
+     case SDLK_s:
       /*putstr("SDLK_DOWN\n");*/
       player_y_move=1;
      break;
      case SDLK_LEFT:
+     case SDLK_a:
       /*putstr("SDLK_LEFT\n");*/
       player_x_move=-1;
      break;
      case SDLK_RIGHT:
+     case SDLK_d:
       /*putstr("SDLK_RIGHT\n");*/
       player_x_move=1;
      break;
