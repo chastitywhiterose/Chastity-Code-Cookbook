@@ -94,6 +94,7 @@ main_font.color=0xFFFFFF;
  /*demo_galatians();*/
  /*demo_power2();*/
  
+ game_title();
  game(); /*the game loop in another header file*/
  
  if(0)

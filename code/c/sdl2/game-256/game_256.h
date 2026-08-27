@@ -1,3 +1,33 @@
+int game_title()
+{
+ 
+ /*first, display the intro to the demo video*/
+  sdl_clear();  /*clear the screen before we begin writing*/
+
+  cursor_left=128;
+
+  main_font.char_scale=8; 
+
+  putstr("\n\nDeath Box\n\n");
+
+  main_font.char_scale=4; 
+
+  putstr("An SDL2 game made in the\n\nC Programming Language\n\nby Chastity White Rose\n");
+  
+  putstr("You are a pink box\n\nThe green boxes will kill you.\n");
+  
+  putstr("Move with the arrow keys.\n");
+
+  
+  putstr("Press Esc to start the game.\n");
+
+  SDL_UpdateWindowSurface(window); /*update window to show the results*/
+  sdl_wait_escape(); /*wait till escape key pressed*/
+  
+  return 0;
+ }
+
+
 
 /*
 a global character pointer
@@ -200,7 +230,7 @@ void game()
      deathbox[x].x=width; /*set to width so it shows up on the right*/
      pi--; /*subtract 1 from pointer for array boundaries*/
      deathbox[x].y=height-((p[pi]+1)*deathbox[x].h); /*set box y based on box height and next digit of power of two*/
-     printf("this digit==%d\n",p[pi]);
+     /*printf("this digit==%d\n",p[pi]);*/
      if(pi==0){pi=pim;} /*if index 0 already reached, reset to pointer index max*/
      break; /*break from the loop now that this box is created*/
     }
@@ -268,7 +298,7 @@ void game()
       player_y_move=0;
      break;
      case SDLK_LEFT:
-      putstr("SDLK_LEFT\n");
+      /*putstr("SDLK_LEFT\n");*/
       player_x_move=0;
      break;
      case SDLK_RIGHT:
