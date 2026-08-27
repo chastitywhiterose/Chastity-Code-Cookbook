@@ -96,6 +96,7 @@ main_font.color=0xFFFFFF;
  
  game_title();
  game(); /*the game loop in another header file*/
+ game_end();
  
  if(0)
  {

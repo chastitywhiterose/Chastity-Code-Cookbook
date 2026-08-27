@@ -151,7 +151,6 @@ int game()
   deathbox[x].h=height/10;
   x++;
  }
- 
 
  radix=10;
  
@@ -237,15 +236,15 @@ int game()
      break; /*break from the loop now that this box is created*/
     }
     
-    if(fpb>100) /*if frames per box is above this value*/
+    if(fpb>60) /*if frames per box is above this value*/
     {
      fpb--; /*subtract from this to make boxes appear faster over time*/
-     printf("fpb==%d\n",fpb);
+     /*printf("fpb==%d\n",fpb);*/
     }
     else /*otherwise changes frame speed for boxes and the player!*/
     {
      fps++; /*increase the frame per second instead*/
-     printf("fps==%d\n",fps);
+     /*printf("fps==%d\n",fps);*/
      delay=1000/fps; /*recalculate the delay for the slowdown routine*/
     }
    
@@ -371,7 +370,7 @@ int game()
 
 
 
-int game_end(int x)
+int game_end()
 {
  
  /*first, display the intro to the demo video*/
