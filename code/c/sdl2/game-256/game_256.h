@@ -107,7 +107,7 @@ void game()
  player_rect.w=32;
  player_rect.h=32;
  
- load_power2(32);
+ load_power2(64);
 
 
 
