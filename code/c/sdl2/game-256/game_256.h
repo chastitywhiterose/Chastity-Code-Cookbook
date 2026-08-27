@@ -80,7 +80,12 @@ it handles almost everything except for data which is preloaded
 */
 void game()
 {
+ int x,y;
  int loop=1,key=0;
+ int frame=0,fps=240; /*frames per second*/
+ int sdl_time,sdl_time1; /*define the timing integers*/
+ int delay=1000/fps;
+
  SDL_Rect player_rect;
  
  int player_x_move=0;
@@ -93,11 +98,33 @@ void game()
  
  load_power2(64);
 
-radix=10;
+ /*
+ there will be a maximum of ten death boxes on the screen at one time
+ the size of each box will be the height of the screen divided by ten
+ */
+ SDL_Rect deathbox[10];
+
+ x=0;
+ y=10;
+
+ while(x<y)
+ {
+  deathbox[x].x=0;
+  deathbox[x].y=0;
+  deathbox[x].w=height/10;
+  deathbox[x].h=height/10;
+  x++;
+ }
+ 
+
+ radix=10;
  
   /*a loop which will only end if we click the X or press escape*/
  while(loop)
  {
+  sdl_time = SDL_GetTicks(); /*get the current time in milliseconds*/
+  sdl_time1 = sdl_time+delay; /*make copy of time with delay added*/
+
   SDL_FillRect(surface,NULL,0x000000);
 
   /*do not allow to go above screen*/
@@ -147,8 +174,38 @@ radix=10;
   player_rect.y+=player_y_move;
   
   SDL_FillRect(surface,&player_rect,0xFF00FF); /*draw the player*/
+
+  cursor_x=10;
+  cursor_y=10;
+  putint(frame);
+  putstr("\n");
+  frame++;
+
+  /*find the first available box which has a rectange x value of 0 or less*/
+  x=0;
+  while(x<y)
+  {
+   if(deathbox[x].x==0) /*if the x of this box is 0*/
+   {deathbox[x].x=width;} /*set to width so it shows up on the right*/
+   else
+   {
+    deathbox[x].x-=1; /*otherwise subtract 1 to move left*/
+   }
+   
+   deathbox[x].y=0;
+   deathbox[x].w=height/10;
+   deathbox[x].h=height/10;
+   x++;
+  }
+
    
   SDL_UpdateWindowSurface(window); /*update window to show the results*/
+
+  /*time loop used to slow the game down so users can see it*/
+  while(sdl_time<sdl_time1)
+  {
+   sdl_time=SDL_GetTicks();
+  }
   
   /*loop to capture and process input that happens*/
   while(SDL_PollEvent(&e))
