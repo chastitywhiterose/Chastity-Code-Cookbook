@@ -14,10 +14,9 @@ int game_title()
 
   putstr("An SDL2 game made in the\n\nC Programming Language\n\nby Chastity White Rose\n");
   
-  putstr("You are a pink box\n\nThe green boxes will kill you.\n");
+  putstr("You are a magenta box\n\nThe green boxes will kill you.\n");
   
   putstr("Move with the arrow keys.\n");
-
   
   putstr("Press Esc to start the game.\n");
 
@@ -113,13 +112,13 @@ int load_power2(int e)
 this is the game function.
 it handles almost everything except for data which is preloaded
 */
-void game()
+int game()
 {
  int x,y;
  int loop=1,key=0;
  int frame=0; /*frame counter*/
  int fps=360; /*frames per second*/
- int fpb=1000; /*frames per deathbox*/
+ int fpb=500; /*frames per deathbox*/
  int sdl_time,sdl_time1; /*define the timing integers*/
  int delay=1000/fps;
 
@@ -222,6 +221,9 @@ void game()
 
   if(frame%fpb==0) /*create a deathbox every so many frames*/
   {
+  
+   printf("fpb==%d\n",fpb);
+
 
    /*find the first available box which has a rectange x value of 0 or less*/
    x=0;
@@ -356,4 +358,33 @@ void game()
   
  } /*end of game while loop*/
  
+ return 0;
 } /*end of game function*/
+
+
+
+int game_end(int x)
+{
+ 
+ /*first, display the intro to the demo video*/
+  sdl_clear();  /*clear the screen before we begin writing*/
+
+  cursor_left=128;
+
+  main_font.char_scale=8; 
+
+  putstr("\n\nGame Over\n\n");
+
+  main_font.char_scale=4; 
+
+  putstr("Player touched deathbox!");
+  
+  putstr("You have died, but don't feel bad\nThis game just gets faster until you eventually lose.");
+  
+   putstr("Press Esc to close the game.\n");
+
+  SDL_UpdateWindowSurface(window); /*update window to show the results*/
+  sdl_wait_escape(); /*wait till escape key pressed*/
+  
+  return 0;
+ }
