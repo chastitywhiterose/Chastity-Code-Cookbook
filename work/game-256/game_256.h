@@ -11,18 +11,29 @@ void game()
  player_rect.w=64;
  player_rect.h=64;
 
-
+radix=10;
  
   /*a loop which will only end if we click the X or press escape*/
  while(loop)
  {
-  SDL_FillRect(surface,NULL,0x0000FF);
- 
-  SDL_FillRect(surface,&player_rect,0xFF00FF);
+  SDL_FillRect(surface,NULL,0x000000);
+
+  /*do not allow to go below screen*/
+  if(player_rect.y+player_rect.h>=height)
+  {
+   putstr("player_rect.y==");
+   putint(player_rect.y);
+   putstr("\n");
+
+   player_rect.y=height-player_rect.h-1;
+   player_y_move=0;
+  }
 
   /*update player x and/or y position based on movement variables*/
   player_rect.x+=player_x_move;
   player_rect.y+=player_y_move;
+  
+  SDL_FillRect(surface,&player_rect,0xFF00FF); /*draw the player*/
    
   SDL_UpdateWindowSurface(window); /*update window to show the results*/
   
