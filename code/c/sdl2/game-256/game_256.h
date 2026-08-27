@@ -12,12 +12,10 @@ int game_title()
 
   main_font.char_scale=4; 
 
-  putstr("An SDL2 game made in the\n\nC Programming Language\n\nby Chastity White Rose\n");
-  
-  putstr("You are a magenta box\n\nThe green boxes will kill you.\n");
+  putstr("An SDL2 game made in the\nC Programming Language\nby Chastity White Rose\n\n");
+  putstr("You are a magenta box\nThe green boxes will kill you.\n");
   
   putstr("Move with the arrow keys.\n");
-  
   putstr("Press Esc to start the game.\n");
 
   SDL_UpdateWindowSurface(window); /*update window to show the results*/
