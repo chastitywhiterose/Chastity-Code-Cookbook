@@ -3,13 +3,15 @@ void game()
  int loop=1,key=0;
  SDL_Rect player_rect;
  
- player_rect.x=100;
- player_rect.y=100;
- player_rect.w=32;
- player_rect.h=64;
-
  int player_x_move=0;
  int player_y_move=0;
+ 
+ player_rect.x=100;
+ player_rect.y=100;
+ player_rect.w=64;
+ player_rect.h=64;
+
+
  
   /*a loop which will only end if we click the X or press escape*/
  while(loop)
@@ -32,10 +34,29 @@ void game()
    /*use Escape as a key that can also end this loop*/
    if(e.type == SDL_KEYUP)
    {
+    putstr("SDL_KEYUP\n");
+    key=e.key.keysym.sym;
     if(e.key.keysym.sym==SDLK_ESCAPE){loop=0;}
+    
+    switch(key)
+    {
+     /*the main 4 directions*/
+     case SDLK_UP:
+      player_y_move=0;
+     break;
+     case SDLK_DOWN:
+      player_y_move=0;
+     break;
+     case SDLK_LEFT:
+      player_x_move=0;
+     break;
+     case SDLK_RIGHT:
+      player_x_move=0;
+     break;
+    }
    }
 
-   if(e.type == SDL_KEYDOWN /*&& e.key.repeat==0*/)
+   if(e.type == SDL_KEYDOWN && e.key.repeat==0)
    {
     putstr("SDL_KEYDOWN\n");
     key=e.key.keysym.sym;
