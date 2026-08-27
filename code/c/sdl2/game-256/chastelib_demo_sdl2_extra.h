@@ -27,9 +27,9 @@ int demo_power2()
 {
  int a=0,b=0x80;
  int x,y;
- #define length 1000
+ int length=1000;
  int length2=40;
- char c[length];
+ char *c=malloc(length*sizeof(*c));
  
  /*first, display the intro to the demo video*/
   sdl_clear();  /*clear the screen before we begin writing*/
@@ -97,6 +97,8 @@ int demo_power2()
 
  SDL_UpdateWindowSurface(window); /*update window to show the results*/
  sdl_wait_escape(); /*wait till escape key pressed*/
+ 
+  free(c);
 
  return 0;
 }

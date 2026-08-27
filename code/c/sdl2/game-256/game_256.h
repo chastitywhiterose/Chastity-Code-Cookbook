@@ -1,3 +1,80 @@
+
+/*
+a global character pointer
+this will be filled with a power of two in decimal
+*/
+char *p=NULL;
+
+int load_power2(int e)
+{
+ /*e stands for exponent*/
+ int a=0,b=e;
+ int x,y;
+ int length=e;
+ int length2=1;
+ 
+ if(p==NULL){p=malloc(length*sizeof(*p));}
+ 
+ radix=10; /*set the radix we will use*/
+ 
+ x=0;
+ while(x<length)
+ {
+  p[x]=0;
+  x++;
+ }
+ p[0]=1;
+
+ while(a<=b)
+ {
+  
+
+  x=length2;
+  while(x>0)
+  {
+   x--;
+   putint(p[x]);
+  }
+  
+  /*optionally, print which power of two was printed this line*/
+  putstr(" = ");
+  putstr("2^");
+  putint(a);
+
+  putstr("\n");
+
+  y=0;
+  x=0;
+  while(x<=length2)
+  {
+   p[x]+=p[x];
+   p[x]+=y;
+   if(p[x]>9){y=1;p[x]-=10;}else{y=0;}
+   x++;
+  }
+  if(p[length2]>0){length2++;}
+
+  a++;
+ }
+ 
+ /*
+ below is an example of how to free the memory
+ 
+ but for this game we don't actually free it because it is a global pointer meant to be used
+ during the entire duration of the game
+ */
+ 
+ /*if(p!=NULL){free(p);}*/ 
+ 
+ return 0;
+}
+
+
+
+/*
+this is the game function.
+it handles almost everything except for data which is preloaded
+*/
 void game()
 {
  int loop=1,key=0;
