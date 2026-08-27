@@ -107,7 +107,7 @@ int demo_primes()
 {
  int x,y,key;
  
- int prime_length=1<<8;
+ int prime_length=1<<16;
  char *c=malloc(prime_length*sizeof(*c));
  
   /*first, display the intro to the demo video*/
