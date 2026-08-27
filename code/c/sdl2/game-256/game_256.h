@@ -87,7 +87,7 @@ void game()
 {
  int x,y;
  int loop=1,key=0;
- int frame=0,fps=240; /*frames per second*/
+ int frame=0,fps=360; /*frames per second*/
  int sdl_time,sdl_time1; /*define the timing integers*/
  int delay=1000/fps;
 
@@ -107,7 +107,7 @@ void game()
  player_rect.w=32;
  player_rect.h=32;
  
- load_power2(64);
+ load_power2(1<<10);
 
 
 
@@ -188,7 +188,7 @@ void game()
   putstr("\n");*/
   frame++;
 
-  if(frame%1000==0) /*create a deathbox every so many frames*/
+  if(frame%100==0) /*create a deathbox every so many frames*/
   {
 
    /*find the first available box which has a rectange x value of 0 or less*/
@@ -223,6 +223,20 @@ void game()
    }
    
   SDL_UpdateWindowSurface(window); /*update window to show the results*/
+  
+  /*after we have displayed the game screen, we need to end if the player touches any blocks*/
+   x=0;
+   while(x<y)
+   {
+    if(SDL_HasIntersection(&player_rect, &deathbox[x]))
+    {
+     printf("Player touched deathbox[%d]\n",x);
+     printf("at location %d,%d\n",deathbox[x].x,deathbox[x].y);
+     loop=0;
+     break;
+    }
+    x++;
+   }
 
   /*time loop used to slow the game down so users can see it*/
   while(sdl_time<sdl_time1)
@@ -238,7 +252,7 @@ void game()
    /*use Escape as a key that can also end this loop*/
    if(e.type == SDL_KEYUP)
    {
-    putstr("SDL_KEYUP==");
+    /*putstr("SDL_KEYUP==");*/
     key=e.key.keysym.sym;
     if(e.key.keysym.sym==SDLK_ESCAPE){loop=0;}
     
@@ -246,11 +260,11 @@ void game()
     {
      /*the main 4 directions*/
      case SDLK_UP:
-      putstr("SDLK_UP\n");
+      /*putstr("SDLK_UP\n");*/
       player_y_move=0;
      break;
      case SDLK_DOWN:
-      putstr("SDLK_DOWN\n");
+      /*putstr("SDLK_DOWN\n");*/
       player_y_move=0;
      break;
      case SDLK_LEFT:
@@ -258,7 +272,7 @@ void game()
       player_x_move=0;
      break;
      case SDLK_RIGHT:
-      putstr("SDLK_RIGHT\n");
+      /*putstr("SDLK_RIGHT\n");*/
       player_x_move=0;
      break;
     }
@@ -266,7 +280,7 @@ void game()
 
    if(e.type == SDL_KEYDOWN && e.key.repeat==0)
    {
-    putstr("SDL_KEYDOWN==");
+    /*putstr("SDL_KEYDOWN==");*/
     key=e.key.keysym.sym;
     switch(key)
     {
@@ -277,19 +291,19 @@ void game()
    
      /*the main 4 directions*/
      case SDLK_UP:
-      putstr("SDLK_UP\n");
+      /*putstr("SDLK_UP\n");*/
       player_y_move=-1;
      break;
      case SDLK_DOWN:
-      putstr("SDLK_DOWN\n");
+      /*putstr("SDLK_DOWN\n");*/
       player_y_move=1;
      break;
      case SDLK_LEFT:
-      putstr("SDLK_LEFT\n");
+      /*putstr("SDLK_LEFT\n");*/
       player_x_move=-1;
      break;
      case SDLK_RIGHT:
-      putstr("SDLK_RIGHT\n");
+      /*putstr("SDLK_RIGHT\n");*/
       player_x_move=1;
      break;
     }
