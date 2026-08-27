@@ -25,23 +25,9 @@ int load_power2(int e)
  }
  p[0]=1;
 
- while(a<=b)
+ while(a<b)
  {
-  
-
-  x=length2;
-  while(x>0)
-  {
-   x--;
-   putint(p[x]);
-  }
-  
-  /*optionally, print which power of two was printed this line*/
-  putstr(" = ");
-  putstr("2^");
-  putint(a);
-
-  putstr("\n");
+ 
 
   y=0;
   x=0;
@@ -56,6 +42,23 @@ int load_power2(int e)
 
   a++;
  }
+ 
+   /*print the final power of two after the loop is done*/
+  x=length2;
+  while(x>0)
+  {
+   x--;
+   printf("%d",p[x]);
+  }
+  
+ /*optionally, print which power of two was printed this line*/
+  putstr(" = ");
+  putstr("2^");
+  putint(a);
+
+  putstr("\n");
+
+
  
  /*
  below is an example of how to free the memory
@@ -87,6 +90,8 @@ void game()
  player_rect.y=height/2;
  player_rect.w=64;
  player_rect.h=64;
+ 
+ load_power2(64);
 
 radix=10;
  
