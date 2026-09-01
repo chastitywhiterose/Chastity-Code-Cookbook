@@ -14,7 +14,7 @@
 ;usually this will be a space, tab, or newline
 
 buf db 0x100 dup '?'
-count dd 0
+count dq 0
 last_char db 0
 
 ;read only 1 byte using Win32 ReadFile system call.
@@ -29,18 +29,17 @@ getchar:
 sub rsp,40  ;align stack before Win API functions(required in windows 64-bit)
 
 mov rcx, -10        ;STD_INPUT_HANDLE = Negative Ten
-
-call [GetStdHandle] ; Get Standard Output Handle
-mov rcx,rax         ; copy handle to ecx
+call [GetStdHandle] ;Get Standard Output Handle
+mov rcx,rax         ;copy handle to rcx
 mov rdx,last_char   ;address to store bytes
-
 mov r8,1            ;Number of bytes to read
 mov r9,count        ;Store Number of Bytes Read from this call
-
 mov qword [rsp + 32], 0 ; Parameter 5: Must be placed on the stack
 call [ReadFile]
 
-xor rax,rax         ;set eax to 0
+add rsp,40  ;restore stack now that WinAPI calls are done
+
+xor rax,rax         ;set rax to 0
 mov al,[last_char]  ;set lowest part of rax to key read
 ret
 
@@ -59,7 +58,7 @@ ret
 
 getstring:
 
-mov ebx,buf       ;address to store the bytes
+mov rbx,buf       ;address to store the bytes
 
 getstring_chars:
 
@@ -67,7 +66,7 @@ call getchar      ;reads one character and stores in al register
 cmp [count],1     ;was 1 character read?
 jnz getstring_end ;if not, then end this loop
 
-mov [ebx],al      ;mov last character read into buffer
+mov [rbx],al      ;mov last character read into buffer
 
 ;check if this character is in the proper range to be part of the string
 
@@ -77,17 +76,17 @@ cmp al,0x7E       ;compare with 0x7E (tilde)
 ja getstring_end  ;jump if above to getstring_end label
 
 ;if neither jump happened, keep the character and
-inc ebx             ;increment address where next byte is stored
+inc rbx             ;increment address where next byte is stored
 jmp getstring_chars ;jump back to start of loop and keep reading
 
 getstring_end:
 
-mov byte[ebx],0 ;terminate this string with a zero
+mov byte[rbx],0 ;terminate this string with a zero
 
-sub ebx,buf     ;subtract buf from current ebx to get length
-mov [count],ebx ;store the length of string in count variable
+sub rbx,buf     ;subtract buf from current rbx to get length
+mov [count],rbx ;store the length of string in count variable
 
-mov eax,buf ;mov the buffer address to eax for returning the string
+mov rax,buf ;mov the buffer address to rax for returning the string
 
 ret
 
@@ -102,7 +101,7 @@ ret
 
 getline:
 
-mov ebx,buf       ;address to store the bytes
+mov rbx,buf       ;address to store the bytes
 
 getline_chars:
 
@@ -110,7 +109,7 @@ call getchar      ;reads one character and stores in al register
 cmp [count],1     ;was 1 character read?
 jnz getstring_end ;if not, then end this loop
 
-mov [ebx],al      ;mov last character read into buffer
+mov [rbx],al      ;mov last character read into buffer
 
 ;check if this character is in the proper range to be part of the string
 
@@ -120,17 +119,17 @@ cmp al,0x7E    ;compare with 0x7E (tilde)
 ja getline_end ;jump if above to getstring_end label
 
 ;if neither jump happened, keep the character and
-inc ebx             ;increment address where next byte is stored
+inc rbx             ;increment address where next byte is stored
 jmp getline_chars ;jump back to start of loop and keep reading
 
 getline_end:
 
-mov byte[ebx],0 ;terminate this string with a zero
+mov byte[rbx],0 ;terminate this string with a zero
 
-sub ebx,buf     ;subtract buf from current ebx to get length
-mov [count],ebx ;store the length of string in count variable
+sub rbx,buf     ;subtract buf from current rbx to get length
+mov [count],rbx ;store the length of string in count variable
 
-mov eax,buf ;mov the buffer address to eax for returning the string
+mov rax,buf ;mov the buffer address to rax for returning the string
 
 ret
 
