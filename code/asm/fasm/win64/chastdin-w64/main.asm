@@ -1,16 +1,16 @@
-format PE console
+format PE64 console
+entry main
 
-
-include 'win32ax.inc'       ;include standard Windows 64-bit definitions and macros
-include 'chastelibw32.asm'  ;include standard functions by Chastity
-include 'chastdinw32.asm'   ;include standard input functions by Chastity
+include 'win64ax.inc'       ;include standard Windows 64-bit definitions and macros
+include 'chastelib-w64.asm' ;include standard functions by Chastity
+include 'chastdin-w64.asm'  ;include standard input functions by Chastity
 
 main:
 
-mov dword[radix],10    ;I can choose the radix for integer output!
-mov dword[int_width],1 ;and the width of each integer for padded zeros
+mov qword[radix],10    ;I can choose the radix for integer output!
+mov qword[int_width],1 ;and the width of each integer for padded zeros
 
-mov ebp,chastack       ;mov the address of the beginning of the stack to ebp registers
+mov rbp,chastack       ;mov the address of the beginning of the stack to rbp registers
 
 ;this program does not read command line arguments
 ;it only reads from stdin (STanDard INput)
@@ -27,84 +27,84 @@ main_loop:
 ;otherwise it will print too many if multiple commands were entered on the same line
 cmp [last_char],0xA
 jnz skip_prompt
-mov eax,string_prompt
+mov rax,string_prompt
 call putstring
 skip_prompt:
 
-call getstring ;get string and return address in eax
+call getstring ;get string and return address in rax
 
 ;we must restart the loop in case of an empty string
 ;if we didn't, strint would read the empty string and return 0
 ;then zero would be pushed to the stack, which is not what we want
 
-cmp dword[count],0 ;were there zero characters read?
+cmp qword[count],0 ;were there zero characters read?
 jz main_loop ;if yes, this was an empty string, retry input
 
-mov esi,eax    ;mov string to esi for string comparison
+mov rsi,rax    ;mov string to rsi for string comparison
 
 ;Now we process the string the user entered
 ;First, we will try testing for commands
-;If any of the predefined strings match the string in esi
+;If any of the predefined strings match the string in rsi
 ;We jump to the label for that command
 
-mov edi,string_setradix
+mov rdi,string_setradix
 call strcmp
 jz command_setradix
 
-mov edi,string_add
+mov rdi,string_add
 call strcmp
 jz command_add
 
-mov edi,string_sub
+mov rdi,string_sub
 call strcmp
 jz command_sub
 
-mov edi,string_mul
+mov rdi,string_mul
 call strcmp
 jz command_mul
 
-mov edi,string_div
+mov rdi,string_div
 call strcmp
 jz command_div
 
-mov edi,string_rem
+mov rdi,string_rem
 call strcmp
 jz command_rem
 
-mov edi,string_putstack
+mov rdi,string_putstack
 call strcmp
 jz command_putstack
 
-mov edi,string_clear
+mov rdi,string_clear
 call strcmp
 jz command_clear
 
-mov edi,chastdin_help
+mov rdi,string_help
 call strcmp
 jz command_help
 
-mov edi,string_exit
+mov rdi,string_exit
 call strcmp
 jz command_exit
 
 ;The default command is to turn the argument into a number and push to stack
 command_num:
 
-mov eax,esi          ;mov the string to eax for processing numbers
-call strint          ;try to get a number from the string pointed to by eax
+mov rax,rsi          ;mov the string to rax for processing numbers
+call strint          ;try to get a number from the string pointed to by rax
 cmp [strint_error],0 ;did we have zero errors in the strint function?
 jz num_push          ;if there were no errors, push this to stack
 
-mov eax,string_err
+mov rax,string_err
 call putstring       ;print error message
-mov eax,esi
+mov rax,rsi
 call putstring       ;print which command failed
 call putline
 jmp num_push_end     ;skip the push because this can't be used
 
 num_push:            ;push the number to the fake stack
-add ebp,4            ;increment the pointer by the size of the native int for this mode
-mov [ebp],eax        ;mov the value we converted from the string with strint
+add rbp,8            ;increment the pointer by the size of the native int for this mode
+mov [rbp],rax        ;mov the value we converted from the string with strint
 num_push_end:
 jmp main_loop        ;once value is pushed, continue the program
 
@@ -117,103 +117,103 @@ jmp main_loop        ;once value is pushed, continue the program
 ;it has error checking and leaves the radix as is
 ;unless at least one number is on the stack
 command_setradix:
-cmp ebp,chastack      ;is ebp above the address of stack start?
+cmp rbp,chastack      ;is rbp above the address of stack start?
 jna change_radix_no   ;if not above, we cannot use it to set the radix
 change_radix_yes:
-mov eax,[ebp]         ;get the top of stack
-mov [radix],eax       ;change the radix
-mov dword[ebp],0      ;erase the top of stack
-sub ebp,4             ;subtract pointer
+mov rax,[rbp]         ;get the top of stack
+mov [radix],rax       ;change the radix
+mov qword[rbp],0      ;erase the top of stack
+sub rbp,8             ;subtract pointer
 jmp main_loop         ;and continue main_loop as normal
 change_radix_no:
-mov eax,string_err1   ;get error message for less than 1 numbers on stack
+mov rax,string_err1   ;get error message for less than 1 numbers on stack
 call putstring        ;print error message
-mov eax,esi           ;get name of the command used
+mov rax,rsi           ;get name of the command used
 call putstring        ;print which command failed
 call putline
 jmp main_loop
 
 ;add number on top of stack to the one below it
 command_add:
-mov eax,[ebp]
-sub ebp,4
-add [ebp],eax
+mov rax,[rbp]
+sub rbp,8
+add [rbp],rax
 jmp memory_check ;check stack for errors after this command
 
 ;subtract number on top of stack from the one below it
 command_sub:
-mov eax,[ebp]
-sub ebp,4
-sub [ebp],eax
+mov rax,[rbp]
+sub rbp,8
+sub [rbp],rax
 jmp memory_check ;check stack for errors after this command
 
 ;multiply number on top of stack by the one below it
 command_mul:
-mov ebx,[ebp]
-sub ebp,4
-mov eax,[ebp]
-mov edx,0     ;zero edx before multiply
-mul ebx       ;multiply eax with value in ebx
-mov [ebp],eax
+mov rbx,[rbp]
+sub rbp,8
+mov rax,[rbp]
+mov rdx,0     ;zero rdx before multiply
+mul rbx       ;multiply rax with value in rbx
+mov [rbp],rax
 jmp memory_check ;check stack for errors after this command
 
 ;divide number on top of stack into the one below it
 command_div:
-mov ebx,[ebp]
-sub ebp,4
-mov eax,[ebp]
-mov edx,0 ;zero edx before divide
-div ebx   ;divide eax with value in ebx
-mov [ebp],eax ;store quotient on stack
+mov rbx,[rbp]
+sub rbp,8
+mov rax,[rbp]
+mov rdx,0 ;zero rdx before divide
+div rbx   ;divide rax with value in rbx
+mov [rbp],rax ;store quotient on stack
 jmp memory_check ;check stack for errors after this command
 
 ;divide number on top of stack into the one below it
 ;but leave remainder instead of quotient
 command_rem:
-mov ebx,[ebp]
-sub ebp,4
-mov eax,[ebp]
-mov edx,0 ;zero edx before divide
-div ebx   ;divide eax with value in ebx
-mov [ebp],edx ;store remainder on stack
+mov rbx,[rbp]
+sub rbp,8
+mov rax,[rbp]
+mov rdx,0 ;zero rdx before divide
+div rbx   ;divide rax with value in rbx
+mov [rbp],rdx ;store remainder on stack
 jmp memory_check ;check stack for errors after this command
 
 ;check if the stack has enough space for the last command
 ;this will print an error if less than two numbers were on the stack
 ;when using one of the math commands above
 memory_check:
-cmp ebp,chastack      ;is ebp above the address of stack start?
+cmp rbp,chastack      ;is rbp above the address of stack start?
 jna print_stack_error ;if not above, explain error to user
-mov dword[ebp+4],0    ;if no error, erase the old top of stack
+mov qword[rbp+8],0    ;if no error, erase the old top of stack
 jmp main_loop         ;and continue main_loop as normal
 print_stack_error:
-mov eax,string_err2  ;get error message for less than 2 numbers on stack
+mov rax,string_err2  ;get error message for less than 2 numbers on stack
 call putstring       ;print error message
-mov eax,esi          ;get name of the command used
+mov rax,rsi          ;get name of the command used
 call putstring       ;print which command failed
 call putline
-add ebp,4            ;increment the pointer to what it was before the failed command
+add rbp,8            ;increment the pointer to what it was before the failed command
 jmp main_loop
 
 command_putstack: ;print all numbers on the stack
-push ebp ;save value of ebp
+push rbp ;save value of rbp
 command_putstack_loop:
-cmp ebp,chastack ;is ebp equal to the address of stack start?
+cmp rbp,chastack ;is rbp equal to the address of stack start?
 jz command_putstack_end  ;if it is, end the putstack loop
-mov eax,[ebp]
-sub ebp,4
+mov rax,[rbp]
+sub rbp,8
 call putint_and_line
 jmp command_putstack_loop
 command_putstack_end:
-pop ebp ;restore ebp to what it was before this command
+pop rbp ;restore rbp to what it was before this command
 jmp main_loop
 
 command_clear: ;erase all numbers on the stack
 command_clear_loop:
-cmp ebp,chastack ;is ebp equal to the address of stack start?
+cmp rbp,chastack ;is rbp equal to the address of stack start?
 jz command_clear_end  ;if it is, end the putstack loop
-mov dword[ebp],0
-sub ebp,4
+mov qword[rbp],0
+sub rbp,8
 jmp command_clear_loop
 command_clear_end:
 jmp main_loop
@@ -224,15 +224,9 @@ jmp main_loop
 
 command_exit: ;end the program
 
-main_loop_end:
-
-;Exit the process with code 0
-push 0
-call [ExitProcess]
-
-.end main
-
-argc dd 0
+sub rsp,40         ;align stack (required in windows 64-bit)
+mov rcx,0          ;exit code for operating system
+call [ExitProcess] ;Exit the process with code 0
 
 string_setradix db 'setradix',0
 string_add db 'add',0
@@ -241,6 +235,7 @@ string_mul db 'mul',0
 string_div db 'div',0
 string_rem db 'rem',0
 
+string_help db 'help',0
 string_exit db 'exit',0
 string_putstack db '?',0
 string_clear db 'clear',0
@@ -252,17 +247,19 @@ string_err1 db 'Error: need one number on stack for command: ',0 ;math fail erro
 string_err2 db 'Error: need two numbers on stack for command: ',0 ;math fail error when less than two numbers on the stack
 
 chastdin_help db 'chastdin is a stack based interactive calculator',0xA
-              db 'Numbers are pushed on the stack and commands can do math.',0xA
-              db 'It is a fork of chastack that reads from stdin instead of arguments.',0xA
-              db 'Each line can contain multiple numbers or commands.',0xA
-              db 'Math commands are add,sub,mul,div,rem',0xA
+              db 'that reads stdin for numbers and commands.',0xA
+              db 'Numbers are pushed on the stack for all math.',0xA
+              db 'Each line can contain multiple numbers or commands.',0xA,0xA
+              db 'Arithmetic commands are add,sub,mul,div,rem',0xA
               db 'The exit command ends the program',0xA
-              db 'The ? command prints the entire stack',0xA,0xA,0
-            
+              db 'The ? command prints the entire stack',0xA
+              db 'The setradix command changes the radix for input and output',0xA,0xA
+              db 'See readme.md for full help',0xA,0
+
 ;a function to print the help message defined above
 ;for how to use this calculator program
 help:
-mov eax,chastdin_help
+mov rax,chastdin_help
 call putstring
 ret
 
@@ -270,4 +267,15 @@ ret
 ;I allocate memory for a virtual stack that we can index as if it was the real stack
 ;I name it "chastack" for Chastity's stack.
 
-chastack: rd 0x100
+chastack: rq 0x100
+
+;FASM builds the Import Address Table (IAT) directly in the source file
+section '.idata' import data readable writeable
+
+library kernel32, 'KERNEL32.DLL'
+
+import kernel32,\
+ GetStdHandle, 'GetStdHandle',\
+ WriteFile, 'WriteFile',\
+ ExitProcess, 'ExitProcess',\
+ ReadFile, 'ReadFile'
