@@ -408,3 +408,51 @@ strlen_end:
 sub s0, t1, s0                  # return length of string in s0
 
 ret
+
+
+# Short Description of strcmp:
+# strcmp compares the string at s0 to the one at s1
+# t0 returns 0 if the strings are the same and non zero if different
+# the algorithm is simple but I will explain it for those who are confused
+
+# Long Description of strcmp:
+# each byte from each string is loaded into the t0 and t1 registers
+# the bytes are compared. if they are different, then we jump to the end
+# However, if they are the same, then we check if one of them is zero
+# if it is zero, this also jumps to the end of the function
+# If neither jump took place, then we jump to the start of the loop
+# but when the function finally ends t1 will be subtracted from t0
+# this ensures that the t0 register returns zero if the final characters are the same
+# a zero result in t0 also guarantees that both strings are equal
+
+strcmp:
+
+mv a0,s0 # move pointer s0 to t0
+mv a1,s1 # move pointer s0 to t0
+
+strcmp_start:
+
+#read a byte from each string
+lb t0, 0(a0) 
+lb t1, 0(a1) 
+#if the two bytes are not equal end comparison
+bne t0, t1, strcmp_end
+
+#but if they are equal, test for zero
+#if one of them is zero, also end the loop
+beq t0, zero, strlen_end
+
+addi a0, a0, 1                  # go to next byte
+addi a1, a1, 1                  # go to next byte
+
+j strcmp_start
+
+strcmp_end:
+
+#subtract t1 from t0
+#if t0 is still zero after the function returns
+#it means that the
+sub t0, t0, t1
+
+ret
+
