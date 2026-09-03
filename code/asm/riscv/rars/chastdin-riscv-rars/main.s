@@ -1,12 +1,20 @@
 # chastelib test suite for RISC-V Assembly in RARS simulator
 
+# this program tests the stdin extension of chastelib
+
 # The same library of functions I commonly use in my Intel Assembly code
 # have now been translated to RISC-V.
+# All assembly code seen here is for the RARS simulator written in Java.
 
 .data
 
-# These variables are used by the intstr function to convert an integer to a string
-# and what radix should be used as well as the width (how many leading zeros)
+##################################################################
+# chastelib core specific variables                              #
+#                                                                #
+# These variables are used by the intstr function to convert an  #
+# integer to a string and what radix and widthshould be used     #
+# width means how many minimum digits including leading zeros    #
+##################################################################
 
 int_string: .space 32 #reserve space for 32 bytes for up to 32 bits if printed in binary
 int_end: .byte 0 #the terminating zero of the integer string
@@ -42,6 +50,8 @@ last_char: .byte 0
 string0: .ascii "chastelib test suite for RISC-V Assembly\n"
 string1: .asciz "stdin (STanDard INput) extension\n"
 
+string_exit: .asciz "exit"
+
 .text
 
 la s0, string0
@@ -52,10 +62,21 @@ li t0, 16    #load t0 register with the new radix
 la t1, radix #load t1 register with the address the radix will go to
 sb t0, 0(t1) #save t0 register (byte) to address t1
 
-jal getstr # read the string from standard input
+main_loop:
+
+jal getstr  # read the string from standard input
+jal putline # print extra line for readability
 
 jal putstr # echo it to standard output
 jal putline
+
+#s0 already contains string that was input and printed
+#s1 will be loaded with address of exit string
+la s1, string_exit
+jal strcmp
+
+# end program if the string entered is equal to string_exit
+beq t0, zero, exit
 
 #method 0: loading the length of string just entered from (count)
 #la t1, count       #load address of count into t2
@@ -64,9 +85,13 @@ jal putline
 #method 1: calculate the length with strlen function
 jal strlen
 
+# regardless of method used, display the length of last string
 jal putint
 jal putline
 
+j main_loop # keep restarting until exit string is entered
+
+exit:
 li a0, 0  #status
 li a7, 93 #exit
 ecall     #environment call
@@ -440,7 +465,7 @@ bne t0, t1, strcmp_end
 
 #but if they are equal, test for zero
 #if one of them is zero, also end the loop
-beq t0, zero, strlen_end
+beq t0, zero, strcmp_end
 
 addi a0, a0, 1                  # go to next byte
 addi a1, a1, 1                  # go to next byte
@@ -451,8 +476,7 @@ strcmp_end:
 
 #subtract t1 from t0
 #if t0 is still zero after the function returns
-#it means that the
+#it means that the strings are equal
 sub t0, t0, t1
 
 ret
-
