@@ -48,14 +48,21 @@ string1: .asciz "stdin (STanDard INput) extension\n"
 la s0, string0
 jal putstr
 
+# change radix for this program
+li t0, 16    #load t0 register with the new radix
+la t1, radix #load t1 register with the address the radix will go to
+sb t0, 0(t1) #save t0 register (byte) to address t1
+
 jal getstr # read the string from standard input
 
 jal putstr # echo it to standard output
+jal putline
 
-mv s0,t0
+la t1, count       #load address of count into t2
+lw s0, 0(t1)       #store number of chars read at (count) address
+
 jal putint
-
-
+jal putline
 
 li a0, 0  #status
 li a7, 93 #exit
@@ -329,7 +336,7 @@ ret
 
 # the getstr function will read a string into a buffer and return it
 # in the s0 register for printing with the putstr function
-# the t0 register will also return the number of characters
+# the (count) variable will also return the number of characters
 
 getstr:
 
@@ -349,7 +356,6 @@ ecall                           # environment call
 # because we read 1 character at a time
 
 blt a0, a2, getstring_end
-add t0, t0, a0     # add to read counter
 
 # if no error, test range of the last byte
 
@@ -365,11 +371,16 @@ li t2, 0x7E
 blt t2, t1, getstring_end
 
 # otherwise, proceed to read more characters
+add t0, t0, a0    # add to read counter
 addi a1, a1, 1    # add 1 to buffer pointer register a1
 j getstring_chars # unconditional jump to getstring_chars
 
 getstring_end:
 
+la t2, count       #load address of count into t2
+sw t0, 0(t2)       #store number of chars read at (count) address
+la t2, last_char   #load address of last_char into t2
+sb t1, 0(t2)       #store last byte at (last_char) address
 sb zero, 0(a1)     #store byte zero to terminate string
 la s0, buf         #return address of buf in s0 register
 
