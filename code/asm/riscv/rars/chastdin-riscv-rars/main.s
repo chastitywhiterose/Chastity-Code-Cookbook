@@ -20,6 +20,22 @@ space: .byte 0x20, 0
 line:  .byte 0x0A, 0
 char:  .byte 0, 0 
 
+##################################################################
+# chastdin specific variables                                    #
+#                                                                #
+# these variables are used as the default controllers            #
+# for the getstring and getline functions                        #
+# buf stores keyboard input during those functions               #
+# count stores how many bytes were read during system read calls #
+# last_char stores the last character read                       #
+# usually this will be a space, tab, or newline                  #
+##################################################################
+
+
+buf: .space 0x100
+count: .word 0
+last_char: .byte 0
+
 # program specific variables
 # These variables are for outputting specific messages
 # or to simulate user input as integers in the strint function
@@ -301,3 +317,9 @@ ret
 #                                                                        #
 # all functions that deal with getting strings and characters from stdin #
 ##########################################################################
+
+getstr:
+
+
+
+ret
