@@ -31,7 +31,6 @@ char:  .byte 0, 0
 # usually this will be a space, tab, or newline                  #
 ##################################################################
 
-
 buf: .space 0x100
 count: .word 0
 last_char: .byte 0
@@ -58,8 +57,12 @@ jal getstr # read the string from standard input
 jal putstr # echo it to standard output
 jal putline
 
-la t1, count       #load address of count into t2
-lw s0, 0(t1)       #store number of chars read at (count) address
+#method 0: loading the length of string just entered from (count)
+#la t1, count       #load address of count into t2
+#lw s0, 0(t1)       #store number of chars read at (count) address
+
+#method 1: calculate the length with strlen function
+jal strlen
 
 jal putint
 jal putline
@@ -383,5 +386,25 @@ la t2, last_char   #load address of last_char into t2
 sb t1, 0(t2)       #store last byte at (last_char) address
 sb zero, 0(a1)     #store byte zero to terminate string
 la s0, buf         #return address of buf in s0 register
+
+ret
+
+
+# Short Description of strlen:
+# The strlen function gets the length of string in s0 and returns it in s0
+# This is the same algorithm used in my putstr function but is independent of an operating system.
+
+strlen:
+
+mv t1, s0                       # t1 will be used as an index register
+
+strlen_start:
+lb t0, 0(t1)                    # load byte into t0 from address of t1
+beq t0, zero, strlen_end        # if t0==0, then we jump to the end of the loop.
+addi t1, t1, 1                  # go to next byte
+j strlen_start                  # jump to start of the loop
+strlen_end:              
+
+sub s0, t1, s0                  # return length of string in s0
 
 ret
