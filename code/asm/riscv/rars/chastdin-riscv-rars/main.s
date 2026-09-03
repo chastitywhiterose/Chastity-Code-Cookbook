@@ -48,6 +48,15 @@ string1: .asciz "stdin (STanDard INput) extension\n"
 la s0, string0
 jal putstr
 
+jal getstr # read the string from standard input
+
+jal putstr # echo it to standard output
+
+mv s0,t0
+jal putint
+
+
+
 li a0, 0  #status
 li a7, 93 #exit
 ecall     #environment call
@@ -318,8 +327,50 @@ ret
 # all functions that deal with getting strings and characters from stdin #
 ##########################################################################
 
+# the getstr function will read a string into a buffer and return it
+# in the s0 register for printing with the putstr function
+# the t0 register will also return the number of characters
+
 getstr:
 
+li t0, 0                        # use t0 register to track chars read
+la a1, buf                      # load address of buffer for read string
+li a2, 1                        # read only 1 byte for each env call
 
+getstring_chars:
+
+li a0, 0                        # STDIN file number
+li a7, 63                       # read call number
+ecall                           # environment call
+
+# Branch to label getstring_end if a0 is less than a2
+# a0 is the return value of this environment read call
+# as will be -1 on error or 1 if successful
+# because we read 1 character at a time
+
+blt a0, a2, getstring_end
+add t0, t0, a0     # add to read counter
+
+# if no error, test range of the last byte
+
+lb t1, 0(a1)      #load byte at address (a1) into t1 register
+
+# if t1 is less than 0x21
+# of t1 is more than 0x7E
+# branch to function end because it is outside of print range
+
+li t2, 0x21
+blt t1, t2, getstring_end
+li t2, 0x7E
+blt t2, t1, getstring_end
+
+# otherwise, proceed to read more characters
+addi a1, a1, 1    # add 1 to buffer pointer register a1
+j getstring_chars # unconditional jump to getstring_chars
+
+getstring_end:
+
+sb zero, 0(a1)     #store byte zero to terminate string
+la s0, buf         #return address of buf in s0 register
 
 ret
