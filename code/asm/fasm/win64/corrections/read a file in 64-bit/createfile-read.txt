@@ -1,0 +1,108 @@
+name open_file_x64.asm
+; Minimal Win64 FASM example: open an existing file (Unicode),
+; read until EOF, print to stdout, then clean up.
+; Assemble: fasm open_file_x64.asm
+
+format PE64 console
+entry start
+
+library kernel32, 'kernel32.dll'
+import kernel32, \
+  CreateFileW, 'CreateFileW', \
+  ReadFile,    'ReadFile', \
+  WriteFile,   'WriteFile', \
+  CloseHandle, 'CloseHandle', \
+  GetStdHandle,'GetStdHandle', \
+  ExitProcess, 'ExitProcess'
+
+section '.data' data readable writeable
+  ; Unicode filename (wide chars, null-terminated). Change path as needed:
+  filename    dw 'C',0,':',0,'\\',0,'p',0,'a',0,'t',0,'h',0,'\\',0,'t',0,'o',0,'\\',0,'f',0,'i',0,'l',0,'e',0,'.',0,'t',0,'x',0,'t',0,0,0
+
+  buffer      rb 4096          ; read buffer
+  bytesRead   dd 0             ; DWORD to receive number of bytes read
+  outBytes    dd 0             ; DWORD to receive number of bytes written
+  hStdout     dq 0             ; cached stdout handle (8 bytes)
+  invalid_handle_value dq -1   ; 0xFFFFFFFFFFFFFFFF
+
+section '.code' code readable executable
+start:
+  ; --- CreateFileW(lpFileName, dwDesiredAccess, dwShareMode, lpSecurityAttributes,
+  ;                 dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile)
+  ; Prepare first 4 args in registers per Windows x64 calling convention
+  sub rsp, 56                 ; reserve 32-byte shadow + space for 3 extra args (3*8=24) = 56
+  mov rcx, filename           ; lpFileName
+  mov rdx, 0x80000000         ; GENERIC_READ
+  mov r8,  1                  ; FILE_SHARE_READ
+  xor r9, r9                  ; lpSecurityAttributes = NULL
+  mov qword [rsp+32], 3       ; dwCreationDisposition = OPEN_EXISTING (3)
+  mov qword [rsp+40], 0       ; dwFlagsAndAttributes = 0
+  mov qword [rsp+48], 0       ; hTemplateFile = NULL
+  call [CreateFileW]
+  add rsp, 56
+
+  mov rbx, rax                ; file handle in rbx
+
+  ; check INVALID_HANDLE_VALUE (-1)
+  cmp rax, [invalid_handle_value]
+  je .open_failed
+
+  ; GetStdHandle(STD_OUTPUT_HANDLE) and cache it in hStdout
+  sub rsp, 40                 ; shadow + align
+  mov rcx, -11                ; STD_OUTPUT_HANDLE
+  call [GetStdHandle]
+  mov [hStdout], rax
+  add rsp, 40
+
+.read_loop:
+  ; ReadFile(hFile, buffer, buffer_size, &bytesRead, NULL)
+  sub rsp, 40
+  mov rcx, rbx                ; hFile
+  lea rdx, [buffer]           ; lpBuffer
+  mov r8d, 4096               ; nNumberOfBytesToRead (lower 32 bits)
+  lea r9, [bytesRead]         ; lpNumberOfBytesRead (pointer)
+  mov qword [rsp+32], 0       ; lpOverlapped = NULL (5th arg)
+  call [ReadFile]
+  add rsp, 40
+
+  test rax, rax
+  jz .read_done               ; ReadFile returned 0 -> error or EOF (we'll exit loop)
+
+  ; If bytesRead == 0 -> EOF
+  mov eax, [bytesRead]
+  test eax, eax
+  jz .read_done
+
+  ; WriteFile(hStdout, buffer, bytesRead, &outBytes, NULL)
+  sub rsp, 40
+  mov rcx, [hStdout]          ; handle to stdout
+  lea rdx, [buffer]           ; lpBuffer
+  mov r8d, dword [bytesRead]  ; number of bytes to write
+  lea r9, [outBytes]          ; pointer to number of bytes written
+  mov qword [rsp+32], 0       ; lpOverlapped = NULL
+  call [WriteFile]
+  add rsp, 40
+
+  ; continue loop
+  jmp .read_loop
+
+.read_done:
+  ; Close the file handle
+  sub rsp, 40
+  mov rcx, rbx
+  call [CloseHandle]
+  add rsp, 40
+
+  ; ExitProcess(0)
+  sub rsp, 40
+  xor rcx, rcx
+  call [ExitProcess]
+  ; never returns
+
+.open_failed:
+  ; ExitProcess(1)
+  sub rsp, 40
+  mov rcx, 1
+  call [ExitProcess]
+
+section '.rsrc' resource data readable

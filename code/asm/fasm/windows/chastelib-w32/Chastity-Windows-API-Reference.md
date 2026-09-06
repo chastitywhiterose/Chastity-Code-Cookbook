@@ -20,6 +20,12 @@ File API
 <https://learn.microsoft.com/en-us/windows/win32/secauthz/generic-access-rights>  
 
 <https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-setfilepointer>  
+
+64 bit ex function for setting the file pointer
+
+<https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-setfilepointerex>  
+
+
 <https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle>  
 
 <https://learn.microsoft.com/en-us/windows/win32/api/errhandlingapi/nf-errhandlingapi-getlasterror>

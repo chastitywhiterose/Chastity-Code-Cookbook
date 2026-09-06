@@ -11,13 +11,17 @@ mov [radix],16 ; Choose radix for integer output.
 mov [int_width],1
 
 call getarg ;this first call will get the command string
-
-call putstring
-call putline
+;optionally display the command string
+;call putstring
+;call putline
 
 call getarg ;get next arg as file name
 cmp rax,0 ;did the getarg function return 0?
 jz help ;if eax was zero, there are no args so we end the program safely after help message
+
+;print the filename
+call putstring
+call putline
 
 mov [file_name], rax ;save the filename to a permanent address
 
@@ -35,21 +39,24 @@ open_sesame:
 ;open a file with the CreateFileA function
 ;https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilea
 
-push 0           ;NULL: We are not using a template file
-push 0x80        ;FILE_ATTRIBUTE_NORMAL
-push 3           ;OPEN_EXISTING
-push 0           ;NULL: No security attributes
-push 0           ;NULL: Share mode irrelevant. Only this program reads the file.
-push 0x10000000  ;GENERIC_ALL access mode (Read+Write)
-push [file_name] ;
+; Prepare first 4 args in registers per Windows x64 calling convention
+sub rsp, 56                 ; reserve 32-byte shadow + space for 3 extra args (3*8=24) = 56
+mov rcx, [file_name]        ; lpFileName = filename to open
+mov rdx, 0x10000000         ; dwDesiredAccess = GENERIC_ALL access mode (Read+Write)
+mov r8, 1                   ; dwShareMode = FILE_SHARE_READ
+mov r9, 0                   ; lpSecurityAttributes = NULL
+mov qword [rsp+32], 3       ; dwCreationDisposition = OPEN_EXISTING (3)
+mov qword [rsp+40], 0       ; dwFlagsAndAttributes = 0
+mov qword [rsp+48], 0       ; hTemplateFile = NULL
 call [CreateFileA]
+add rsp, 56
 
 ;check eax for file handle or error code
 ;call putint
-cmp eax,-1
+cmp rax,-1
 jnz file_ok
 
-mov eax,file_error_message
+mov rax,file_error_message
 call putstring
 call [GetLastError]
 call putint
@@ -72,13 +79,16 @@ jz hexdump ;proceed to normal hex dump if no more args
 call strint
 mov [file_offset],rax
 
-;seek to address of file with SetFilePointer function
-;https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-setfilepointer
-push 0             ;seek from beginning of file (SEEK_SET)
-push 0             ;NULL: We are not using a 64 bit address
-push [file_offset] ;where we are seeking to
-push [file_handle] ;seek within this file
-call [SetFilePointer]
+;seek to 64-bit address of file with SetFilePointerEx function
+;https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-setfilepointerex
+
+sub rsp,40  ;align stack before Win API functions(required in windows 64-bit)
+mov rcx, [file_handle]      ;seek within this file
+mov rdx, [file_offset]      ;where we are seeking to
+mov r8, 0                   ;NULL: We are not storing the result anywhere
+mov r9, 0                   ;seek from beginning of file (SEEK_SET)
+call [SetFilePointerEx]
+add rsp,40  ;restore stack now that WinAPI calls are done
 
 ;check for more args after the address argument
 call getarg ;get next arg as potential bytes to write
@@ -97,6 +107,17 @@ push 1              ;Number of bytes to write
 push byte_array     ;address to store bytes
 push [file_handle]  ;handle of the open file
 call [WriteFile]
+
+sub rsp,40  ;align stack before Win API functions(required in windows 64-bit)
+
+mov rcx, [file_handle] ;handle of the open file
+mov rdx,byte_array     ;address to write from
+mov r8,1               ;write 1 byte
+mov r9,0               ;NULL: don't store number of bytes written
+mov qword [rsp + 32], 0 ; Parameter 5: Must be placed on the stack
+call [WriteFile]
+
+add rsp,40  ;restore stack now that WinAPI calls are done
 
 mov rax,[file_offset]
 inc [file_offset]
@@ -317,7 +338,7 @@ import kernel32,\
  GetCommandLineA, 'GetCommandLineA',\
  CreateFileA, 'CreateFileA',\
  GetLastError, 'GetLastError',\
- SetFilePointer, 'SetFilePointer',\
+ SetFilePointerEx, 'SetFilePointerEx',\
  ReadFile, 'ReadFile',\
  CloseHandle, 'CloseHandle'
 

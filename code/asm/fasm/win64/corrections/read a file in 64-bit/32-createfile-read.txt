@@ -1,0 +1,82 @@
+name open_file.asm
+; Minimal Win32 FASM example: open an existing file, read and print contents
+; Assemble: fasm open_file.asm
+
+format PE CONSOLE 4.0
+entry start
+
+library kernel32,'kernel32.dll'
+import kernel32,\
+  CreateFileA,'CreateFileA',\
+  ReadFile,'ReadFile',\
+  WriteFile,'WriteFile',\
+  CloseHandle,'CloseHandle',\
+  GetStdHandle,'GetStdHandle',\
+  ExitProcess,'ExitProcess'
+
+section '.data' data readable writeable
+  filename    db 'C:\path\to\your\file.txt',0  ; <- change this path
+  buffer      rb 1024
+  bytesRead   dd 0
+  outBytes    dd 0
+
+section '.code' code readable executable
+start:
+  ; CreateFileA(
+  ;   lpFileName,
+  ;   dwDesiredAccess=GENERIC_READ,
+  ;   dwShareMode=FILE_SHARE_READ,
+  ;   lpSecurityAttributes=NULL,
+  ;   dwCreationDisposition=OPEN_EXISTING,
+  ;   dwFlagsAndAttributes=0,
+  ;   hTemplateFile=NULL
+  ; )
+  push 0                  ; hTemplateFile
+  push 0                  ; dwFlagsAndAttributes
+  push 3                  ; OPEN_EXISTING
+  push 0                  ; lpSecurityAttributes
+  push 1                  ; FILE_SHARE_READ
+  push 0x80000000         ; GENERIC_READ
+  push filename           ; lpFileName
+  call [CreateFileA]
+  mov ebx, eax            ; EBX = file handle
+
+  cmp eax, -1             ; INVALID_HANDLE_VALUE == 0xFFFFFFFF
+  je .open_failed
+
+  ; ReadFile(hFile, buffer, 1024, &bytesRead, NULL)
+  push 0                  ; lpOverlapped
+  lea eax, [bytesRead]
+  push eax                ; lpNumberOfBytesRead
+  push 1024               ; nNumberOfBytesToRead
+  push buffer             ; lpBuffer
+  push ebx                ; hFile
+  call [ReadFile]
+  test eax, eax
+  jz .done                ; ReadFile returned 0 -> no read / error
+
+  ; GetStdHandle(STD_OUTPUT_HANDLE) and WriteFile(stdout, buffer, bytesRead, &outBytes, NULL)
+  push -11                ; STD_OUTPUT_HANDLE
+  call [GetStdHandle]
+  mov esi, eax            ; ESI = stdout handle
+
+  push 0                  ; lpOverlapped
+  push outBytes           ; lpNumberOfBytesWritten
+  push dword [bytesRead]  ; nNumberOfBytesToWrite (value from bytesRead)
+  push buffer             ; lpBuffer
+  push esi                ; hFile (stdout)
+  call [WriteFile]
+
+  ; Close the file handle
+  push ebx
+  call [CloseHandle]
+
+.done:
+  push 0
+  call [ExitProcess]
+
+.open_failed:
+  push 1
+  call [ExitProcess]
+
+section '.rsrc' resource data readable
