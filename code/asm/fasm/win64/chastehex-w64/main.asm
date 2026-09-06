@@ -11,6 +11,9 @@ mov [radix],16 ; Choose radix for integer output.
 mov [int_width],1
 
 call getarg ;this first call will get the command string
+cmp rax,0 ;did the getarg function return 0?
+jz help ;if eax was zero, there are no args so we end the program safely after help message
+
 ;optionally display the command string
 ;call putstring
 ;call putline
@@ -140,12 +143,18 @@ jmp main_end
 read_one_byte:
 
 ;read only 1 byte using Win32 ReadFile system call.
-push 0              ;Optional Overlapped Structure 
-push bytes_read     ;Store Number of Bytes Read from this call
-push 1              ;Number of bytes to read
-push byte_array     ;address to store bytes
-push [file_handle]  ;handle of the open file
+
+sub rsp,40  ;align stack before Win API functions(required in windows 64-bit)
+
+mov rcx,[file_handle]  ;handle of the open file
+mov rdx,byte_array  ;address to store bytes
+mov r8,1            ;Number of bytes to read
+mov r9,bytes_read   ;Store Number of Bytes Read from this call
+mov qword [rsp + 32], 0 ; Parameter 5: Must be placed on the stack
 call [ReadFile]
+
+add rsp,40  ;restore stack now that WinAPI calls are done
+
 
 cmp [bytes_read],1 
 jz print_byte ;if less than one bytes read, there is an error
@@ -173,12 +182,17 @@ jmp main_end
 hexdump:
 
 ;read bytes using Win32 ReadFile system call.
-push 0              ;Optional Overlapped Structure 
-push bytes_read     ;Store Number of Bytes Read from this call
-push 16             ;Number of bytes to read
-push byte_array     ;address to store bytes
-push [file_handle]  ;handle of the open file
-call [ReadFile]     ;all the data is in place, do the write thing!
+
+sub rsp,40  ;align stack before Win API functions(required in windows 64-bit)
+
+mov rcx,[file_handle]  ;handle of the open file
+mov rdx,byte_array  ;address to store bytes
+mov r8,16           ;Number of bytes to read
+mov r9,bytes_read   ;Store Number of Bytes Read from this call
+mov qword [rsp + 32], 0 ; Parameter 5: Must be placed on the stack
+call [ReadFile]
+
+add rsp,40  ;restore stack now that WinAPI calls are done
 
 mov rax,[bytes_read]
 ;call putint
@@ -215,12 +229,14 @@ call putstr_and_line
 main_end:
 
 ;close the file
-push [file_handle]
+sub rsp,40
+mov rcx,[file_handle]
 call [CloseHandle]
+add rsp,40
 
-;Exit the process with code 0
-push 0
-call [ExitProcess]
+sub rsp,40         ;align stack (required in windows 64-bit)
+mov rcx,0          ;exit code for operating system
+call [ExitProcess] ;Exit the process with code 0
 
 
 ;variables for displaying messages
