@@ -31,7 +31,7 @@ This program is the modern descendant of the original command.com from DOS. Wind
 
 Because the Assembler I will be using is FASM, which includes an IDE, you don't technically have to use the command line the way I will teach you, but you are cheating yourself if you don't become comfortable with basic commands in a terminal/console.
 
-There is a common lie that Windows is point and click whereas Linux requires running commands at a terminal. Technically neither of these are true. The actualy truth is that a PROGRAMMER must know how to use the command line on ANY operating system to achieve full power in controlling their own operating system or the building of their own programs.
+There is a common lie that Windows is point and click whereas Linux requires running commands at a terminal. Technically neither of these are true. The actual truth is that a PROGRAMMER must know how to use the command line on ANY operating system to achieve full power in controlling their own operating system or the building of their own programs.
 
 But don't worry, you don't need to have been born in 1987 or grow up reading MS-DOS manuals to learn these commands. I will give you all the commands you need and you will still be pointing and clicking your way through the Windows file explorer a lot when going to your specific folder or directory (these two words mean the exact same thing in this context).
 
@@ -266,7 +266,7 @@ These three functions are required for even a simple Hello World program like bo
 - WriteFile
 - ExitProcess
 
-The documentation for these functions can be found on Microsoft's website but it is not very helpful because it is written for C and C++ programming.
+The documentation for these functions can be found on Microsoft's website but it is not very helpful for Assembly because it is written for C and C++ programming. But don't worry, I will teach you how to translate these C functions into something usable for Assembly programming. Therefore, I suggest you look at these links because they have been my primary sources.
 
 <https://learn.microsoft.com/en-us/windows/console/getstdhandle>
 
@@ -274,7 +274,20 @@ The documentation for these functions can be found on Microsoft's website but it
 
 <https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-exitprocess>
 
-Despite the fact that most of the web pages don't tell us what we need for assembly, some of it is helpful. For example the following table for the 3 standard handles on the GetStdHandle page is copied below.
+Despite the fact that most of the web pages don't tell us what we need for assembly, some of it is helpful. For example, the C function prototype the GetStdHandle is below.
+
+## GetStdHandle Syntax
+
+```
+HANDLE WINAPI GetStdHandle(
+  _In_ DWORD nStdHandle
+);
+```
+
+This tells us that the function has one parameter called "nStdHandle". The values we need for it are in the table below.
+
+
+For example the following table for the 3 standard handles on the GetStdHandle page is copied below.
 
 ## GetStdHandle function table
 
@@ -284,7 +297,9 @@ Despite the fact that most of the web pages don't tell us what we need for assem
 |-11|STD_OUTPUT_HANDLE|
 |-12|STD_ERROR_HANDLE|
 
-Because negative 11 is how the standard output handle is obtained, that is why the 32 bit putstring has these 3 lines
+These three "handles" are just the Windows version of what would have been called a "file descriptor" in Linux. They actual handle numbers returned from the GetStdHandle function may be different from the numbers passed as the nStdHandle. However, in all programs, the standard input, standard output, and standard error handles are supposed to exist.
+
+For right now, we need to only consider the standard output handle because we want to display something on the screen. Because negative 11 is how the standard output handle is obtained, that is why the 32 bit putstring has these 3 lines
 
 ```
 push -11            ;STD_OUTPUT_HANDLE = Negative Eleven
@@ -308,7 +323,9 @@ Windows is harder because it uses a hybrid approach of sometimes using registers
 
 But you are probably asking at this point: "What is a stack?", "What is a register?", and "What is a bit?".
 
-I will attempt to answer all these questions but it will take time. But before I end this chapter, I will give brief definitions.
+I will attempt to answer all these questions in the next chapter. For now, I still need to finish explaining the
+
+# Chapter 2: Assembly Terminology
 
 ## Register
 
