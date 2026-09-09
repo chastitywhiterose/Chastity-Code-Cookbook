@@ -14,9 +14,7 @@
    
 ; Now, the source of the functions begins, with comments included for parts that I felt needed explanation.
 
-write_count dq 0        ;variable to store how many bytes were written
-
-putstring:              ;print string pointed to by rax register
+putstring:         ;print string pointed to by rax register
 
 push rax
 push rbx
@@ -35,28 +33,24 @@ jmp putstring_strlen_start
 putstring_strlen_end:
 sub rbx,rax ;subtract start pointer from current pointer to get length of string
 
-sub rsp,40  ;align stack before Win API functions(required in windows 64-bit)
-
-mov rdx,rax ;pointer to message
-
-mov rcx, -11        ; STD_OUTPUT_HANDLE
-call [GetStdHandle] ; Get Standard Output Handle
-mov rcx,rax         ; copy handle to ecx
-
-mov r8,rbx          ;message length
-mov r9,write_count  ;address to store how many bytes are written
-
-mov qword [rsp + 32], 0 ; Parameter 5: Must be placed on the stack
+;Windows 64-bit WriteFile system call
+sub rsp,40           ;align stack for Win64 API calls
+mov qword [rsp+32],0 ;lpOverlapped = NULL
+mov r9,0             ;lpNumberOfBytesWritten = NULL
+mov r8,rbx           ;nNumberOfBytesToWrite = rbx
+mov rdx,rax          ;lpBuffer = address of string to write
+mov rcx, -11         ;STD_OUTPUT_HANDLE = Negative Eleven
+call [GetStdHandle]  ;Get Standard Handle for -11
+mov rcx,rax          ;hFile = rax (returned from GetStdHandle)
 call [WriteFile]
-
-add rsp,40  ;restore stack now that WinAPI calls are done
+add rsp,40           ;restore stack now that WinAPI calls are done
 
 pop rdx
 pop rcx
 pop rbx
 pop rax
 
-ret ;this is the end of the putstring function return to calling location
+ret
 
 ; This is the location in memory where digits are written to by the intstr function
 ; The string of bytes and settings such as the radix and width are global variables defined below.

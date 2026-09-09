@@ -2,8 +2,8 @@ format PE console
 
 
 include 'win32ax.inc'       ;include standard Windows 64-bit definitions and macros
-include 'chastelibw32.asm'  ;include standard functions by Chastity
-include 'chastdinw32.asm'   ;include standard input functions by Chastity
+include 'chastelib-w32.asm'  ;include standard functions by Chastity
+include 'chastdin-w32.asm'   ;include standard input functions by Chastity
 
 main:
 
