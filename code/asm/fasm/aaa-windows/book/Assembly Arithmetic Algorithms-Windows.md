@@ -98,6 +98,14 @@ fasm main.asm
 
 The file does not have to specifically be named "main.asm". It could just as well be "fartbutt.asm" or even "count-dracula.txt". You can choose whatever seems like a good name to you and adjust the commands accordingly.
 
+But in this example, a file named "main.exe" will be created and so you just type:
+
+```
+main
+```
+
+To run it like you would any other Windows program.
+
 To get started, I will provide the first example program that can be assembled and run under the Windows operating system. This was tested on my laptop with Windows 11 but should theoretically work on older versions as well as long as you followed my instructions so far.
 
 Behold,the "Hello World" source file for a Windows console program.
@@ -108,7 +116,7 @@ Behold,the "Hello World" source file for a Windows console program.
 format PE console
 entry main
 
-include 'win32ax.inc'       ;includes standard Windows 32-bit definitions and macros
+include 'win32a.inc' ;include Windows 32-bit macros
 
 main:
 
@@ -119,12 +127,9 @@ call putstring
 push 0             ;exit code for operating system
 call [ExitProcess] ;Exit the process with code 0
 
-;A string to test if output works
 main_string db 'Hello World',0x0D,0x0A,0
 
-write_count dd 0        ;variable to store how many bytes were written
-
-putstring:              ;print string pointed to by eax register
+putstring:         ;print string pointed to by eax register
 
 push eax
 push ebx
@@ -143,24 +148,25 @@ jmp putstring_strlen_start
 putstring_strlen_end:
 sub ebx,eax ;subtract start pointer from current pointer to get length of string
 
-;Write string using Win32 WriteFile system call.
-push 0              ;Optional Overlapped Structure
-push write_count    ;address to store how many bytes are written
-push ebx            ;Number of bytes to write
-push eax            ;address of string to print
-push -11            ;STD_OUTPUT_HANDLE = Negative Eleven
-call [GetStdHandle] ;use the above handle
-push eax            ;eax is return value of previous function
-call [WriteFile]    ;all the data is in place, do the write thing!
+;Windows 32-bit WriteFile system call
+
+push 0               ;lpOverlapped = NULL
+push 0               ;lpNumberOfBytesWritten = NULL
+push ebx             ;nNumberOfBytesToWrite = ebx
+push eax             ;lpBuffer = address of string to write
+push -11             ;STD_OUTPUT_HANDLE = Negative Eleven
+call [GetStdHandle]  ;Get Standard Handle for -11
+push eax             ;hFile = eax (returned from GetStdHandle)
+call [WriteFile]
+
 
 pop edx
 pop ecx
 pop ebx
 pop eax
 
-ret ;this is the end of the putstring function return to calling location
+ret
 
-;FASM builds the Import Address Table (IAT) directly in the source file
 section '.idata' import data readable writeable
 
 library kernel32, 'KERNEL32.DLL'
@@ -185,7 +191,7 @@ However, this is only the 32 bit version of the program. A 64 bit version looks 
 format PE64 console
 entry main
 
-include 'win64ax.inc'       ;includes standard Windows 64-bit definitions and macros
+include 'win64a.inc' ;include Windows 64-bit macros
 
 main:
 
@@ -196,12 +202,9 @@ sub rsp,40         ;align stack (required in windows 64-bit)
 mov rcx,0          ;exit code for operating system
 call [ExitProcess] ;Exit the process with code 0
 
-;A string to test if output works
 main_string db 'Hello World',0x0D,0x0A,0
 
-write_count dq 0        ;variable to store how many bytes were written
-
-putstring:              ;print string pointed to by rax register
+putstring:         ;print string pointed to by rax register
 
 push rax
 push rbx
@@ -220,30 +223,25 @@ jmp putstring_strlen_start
 putstring_strlen_end:
 sub rbx,rax ;subtract start pointer from current pointer to get length of string
 
-sub rsp,40  ;align stack before Win API functions(required in windows 64-bit)
-
-mov rdx,rax ;pointer to message
-
-mov rcx, -11        ; STD_OUTPUT_HANDLE
-call [GetStdHandle] ; Get Standard Output Handle
-mov rcx,rax         ; copy handle to ecx
-
-mov r8,rbx          ;message length
-mov r9,write_count  ;address to store how many bytes are written
-
-mov qword [rsp + 32], 0 ; Parameter 5: Must be placed on the stack
+;Windows 64-bit WriteFile system call
+sub rsp,40           ;align stack for Win64 API calls
+mov qword [rsp+32],0 ;lpOverlapped = NULL
+mov r9,0             ;lpNumberOfBytesWritten = NULL
+mov r8,rbx           ;nNumberOfBytesToWrite = rbx
+mov rdx,rax          ;lpBuffer = address of string to write
+mov rcx, -11         ;STD_OUTPUT_HANDLE = Negative Eleven
+call [GetStdHandle]  ;Get Standard Handle for -11
+mov rcx,rax          ;hFile = rax (returned from GetStdHandle)
 call [WriteFile]
-
-add rsp,40  ;restore stack now that WinAPI calls are done
+add rsp,40           ;restore stack now that WinAPI calls are done
 
 pop rdx
 pop rcx
 pop rbx
 pop rax
 
-ret ;this is the end of the putstring function return to calling location
+ret
 
-;FASM builds the Import Address Table (IAT) directly in the source file
 section '.idata' import data readable writeable
 
 library kernel32, 'KERNEL32.DLL'
@@ -254,7 +252,7 @@ import kernel32,\
  ExitProcess, 'ExitProcess'
 ```
 
-Because in both cases, the programs are identical, you might wonder which is better or the correct thing to use. Actually, they are exactly the same but using a different calling convention.
+Because in both cases, the programs are identical, you might wonder which is better or the correct thing to use. Actually, they are exactly the same but using a different calling convention and register size.
 
 You may also notice that at the bottom of the source files there is an "idata" section which includes data from the Windows kernel which is KERNEL32.DLL. Regardless of whether your code using 32 or 64 bit registers, the exact same functions from the kernel are being dynamically linked and loaded so that your program can do basic tasks.
 
@@ -323,7 +321,51 @@ Windows is harder because it uses a hybrid approach of sometimes using registers
 
 But you are probably asking at this point: "What is a stack?", "What is a register?", and "What is a bit?".
 
-I will attempt to answer all these questions in the next chapter. For now, I still need to finish explaining the
+I will attempt to answer all these questions in the next chapter. For now, I still need to finish explaining the WriteFile and ExitProcess calls.
+
+## WriteFile Syntax
+
+```
+BOOL WriteFile(
+  [in]                HANDLE       hFile,
+  [in]                LPCVOID      lpBuffer,
+  [in]                DWORD        nNumberOfBytesToWrite,
+  [out, optional]     LPDWORD      lpNumberOfBytesWritten,
+  [in, out, optional] LPOVERLAPPED lpOverlapped
+);
+```
+
+As you can see above, the WriteFile function has 5 parameters. 2 of these are optional and have been marked as NULL in my Hello World examples above. This leaves us with only 3 variables as our parameters, which are sometimes called arguments.
+
+## WriteFile parameters
+
+|Variable             |Meaning                   |
+|---------------------|--------------------------|
+|hfile                |destination file or device|
+|lpBuffer             |address of byte string    |
+|nNumberOfBytesToWrite|write this many bytes     |
+
+The WriteFile function looks complicated mostly because of the optional arguments used in it. Because the Windows API expects all these arguments to be present on the stack (32-bit mode) or a combination of stack and registers (64-bit mode), extra code is wasted every time we make a call to WriteFile.
+
+It is precisely for this reason that the Hello World examples for this chapter called the WriteFile function inside a function named "putstring". The idea behind this is to have to only call this function inside another function that automatically calculates how many bytes exist before the zero byte, then gets the standard output handle with GetStdHandle, and then writes exactly that many bytes from the address pointed to by the eax or rax register before the putstring function was called.
+
+## ExitProcess Syntax
+
+```
+VOID ExitProcess(
+  [in] UINT uExitCode
+);
+```
+
+The ExitProcess function is the easiest of all to use. It ends the program and therefore only needs to be called at the end. But there is a special trick it does. You pass the exit code to it that you want. This can literally be any number you like best, but the tradition is to pass 0 to say that there were zero problems in this program.
+
+In 32-bit mode you need to only push one 32-bit number onto the stack before you call it. In 64-bit mode, you load the rcx register with the number you prefer. The best part is that you can run the following command right after the program finishes to see the error code you used.
+
+```
+echo %errorlevel%
+```
+
+Those 3 Windows API calls are all you actually need to build most programs. There are more that will be covered later, but you will need to understand some terminology that I will cover in Chapter 2 before we can proceed to more advanced things like getting user input and printing numbers.
 
 # Chapter 2: Assembly Terminology
 
@@ -337,7 +379,7 @@ A bit is a BInary digiT. It is a number that can be 0 or 1. These are the only t
 
 ## Stack
 
-A stack can be many things. It can be a stack of plates, a stack of pancakes on top of plates that you are going to eat, or it can be a stack of numbers where we temporarily place numbers that are in registers and free them up to be used for other tasks. Assembly programming requires basic understanding of the stack, but Windows specifically requires using the stack in the way Microsoft wants you do. Admittedly this is less fun and restrictive but there are clever ways to break the convention.
+A stack can be many things. It can be a stack of plates, a stack of pancakes on top of plates that you are going to eat, or it can be a stack of numbers where we temporarily place numbers that are in registers and free them up to be used for other tasks. Assembly programming requires basic understanding of the stack, but Windows specifically requires using the stack in the way Microsoft wants you do. Admittedly this is less fun and more restrictive compared to DOS or Linux, but there are clever ways to break the convention.
 
 This is the point where most people will give up. There are so many terms to learn and it takes a lot of information to even get a small program working to display a message like "Hello World".
 
