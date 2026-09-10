@@ -373,13 +373,42 @@ Those 3 Windows API calls are all you actually need to build most programs. Ther
 
 A variable with a fixed name that is always available to use. These come in different sizes such as "EAX" for 32-bit and "RAX" for 64-bit.
 
+### The General Purpose Registers
+
+There are 8 general purpose registers that exist on 32-bit Intel machines. Their names are the same as those used in 16-bit Intel machines except with the letter 'E' prefixed. Their names are acronyms that mean the following.
+
+Register|Meaning             |
+|-------|--------------------|
+|EAX    |Accumulator Register|
+|EBX    |Base Register       |
+|ECX    |Count Register      |
+|EDX    |Data Register       |
+|ESI    |Source Index        |
+|EDI    |Destination index   |
+|EBP    |Base Pointer        |
+|ESP    |Stack Pointer       |
+
+In 64 bit mode, all of these are prefixed with an 'R' and are 64 bits in size. However, the 32 bit versions above still exist as the lower half of the 64 bit registers.
+
+But in 64-bit mode, there are also 8 more registers which are named R8 to R15. This gives you plenty more registers to work with which in my opinion is the primary advantage of 64-bit Assembly programming. More registers is generally good because you might be doing something complicated and use them to store variables instead of saving them to memory. Because registers are faster to access than RAM, the faster programs are those that use the most registers and the least RAM.
+
+With all that being said, I only use the new registers R8 and R9 in this book because they are the third and fourth arguments in the 64-bit calling convention of the Windows API. Most of the time I prefer to stick with the Accumulator Register, Base Register, Count Register, and Data Register. For this reason, there is a convention of using them in a specific way in the DOS, Linux, and Windows versions of Assembly Arithmetic Algorithms. Since this is the Windows book, you will see a lot of use of the RCX, RDX, R8, and R9 registers for the 64-bit sample programs.
+
 ## Bit
 
 A bit is a BInary digiT. It is a number that can be 0 or 1. These are the only two numbers a bit can be but by combining multiple bits as a group, any number can be represented. Just as the decimal systems humans use only uses digits 0,1,2,3,4,5,6,7,8,9 but can represent any possible number, binary can also represent any number once you learn how it works. Explaining the Binary Numeral System will be a central feature of this book because no programmer can be successful without it.
 
+The Binary Numeral System is essential because all computers define their data types in terms of how many bits they are. A 32 bit number can access up to 4294967296 bytes (4 Gigabytes) of memory at a time. A 64 bit number can access far more memory than you will probably ever see in a computer. 
+
+This math is based on powers of two. Two to the power of 64 is 18446744073709551616 because it is what happens if you keep multiplying two by itself 64 times. This number is so large that I highly doubt humanity will have need of machines processing larger than 64-bits at a time.
+
 ## Stack
 
 A stack can be many things. It can be a stack of plates, a stack of pancakes on top of plates that you are going to eat, or it can be a stack of numbers where we temporarily place numbers that are in registers and free them up to be used for other tasks. Assembly programming requires basic understanding of the stack, but Windows specifically requires using the stack in the way Microsoft wants you do. Admittedly this is less fun and more restrictive compared to DOS or Linux, but there are clever ways to break the convention.
+
+For example, the putstring function from chapter 1 is an example of a user written function that uses the Windows API so that I don't have to manually call a Windows API function every time I need to print a string.
+
+## It gets easier!
 
 This is the point where most people will give up. There are so many terms to learn and it takes a lot of information to even get a small program working to display a message like "Hello World".
 
@@ -387,5 +416,8 @@ But despite being difficult to get started, it gets easier as you proceed. It is
 
 A funny example I suppose, but programming really is like playing a game where you get to create your own rules. Perhaps Minecraft would be an even better example because you start with nothing and slowly create your own tools to progress faster.
 
+I can tell you one thing, when I started playing Minecraft, I knew nothing. Back in those early days, I had to look up the recipes in order to arrange my sticks and planks on a grid to make a sword, axe, pickaxe, or shovel. They didn't have the recipes built into the interface like they do now.
 
-To be continued
+Assembly programming is actually a lot like Minecraft or Terraria because you start the game with nothing and have to slowly build your tools to make something useful. I started Assembly in 2024 and have already built a series of tools I personally use on both DOS and Linux operating systems. Through the course of this book, I will be slowly showing you how I can port everything in the Linux version of Assembly Arithmetic Algorithms to Windows.
+
+# Chapter 3: To Be Written
