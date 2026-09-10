@@ -9,12 +9,13 @@ mov eax,1
 loop0:
 
 mov dword[radix],2      ;set radix to binary
-mov dword[int_width],32
+mov dword[int_width],32 ;width of 8 bits
 call putint
 call putspace
 mov dword[radix],10     ;set radix to decimal (what humans read)
-mov dword[int_width],10
+mov dword[int_width],10 ;width of 3 decimal digits
 call putint
+
 call putline            ;print newline before the next loop
 
 add eax,eax

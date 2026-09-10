@@ -9,12 +9,13 @@ mov rax,1
 loop0:
 
 mov qword[radix],2      ;set radix to binary
-mov qword[int_width],64
+mov qword[int_width],64 ;width of 8 bits
 call putint
 call putspace
 mov qword[radix],10     ;set radix to decimal (what humans read)
-mov qword[int_width],19
+mov qword[int_width],19 ;width of 3 decimal digits
 call putint
+
 call putline            ;print newline before the next loop
 
 add rax,rax
