@@ -8,7 +8,7 @@ This book is the Windows edition of Assembly Arithmetic Algorithms. The first bo
 
 I suspect most people fall into this category because Windows comes preinstalled on almost any PC you would buy in a store. Although I am old enough to have experienced DOS, and autistic enough use Linux for everything since my teenage days, I am aware that most people will never both trying other operating systems.
 
-Although I use Linux for most things, I had to buy a laptop with Windows on it to use specific software required by Full Sail University when I was an online student. Since I have it, I decided I might as well try out some assembly language on it and learn how it works so I can pass the knowledge on to other peeople who are not ready to leave Windows but ARE ready to try learning assembly language.
+Although I use Linux for most things, I had to buy a laptop with Windows on it to use specific software required by Full Sail University when I was an online student. Since I have it, I decided I might as well try out some assembly language on it and learn how it works so I can pass the knowledge on to other people who are not ready to leave Windows but ARE ready to try learning assembly language.
 
 At the time of this writing, most Windows systems use the x86-64 Intel architecture which can run 32-bit or 64-bit code. Because of this, I have decided to include code samples for both modes and explain the differences between them.
 

@@ -9,3 +9,11 @@ call [GetStdHandle]
 mov rcx,rax
 call [WriteFile]
 add rsp,40
+
+
+
+
+
+
+
+This is a cover I designed for the Windows Edition of Assembly Arithmetic Algorithms. I decided to go with a multicolored example for the source snippet but still a black background like the DOS book because Windows was originally just a program that ran on top of DOS.
