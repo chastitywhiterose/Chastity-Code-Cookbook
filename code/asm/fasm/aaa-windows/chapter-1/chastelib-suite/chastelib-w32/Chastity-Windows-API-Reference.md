@@ -8,7 +8,9 @@ Console API
 <https://learn.microsoft.com/en-us/windows/console/setconsolemode>  
 <https://learn.microsoft.com/en-us/windows/console/getstdhandle>  
 <https://learn.microsoft.com/en-us/windows/console/writeconsole>  
-<https://learn.microsoft.com/en-us/windows/console/readconsole>
+<https://learn.microsoft.com/en-us/windows/console/readconsole>  
+
+<https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-exitprocess>
 
 File API  
 <https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-writefile>  
@@ -18,6 +20,12 @@ File API
 <https://learn.microsoft.com/en-us/windows/win32/secauthz/generic-access-rights>  
 
 <https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-setfilepointer>  
+
+64 bit ex function for setting the file pointer
+
+<https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-setfilepointerex>  
+
+
 <https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle>  
 
 <https://learn.microsoft.com/en-us/windows/win32/api/errhandlingapi/nf-errhandlingapi-getlasterror>

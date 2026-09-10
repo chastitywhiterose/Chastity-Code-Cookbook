@@ -1,0 +1,186 @@
+format PE64 console
+entry main
+
+include 'win64a.inc'        ;includes standard Windows 64-bit definitions and macros
+;include 'chastelib-w64.asm' ;include standard functions by Chastity
+
+main:
+
+mov rax,1
+loop0:
+
+mov qword[radix],2        ;set radix to binary
+mov qword[int_width],64    ;width of 8 bits
+call putint
+call putspace
+
+mov qword[radix],10       ;set radix to decimal (what humans read)
+mov qword[int_width],19    ;width of 3 decimal digits
+call putint
+
+call putline              ;print newline before the next loop
+
+add rax,rax
+cmp rax,0;
+jnz loop0
+
+sub rsp,40         ;align stack (required in windows 64-bit)
+mov rcx,0          ;exit code for operating system
+call [ExitProcess] ;Exit the process with code 0
+
+putstring:         ;print string pointed to by rax register
+
+push rax
+push rbx
+push rcx
+push rdx
+
+mov rbx,rax             ;copy eax to ebx to be used as index to the string
+
+putstring_strlen_start: ;this loop finds the length of the string as part of the putstring function
+
+cmp [rbx],byte 0        ;compare byte at address ebx with 0
+jz putstring_strlen_end ;if comparison was zero, jump to loop end because we have found the length
+inc rbx
+jmp putstring_strlen_start
+
+putstring_strlen_end:
+sub rbx,rax ;subtract start pointer from current pointer to get length of string
+
+;Windows 64-bit WriteFile system call
+sub rsp,40           ;align stack for Win64 API calls
+mov qword [rsp+32],0 ;lpOverlapped = NULL
+mov r9,0             ;lpNumberOfBytesWritten = NULL
+mov r8,rbx           ;nNumberOfBytesToWrite = rbx
+mov rdx,rax          ;lpBuffer = address of string to write
+mov rcx, -11         ;STD_OUTPUT_HANDLE = Negative Eleven
+call [GetStdHandle]  ;Get Standard Handle for -11
+mov rcx,rax          ;hFile = rax (returned from GetStdHandle)
+call [WriteFile]
+add rsp,40           ;restore stack now that WinAPI calls are done
+
+pop rdx
+pop rcx
+pop rbx
+pop rax
+
+ret
+
+; This is the location in memory where digits are written to by the intstr function
+; The string of bytes and settings such as the radix and width are global variables defined below.
+
+int_string db 64 dup '?' ;reserve bytes for characters string for 64-bit binary integer
+
+int_string_end db 0 ;zero byte terminator for the integer string
+
+radix dq 2     ;radix or base for integer output. 2=binary, 8=octal, 10=decimal, 16=hexadecimal
+int_width dq 8 ;default width of integers. Extra zeros prefixed if more than 1
+
+;this function creates a string of the integer in rax
+;it uses the above radix variable to determine base from 2 to 36
+;it then loads rax with the address of the string
+;this means that it can be used with the putstring function
+
+intstr:
+
+mov rbx,int_string_end-1 ;find address of lowest digit
+mov rcx,1
+
+digits_start:
+
+mov rdx,0;
+div qword [radix]
+cmp rdx,10
+jb decimal_digit
+jnb hexadecimal_digit
+
+decimal_digit: ;we go here if it is only a digit 0 to 9
+add rdx,'0'
+jmp save_digit
+
+hexadecimal_digit:
+sub rdx,10
+add rdx,'A'
+
+save_digit:
+
+mov [rbx],dl
+cmp rax,0
+jz intstr_end
+dec rbx
+inc rcx
+jmp digits_start
+
+intstr_end:
+
+prefix_zeros:
+cmp rcx,[int_width]
+jnb end_zeros
+dec rbx
+mov [rbx],byte '0'
+inc rcx
+jmp prefix_zeros
+end_zeros:
+
+mov rax,rbx ;point eax register to this string for putstring
+
+ret
+
+;function to print string form of whatever integer is in rax
+;The radix determines which number base the string form takes.
+;Anything from 2 to 36 is a valid radix
+;in practice though, only bases 2,8,10,and 16 will make sense to other programmers
+;this function does not process anything by itself but calls the combination of my other
+;functions in the order I intended them to be used.
+
+putint: 
+
+push rax
+push rbx
+push rcx
+push rdx
+
+call intstr
+call putstring
+
+pop rdx
+pop rcx
+pop rbx
+pop rax
+
+ret
+
+;The utility functions below simply print a space or a newline.
+;these help me save code when printing lots of strings and integers.
+
+space db ' ',0 ;a string containing only a space
+
+putspace:
+push rax
+mov rax,space
+call putstring
+pop rax
+ret
+
+line db 0x0D,0x0A,0 ;a string containing only a newline
+
+;the next function which pushes rax to the stack
+;moves the address of the line string and prints it with putstring
+;then it pops the original value of rax back from the stack before the function returns
+;this allows me to print a newline anywhere in the code without a single register changing
+
+putline:
+push rax
+mov rax,line
+call putstring
+pop rax
+ret
+
+section '.idata' import data readable writeable
+
+library kernel32, 'KERNEL32.DLL'
+
+import kernel32,\
+ GetStdHandle, 'GetStdHandle',\
+ WriteFile, 'WriteFile',\
+ ExitProcess, 'ExitProcess'

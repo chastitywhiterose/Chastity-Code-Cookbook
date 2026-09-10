@@ -1,7 +1,7 @@
 format PE64 console
 entry main
 
-include 'win64ax.inc'       ;includes standard Windows 64-bit definitions and macros
+include 'win64a.inc'        ;includes standard Windows 64-bit definitions and macros
 include 'chastelib-w64.asm' ;include standard functions by Chastity
 
 main:
