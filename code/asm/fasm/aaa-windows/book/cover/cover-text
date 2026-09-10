@@ -1,0 +1,11 @@
+;Windows 64-bit WriteFile system call
+sub rsp,40
+mov qword [rsp+32],0
+mov r9,0
+mov r8,rbx
+mov rdx,rax
+mov rcx, -11
+call [GetStdHandle]
+mov rcx,rax
+call [WriteFile]
+add rsp,40
