@@ -1,7 +1,0 @@
-chastehex:
-hexdump a file:
-	chex file
-read a byte:
-	chex file address
-write bytes:
-	chex file address byte1 byte2 etc.
