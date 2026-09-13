@@ -1,7 +1,7 @@
 format PE console
 entry main
 
-include 'win32ax.inc'       ;includes standard Windows 32-bit definitions and macros
+include 'win32a.inc'        ;includes standard Windows 32-bit definitions and macros
 include 'chastelib-w32.asm' ;include standard functions by Chastity
 
 main:
