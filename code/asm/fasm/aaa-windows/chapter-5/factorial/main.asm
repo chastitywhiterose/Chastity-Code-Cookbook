@@ -42,29 +42,6 @@ cmp rbx,0
 jnz stage1
 call putline
 
-;stage 1 debug info: display the b array also
-mov rax,0
-mov rbx,[array_b_length]
-stage1_debug_b:
-dec rbx
-mov al,[array_b+rbx]
-;call putint
-cmp rbx,0
-jnz stage1_debug_b
-;call putline
-
-;stage 1 debug info: display the c array also
-mov rax,0
-mov rbx,[array_c_length]
-stage1_debug_c:
-dec rbx
-mov al,[array_c+rbx]
-;call putint
-cmp rbx,0
-jnz stage1_debug_c
-;call putline
-
-
 ;stage 2: multiply the a and b arrays together and store the result in the c array
 
 mov rbx,0
@@ -75,7 +52,6 @@ stage2_multiply:
 
 ;we need to get the result of multiplication of the current digit
 ;indexed in array_a by rax and array_b by rbx
-;because of Intel rules about multiplication
 ;the only safe way is to back up all the registers
 ;do a multiply operation, and then restore them
 
@@ -95,7 +71,7 @@ mov rax,0
 mov al,[array_a+rcx]
 mov rbx,0
 mov bl,[array_b+rdx]
-mul bl
+mul bl ;multiply al by bl
 
 ;al now has the result of multiplying the
 ;two digits from the arrays
@@ -105,14 +81,14 @@ add rcx,rdx ;rcx is now sum of original rax and rbx
 stage2_add_product:
 add [array_c+rcx],al
 mov al,0 ;set al to zero before our manual divide by ten
-divide_with_subtraction:
+c_divide_with_subtraction:
 cmp [array_c+rcx],10
 jb digit_less_than_ten ;if less than ten, end the divide
 
 ;otherwise, divide by repeated subtraction!
 sub [array_c+rcx],10 ;subtract ten from this element
 inc al ;add one to count of subtractions
-jmp divide_with_subtraction
+jmp c_divide_with_subtraction
 
 digit_less_than_ten:
 
@@ -153,6 +129,7 @@ jb b_digit_less_than_ten ;if less than ten, end the divide
 ;otherwise, divide by repeated subtraction!
 sub [array_b+rbx],10 ;subtract ten from this element
 inc al ;add one to count of subtractions
+jmp b_divide_with_subtraction
 
 b_digit_less_than_ten:
 
@@ -166,7 +143,6 @@ jb b_digits_are_enough
 mov [array_b_length],rbx ;expand digits
 
 b_digits_are_enough:
-
 
 ;stage 4: replace array_a with array_c
 ;and turn array_c to all zeros to be used for next product
@@ -187,7 +163,7 @@ cmp rbx,maxlength
 jnz stage4
 
 inc rdx
-cmp rdx,32
+cmp rdx,64
 jna main_loop
 
 sub rsp,40

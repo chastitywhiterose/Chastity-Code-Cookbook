@@ -105,14 +105,14 @@ add rcx,rdx ;rcx is now sum of original rax and rbx
 stage2_add_product:
 add [array_c+rcx],al
 mov al,0 ;set al to zero before our manual divide by ten
-divide_with_subtraction:
+c_divide_with_subtraction:
 cmp [array_c+rcx],10
 jb digit_less_than_ten ;if less than ten, end the divide
 
 ;otherwise, divide by repeated subtraction!
 sub [array_c+rcx],10 ;subtract ten from this element
 inc al ;add one to count of subtractions
-jmp divide_with_subtraction
+jmp c_divide_with_subtraction
 
 digit_less_than_ten:
 
@@ -153,6 +153,7 @@ jb b_digit_less_than_ten ;if less than ten, end the divide
 ;otherwise, divide by repeated subtraction!
 sub [array_b+rbx],10 ;subtract ten from this element
 inc al ;add one to count of subtractions
+jmp b_divide_with_subtraction
 
 b_digit_less_than_ten:
 
