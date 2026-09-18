@@ -66,24 +66,34 @@ mov ecx,eax
 mov edx,ebx
 ;both eax and ebx are zeroed to avoid conflicts
 ;only the lowest 8 bits will be loaded from the arrays
-;then we will do a multiply instruction
 mov eax,0
 mov al,[array_a+ecx]
 mov ebx,0
 mov bl,[array_b+edx]
-add ecx,edx ;add edx to ecx before edx is overwritten with mul
-mul ebx ;multiply eax by ebx
+mul bl ;multiply al by bl
 
+;al now has the result of multiplying the
+;two digits from the arrays
+;next we begin another sub loop where we add this to the c array
+
+add ecx,edx ;ecx is now sum of original eax and ebx
 stage2_add_product:
-add al,[array_c+ecx] ;add the byte at this index to al
-mov ebx,[radix]      ;set the bl register to the radix
-mov edx,0            ;clear edx before division
-div ebx              ;divide eax by ebx
-mov [array_c+ecx],dl ;move the remainder back to this index
+add [array_c+ecx],al
+mov al,0 ;set al to zero before our manual divide by ten
+c_divide_with_subtraction:
+cmp [array_c+ecx],10
+jb digit_less_than_ten ;if less than ten, end the divide
+
+;otherwise, divide by repeated subtraction!
+sub [array_c+ecx],10 ;subtract ten from this element
+inc al ;add one to count of subtractions
+jmp c_divide_with_subtraction
+
+digit_less_than_ten:
 
 inc ecx
-cmp al,0               ;is the carry or quotient zero?
-jnz stage2_add_product ;if not zero, go to next digit and repeat
+cmp al,0 ;is there still a carry left over?
+jnz stage2_add_product ;if so, go to next digit and repeat
 
 cmp ecx,[array_c_length] ;is the index higher than current length of c array?
 jb c_digits_are_enough
@@ -152,7 +162,7 @@ cmp ebx,maxlength
 jnz stage4
 
 inc edx
-cmp edx,16
+cmp edx,64
 jna main_loop
 
 mov eax,1
