@@ -90,7 +90,7 @@ jb c_digits_are_enough
 mov [array_c_length],ecx ;expand digits
 c_digits_are_enough:
 
-;pop path the original values of the registers
+;pop back the original values of the registers
 pop edx
 pop ecx
 pop ebx
@@ -106,24 +106,17 @@ jnz stage2
 ;end of array multiplication stage
 
 ;stage 3: add 1 to the b array
-mov al,1  ;set carry to 1
+push edx
+mov eax,1  ;set carry to 1
 mov ebx,0 ;start at lowest element of b
 stage3_add_one_to_b:
-add [array_b+ebx],al
-mov al,0 ;set al to zero before our manual divide by ten
-b_divide_with_subtraction:
-cmp [array_b+ebx],10
-jb b_digit_less_than_ten ;if less than ten, end the divide
-
-;otherwise, divide by repeated subtraction!
-sub [array_b+ebx],10 ;subtract ten from this element
-inc al ;add one to count of subtractions
-jmp b_divide_with_subtraction
-
-b_digit_less_than_ten:
+add al,[array_b+ebx]
+mov edx,0
+div dword [radix]
+mov [array_b+ebx],dl ;move the remainder back to this index
 
 inc ebx
-cmp al,0 ;is there still a carry left over?
+cmp al,0                ;is the carry or quotient zero?
 jnz stage3_add_one_to_b ;if so, go to next digit and repeat
 
 cmp ebx,[array_b_length] ;is the index higher than current length of c array?
@@ -132,6 +125,7 @@ jb b_digits_are_enough
 mov [array_b_length],ebx ;expand digits
 
 b_digits_are_enough:
+pop edx
 
 ;stage 4: replace array_a with array_c
 ;and turn array_c to all zeros to be used for next product
@@ -152,8 +146,8 @@ cmp ebx,maxlength
 jnz stage4
 
 inc edx
-cmp edx,16
-jna main_loop
+cmp edx,64     ;maximum factorial
+jnz main_loop
 
 mov eax,1
 mov ebx,0
