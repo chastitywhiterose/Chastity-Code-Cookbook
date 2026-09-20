@@ -55,11 +55,14 @@ string_sub: .asciz "sub"
 string_mul: .asciz "mul"
 string_div: .asciz "div"
 string_rem: .asciz "rem"
+string_setradix: .asciz "setradix"
 
 string_help: .asciz "help"
 string_exit: .asciz "exit"
 string_putstack: .asciz "?"
 string_clear: .asciz "clear"
+
+string_prompt: .asciz "->"
 
 string_err: .asciz "Error: invalid number or command: "
 string_err1: .asciz "Error: need one number on stack for command: "
@@ -92,12 +95,26 @@ la s11, chastack #s11 will be used as the virtual stack pointer for this program
 main_loop:
 
 jal getstr  # read the string from standard input
-jal putline # print extra line for readability
 
-jal putstr # echo it to standard output
-jal putline
+la t1, last_char #load address of last_char
+lb t0, 0(t1)     #get the last character
 
-#s0 already contains string that was input and printed
+#show the arrow indicating we wait for the user to enter something
+#but only show it when the last character is a newline
+#otherwise it will print too many if multiple commands were entered on the same line
+li t1, 0xA
+bne t0, t1, skip_prompt
+mv s1, s0
+la s0, string_prompt
+jal putstr
+mv s0, s1
+skip_prompt:
+
+#jal putline # print extra line for readability
+#jal putstr # echo it to standard output
+#jal putline
+
+#s0 already contains string that was input
 #s1 will be loaded with address of exit string
 la s1, string_exit
 jal strcmp
@@ -137,6 +154,11 @@ beq t0, zero, command_div
 la s1, string_rem
 jal strcmp
 beq t0, zero, command_rem
+
+la s1, string_setradix
+jal strcmp
+beq t0, zero, command_setradix
+
 
 #if the last string entered was not exit or a math command then
 #The default command is to turn the argument into a number and push to stack
@@ -273,6 +295,31 @@ sw t0, 0(s11)     #save the word at this chastack address
 j memory_check    #check stack for errors after this command
 
 
+
+#pop top of stack and set the current radix to it
+#it has error checking and leaves the radix as is
+#unless at least one number is on the stack
+command_setradix:
+
+
+la s10, chastack     #load s10 with chastack address for branch comparison
+ble s11, s10, change_radix_no # if s11 is less than or equal to chastack address, branch to radix error
+change_radix_yes:
+lw t0, 0(s11)        #load t0 register with the new radix
+la t1, radix         #load t1 register with the address the radix will go to
+sb t0, 0(t1)         #save t0 register (byte) to address t1
+sw zero, 0(s11)      #erase the old top of stack by storing zero
+addi s11, s11, -4
+j main_loop          #and continue main_loop as normal
+change_radix_no:
+la s0,string_err1    #get error message for less than 1 numbers on stack
+jal putstr           #print error message
+mv s0, s1            #get name of the command used
+jal putstr           #print which command failed
+jal putline
+
+addi s11, s11, 4     #increment the pointer to what it was before the failed command
+j main_loop          #now go back to main loop after error was printed
 
 #################################################################################
 # The following functions are independent of a specific RISC-V Operating System #
