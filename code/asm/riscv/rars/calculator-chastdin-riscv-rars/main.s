@@ -65,7 +65,7 @@ string_err: .asciz "Error: invalid number or command: "
 string_err1: .asciz "Error: need one number on stack for command: "
 string_err2: .asciz "Error: need two numbers on stack for command: "
 
-
+.align 2  # Aligns the next item to a 4-byte (2^2) word boundary
 chastack: .space 0x400 #reserve space for RPN calculator stack
 
 .text
@@ -74,7 +74,7 @@ la s0, string0
 jal putstr
 
 # change radix for this program
-li t0, 16    #load t0 register with the new radix
+li t0, 10    #load t0 register with the new radix
 la t1, radix #load t1 register with the address the radix will go to
 sb t0, 0(t1) #save t0 register (byte) to address t1
 
@@ -92,9 +92,29 @@ jal putline
 #s1 will be loaded with address of exit string
 la s1, string_exit
 jal strcmp
-
 # end program if the string entered is equal to string_exit
 beq t0, zero, exit
+
+#if the last string entered was not exit or a math command then
+#The default command is to turn the argument into a number and push to stack
+command_num:
+
+mv s1, s0              #back up this string address to s1 register
+jal strint             #try to get a number from the string pointed to by s0 register
+beq a0, zero, num_push #branch to number push if zero errors in integer string
+
+la s0, string_err    #load error message
+jal putstr           #print error message
+mv s0, s1            #load original command string
+jal putstr           #print which command failed
+jal putline
+j num_push_end       #skip the push because this can't be used
+
+num_push:            #push the number to the fake stack
+addi s11, s11, 4     #increment the pointer by the size of the native int for this mode
+sw s0, 0(s11)        #store the value we converted from the string with strint to this stack space
+num_push_end:
+j main_loop          #once value is pushed, continue the program
 
 #method 0: loading the length of string just entered from (count)
 #la t1, count       #load address of count into t1
@@ -244,6 +264,8 @@ ret
 
 strint:
 
+li a0, 0         #load zero into register for error counting
+
 la t1, radix     #load address of radix into t1
 lb t2, 0(t1)     #load value of radix into t2
 
@@ -300,6 +322,8 @@ not_lower:
 
 # if we have reached this point, result invalid and end function
 # this is only reached if the byte was not a valid digit or alphabet character
+addi a0, a0, 1 #add 1 to the a0 register indicating an error occurred
+
 j strint_end
 
 process_char:
