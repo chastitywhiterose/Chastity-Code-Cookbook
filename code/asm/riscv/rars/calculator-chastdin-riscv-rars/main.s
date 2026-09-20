@@ -50,7 +50,23 @@ last_char: .byte 0
 string0: .ascii "chastelib test suite for RISC-V Assembly\n"
 string1: .asciz "stdin (STanDard INput) extension\n"
 
+string_add: .asciz "add"
+string_sub: .asciz "sub"
+string_mul: .asciz "mul"
+string_div: .asciz "div"
+string_rem: .asciz "rem"
+
+string_help: .asciz "help"
 string_exit: .asciz "exit"
+string_putstack: .asciz "?"
+string_clear: .asciz "clear"
+
+string_err: .asciz "Error: invalid number or command: "
+string_err1: .asciz "Error: need one number on stack for command: "
+string_err2: .asciz "Error: need two numbers on stack for command: "
+
+
+chastack: .space 0x400 #reserve space for RPN calculator stack
 
 .text
 
@@ -61,6 +77,8 @@ jal putstr
 li t0, 16    #load t0 register with the new radix
 la t1, radix #load t1 register with the address the radix will go to
 sb t0, 0(t1) #save t0 register (byte) to address t1
+
+la s11, chastack #s11 will be used as the virtual stack pointer for this program
 
 main_loop:
 
@@ -95,6 +113,36 @@ exit:
 li a0, 0  #status
 li a7, 93 #exit
 ecall     #environment call
+
+#################################################################################
+# The following functions are used in the calculator program                    #
+#                                                                               #
+#                                                                               #
+#################################################################################
+
+#check if the stack has enough space for the last command
+#this will print an error if less than two numbers were on the stack
+#when using one of the math commands above
+memory_check:
+
+la s10, chastack     #load s10 with chastack address for branch comparison
+ble s11, s10, print_stack_error # if s11 is less than or equal to chastack address, branch to print error
+sw zero, 4(sp)       #if no error, erase the old top of stack by storing zero
+j main_loop          #and continue main_loop as normal
+print_stack_error:
+la s0,string_err2    #get error message for less than 2 numbers on stack
+jal putstr           #print error message
+mv s0, s1            #get name of the command used
+jal putstr           #print which command failed
+jal putline
+
+addi s11, s11, 4     #increment the pointer to what it was before the failed command
+j main_loop          #now go back to main loop after error was printed
+
+
+
+
+
 
 #################################################################################
 # The following functions are independent of a specific RISC-V Operating System #
