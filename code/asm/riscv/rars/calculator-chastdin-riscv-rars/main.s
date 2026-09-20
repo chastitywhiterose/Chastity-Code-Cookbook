@@ -47,8 +47,8 @@ last_char: .byte 0
 # These variables are for outputting specific messages
 # or to simulate user input as integers in the strint function
 
-string0: .ascii "chastelib test suite for RISC-V Assembly\n"
-string1: .asciz "stdin (STanDard INput) extension\n"
+string0: .ascii "calculator for RISC-V Assembly\n"
+string1: .asciz "chastdin (Chastity's STanDard INput) extension\n"
 
 string_add: .asciz "add"
 string_sub: .asciz "sub"
@@ -92,9 +92,15 @@ sb t0, 0(t1) #save t0 register (byte) to address t1
 
 la s11, chastack #s11 will be used as the virtual stack pointer for this program
 
-main_loop:
+#print the help message at the beginning of the program
+la s0, chastdin_help
+jal putstr
 
-jal getstr  # read the string from standard input
+#print the initial arrow prompt
+la s0, string_prompt
+jal putstr
+
+main_loop:
 
 la t1, last_char #load address of last_char
 lb t0, 0(t1)     #get the last character
@@ -104,11 +110,16 @@ lb t0, 0(t1)     #get the last character
 #otherwise it will print too many if multiple commands were entered on the same line
 li t1, 0xA
 bne t0, t1, skip_prompt
-mv s1, s0
 la s0, string_prompt
 jal putstr
-mv s0, s1
 skip_prompt:
+
+jal getstr  # read the string from standard input
+
+#load the length of string just entered from (count)
+la t1, count            #load address of count into t1
+lw t0, 0(t1)            #load number of chars read at (count) address
+beq t0, zero, main_loop #restart main_loop on empty string
 
 #jal putline # print extra line for readability
 #jal putstr # echo it to standard output
