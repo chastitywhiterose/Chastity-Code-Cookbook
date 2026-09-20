@@ -65,6 +65,15 @@ string_err: .asciz "Error: invalid number or command: "
 string_err1: .asciz "Error: need one number on stack for command: "
 string_err2: .asciz "Error: need two numbers on stack for command: "
 
+chastdin_help: .ascii "chastdin is a stack based interactive calculator\n"
+              .ascii "that reads stdin for numbers and commands.\n"
+              .ascii "Numbers are pushed on the stack for all math.\n"
+              .ascii "Each line can contain multiple numbers or commands.\n"
+              .ascii "Arithmetic commands are add,sub,mul,div,rem\n"
+              .ascii "The exit command ends the program\n"
+              .ascii "The ? command prints the entire stack\n"
+              .asciz "The setradix command changes the radix for input and output\n"
+
 .align 2  # Aligns the next item to a 4-byte (2^2) word boundary
 chastack: .space 0x400 #reserve space for RPN calculator stack
 
@@ -94,6 +103,16 @@ la s1, string_exit
 jal strcmp
 # end program if the string entered is equal to string_exit
 beq t0, zero, exit
+
+la s1, string_putstack
+jal strcmp
+# end program if the string entered is equal to string_putstack
+beq t0, zero, command_putstack
+
+la s1, string_help
+jal strcmp
+# end program if the string entered is equal to string_putstack
+beq t0, zero, command_help
 
 #if the last string entered was not exit or a math command then
 #The default command is to turn the argument into a number and push to stack
@@ -173,6 +192,12 @@ jal putint
 jal putline
 j command_putstack_loop
 command_putstack_end:
+j main_loop
+
+
+command_help:
+la s0, chastdin_help
+jal putstr
 j main_loop
 
 
