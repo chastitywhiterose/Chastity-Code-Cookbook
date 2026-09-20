@@ -48,7 +48,7 @@ last_char: .byte 0
 # or to simulate user input as integers in the strint function
 
 string0: .ascii "calculator for RISC-V Assembly\n"
-string1: .asciz "chastdin (Chastity's STanDard INput) extension\n"
+string1: .asciz "chastdin (Chastity's STanDard INput) extension\n\n"
 
 string_add: .asciz "add"
 string_sub: .asciz "sub"
@@ -71,7 +71,7 @@ string_err2: .asciz "Error: need two numbers on stack for command: "
 chastdin_help: .ascii "chastdin is a stack based interactive calculator\n"
               .ascii "that reads stdin for numbers and commands.\n"
               .ascii "Numbers are pushed on the stack for all math.\n"
-              .ascii "Each line can contain multiple numbers or commands.\n"
+              .ascii "Each line can contain multiple numbers or commands.\n\n"
               .ascii "Arithmetic commands are add,sub,mul,div,rem\n"
               .ascii "The exit command ends the program\n"
               .ascii "The ? command prints the entire stack\n"
@@ -206,21 +206,25 @@ ecall     #environment call
 #check if the stack has enough space for the last command
 #this will print an error if less than two numbers were on the stack
 #when using one of the math commands above
+
 memory_check:
 
-la s10, chastack     #load s10 with chastack address for branch comparison
-ble s11, s10, print_stack_error # if s11 is less than or equal to chastack address, branch to print error
-sw zero, 4(sp)       #if no error, erase the old top of stack by storing zero
-j main_loop          #and continue main_loop as normal
-print_stack_error:
-la s0,string_err2    #get error message for less than 2 numbers on stack
+la s10, chastack        #load s10 with chastack address for branch comparison
+blt s10, s11, memory_ok # if s10 is less than s11, no errors
+
+print_stack_error:   #otherwise we print error message
+la s0, string_err2   #get error message for less than 2 numbers on stack
 jal putstr           #print error message
 mv s0, s1            #get name of the command used
 jal putstr           #print which command failed
 jal putline
-
 addi s11, s11, 4     #increment the pointer to what it was before the failed command
 j main_loop          #now go back to main loop after error was printed
+
+memory_ok:
+sw zero, 4(sp)       #if no error, erase the old top of stack by storing zero
+j main_loop          #and continue main_loop as normal
+
 
 command_putstack: #print all numbers on the stack
 la s9, chastack #load s9 with address of chastack
