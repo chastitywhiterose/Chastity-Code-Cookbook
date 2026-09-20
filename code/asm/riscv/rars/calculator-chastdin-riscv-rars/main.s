@@ -365,12 +365,11 @@ addi sp, sp, 8
 
 ret
 
-# RISC-V does not allow constants for branches
-# Because of this fact, the RISC-V version of strint
-# requires a lot more code than the MIPS version
-# Whatever value I wanted to compare in the branch statement
-# was placed in the t5 register on the line before the conditional branch
-# Even though it is completely stupid, it has proven to work
+# strint takes the string at address pointed to by s0 register
+# and then loads the s0 register with an integer equivalent value
+# the a0 register is returned with the number of errors that happened
+# programs can use this to find if a user entered a valid number
+# number is intepreted according to the current radix
 
 strint:
 

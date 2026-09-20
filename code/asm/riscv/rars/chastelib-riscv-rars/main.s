@@ -213,14 +213,15 @@ addi sp, sp, 8
 
 ret
 
-# RISC-V does not allow constants for branches
-# Because of this fact, the RISC-V version of strint
-# requires a lot more code than the MIPS version
-# Whatever value I wanted to compare in the branch statement
-# was placed in the t5 register on the line before the conditional branch
-# Even though it is completely stupid, it has proven to work
+# strint takes the string at address pointed to by s0 register
+# and then loads the s0 register with an integer equivalent value
+# the a0 register is returned with the number of errors that happened
+# programs can use this to find if a user entered a valid number
+# number is intepreted according to the current radix
 
 strint:
+
+li a0, 0         #load zero into register for error counting
 
 la t1, radix     #load address of radix into t1
 lb t2, 0(t1)     #load value of radix into t2
@@ -278,19 +279,21 @@ not_lower:
 
 # if we have reached this point, result invalid and end function
 # this is only reached if the byte was not a valid digit or alphabet character
-j strint_end
+j strint_end_error
 
 process_char:
 
-blt t2, t0 strint_end #;if this value is above or equal to radix, it is too high despite being a valid digit/alpha
+blt t2, t0 strint_end_error #if this value is above or equal to radix, it is too high despite being a valid digit/alpha
 
 mul s0, s0, t2 # multiply s0 by the radix
 add s0, s0, t0 # add the correct value of this digit
 
 j read_strint # jump back and continue the loop if nothing has exited it
 
-strint_end:
+strint_end_error:  #we jump here if there was an error with one of the chars
+addi a0, a0, 1 #add 1 to the a0 register indicating an error occurred
 
+strint_end: #we jump here when no errors happened
 ret
 
 ###############################################################################
