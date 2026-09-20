@@ -109,6 +109,11 @@ jal strcmp
 # end program if the string entered is equal to string_putstack
 beq t0, zero, command_putstack
 
+la s1, string_clear
+jal strcmp
+# end program if the string entered is equal to string_putstack
+beq t0, zero, command_clear
+
 la s1, string_help
 jal strcmp
 # end program if the string entered is equal to string_putstack
@@ -155,7 +160,7 @@ ecall     #environment call
 
 #################################################################################
 # The following functions are used in the calculator program                    #
-#                                                                               #
+# The all jump back to the main_loop after they are done                        #
 #                                                                               #
 #################################################################################
 
@@ -183,7 +188,7 @@ la s9, chastack #load s9 with address of chastack
 mv s10, s11     #copy value of s11 to s10
 command_putstack_loop:
 
-#is ebp equal to the address of stack start?
+#is s10 equal to the address of stack start?
 #if so, end the putstack loop
 beq s9, s10 command_putstack_end
 lw s0, 0(s10) #load the word at s10 into s0 for printing integer 
@@ -192,6 +197,22 @@ jal putint
 jal putline
 j command_putstack_loop
 command_putstack_end:
+j main_loop
+
+
+
+
+command_clear: #erase all numbers on the stack
+la s9, chastack #load s9 with address of chastack
+command_clear_loop:
+
+#is s11 equal to the address of stack start?
+#if so, end the clear loop
+beq s9, s11 command_clear_end
+sw zero, 0(s11) #store zero into the word at 0(s11) to erase it
+addi s11, s11, -4 #subtract the word size from this temp stack index
+j command_clear_loop
+command_clear_end:
 j main_loop
 
 
