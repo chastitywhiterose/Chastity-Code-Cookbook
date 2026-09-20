@@ -106,18 +106,25 @@ beq t0, zero, exit
 
 la s1, string_putstack
 jal strcmp
-# end program if the string entered is equal to string_putstack
 beq t0, zero, command_putstack
 
 la s1, string_clear
 jal strcmp
-# end program if the string entered is equal to string_putstack
 beq t0, zero, command_clear
 
 la s1, string_help
 jal strcmp
-# end program if the string entered is equal to string_putstack
 beq t0, zero, command_help
+
+#next we begin checking for actual math commands of arithmetic
+
+la s1, string_add
+jal strcmp
+beq t0, zero, command_add
+
+la s1, string_sub
+jal strcmp
+beq t0, zero, command_sub
 
 #if the last string entered was not exit or a math command then
 #The default command is to turn the argument into a number and push to stack
@@ -139,19 +146,6 @@ addi s11, s11, 4     #increment the pointer by the size of the native int for th
 sw s0, 0(s11)        #store the value we converted from the string with strint to this stack space
 num_push_end:
 j main_loop          #once value is pushed, continue the program
-
-#method 0: loading the length of string just entered from (count)
-#la t1, count       #load address of count into t1
-#lw s0, 0(t1)       #load number of chars read at (count) address
-
-#method 1: calculate the length with strlen function
-jal strlen
-
-# regardless of method used, display the length of last string
-jal putint
-jal putline
-
-j main_loop # keep restarting until exit string is entered
 
 exit:
 li a0, 0  #status
@@ -220,6 +214,24 @@ command_help:
 la s0, chastdin_help
 jal putstr
 j main_loop
+
+#add number on top of stack to the one below it
+command_add:
+lw t1, 0(s11)     #load the word at this chastack address
+addi s11, s11, -4 #subtract the word size from s11
+lw t0, 0(s11)     #load the word at this chastack address
+add t0, t0, t1    #t0 = t0 + t1
+sw t0, 0(s11)     #save the word at this chastack address
+j memory_check    #check stack for errors after this command
+
+#add number on top of stack to the one below it
+command_sub:
+lw t1, 0(s11)     #load the word at this chastack address
+addi s11, s11, -4 #subtract the word size from s11
+lw t0, 0(s11)     #load the word at this chastack address
+sub t0, t0, t1    #t0 = t0 - t1
+sw t0, 0(s11)     #save the word at this chastack address
+j memory_check    #check stack for errors after this command
 
 
 
