@@ -126,6 +126,18 @@ la s1, string_sub
 jal strcmp
 beq t0, zero, command_sub
 
+la s1, string_mul
+jal strcmp
+beq t0, zero, command_mul
+
+la s1, string_div
+jal strcmp
+beq t0, zero, command_div
+
+la s1, string_rem
+jal strcmp
+beq t0, zero, command_rem
+
 #if the last string entered was not exit or a math command then
 #The default command is to turn the argument into a number and push to stack
 command_num:
@@ -230,6 +242,33 @@ lw t1, 0(s11)     #load the word at this chastack address
 addi s11, s11, -4 #subtract the word size from s11
 lw t0, 0(s11)     #load the word at this chastack address
 sub t0, t0, t1    #t0 = t0 - t1
+sw t0, 0(s11)     #save the word at this chastack address
+j memory_check    #check stack for errors after this command
+
+#mul number on top of stack to the one below it
+command_mul:
+lw t1, 0(s11)     #load the word at this chastack address
+addi s11, s11, -4 #subtract the word size from s11
+lw t0, 0(s11)     #load the word at this chastack address
+mul t0, t0, t1    #t0 = t0 * t1
+sw t0, 0(s11)     #save the word at this chastack address
+j memory_check    #check stack for errors after this command
+
+#divide and store quotient on stack
+command_div:
+lw t1, 0(s11)     #load the word at this chastack address
+addi s11, s11, -4 #subtract the word size from s11
+lw t0, 0(s11)     #load the word at this chastack address
+divu t0, t0, t1    #t0 = t0 / t1
+sw t0, 0(s11)     #save the word at this chastack address
+j memory_check    #check stack for errors after this command
+
+#divide and store remainder on stack
+command_rem:
+lw t1, 0(s11)     #load the word at this chastack address
+addi s11, s11, -4 #subtract the word size from s11
+lw t0, 0(s11)     #load the word at this chastack address
+remu t0, t0, t1   #t0 = t0 % t1
 sw t0, 0(s11)     #save the word at this chastack address
 j memory_check    #check stack for errors after this command
 
