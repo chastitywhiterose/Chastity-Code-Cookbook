@@ -159,8 +159,21 @@ jal putline
 addi s11, s11, 4     #increment the pointer to what it was before the failed command
 j main_loop          #now go back to main loop after error was printed
 
+command_putstack: #print all numbers on the stack
+la s9, chastack #load s9 with address of chastack
+mv s10, s11     #copy value of s11 to s10
+command_putstack_loop:
 
-
+#is ebp equal to the address of stack start?
+#if so, end the putstack loop
+beq s9, s10 command_putstack_end
+lw s0, 0(s10) #load the word at s10 into s0 for printing integer 
+addi s10, s10, -4 #subtract the word size from this temp stack index
+jal putint
+jal putline
+j command_putstack_loop
+command_putstack_end:
+j main_loop
 
 
 
@@ -322,21 +335,21 @@ not_lower:
 
 # if we have reached this point, result invalid and end function
 # this is only reached if the byte was not a valid digit or alphabet character
-addi a0, a0, 1 #add 1 to the a0 register indicating an error occurred
-
-j strint_end
+j strint_end_error
 
 process_char:
 
-blt t2, t0 strint_end #;if this value is above or equal to radix, it is too high despite being a valid digit/alpha
+blt t2, t0 strint_end_error #if this value is above or equal to radix, it is too high despite being a valid digit/alpha
 
 mul s0, s0, t2 # multiply s0 by the radix
 add s0, s0, t0 # add the correct value of this digit
 
 j read_strint # jump back and continue the loop if nothing has exited it
 
-strint_end:
+strint_end_error:  #we jump here if there was an error with one of the chars
+addi a0, a0, 1 #add 1 to the a0 register indicating an error occurred
 
+strint_end: #we jump here when no errors happened
 ret
 
 ###############################################################################
