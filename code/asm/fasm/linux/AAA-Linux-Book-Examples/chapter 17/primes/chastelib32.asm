@@ -67,7 +67,7 @@ int_width dd 8 ;default width of integers. Extra zeros prefixed if more than 1
 
 intstr:
 
-mov ebx,int_string_end-1 ;find address of lowest digit(just before the newline 0Ah)
+mov ebx,int_string_end-1 ;find address of lowest digit
 mov ecx,1
 
 digits_start:
