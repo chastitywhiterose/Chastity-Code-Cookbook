@@ -28,15 +28,16 @@ mov qword [array_a_length],1
 mov qword [array_b_length],1
 mov qword [array_c_length],1
 
-mov rdx,0 ;use rdx as a counter for the main loop
+mov rdx,0 ;use edx as a counter for the main loop
 main_loop:
+push rdx
 
 ;stage 1: display the a array
 mov rax,0
 mov rbx,[array_a_length]
 stage1:
 dec rbx
-mov al,[array_a+rbx]
+mov al,[array_a+ebx]
 call putint
 cmp rbx,0
 jnz stage1
@@ -51,59 +52,45 @@ mov rax,0
 stage2_multiply:
 
 ;we need to get the result of multiplication of the current digit
-;indexed in array_a by rax and array_b by rbx
+;indexed in array_a by eax and array_b by ebx
 ;the only safe way is to back up all the registers
 ;do a multiply operation, and then restore them
 
 push rax
 push rbx
-push rcx
-push rdx
 
-;mov rax and rbx to rcx and rdx
+;mov eax and ebx to ecx and edx
 ;so that we can index the arrays
-;using the low parts of rax and rbx as the result
+;using the low parts of eax and ebx as the result
 mov rcx,rax
 mov rdx,rbx
-;both rax and rbx are zeroed to avoid conflicts
+;both eax and ebx are zeroed to avoid conflicts
 ;only the lowest 8 bits will be loaded from the arrays
+;then we will do a multiply instruction
 mov rax,0
 mov al,[array_a+rcx]
 mov rbx,0
 mov bl,[array_b+rdx]
-mul bl ;multiply al by bl
+add rcx,rdx ;add edx to ecx before edx is overwritten with mul
+mul rbx ;multiply eax by ebx
 
-;al now has the result of multiplying the
-;two digits from the arrays
-;next we begin another sub loop where we add this to the c array
-
-add rcx,rdx ;rcx is now sum of original rax and rbx
 stage2_add_product:
-add [array_c+rcx],al
-mov al,0 ;set al to zero before our manual divide by ten
-c_divide_with_subtraction:
-cmp [array_c+rcx],10
-jb digit_less_than_ten ;if less than ten, end the divide
-
-;otherwise, divide by repeated subtraction!
-sub [array_c+rcx],10 ;subtract ten from this element
-inc al ;add one to count of subtractions
-jmp c_divide_with_subtraction
-
-digit_less_than_ten:
+add al,[array_c+rcx] ;add the byte at this index to al
+mov rbx,[radix]      ;set the bl register to the radix
+mov rdx,0            ;clear edx before division
+div rbx              ;divide eax by ebx
+mov [array_c+rcx],dl ;move the remainder back to this index
 
 inc rcx
-cmp al,0 ;is there still a carry left over?
-jnz stage2_add_product ;if so, go to next digit and repeat
+cmp al,0               ;is the carry or quotient zero?
+jnz stage2_add_product ;if not zero, go to next digit and repeat
 
 cmp rcx,[array_c_length] ;is the index higher than current length of c array?
 jb c_digits_are_enough
 mov [array_c_length],rcx ;expand digits
 c_digits_are_enough:
 
-;pop path the original values of the registers
-pop rdx
-pop rcx
+;pop back the original values of the registers
 pop rbx
 pop rax
 
@@ -117,24 +104,16 @@ jnz stage2
 ;end of array multiplication stage
 
 ;stage 3: add 1 to the b array
-mov al,1  ;set carry to 1
+mov rax,1 ;set carry to 1
 mov rbx,0 ;start at lowest element of b
 stage3_add_one_to_b:
-add [array_b+rbx],al
-mov al,0 ;set al to zero before our manual divide by ten
-b_divide_with_subtraction:
-cmp [array_b+rbx],10
-jb b_digit_less_than_ten ;if less than ten, end the divide
-
-;otherwise, divide by repeated subtraction!
-sub [array_b+rbx],10 ;subtract ten from this element
-inc al ;add one to count of subtractions
-jmp b_divide_with_subtraction
-
-b_digit_less_than_ten:
+add al,[array_b+ebx]
+mov rdx,0
+div qword [radix]
+mov [array_b+rbx],dl ;move the remainder back to this index
 
 inc rbx
-cmp al,0 ;is there still a carry left over?
+cmp al,0                ;is the carry or quotient zero?
 jnz stage3_add_one_to_b ;if so, go to next digit and repeat
 
 cmp rbx,[array_b_length] ;is the index higher than current length of c array?
@@ -162,9 +141,10 @@ inc rbx
 cmp rbx,maxlength
 jnz stage4
 
+pop rdx
 inc rdx
-cmp rdx,64
-jna main_loop
+cmp rdx,64     ;maximum factorial
+jnz main_loop
 
 sub rsp,40
 mov rcx,0
