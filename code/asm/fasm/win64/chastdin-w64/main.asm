@@ -269,7 +269,6 @@ ret
 
 chastack: rq 0x100
 
-;FASM builds the Import Address Table (IAT) directly in the source file
 section '.idata' import data readable writeable
 
 library kernel32, 'KERNEL32.DLL'

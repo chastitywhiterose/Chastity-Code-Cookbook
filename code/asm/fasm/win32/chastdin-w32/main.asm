@@ -1,9 +1,9 @@
 format PE console
-
+entry main
 
 include 'win32ax.inc'       ;include standard Windows 64-bit definitions and macros
-include 'chastelib-w32.asm'  ;include standard functions by Chastity
-include 'chastdin-w32.asm'   ;include standard input functions by Chastity
+include 'chastelib-w32.asm' ;include standard functions by Chastity
+include 'chastdin-w32.asm'  ;include standard input functions by Chastity
 
 main:
 
@@ -79,7 +79,7 @@ mov edi,string_clear
 call strcmp
 jz command_clear
 
-mov edi,chastdin_help
+mov edi,string_help
 call strcmp
 jz command_help
 
@@ -224,15 +224,9 @@ jmp main_loop
 
 command_exit: ;end the program
 
-main_loop_end:
-
 ;Exit the process with code 0
 push 0
 call [ExitProcess]
-
-.end main
-
-argc dd 0
 
 string_setradix db 'setradix',0
 string_add db 'add',0
@@ -241,6 +235,7 @@ string_mul db 'mul',0
 string_div db 'div',0
 string_rem db 'rem',0
 
+string_help db 'help',0
 string_exit db 'exit',0
 string_putstack db '?',0
 string_clear db 'clear',0
@@ -252,12 +247,14 @@ string_err1 db 'Error: need one number on stack for command: ',0 ;math fail erro
 string_err2 db 'Error: need two numbers on stack for command: ',0 ;math fail error when less than two numbers on the stack
 
 chastdin_help db 'chastdin is a stack based interactive calculator',0xA
-              db 'Numbers are pushed on the stack and commands can do math.',0xA
-              db 'It is a fork of chastack that reads from stdin instead of arguments.',0xA
-              db 'Each line can contain multiple numbers or commands.',0xA
-              db 'Math commands are add,sub,mul,div,rem',0xA
+              db 'that reads stdin for numbers and commands.',0xA
+              db 'Numbers are pushed on the stack for all math.',0xA
+              db 'Each line can contain multiple numbers or commands.',0xA,0xA
+              db 'Arithmetic commands are add,sub,mul,div,rem',0xA
               db 'The exit command ends the program',0xA
-              db 'The ? command prints the entire stack',0xA,0xA,0
+              db 'The ? command prints the entire stack',0xA
+              db 'The setradix command changes the radix for input and output',0xA,0xA
+              db 'See readme.md for full help',0xA,0
             
 ;a function to print the help message defined above
 ;for how to use this calculator program
@@ -271,3 +268,13 @@ ret
 ;I name it "chastack" for Chastity's stack.
 
 chastack: rd 0x100
+
+section '.idata' import data readable writeable
+
+library kernel32, 'KERNEL32.DLL'
+
+import kernel32,\
+ GetStdHandle, 'GetStdHandle',\
+ WriteFile, 'WriteFile',\
+ ExitProcess, 'ExitProcess',\
+ ReadFile, 'ReadFile'
