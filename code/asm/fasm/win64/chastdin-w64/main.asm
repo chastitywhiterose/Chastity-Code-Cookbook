@@ -1,7 +1,7 @@
 format PE64 console
 entry main
 
-include 'win64ax.inc'       ;include standard Windows 64-bit definitions and macros
+include 'win64a.inc'        ;include standard Windows 64-bit definitions and macros
 include 'chastelib-w64.asm' ;include standard functions by Chastity
 include 'chastdin-w64.asm'  ;include standard input functions by Chastity
 
@@ -222,7 +222,7 @@ command_help:
 call help
 jmp main_loop
 
-command_exit: ;end the program
+command_exit:      ;end the program
 
 sub rsp,40         ;align stack (required in windows 64-bit)
 mov rcx,0          ;exit code for operating system
