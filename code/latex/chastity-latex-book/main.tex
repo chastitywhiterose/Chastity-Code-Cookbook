@@ -1,5 +1,6 @@
 \documentclass{book}
 
+%define the paper size and margins using the geometry package
 \usepackage{geometry}
 \geometry{papersize={8.5in,11in},margin=1in}
 
@@ -8,13 +9,18 @@
 \author{Chastity White Rose}
 
 \begin{document}
+
+\pagenumbering{gobble} %turn off page numbering
 \maketitle
+\pagenumbering{arabic} %turn on page numbering using arabic numerals (not roman)
 
 This short example book was written in LaTeX by Chastity to remind herself why she was learning LaTeX. It was converted to PDF by the pdflatex program running on Debian Linux.
 
 \chapter{What is LaTeX?}
 
 LaTeX is a language for describing documents that you might want to print or just view on a computer. It is similar to what HTML is for web pages because you have tags representing different kinds of elements. Many people say it is extremely helpful for making scientific papers or books representing math formulas that are hard to represent using traditional word processors or Markdown.
+
+Because it is a plain text format, it can be edited using any text editor and doesn't require using special software. In particular, it avoids the need for Microsoft Word that many people are told to use. LibreOffice is a good GUI alternative to Microsoft Word but sometimes plain text is the fastest, especially for editing a document using a terminal only environment on a Linux that may not even have the X Window System installed.
 
 \chapter{Why am I Learning LaTeX?}
 
