@@ -4,8 +4,8 @@
 \usepackage{geometry}
 \geometry{papersize={8.5in,11in},margin=1in}
 
-%include the listings package to allow use of source code listings
-\usepackage{listings}
+%include the hyperref package to allow use of hyperlinks
+\usepackage{hyperref}
 
 %include the graphicx package to allow use of pictures
 \usepackage{graphicx}
@@ -57,7 +57,7 @@ code listings which will retain their spacing and not be interpreted as paragrap
 
 The following listing is a C function I wrote which prints any zero terminated string of bytes. It is one of the functions I am most proud of because the algorithm used is the same as the one used for the putstring function in all of my editions of Assembly Arithmetic Algorithms
 
-\begin{lstlisting}
+\begin{verbatim}
 int putstring(const char *s)
 {
  int count=0;              /*used to count how many bytes will be written*/
@@ -67,11 +67,52 @@ int putstring(const char *s)
  fwrite(s,1,count,stdout); /*https://cppreference.com/w/c/io/fwrite.html*/
  return count;             /*return how many bytes were written*/
 }
-\end{lstlisting}
+\end{verbatim}
+
+A slightly more complicated function and its global variables are shown below. The getstring function returns a zero terminated string that can be input by the user. I used this function in my chastdin calculator. This means getstring is the opposite of putstring, as its name would imply.
+
+\begin{verbatim}
+/*variable to store how many characters were read into the string last time*/
+int read_count=0;
+char last_char=0;
+
+/*
+this is my basic function for recieving input from the keyboard
+it uses a global variable to store the string into
+However, it returns a pointer to this string which makes it really convenient if I need
+to read something and then immediately print it or copy it to another variable
+
+It reads characters into the string and stops at the first whitespace character.
+This can be a regular space, tab, or newline.
+My reasoning for this is because I plan for multiple strings to exist on one line.
+This is similar to how a command and its arguments are entered on the command line.
+By stopping every time a separating whitespace character is found, the tokens can be processed manually.
+*/
+
+char *getstring()
+{
+ char *s=main_string,*p=s,c=0;
+ while( c!=' ' && c!='\n' && c!='\t')
+ {
+  read_count=fread(p,1,1,stdin); /*read exactly 1 byte*/
+  if(read_count==0) /*if failed to read one byte, print EOF*/
+  {
+   *p=0; /*terminate this string with zero*/
+   return s; /*return the null string because there is nothing left to read*/
+   } 
+  c=*p; /*character equals the last character read*/
+  p++; /*increment the pointer to the next byte*/
+ }
+ last_char=c;
+ *--p=0; /*go back to last character (space,newline,tab) and replace with zero*/
+ read_count=p-s;
+ return s;
+}
+\end{verbatim}
 
 \chapter{Including Images}
 
-Images should usually be used quite sparingly in books designed to be printed as paperbacks, however they are essential for showing geometric shapes in a way text never can. The following images in this chapter were included in my book: Chastity's Code Cookbook. I have included them here mostly as a demonstration that I figured out how to include images in a LaTeX document.
+Images should usually be used quite sparingly in books designed to be printed as paperbacks, however they are essential for showing geometric shapes in a way text never can. The following images in this chapter were included in my book: \href{https://leanpub.com/chastitycodecookbook}{Chastity's Code Cookbook}. I have included them here mostly as a demonstration that I figured out how to include images in a LaTeX document.
 
 \begin{figure}
 \includegraphics[width=\linewidth]{images/pbm-checker.png}
