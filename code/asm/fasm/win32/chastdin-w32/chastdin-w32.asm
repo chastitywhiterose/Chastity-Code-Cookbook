@@ -17,24 +17,27 @@ buf db 0x100 dup '?'
 count dd 0
 last_char db 0
 
-;read only 1 byte using Win32 ReadFile system call.
+;read only 1 byte using ReadFile system call.
+;https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-readfile
 ;this function is the only place in my source where I read from standard input
-;this keeps my code simple because even reading 1 character
-;requires this long series of stack commands
-;if I tried to use the ReadFile system call in multiple places,
-;it would lead to a lot of code bloat in both source and binary
-;getstring and getline both use this function for all input
+;Keeping this call here reduces errors and code bloat
+;getstring and getline both use this function for keyboard input
+
 getchar:
-push 0              ;Optional Overlapped Structure 
-push count          ;Store Number of Bytes Read from this call
-push 1              ;Number of bytes to read
-push last_char      ;address to store bytes
-push -10            ;STD_INPUT_HANDLE = Negative Ten
-call [GetStdHandle] ;use the above handle
-push eax            ;eax is return value of previous function
+
+
+push 0               ;lpOverlapped = NULL
+push count           ;lpNumberOfBytesRead
+push 1               ;nNumberOfBytesToRead
+push last_char       ;lpBuffer
+push -10             ;STD_INPUT_HANDLE = Negative Ten
+call [GetStdHandle]  ;Get Standard Handle for -10
+push eax             ;hFile
 call [ReadFile]
-xor eax,eax         ;set eax to 0
-mov al,[last_char]  ;set lowest part of eax to key read
+
+
+xor eax,eax          ;set eax to 0
+mov al,[last_char]   ;set lowest part of eax to key read
 ret
 
 ;summary

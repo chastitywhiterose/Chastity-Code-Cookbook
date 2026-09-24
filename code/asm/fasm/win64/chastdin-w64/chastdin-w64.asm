@@ -17,30 +17,27 @@ buf db 0x100 dup '?'
 count dq 0
 last_char db 0
 
-;read only 1 byte using Win32 ReadFile system call.
+;read only 1 byte using ReadFile system call.
+;https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-readfile
 ;this function is the only place in my source where I read from standard input
-;this keeps my code simple because even reading 1 character
-;requires this long series of stack commands
-;if I tried to use the ReadFile system call in multiple places,
-;it would lead to a lot of code bloat in both source and binary
-;getstring and getline both use this function for all input
+;Keeping this call here reduces errors and code bloat
+;getstring and getline both use this function for keyboard input
+
 getchar:
 
-sub rsp,40  ;align stack before Win API functions(required in windows 64-bit)
-
-mov rcx, -10        ;STD_INPUT_HANDLE = Negative Ten
-call [GetStdHandle] ;Get Standard Output Handle
-mov rcx,rax         ;copy handle to rcx
-mov rdx,last_char   ;address to store bytes
-mov r8,1            ;Number of bytes to read
-mov r9,count        ;Store Number of Bytes Read from this call
-mov qword [rsp + 32], 0 ; Parameter 5: Must be placed on the stack
+sub rsp,40           ;align stack before Win API functions(required in windows 64-bit)
+mov qword [rsp+32],0 ;lpOverlapped = NULL
+mov r9,count         ;lpNumberOfBytesRead
+mov r8,1             ;nNumberOfBytesToRead
+mov rdx,last_char    ;lpBuffer
+mov rcx, -10         ;STD_INPUT_HANDLE = Negative Ten
+call [GetStdHandle]  ;Get Standard Handle for -10
+mov rcx,rax          ;hFile
 call [ReadFile]
+add rsp,40           ;restore stack now that WinAPI calls are done
 
-add rsp,40  ;restore stack now that WinAPI calls are done
-
-xor rax,rax         ;set rax to 0
-mov al,[last_char]  ;set lowest part of rax to key read
+xor rax,rax          ;set rax to 0
+mov al,[last_char]   ;set lowest part of rax to key read
 ret
 
 ;summary
