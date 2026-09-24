@@ -1,0 +1,4 @@
+\contentsline {chapter}{Introduction}{3}{}%
+\contentsline {chapter}{\numberline {1}What is LaTeX?}{5}{}%
+\contentsline {chapter}{\numberline {2}Why am I Learning LaTeX?}{7}{}%
+\contentsline {chapter}{\numberline {3}Goals of this LaTeX Book}{9}{}%

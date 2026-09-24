@@ -4,6 +4,9 @@
 \usepackage{geometry}
 \geometry{papersize={8.5in,11in},margin=1in}
 
+%include the graphicx package to allow use of pictures
+\usepackage{graphicx}
+
 \title{Chastity's LaTeX Book}
 \date{\today}
 \author{Chastity White Rose}
@@ -12,9 +15,15 @@
 
 \pagenumbering{gobble} %turn off page numbering
 \maketitle
+\tableofcontents
 \pagenumbering{arabic} %turn on page numbering using arabic numerals (not roman)
 
+\chapter*{Introduction}
+\addcontentsline{toc}{chapter}{Introduction}
+
 This short example book was written in LaTeX by Chastity to remind herself why she was learning LaTeX. It was converted to PDF by the pdflatex program running on Debian Linux.
+
+LaTeX is a plain text language for describing books meant to be read in paperback form or as digital PDF files.
 
 \chapter{What is LaTeX?}
 
@@ -37,5 +46,12 @@ The books I usually write are very simple. At least, a book contains text separa
 More complex books require the use of images, such as my book: Chastity's Chess Chapters. Images are the best way to render anything where the look must be perfect, but they also take time to create and are tricky to include in books because GUI editors like to choose where they appear and force the user to click and drag with a mouse to reposition them or right click and open a dialog box to resize them.
 
 The headache I just mentioned about images is one I experienced and ultimately what forced me to learn Markdown. The goals of this book are to learn how to use LaTeX to do everything I could have done with Markdown and perhaps more as I learn the capabilities of LaTeX and how I can use it to make books on Arithmetic and Computer Programming Languages.
+
+
+\begin{figure}
+\includegraphics[width=\linewidth]{images/sdl-square-target.png}
+\caption{A square target}
+\end{figure}
+
 
 \end{document}
