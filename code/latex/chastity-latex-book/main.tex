@@ -4,6 +4,9 @@
 \usepackage{geometry}
 \geometry{papersize={8.5in,11in},margin=1in}
 
+%include the listings package to allow use of source code listings
+\usepackage{listings}
+
 %include the graphicx package to allow use of pictures
 \usepackage{graphicx}
 
@@ -47,11 +50,37 @@ More complex books require the use of images, such as my book: Chastity's Chess 
 
 The headache I just mentioned about images is one I experienced and ultimately what forced me to learn Markdown. The goals of this book are to learn how to use LaTeX to do everything I could have done with Markdown and perhaps more as I learn the capabilities of LaTeX and how I can use it to make books on Arithmetic and Computer Programming Languages.
 
+\chapter{Including Source Code}
+
+Because programming books are my favorite thing to write, it is essential to be able to include
+code listings which will retain their spacing and not be interpreted as paragraphs of text.
+
+The following listing is a C function I wrote which prints any zero terminated string of bytes. It is one of the functions I am most proud of because the algorithm used is the same as the one used for the putstring function in all of my editions of Assembly Arithmetic Algorithms
+
+\begin{lstlisting}
+int putstring(const char *s)
+{
+ int count=0;              /*used to count how many bytes will be written*/
+ const char *p=s;          /*pointer used to find terminating zero of string*/
+ while(*p){p++;}           /*loop until zero found and immediately exit*/
+ count=p-s;                /*count is the difference of pointers p and s*/
+ fwrite(s,1,count,stdout); /*https://cppreference.com/w/c/io/fwrite.html*/
+ return count;             /*return how many bytes were written*/
+}
+\end{lstlisting}
+
+\chapter{Including Images}
+
+Images should usually be used quite sparingly in books designed to be printed as paperbacks, however they are essential for showing geometric shapes in a way text never can. The following images in this chapter were included in my book: Chastity's Code Cookbook. I have included them here mostly as a demonstration that I figured out how to include images in a LaTeX document.
+
+\begin{figure}
+\includegraphics[width=\linewidth]{images/pbm-checker.png}
+\caption{A checker board}
+\end{figure}
 
 \begin{figure}
 \includegraphics[width=\linewidth]{images/sdl-square-target.png}
 \caption{A square target}
 \end{figure}
-
 
 \end{document}
