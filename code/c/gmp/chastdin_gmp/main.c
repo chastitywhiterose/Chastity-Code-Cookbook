@@ -8,7 +8,8 @@
 #define stack_length 0x100
 mpz_t stack[stack_length+1]; /*stack array of size stack_length*/
 
-char outstr[0x10000000]; /*large space for string form of mpz conversion*/
+#define outstr_length 0x10000000
+char outstr[outstr_length]; /*large space for string form of mpz conversion*/
 
 int stack_length_init=stack_length;
 int stack_index=0;
@@ -23,19 +24,21 @@ void help()
   "Numbers are pushed on the stack and commands can do math.\n"
   "It is a fork of chastack that reads from stdin instead of arguments.\n"
   "Each line can contain multiple numbers or commands.\n\n"
-  "Math commands are add,sub,mul,div,rem\n"
+  "Math commands are add,sub,mul,div,rem,pow\n"
   "And use the top two stack numbers for their operations\n\n"
 
   "The setradix command uses the top of stack as the new radix\n"
   "The exit command ends the program\n"
   "The ? command prints the entire stack\n\n"
+  
+  "This edition of chastdin is powered by the\nGNU Multiple Precision Arithmetic Library\n\n"
  );
 }
 
 /*
  This function is called by all math commands that require two or more numbers
  to be on the stack when they are used.
-*/ 
+*/
 void stack_check()
 {
  if(stack_index>0)
@@ -54,7 +57,7 @@ void stack_check()
 
 int main(int argc, char **argv)
 {
- int x;/*,y*/
+ int x;
  
  /*initialize the mpz stack array*/
  x=0;
@@ -85,7 +88,6 @@ int main(int argc, char **argv)
   }  
   s=getstring();
   
-     
   /*first, we check for commands before we check for integers*/
   if(!strcmp(s,"exit"))
   {
@@ -133,14 +135,6 @@ int main(int argc, char **argv)
    stack_check();
   }
   
-  else if(!strcmp(s,"pow"))
-  {
-   x=mpz_get_ui(stack[stack_index]);
-   stack_index--;
-   mpz_pow_ui(stack[stack_index],stack[stack_index],x);
-   stack_check();
-  }
-
   else if(!strcmp(s,"div"))
   {
    if(!mpz_get_ui(stack[stack_index]))
@@ -168,6 +162,15 @@ int main(int argc, char **argv)
     stack_check();
    }
   }
+  
+  else if(!strcmp(s,"pow"))
+  {
+   x=mpz_get_ui(stack[stack_index]);
+   stack_index--;
+   mpz_pow_ui(stack[stack_index],stack[stack_index],x);
+   stack_check();
+  }
+
   
   /*print all elements of stack*/
   else if(!strcmp(s,"?"))
