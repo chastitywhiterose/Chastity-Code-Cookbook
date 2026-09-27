@@ -190,6 +190,7 @@ int main(int argc, char **argv)
   {
    while(ebp>stack)
    {
+    *ebp=0;
     ebp--; /*erase whole stack in this loop*/  
    }
   }
