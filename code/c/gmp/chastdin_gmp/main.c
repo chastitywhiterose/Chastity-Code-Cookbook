@@ -135,8 +135,9 @@ int main(int argc, char **argv)
   
   else if(!strcmp(s,"pow"))
   {
+   x=mpz_get_ui(stack[stack_index]);
    stack_index--;
-   mpz_mul(stack[stack_index],stack[stack_index],stack[stack_index+1]);
+   mpz_pow_ui(stack[stack_index],stack[stack_index],x);
    stack_check();
   }
 
