@@ -8,7 +8,7 @@
 #define stack_length 0x100
 mpz_t stack[stack_length+1]; /*stack array of size stack_length*/
 
-char outstr[0x1000000]; /*large space for string form of mpz conversion*/
+char outstr[0x10000000]; /*large space for string form of mpz conversion*/
 
 int stack_length_init=stack_length;
 int stack_index=0;
@@ -169,22 +169,32 @@ int main(int argc, char **argv)
    }
   }
   
+  /*print all elements of stack*/
   else if(!strcmp(s,"?"))
   {
    x=stack_index;
    while(x>0)
    {
-    /*convert integer to a string in specific radix*/
-    mpz_get_str(outstr,radix,stack[x]);
+    /*
+     convert integer to a string in specific radix
+     negative radix is passed to force capital letters
+     for bases 11 to 36
+    */
+    mpz_get_str(outstr,-radix,stack[x]);
     putstr(outstr); /*print the outstr*/  
     putstr("\n");
     x--;
    }
   }
   
+  /*erase all elements of stack with zero*/
   else if(!strcmp(s,"clear"))
   {
-
+   while(stack_index>0)
+   {
+    mpz_set_ui(stack[stack_index],0); 
+    stack_index--;
+   }
   }
 
   /*
