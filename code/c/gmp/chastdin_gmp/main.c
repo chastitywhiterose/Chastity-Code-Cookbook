@@ -6,24 +6,12 @@
 #include <gmp.h>
 
 #define stack_length 0x100
-mpz_t stack[stack_length]; /*stack array of size stack_length*/
+mpz_t stack[stack_length+1]; /*stack array of size stack_length*/
 
 char outstr[0x1000000]; /*large space for string form of mpz conversion*/
 
-int stack_length_init=4;
+int stack_length_init=stack_length;
 int stack_index=0;
-
-/*
-variables named after registers
-
-esp is declared as a pointer because its only purpose in Assembly is managing the stack
-ebp is declared as a pointer to keep track of the original stack pointer address
-
-all other registers are used as normal integers
-real assembly language allows registers to be used interchangeably as numbers or pointers
-this is one reason C is limited compared to Assembly.
-*/
-
 
 char *s; /*character pointer for user input*/
 
@@ -111,7 +99,17 @@ int main(int argc, char **argv)
   
   else if(!strcmp(s,"setradix"))
   {
-
+   if(stack_index>0)
+   {
+    radix=mpz_get_ui(stack[stack_index]);
+    stack_index--;
+   }
+   else
+   {
+    putstr("Error: need one number on stack for command: ");
+    putstr(s);
+    putstr("\n");
+   }
   }
 
   else if(!strcmp(s,"add"))
@@ -134,19 +132,40 @@ int main(int argc, char **argv)
    mpz_mul(stack[stack_index],stack[stack_index],stack[stack_index+1]);
    stack_check();
   }
+  
+  else if(!strcmp(s,"pow"))
+  {
+   stack_index--;
+   mpz_mul(stack[stack_index],stack[stack_index],stack[stack_index+1]);
+   stack_check();
+  }
 
   else if(!strcmp(s,"div"))
   {
-   stack_index--;
-   mpz_tdiv_q(stack[stack_index],stack[stack_index],stack[stack_index+1]);
-   stack_check();
+   if(!mpz_get_ui(stack[stack_index]))
+   {
+    putstr("Cannot get quotient of division by zero!\n");
+   }
+   else
+   {
+    stack_index--;
+    mpz_tdiv_q(stack[stack_index],stack[stack_index],stack[stack_index+1]);
+    stack_check();
+   }
   }
   
   else if(!strcmp(s,"rem"))
   {
-   stack_index--;
-   mpz_tdiv_q(stack[stack_index],stack[stack_index],stack[stack_index+1]);
-   stack_check();
+   if(!mpz_get_ui(stack[stack_index]))
+   {
+    putstr("Cannot get remainder of division by zero!\n");
+   }
+   else
+   {
+    stack_index--;
+    mpz_tdiv_r(stack[stack_index],stack[stack_index],stack[stack_index+1]);
+    stack_check();
+   }
   }
   
   else if(!strcmp(s,"?"))
@@ -155,7 +174,7 @@ int main(int argc, char **argv)
    while(x>0)
    {
     /*convert integer to a string in specific radix*/
-    mpz_get_str(outstr,10,stack[x]);
+    mpz_get_str(outstr,radix,stack[x]);
     putstr(outstr); /*print the outstr*/  
     putstr("\n");
     x--;
@@ -208,7 +227,6 @@ int main(int argc, char **argv)
   mpz_clear(stack[x]);
   x++;
  }
-
 
  return 0;
 }
