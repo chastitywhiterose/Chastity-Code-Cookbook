@@ -30,9 +30,9 @@ void help()
   "The setradix command uses the top of stack as the new radix\n"
   "The exit command ends the program\n"
   "The ? command prints the entire stack\n\n"
-  
-  "This edition of chastdin is powered by the\nGNU Multiple Precision Arithmetic Library\n\n"
  );
+ 
+ putstr("This edition of chastdin is powered by the\nGNU Multiple Precision Arithmetic Library\n\n");
 }
 
 /*
