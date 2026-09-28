@@ -19,12 +19,20 @@ int main(int argc, char **argv)
  printf("SDL Program Compiled Correctly\n");
  while(loop)
  {
-  int MouseState=0;
+  int MouseState=0,MouseState_old=0;
   int x,y;
+  MouseState_old=MouseState;
   MouseState=SDL_GetMouseState(&x,&y);
-  printf("MouseState==%d x==%d y==%d\n",MouseState,x,y);
+/*  if(MouseState!=MouseState_old)
+  {
+   MouseState_old=MouseState;
+  }
+  */
   
-  
+  if(MouseState!=0)
+  {
+   printf("MouseState==%d x==%d y==%d\n",MouseState,x,y);
+  }
  
   while(SDL_PollEvent(&e))
   {
