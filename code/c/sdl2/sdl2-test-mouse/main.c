@@ -23,16 +23,16 @@ int main(int argc, char **argv)
   int x,y;
   MouseState_old=MouseState;
   MouseState=SDL_GetMouseState(&x,&y);
-/*  if(MouseState!=MouseState_old)
+  if(MouseState!=MouseState_old)
   {
+   if(MouseState!=0)
+   {
+    printf("MouseState==%d x==%d y==%d\n",MouseState,x,y);
+   }
    MouseState_old=MouseState;
   }
-  */
   
-  if(MouseState!=0)
-  {
-   printf("MouseState==%d x==%d y==%d\n",MouseState,x,y);
-  }
+
  
   while(SDL_PollEvent(&e))
   {
