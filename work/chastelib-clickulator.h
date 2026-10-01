@@ -7,6 +7,11 @@ int sdl_chastelib_clickulator()
  SDL_Event e;
  SDL_Rect rect;
 
+ /*upper left coordinates of where calculator buttons start*/
+ int button_area_x=200; 
+ int button_area_y=200;
+ int button_size=90;
+
  int n=0; /*variables for this test program*/
 
  line_spacing_pixels=1; /*empty space in pixels between lines*/
@@ -21,12 +26,6 @@ int sdl_chastelib_clickulator()
  {
   /*start of game loop*/
 
- rect.x=100;
- rect.y=100;
- rect.w=100;
- rect.h=100;
-
-
  if(change) /*start of update on input section*/
  {
   
@@ -38,7 +37,45 @@ int sdl_chastelib_clickulator()
   main_font.color=0xFFFFFF;
   putstr("Official test suite for the C version of chastelib.\nThis version uses SDL2.\n\n");
 
-  main_font.char_scale=4; 
+  /*button 0*/
+  rect.x=button_area_x+button_size*1;
+  rect.y=button_area_y+button_size*0;
+  rect.w=button_size;
+  rect.h=button_size;
+  SDL_FillRect(surface,&rect,0x808080);
+  cursor_x=rect.x+1;
+  cursor_y=rect.y+1;
+  main_font.char_scale=11;
+  sdl_putchar_blit('0');
+
+  /*button 1*/
+  rect.x=button_area_x+button_size*2;
+  rect.y=button_area_y+button_size*0;
+  rect.w=button_size;
+  rect.h=button_size;
+  SDL_FillRect(surface,&rect,0x808080);
+  cursor_x=rect.x+1;
+  cursor_y=rect.y+1;
+  main_font.char_scale=11;
+  sdl_putchar_blit('1');
+
+  /*button backspace*/
+  rect.x=button_area_x+button_size*4;
+  rect.y=button_area_y+button_size*0;
+  rect.w=button_size*4;
+  rect.h=button_size;
+  SDL_FillRect(surface,&rect,0x808080);
+  /*draw smaller rectangle inside to delete space*/
+  rect.x=rect.x+1;
+  rect.y=rect.y+1;
+  rect.w=rect.w-2;
+  rect.h=rect.h-2;
+  SDL_FillRect(surface,&rect,0x000000);
+
+  cursor_x=rect.x+1;
+  cursor_y=rect.y+1;
+  main_font.char_scale=11;
+  sdl_putstring("back");
 
 
   SDL_UpdateWindowSurface(window); /*update window to show the results*/
