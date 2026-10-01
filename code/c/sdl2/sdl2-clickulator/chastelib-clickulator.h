@@ -29,8 +29,8 @@ int sdl_chastelib_clickulator()
   /*clear the sdl screen and terminal before we redraw*/
   sdl_clear();
 
-  cursor_x=cursor_left+main_font.char_width*9;
-  cursor_y=cursor_top+main_font.char_width*4;
+  cursor_x=main_font.char_width*13;
+  cursor_y=main_font.char_width*4;
   main_font.char_scale=8;
   main_font.color=0xFFFFFF;
   putstr("SDL2 clickulator\n");
@@ -115,7 +115,7 @@ int sdl_chastelib_clickulator()
   putstr("\n");
   
   putstr("Octal\n");
-  radix=2;
+  radix=8;
   int_width=32;
   putint(n);
   putstr("\n");
