@@ -22,6 +22,17 @@ call putline
 call getint
 mov r11,rax
 
+mov rax,help7
+call putstring
+call putline
+mov rax,r10
+call putint
+call putline
+mov rax,r11
+call putint
+call putline
+call putline
+
 op_choose:
 
 mov rax,help6
@@ -42,14 +53,26 @@ jz op_div
 jmp op_choose ;start over if none of the choices 0 to 3 were chosen
 
 op_add:
-jmp command_exit
+mov rax,r10
+add rax,r11
+jmp print_result
 op_sub:
-jmp command_exit
+mov rax,r10
+sub rax,r11
+jmp print_result
 op_mul:
-jmp command_exit
+mov rax,r10
+mul r11
+jmp print_result
 op_div:
-jmp command_exit
+mov rdx,0
+mov rax,r10
+div r11
+jmp print_result
 
+print_result:
+call putint
+call putline
 
 command_exit:      ;end the program
 
@@ -63,8 +86,8 @@ help0 db 'Please enter a decimal number.',0xD,0xA
       db 'That means digits 0 to 9 are allowed',0xD,0xA,0
       
 help1 db 'You entered: ',0
-help2 db 'That is not a valid number! Try again!',0
-help3 db 'Yes, that is a number!',0
+help2 db 'That is not a valid number! Try again!',0xD,0xA,0
+help3 db 'Yes, that is a number!',0xD,0xA,0
 help4 db 'Enter the first number',0
 help5 db 'Enter the second number',0
 help6 db 'Enter which math function to use:',0xD,0xA
@@ -72,12 +95,17 @@ help6 db 'Enter which math function to use:',0xD,0xA
       db '1=subtraction',0xD,0xA
       db '2=multiplication',0xD,0xA
       db '3=division',0xD,0xA,0
+help7 db 'Your numbers are:',0xD,0xA,0
 
 
 
 ret
 
 getint:
+
+push rbx
+push rcx
+push rdx
 
 mov rax,help0
 call putstring
@@ -89,11 +117,11 @@ call getstring     ;get string and return address in rax
 cmp qword[count],0 ;were there zero characters read?
 jz getint_loop     ;if yes, this was an empty string, retry input
 
-mov rsi,rax        ;mov string to rsi for backup and comparison
+mov rdx,rax        ;mov string to rdx for backup and comparison
 
 mov rax,help1
 call putstring
-mov rax,rsi
+mov rax,rdx
 call putstring
 call putline
 
@@ -111,11 +139,18 @@ jmp getint_loop
 
 number_good:
 
+push rax
 mov rax,help3
 call putstring
 call putline
+pop rax
+
 
 getint_end:
+push rdx
+push rcx
+push rbx
+
 ret
             
 section '.idata' import data readable writeable
