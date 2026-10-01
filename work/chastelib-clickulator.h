@@ -5,7 +5,8 @@ int sdl_chastelib_clickulator()
  int key=1;
  int change=1;
  SDL_Event e;
- SDL_Rect rect;
+ SDL_Rect rect;   /*used for temporary rectangle construction and detection*/
+ SDL_Point mouse; /*used to store coordinates of mouse clicks*/
 
  /*upper left coordinates of where calculator buttons start*/
  int button_area_x=200; 
@@ -47,6 +48,12 @@ int sdl_chastelib_clickulator()
   cursor_y=rect.y+1;
   main_font.char_scale=11;
   sdl_putchar_blit('0');
+  
+  if(SDL_PointInRect(&mouse,&rect))
+  {
+   printf("Button Zero Pressed");
+   printf("mouse.x==%d,mouse.y==%d\n",mouse.x,mouse.y);
+  }
 
   /*button 1*/
   rect.x=button_area_x+button_size*2;
@@ -58,6 +65,12 @@ int sdl_chastelib_clickulator()
   cursor_y=rect.y+1;
   main_font.char_scale=11;
   sdl_putchar_blit('1');
+  
+  if(SDL_PointInRect(&mouse,&rect))
+  {
+   printf("Button One Pressed");
+   printf("mouse.x==%d,mouse.y==%d\n",mouse.x,mouse.y);
+  }
 
   /*button backspace*/
   rect.x=button_area_x+button_size*4;
@@ -91,7 +104,10 @@ int sdl_chastelib_clickulator()
 
    if(e.type==SDL_MOUSEBUTTONDOWN)
    {
-    printf("button.x==%d,button.y==%d\n",e.button.x,e.button.y);
+    mouse.x=e.button.x;
+    mouse.y=e.button.y;
+    printf("mouse.x==%d,mouse.y==%d\n",mouse.x,mouse.y);
+    change=1; /*signal that something has changed*/
     
     if (e.button.button == SDL_BUTTON_LEFT)
     {
