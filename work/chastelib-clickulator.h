@@ -19,9 +19,6 @@ int sdl_chastelib_clickulator()
  
  main_font.color=0x00FF00; /*change text color*/
 
- radix=2;
- int_width=32;
-
  /*a loop which will only end if we click the X or press escape*/
  while(loop)
  {
@@ -29,16 +26,19 @@ int sdl_chastelib_clickulator()
 
  if(change) /*start of update on input section*/
  {
-  /*clear the screen before we redraw*/
-  SDL_FillRect(surface,NULL,0x000000);
+  /*clear the sdl screen and terminal before we redraw*/
+  sdl_clear();
 
-  /*cursor_x=cursor_left;cursor_y=cursor_top;*/
-
-  cursor_x=cursor_left+main_font.char_width*8;
+  cursor_x=cursor_left+main_font.char_width*9;
   cursor_y=cursor_top+main_font.char_width*4;
   main_font.char_scale=8;
   main_font.color=0xFFFFFF;
   putstr("SDL2 clickulator\n");
+
+  main_font.char_scale=3;
+  cursor_x=100;
+  cursor_y=100;
+  putstr("32-bit integer mouse click edition\n");
 
   /*button 0*/
   rect.x=button_area_x+button_size*1;
@@ -53,7 +53,7 @@ int sdl_chastelib_clickulator()
   
   if(SDL_PointInRect(&mouse,&rect))
   {
-   printf("Button Zero Pressed\n");
+   printf("Button Zero Clicked\n");
    printf("mouse.x==%d,mouse.y==%d\n",mouse.x,mouse.y);
    n<<=1;
   }
@@ -71,7 +71,7 @@ int sdl_chastelib_clickulator()
   
   if(SDL_PointInRect(&mouse,&rect))
   {
-   printf("Button One Pressed\n");
+   printf("Button One Clicked\n");
    printf("mouse.x==%d,mouse.y==%d\n",mouse.x,mouse.y);
    n<<=1;
    n+=1;
@@ -97,17 +97,35 @@ int sdl_chastelib_clickulator()
 
   if(SDL_PointInRect(&mouse,&rect))
   {
-   printf("Button Backspace Pressed\n");
+   printf("Button Backspace Clicked\n");
    printf("mouse.x==%d,mouse.y==%d\n",mouse.x,mouse.y);
    n>>=1;
   }
 
   /*print the integer*/
   main_font.char_scale=4;
-  cursor_x=100;
-  cursor_y=360;
+  cursor_left=100;
+  cursor_x=cursor_left;
+  cursor_y=300;
+
+  putstr("Binary\n");
+  radix=2;
+  int_width=32;
   putint(n);
   putstr("\n");
+
+  putstr("Decimal\n");
+  radix=10;
+  int_width=32;
+  putint(n);
+  putstr("\n");
+
+  putstr("Hexadecimal\n");
+  radix=16;
+  int_width=32;
+  putint(n);
+  putstr("\n");
+
 
   SDL_UpdateWindowSurface(window); /*update window to show the results*/
  
