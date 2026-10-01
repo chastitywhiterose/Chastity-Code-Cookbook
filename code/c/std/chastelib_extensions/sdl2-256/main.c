@@ -87,12 +87,12 @@ main_font.color=0xFFFFFF;
  }
  
  /*now call a demo function I wrote*/
- /*sdl_chastelib_test_suite();*/
+ sdl_chastelib_test_suite();
  
  /*demo_galatians();*/
  /*demo_power2();*/
  
- demo_primes();
+ /*demo_primes();*/
  
  if(0)
  {

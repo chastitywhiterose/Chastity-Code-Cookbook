@@ -7,7 +7,7 @@ int demo_galatians()
   cursor_left=main_font.char_scale*8;
 
   main_font.char_scale=8; 
-
+  main_font.color=0xFFFFFF;
 
   putstr("\nGalatians Chapter 3\n\n");
 
