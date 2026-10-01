@@ -36,7 +36,7 @@ int sdl_chastelib_clickulator()
   putstr("SDL2 clickulator\n");
 
   main_font.char_scale=3;
-  cursor_x=100;
+  cursor_x=180;
   cursor_y=100;
   putstr("32-bit integer mouse click edition\n");
 
@@ -109,6 +109,12 @@ int sdl_chastelib_clickulator()
   cursor_y=300;
 
   putstr("Binary\n");
+  radix=2;
+  int_width=32;
+  putint(n);
+  putstr("\n");
+  
+  putstr("Octal\n");
   radix=2;
   int_width=32;
   putint(n);
