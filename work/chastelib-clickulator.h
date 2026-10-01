@@ -10,17 +10,17 @@ int sdl_chastelib_clickulator()
 
  /*upper left coordinates of where calculator buttons start*/
  int button_area_x=200; 
- int button_area_y=200;
+ int button_area_y=150;
  int button_size=90;
 
- int n=0; /*variables for this test program*/
+ unsigned int n=0; /*variables for this test program*/
 
  line_spacing_pixels=1; /*empty space in pixels between lines*/
  
  main_font.color=0x00FF00; /*change text color*/
 
- radix=10;
- int_width=1;
+ radix=2;
+ int_width=32;
 
  /*a loop which will only end if we click the X or press escape*/
  while(loop)
@@ -29,14 +29,16 @@ int sdl_chastelib_clickulator()
 
  if(change) /*start of update on input section*/
  {
-  
-  sdl_clear();  /*clear the screen before we begin writing*/
+  /*clear the screen before we redraw*/
+  SDL_FillRect(surface,NULL,0x000000);
 
-  printf("Updating screen\n");
+  /*cursor_x=cursor_left;cursor_y=cursor_top;*/
 
-  main_font.char_scale=3;
+  cursor_x=cursor_left+main_font.char_width*8;
+  cursor_y=cursor_top+main_font.char_width*4;
+  main_font.char_scale=8;
   main_font.color=0xFFFFFF;
-  putstr("Official test suite for the C version of chastelib.\nThis version uses SDL2.\n\n");
+  putstr("SDL2 clickulator\n");
 
   /*button 0*/
   rect.x=button_area_x+button_size*1;
@@ -51,8 +53,9 @@ int sdl_chastelib_clickulator()
   
   if(SDL_PointInRect(&mouse,&rect))
   {
-   printf("Button Zero Pressed");
+   printf("Button Zero Pressed\n");
    printf("mouse.x==%d,mouse.y==%d\n",mouse.x,mouse.y);
+   n<<=1;
   }
 
   /*button 1*/
@@ -68,8 +71,10 @@ int sdl_chastelib_clickulator()
   
   if(SDL_PointInRect(&mouse,&rect))
   {
-   printf("Button One Pressed");
+   printf("Button One Pressed\n");
    printf("mouse.x==%d,mouse.y==%d\n",mouse.x,mouse.y);
+   n<<=1;
+   n+=1;
   }
 
   /*button backspace*/
@@ -88,8 +93,21 @@ int sdl_chastelib_clickulator()
   cursor_x=rect.x+1;
   cursor_y=rect.y+1;
   main_font.char_scale=11;
-  sdl_putstring("back");
+  sdl_putstring("back\n");
 
+  if(SDL_PointInRect(&mouse,&rect))
+  {
+   printf("Button Backspace Pressed\n");
+   printf("mouse.x==%d,mouse.y==%d\n",mouse.x,mouse.y);
+   n>>=1;
+  }
+
+  /*print the integer*/
+  main_font.char_scale=4;
+  cursor_x=100;
+  cursor_y=360;
+  putint(n);
+  putstr("\n");
 
   SDL_UpdateWindowSurface(window); /*update window to show the results*/
  
@@ -108,7 +126,8 @@ int sdl_chastelib_clickulator()
     mouse.y=e.button.y;
     printf("mouse.x==%d,mouse.y==%d\n",mouse.x,mouse.y);
     change=1; /*signal that something has changed*/
-    
+ 
+    /*   
     if (e.button.button == SDL_BUTTON_LEFT)
     {
      printf("Left Click!\n");
@@ -121,6 +140,7 @@ int sdl_chastelib_clickulator()
     {
      printf("Middle Click!\n");
     }
+   */
    }
 
 
