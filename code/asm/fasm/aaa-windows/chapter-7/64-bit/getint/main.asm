@@ -10,67 +10,77 @@ main:
 mov dword[radix],10    ;I can choose the radix for integer output!
 mov dword[int_width],1 ;and the width of each integer for padded zeros
 
+;get the first number
 mov rax,help4
 call putstring
 call putline
 call getint
-mov r10,rax
+mov rbx,rax
 
+;get the second number
 mov rax,help5
 call putstring
 call putline
 call getint
-mov r11,rax
+mov rcx,rax
 
+;show both entered numbers
 mov rax,help7
 call putstring
 call putline
-mov rax,r10
+mov rax,rbx
 call putint
 call putline
-mov rax,r11
+mov rax,rcx
 call putint
 call putline
 call putline
 
+;ask user for math operation
 op_choose:
-
 mov rax,help6
 call putstring
 call putline
 call getint
-mov r12,rax
 
-cmp r12,0
+cmp rax,0
 jz op_add
-cmp r12,1
+cmp rax,1
 jz op_sub
-cmp r12,2
+cmp rax,2
 jz op_mul
-cmp r12,3
+cmp rax,3
 jz op_div
 
 jmp op_choose ;start over if none of the choices 0 to 3 were chosen
 
 op_add:
-mov rax,r10
-add rax,r11
+mov rax,rbx
+add rax,rcx
 jmp print_result
+
 op_sub:
-mov rax,r10
-sub rax,r11
+mov rax,rbx
+sub rax,rcx
 jmp print_result
+
 op_mul:
-mov rax,r10
-mul r11
+mov rax,rbx
+mul rcx
 jmp print_result
+
 op_div:
 mov rdx,0
-mov rax,r10
-div r11
+mov rax,rbx
+div rcx
 jmp print_result
 
 print_result:
+push rax
+mov rax,help8
+call putstring
+call putline
+pop rax
 call putint
 call putline
 
@@ -96,10 +106,7 @@ help6 db 'Enter which math function to use:',0xD,0xA
       db '2=multiplication',0xD,0xA
       db '3=division',0xD,0xA,0
 help7 db 'Your numbers are:',0xD,0xA,0
-
-
-
-ret
+help8 db 'Your result is:',0xD,0xA,0
 
 getint:
 
@@ -117,11 +124,11 @@ call getstring     ;get string and return address in rax
 cmp qword[count],0 ;were there zero characters read?
 jz getint_loop     ;if yes, this was an empty string, retry input
 
-mov rdx,rax        ;mov string to rdx for backup and comparison
+mov rsi,rax        ;mov string to rsi for backup and comparison
 
 mov rax,help1
 call putstring
-mov rax,rdx
+mov rax,rsi
 call putstring
 call putline
 
@@ -145,11 +152,10 @@ call putstring
 call putline
 pop rax
 
-
 getint_end:
-push rdx
-push rcx
-push rbx
+pop rdx
+pop rcx
+pop rbx
 
 ret
             
