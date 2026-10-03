@@ -103,6 +103,29 @@ void api_set_ui(struct api_t *a,unsigned int i)
  }
 }
 
+
+
+
+
+/*
+ a=b
+ x is used as index variable
+ every digit in a is copied from b
+ length of a is set to the length of b
+*/
+void api_mov(struct api_t *a,struct api_t *b)
+{
+ int x=0;
+ while(x<b->length)
+ {
+  a->digits[x]=b->digits[x];
+  x++;
+ }
+ a->length=b->length;
+}
+
+
+
 /*
  section 1
 

@@ -20,17 +20,12 @@ int main(int argc, char *argv[])
  api_set_ui(a,256);
  api_set_ui(b,512);
 
- put_api(a); putstr("\n");
- put_api(b); putstr("\n");
- put_api(c); putstr("\n");
+ api_mov(c,a); /*c=a*/
+ api_add(c,b); /*c+=b*/
 
- api_add(a,b);
- api_add(a,b);
-
-
- put_api(a); putstr("\n");
- put_api(b); putstr("\n");
- put_api(c); putstr("\n");
+ putstr("a="); put_api(a); putstr("\n");
+ putstr("b="); put_api(b); putstr("\n");
+ putstr("c="); put_api(c); putstr("\n");
 
  api_delete(a);
  api_delete(b);
@@ -38,4 +33,3 @@ int main(int argc, char *argv[])
 
  return 0;
 }
-
