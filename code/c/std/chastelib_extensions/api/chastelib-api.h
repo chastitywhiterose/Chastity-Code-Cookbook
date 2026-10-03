@@ -6,22 +6,31 @@
  These integers should be represented as strings of digits using the current radix.
 */
 
+/*
+ section zero
+
+ these variables, types, and functions are concerned with creating
+ a new api integer and setting its value with a regular integer
+*/
+
 int init_length=0x100; /*the default length for new integers allocated*/
 
 /*
 Arbitrary Precision Integer structure
 */
-struct api
+struct api_t
 {
  char *digits; /*pointer to an array of dynamically allocated of bytes*/
  int length,x;  /*current number of digits used*/
  int length_max;  /*current number of digits used*/
 };
 
-struct api* api_new()
+typedef struct api_t* api;
+
+struct api_t* api_new()
 {
  /*create a new pointer variable for an api struct*/
- struct api *a;
+ struct api_t *a;
  /*allocate memory for the variables of this struct*/
  a=malloc(sizeof(*a));
  /*use default init_length*/
@@ -36,7 +45,7 @@ struct api* api_new()
  return a;
 }
 
-void put_api(struct api *a)
+void put_api(struct api_t *a)
 {
  int x=a->length;
  while(x>0)
@@ -46,7 +55,7 @@ void put_api(struct api *a)
  }
 }
 
-void put_api_reverse(struct api *a)
+void put_api_reverse(struct api_t *a)
 {
  int x=0;
  while(x<a->length)
@@ -57,7 +66,7 @@ void put_api_reverse(struct api *a)
 }
 
 
-void api_set_ui(struct api *a,unsigned int i)
+void api_set_ui(struct api_t *a,unsigned int i)
 {
  int x=0;
  while(i!=0)
