@@ -157,3 +157,44 @@ void api_add(struct api_t *a,struct api_t *b)
   a->length++;
  }
 }
+
+
+
+
+
+/*
+ a=a-b
+ x is used as index variable
+ y is used as borrow variable
+ this function fails miserably if you subtract
+ a larger number from a smaller number
+ negative numbers are not part of this library
+*/
+int api_sub(struct api_t *a,struct api_t *b)
+{
+ int x=0,y=0;
+ while(x<b->length)
+ {
+  y=a->digits[x];
+  y-=b->digits[x];
+
+  /*printf("y=%d\n",y);*/
+  /*if negative y, borrow from next digit*/
+  if(y<0)
+  {
+   a->digits[x+1]--;
+   y+=radix;
+  }
+
+  a->digits[x]=y;
+  x++;
+ }
+
+ if(a->digits[x]!=0)
+ {
+  printf("subtraction failure: bigger number subtracted from smaller number\n");
+  return 1; /*an error has occurred*/
+ }
+
+ return 0; /*if no errors, return 0*/
+}
