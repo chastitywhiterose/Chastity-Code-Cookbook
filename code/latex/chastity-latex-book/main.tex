@@ -124,4 +124,42 @@ Images should usually be used quite sparingly in books designed to be printed as
 \caption{A square target}
 \end{figure}
 
+\chapter{Changing Font Size}
+
+Most of the time, the default font size for LaTeX doesn't matter very much. After all, most PDF files are read on computers and can be resized on the screen. But when printing real paperback books, there may be reasons to make text bigger.
+
+For this purpose, there are LaTeX commands for common sizes. They can be used to temporarily make certain sections a different size of text. Here is a code sample and the output it generates.
+
+\begin{verbatim}
+\tiny tiny
+\scriptsize scriptsize
+\footnotesize footnotessize
+\small small
+\normalsize normalsize
+\large large
+\Large Large
+\LARGE LARGE
+\huge huge
+\Huge Huge
+\end{verbatim}
+
+\tiny tiny
+\scriptsize scriptsize
+\footnotesize footnotessize
+\small small
+\normalsize normalsize
+\large large
+\Large Large
+\LARGE LARGE
+\huge huge
+\Huge Huge
+
+\normalsize
+
+There are some references I use to remind myself how to change font sizes in a document. It can either be changed individually with the above keywords or for an entire document as part of its class options.
+
+\href{https://tug.org/texinfohtml/latex2e.html#Document-class-options}{Document-class-options}
+
+\href{https://tug.org/texinfohtml/latex2e.html#Font-sizes}{Font-sizes}
+
 \end{document}
