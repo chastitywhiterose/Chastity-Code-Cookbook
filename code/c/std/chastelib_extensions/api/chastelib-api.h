@@ -38,10 +38,36 @@ struct api* api_new()
 
 void put_api(struct api *a)
 {
+ int x=a->length;
+ while(x>0)
+ {
+  x--;
+  putint(a->digits[x]);
+ }
+}
+
+void put_api_reverse(struct api *a)
+{
  int x=0;
  while(x<a->length)
  {
   putint(a->digits[x]);
   x++;
+ }
+}
+
+
+void api_set_ui(struct api *a,unsigned int i)
+{
+ int x=0;
+ while(i!=0)
+ {
+  a->digits[x]=i%radix;
+  i/=radix;
+  x++;
+ }
+ if(x>a->length)
+ {
+  a->length=x;
  }
 }
