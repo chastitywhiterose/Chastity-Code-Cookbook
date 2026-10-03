@@ -25,6 +25,20 @@ struct api_t
  int length_max;  /*current number of digits used*/
 };
 
+/*
+ the following typedef is a convenience type
+ so that a program can define variables as:
+
+ api a,b;
+
+ instead of:
+
+ struct api_t *a,*b;
+
+ It looks cleaner to a human but to the compiler
+ the two statements are identical thanks to the name
+ api being assigned to a pointer of type apt_t
+*/
 typedef struct api_t* api;
 
 struct api_t* api_new()

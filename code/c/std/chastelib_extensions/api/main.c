@@ -5,7 +5,7 @@
 
 int main(int argc, char *argv[])
 {
- struct api_t *a,*b;
+ api a,b;
 
  radix=10;
  int_width=1;
