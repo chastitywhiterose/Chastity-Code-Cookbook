@@ -59,6 +59,14 @@ struct api_t* api_new()
  return a;
 }
 
+void api_delete(struct api_t *a)
+{
+ /*free the allocated digits array first*/
+ free(a->digits);
+ /*then free the structure itself*/
+ free(a);
+}
+
 void put_api(struct api_t *a)
 {
  int x=a->length;
@@ -92,5 +100,36 @@ void api_set_ui(struct api_t *a,unsigned int i)
  if(x>a->length)
  {
   a->length=x;
+ }
+}
+
+/*
+ section 1
+
+ these functions do arithmetic on the api variables
+ and should only be used once they are initialized
+*/
+
+
+/*
+ a=a+b
+ x is used as index variable
+ y is used as carry variable
+*/
+void api_add(struct api_t *a,struct api_t *b)
+{
+ int x=0,y=0;
+ while(x<b->length)
+ {
+  y+=a->digits[x];
+  y+=b->digits[x];
+  a->digits[x]=y%radix;
+  y/=radix;
+  x++;
+ }
+ if(y)
+ {
+  a->digits[x]=y;
+  a->length++;
  }
 }
