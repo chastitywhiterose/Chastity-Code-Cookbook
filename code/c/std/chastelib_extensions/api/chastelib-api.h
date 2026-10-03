@@ -50,7 +50,8 @@ struct api_t* api_new()
  /*use default init_length*/
  a->length_max=init_length;
  /*allocate memory for the array of digits*/
- a->digits=malloc(sizeof(*a->digits));
+ a->digits=malloc(a->length_max*sizeof(*a->digits));
+ if(a->digits==NULL){printf("Failed to create digits array\n");}
  /*set length of used digits to 1*/
  a->length=1;
  /*set lowest digit to 0*/
