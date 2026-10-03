@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "chastelib.h"
+#include "chastelib-api.h"
 
 int main(int argc, char *argv[])
 {
