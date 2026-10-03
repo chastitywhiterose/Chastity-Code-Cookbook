@@ -18,9 +18,30 @@ struct api
  int length_max;  /*current number of digits used*/
 };
 
-void api_init(struct api *a)
+struct api* api_new()
 {
+ /*create a new pointer variable for an api struct*/
+ struct api *a;
+ /*allocate memory for the variables of this struct*/
+ a=malloc(sizeof(*a));
+ /*use default init_length*/
  a->length_max=init_length;
- a->digits=malloc(a->length_max);
+ /*allocate memory for the array of digits*/
+ a->digits=malloc(sizeof(*a->digits));
+ /*set length of used digits to 1*/
  a->length=1;
+ /*set lowest digit to 0*/
+ a->digits[0]=0;
+ /*return this pointer to the calling function*/
+ return a;
+}
+
+void put_api(struct api *a)
+{
+ int x=0;
+ while(x<a->length)
+ {
+  putint(a->digits[x]);
+  x++;
+ }
 }

@@ -5,14 +5,18 @@
 
 int main(int argc, char *argv[])
 {
-
+ struct api *a;
 
  radix=10;
  int_width=1;
 
- putstr("Official test suite for the C version of chastelib.\n");
+ putstr("chastelib Arbitrary Precision Integer demo\n");
 
-     
+ a=api_new();
+
+ put_api(a);
+ putstr("\n");
+
  return 0;
 }
 
