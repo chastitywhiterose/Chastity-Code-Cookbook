@@ -13,7 +13,11 @@
  a new api integer and setting its value with a regular integer
 */
 
-int init_length=0x100; /*the default length for new integers allocated*/
+/*
+ the default length for new integers allocated
+ can be increased by the main program to allocate more digits
+*/
+int init_length=0x100;
 
 /*
 Arbitrary Precision Integer structure
@@ -22,7 +26,7 @@ struct api_t
 {
  char *digits;   /*pointer to an array of dynamically allocated of bytes*/
  int length,x;   /*current number of digits used*/
- int length_max; /*current number of digits used*/
+ int length_max; /*maximum number of digits used*/
  int signbit;    /*used to fake negative numbers in subtraction*/
 };
 
@@ -158,7 +162,7 @@ void api_mov(struct api_t *a,struct api_t *b)
 void api_add(struct api_t *a,struct api_t *b)
 {
  int x=0,y=0;
- while(x<b->length)
+ while(x<a->length)
  {
   y+=a->digits[x];
   y+=b->digits[x];
@@ -184,6 +188,7 @@ void api_add(struct api_t *a,struct api_t *b)
  this function fails miserably if you subtract
  a larger number from a smaller number
  negative numbers are not part of this library
+ but are simulated with a signbit field in the api struct
 */
 int api_sub(struct api_t *a,struct api_t *b)
 {
@@ -238,3 +243,63 @@ int api_sub(struct api_t *a,struct api_t *b)
 
  return a->signbit;
 }
+
+
+
+
+
+
+
+
+/*
+ a=a*b
+ each api integer has its own index variable
+ i is used as product and carry variable
+ c integer destination is dynamically created and 
+ then copied to a and deleted
+*/
+void api_mul(struct api_t *a,struct api_t *b)
+{
+ int i,ax,bx,cx;
+
+ api c; /*temporary variable in case something goes horribly wrong!*/
+ c=api_new(); /*allocate temp int*/
+
+ /*all digits of c must be initialized o 0*/
+ cx=0;
+ while(cx<c->length_max)
+ {
+  c->digits[cx]=0;
+  cx++;
+ }
+
+ /*
+  multiply the a and b arrays together and store the result
+  in the c array
+ */
+  bx=0;
+  while(bx<b->length)/*multiplication code begin*/
+  {
+   ax=0;
+   while(ax<a->length)
+   {
+    i=a->digits[ax]*b->digits[bx];
+    cx=ax+bx; 
+    while(cx<c->length_max && i>0)
+    {
+     c->digits[cx]+=i;
+     i=c->digits[cx]/radix;
+     c->digits[cx]%=radix;
+     cx++;
+     if(cx>c->length){c->length=cx;}
+    }
+    ax++;
+   }
+   bx++;
+
+  } /*multiplication code end*/
+
+ api_mov(a,c);
+ api_delete(c);
+}
+
