@@ -77,13 +77,14 @@ void api_delete(struct api_t *a)
 */
 void put_api(struct api_t *a)
 {
+ int x;
 
  if(a->signbit)
  {
   putstr("-");
  }
 
- int x=a->length;
+ x=a->length;
  while(x>0)
  {
   x--;
