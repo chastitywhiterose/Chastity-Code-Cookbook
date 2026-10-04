@@ -71,14 +71,25 @@ void api_delete(struct api_t *a)
  free(a);
 }
 
+/*
+ print all the digits of the api integer
+ with a leading - if the signbit is set
+*/
 void put_api(struct api_t *a)
 {
+
+ if(a->signbit)
+ {
+  putstr("-");
+ }
+
  int x=a->length;
  while(x>0)
  {
   x--;
   putint(a->digits[x]);
  }
+
 }
 
 void put_api_reverse(struct api_t *a)
@@ -176,7 +187,11 @@ void api_add(struct api_t *a,struct api_t *b)
 int api_sub(struct api_t *a,struct api_t *b)
 {
  int x=0,y=0;
- while(x<b->length)
+ api t; /*temporary variable in case something goes horribly wrong!*/
+ t=api_new();  /*allocate temp int*/
+ api_mov(t,a); /*make copy of a*/
+
+ while(x<a->length)
  {
   y=a->digits[x]-y;
   y-=b->digits[x];
@@ -198,12 +213,27 @@ int api_sub(struct api_t *a,struct api_t *b)
   x++;
  }
 
- if(a->digits[x]!=0)
+ /*reduce length by excluding leading zero digits*/
+ while(a->digits[x-1]==0)
+ {
+  x--;
+ }
+ a->length=x;
+
+ /*
+  if b is greater than a, it results in negative number
+  we subtract original a from b to get the difference
+  and then flip the sign bit
+ */
+ if(y!=0)
  {
   putstr("Warning: signbit changed to 1 for negative number.\n");
   a->signbit=1;
-  return 1; /*an error has occurred*/
+  api_mov(a,b);
+  api_sub(a,t);
  }
 
- return 0; /*if no errors, return 0*/
+ api_delete(t);
+
+ return a->signbit;
 }

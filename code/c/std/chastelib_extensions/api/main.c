@@ -17,8 +17,8 @@ int main(int argc, char *argv[])
  b=api_new();
  c=api_new();
 
- api_set_ui(a,768);
- api_set_ui(b,512);
+ api_set_ui(a,512);
+ api_set_ui(b,768);
 
  api_mov(c,a); /*c=a*/
  api_sub(c,b); /*c-=b*/
