@@ -252,9 +252,11 @@ int api_sub(struct api_t *a,struct api_t *b)
 
 
 /*
- a=a+b
- x is used as index variable
- y is used as carry variable
+ a=a*b
+ each api integer has its own index variable
+ i is used as product and carry variable
+ c integer destination is dynamically created and 
+ then copied to a and deleted
 */
 void api_mul(struct api_t *a,struct api_t *b)
 {
@@ -278,8 +280,8 @@ void api_mul(struct api_t *a,struct api_t *b)
     while(cx<c->length_max && i>0)
     {
      c->digits[cx]+=i;
-     i=c->digits[cx]/10;
-     c->digits[cx]%=10;
+     i=c->digits[cx]/radix;
+     c->digits[cx]%=radix;
      cx++;
      if(cx>c->length){c->length=cx;}
     }

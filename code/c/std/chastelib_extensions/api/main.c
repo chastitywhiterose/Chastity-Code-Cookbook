@@ -18,10 +18,10 @@ int main(int argc, char *argv[])
  c=api_new();
 
  api_set_ui(a,1024);
- api_set_ui(b,3);
+ api_set_ui(b,5);
 
  api_mov(c,a); /*c=a*/
- api_sub(c,b); /*c-=b*/
+ api_mul(c,b); /*c-=b*/
 
  putstr("a="); put_api(a); putstr("\n");
  putstr("b="); put_api(b); putstr("\n");
