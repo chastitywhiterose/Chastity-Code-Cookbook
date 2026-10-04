@@ -20,9 +20,10 @@ Arbitrary Precision Integer structure
 */
 struct api_t
 {
- char *digits; /*pointer to an array of dynamically allocated of bytes*/
- int length,x;  /*current number of digits used*/
- int length_max;  /*current number of digits used*/
+ char *digits;   /*pointer to an array of dynamically allocated of bytes*/
+ int length,x;   /*current number of digits used*/
+ int length_max; /*current number of digits used*/
+ int signbit;    /*used to fake negative numbers in subtraction*/
 };
 
 /*
@@ -56,6 +57,8 @@ struct api_t* api_new()
  a->length=1;
  /*set lowest digit to 0*/
  a->digits[0]=0;
+ /*set signbit to 0 meaning positive or unsigned*/
+ a->signbit=0;
  /*return this pointer to the calling function*/
  return a;
 }
@@ -175,24 +178,30 @@ int api_sub(struct api_t *a,struct api_t *b)
  int x=0,y=0;
  while(x<b->length)
  {
-  y=a->digits[x];
+  y=a->digits[x]-y;
   y-=b->digits[x];
 
   /*printf("y=%d\n",y);*/
   /*if negative y, borrow from next digit*/
   if(y<0)
   {
-   a->digits[x+1]--;
    y+=radix;
+   a->digits[x]=y;
+   y=1;
+  }
+  else
+  {
+   a->digits[x]=y;
+   y=0;
   }
 
-  a->digits[x]=y;
   x++;
  }
 
  if(a->digits[x]!=0)
  {
-  printf("subtraction failure: bigger number subtracted from smaller number\n");
+  putstr("Warning: signbit changed to 1 for negative number.\n");
+  a->signbit=1;
   return 1; /*an error has occurred*/
  }
 
