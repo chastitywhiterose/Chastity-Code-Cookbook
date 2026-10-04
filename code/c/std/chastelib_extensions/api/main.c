@@ -5,6 +5,7 @@
 
 int main(int argc, char *argv[])
 {
+ int x;
  api a,b,c;
 
  radix=10;
@@ -17,15 +18,19 @@ int main(int argc, char *argv[])
  b=api_new();
  c=api_new();
 
- api_set_ui(a,1024);
- api_set_ui(b,5);
+ api_set_ui(a,1);
+ api_set_ui(b,1);
+ api_set_ui(c,1);
 
- api_mov(c,a); /*c=a*/
- api_mul(c,b); /*c-=b*/
-
- putstr("a="); put_api(a); putstr("\n");
- putstr("b="); put_api(b); putstr("\n");
- putstr("c="); put_api(c); putstr("\n");
+ x=0;
+ while(x<64)
+ {
+  api_mul(a,b);
+  put_api(b); 
+  putstr("! = "); put_api(a); putstr("\n");
+  api_add(b,c);
+  x++;
+ }
 
  api_delete(a);
  api_delete(b);

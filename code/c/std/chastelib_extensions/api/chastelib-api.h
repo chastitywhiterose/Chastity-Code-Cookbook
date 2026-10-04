@@ -162,7 +162,7 @@ void api_mov(struct api_t *a,struct api_t *b)
 void api_add(struct api_t *a,struct api_t *b)
 {
  int x=0,y=0;
- while(x<b->length)
+ while(x<a->length)
  {
   y+=a->digits[x];
   y+=b->digits[x];
@@ -264,6 +264,14 @@ void api_mul(struct api_t *a,struct api_t *b)
 
  api c; /*temporary variable in case something goes horribly wrong!*/
  c=api_new(); /*allocate temp int*/
+
+ /*all digits of c must be initialized o 0*/
+ cx=0;
+ while(cx<c->length_max)
+ {
+  c->digits[cx]=0;
+  cx++;
+ }
 
  /*
   multiply the a and b arrays together and store the result
