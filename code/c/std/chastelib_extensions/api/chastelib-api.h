@@ -396,7 +396,7 @@ int api_cmp(struct api_t *a,struct api_t *b)
 
 void api_div(struct api_t *a,struct api_t *b)
 {
- int i,ax,bx,qx,rx;
+ int x,ax;
 
  api q; /*quotient*/
  api r; /*remainder*/
@@ -405,12 +405,12 @@ void api_div(struct api_t *a,struct api_t *b)
 
 
  /*all digits of q and r must be initialized o 0*/
- qx=0;
- while(qx<q->length_max)
+ x=0;
+ while(x<q->length_max)
  {
-  q->digits[qx]=0;
-  r->digits[qx]=0;
-  qx++;
+  q->digits[x]=0;
+  r->digits[x]=0;
+  x++;
  }
 
  /*
@@ -430,8 +430,26 @@ void api_div(struct api_t *a,struct api_t *b)
    */
    api_shl(r);
    r->digits[0]=a->digits[ax];
- 
 
+   x=0; /*used to be next quotient digit*/
+   /*
+    while the remainder is greater or equal to b
+    subtract b from r
+    keep track of how many times with i
+   */
+   while(api_cmp(r,b)>=0)
+   {
+    api_sub(r,b);
+    x++;
+   }
+   /*
+    left shift quotient by radix
+    and place next digit from i
+    as lowest digit of quotient
+   */
+   api_shl(q);
+   q->digits[0]=x;
+ 
   } /*division code end*/
 
  api_mov(a,r);
