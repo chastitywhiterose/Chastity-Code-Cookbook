@@ -22,13 +22,13 @@ int main(int argc, char *argv[])
  api_set_ui(b,1);
  api_set_ui(c,1);
 
+
  x=0;
- while(x<64)
+ while(x<6)
  {
-  api_mul(a,b);
-  put_api(b); 
-  putstr("! = "); put_api(a); putstr("\n");
-  api_add(b,c);
+  api_shl(a);
+  put_api(a); 
+  putstr("\n");
   x++;
  }
 

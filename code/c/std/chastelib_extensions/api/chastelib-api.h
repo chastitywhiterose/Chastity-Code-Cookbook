@@ -303,3 +303,20 @@ void api_mul(struct api_t *a,struct api_t *b)
  api_delete(c);
 }
 
+/*
+ a is left shifted once
+ this is the same as multiplying by the radix
+ this is designed as a convenience function for
+ the long division algorithm later
+*/
+void api_shl(struct api_t *a)
+{
+ int x=a->length;
+ while(x>0)
+ {
+  x--;
+  a->digits[x+1]=a->digits[x];
+ }
+ a->digits[x]=0;
+ a->length++;
+}
