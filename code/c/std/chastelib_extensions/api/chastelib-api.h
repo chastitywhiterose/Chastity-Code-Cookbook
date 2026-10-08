@@ -318,7 +318,14 @@ void api_shl(struct api_t *a)
   a->digits[x+1]=a->digits[x];
  }
  a->digits[x]=0;
- a->length++;
+ /*
+  if the digit at length index is not zero
+  then we expand this integer by 1 digit
+ */
+ if(a->digits[a->length]!=0)
+ {
+  a->length++;
+ }
 }
 
 
@@ -377,3 +384,57 @@ int api_cmp(struct api_t *a,struct api_t *b)
  return y;
 }
 
+
+
+
+
+
+
+
+
+
+
+void api_div(struct api_t *a,struct api_t *b)
+{
+ int i,ax,bx,qx,rx;
+
+ api q; /*quotient*/
+ api r; /*remainder*/
+ q=api_new(); /*allocate quotient*/
+ r=api_new(); /*allocate remainder*/
+
+
+ /*all digits of q and r must be initialized o 0*/
+ qx=0;
+ while(qx<q->length_max)
+ {
+  q->digits[qx]=0;
+  r->digits[qx]=0;
+  qx++;
+ }
+
+ /*
+  divide b from a
+  store the quotient in q
+  and remainder in r
+ */
+  ax=a->length;
+  while(ax>0) /*division code begin*/
+  {
+   ax--;
+ 
+   /*
+    left shift remainder by radix
+    and place next digit from a
+    as lowest digit of remainder
+   */
+   api_shl(r);
+   r->digits[0]=a->digits[ax];
+ 
+
+  } /*division code end*/
+
+ api_mov(a,r);
+ api_delete(q);
+ api_delete(r);
+}

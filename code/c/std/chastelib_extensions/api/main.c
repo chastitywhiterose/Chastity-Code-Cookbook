@@ -5,7 +5,6 @@
 
 int main(int argc, char *argv[])
 {
- int x,y;
  api a,b,c;
 
  radix=10;
@@ -18,22 +17,20 @@ int main(int argc, char *argv[])
  b=api_new();
  c=api_new();
 
- api_set_ui(a,0);
- api_set_ui(b,8);
+ api_set_ui(a,256);
+ api_set_ui(b,10);
  api_set_ui(c,1);
 
 
- x=0;
- while(x<16)
- {
   put_api(a); 
-  putstr(" api_cmp=");
-  y=api_cmp(a,b);
-  putint(y);
   putstr("\n");
-  api_add(a,c);
-  x++;
- }
+  put_api(b); 
+  putstr("\n");
+  api_div(a,b);
+
+  put_api(a); 
+  putstr("\n");
+ 
 
  api_delete(a);
  api_delete(b);
