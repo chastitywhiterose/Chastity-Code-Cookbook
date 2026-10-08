@@ -220,7 +220,7 @@ int api_sub(struct api_t *a,struct api_t *b)
  }
 
  /*reduce length by excluding leading zero digits*/
- while(a->digits[x-1]==0)
+ while(a->digits[x-1]==0 && x>1)
  {
   x--;
  }
@@ -355,7 +355,7 @@ int api_cmp(struct api_t *a,struct api_t *b)
  {
   y=-1;
  }
- else if (a->length > b->length)
+ else if(a->length > b->length)
  {
   y=1;
  }
@@ -374,10 +374,12 @@ int api_cmp(struct api_t *a,struct api_t *b)
    if(a->digits[x] < b->digits[x])
    {
     y=-1;
+    break;
    }
    if(a->digits[x] > b->digits[x])
    {
     y=1;
+    break;
    }
   }
  }
@@ -446,13 +448,12 @@ void api_div(struct api_t *a,struct api_t *b)
     put_api(b);
     putstr("\n");
     cmp=api_cmp(r,b);
-    printf("cmp==%d\n\n",cmp);
+    printf("cmp==%d\n",cmp);
     if(cmp==-1)
     {
-     printf("r is less than b: cannot subtract\n");
+     printf("r is less than b: cannot subtract\n\n");
      break;
     }
-
 
     api_sub(r,b);
     put_api(r);
