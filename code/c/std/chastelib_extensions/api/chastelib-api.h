@@ -396,7 +396,7 @@ int api_cmp(struct api_t *a,struct api_t *b)
 
 void api_div(struct api_t *a,struct api_t *b)
 {
- int x,ax;
+ int x,ax,cmp;
 
  api q; /*quotient*/
  api r; /*remainder*/
@@ -437,9 +437,27 @@ void api_div(struct api_t *a,struct api_t *b)
     subtract b from r
     keep track of how many times with i
    */
-   while(api_cmp(r,b)>=0)
+   while(1)
    {
+
+    putstr("r==");
+    put_api(r);
+    putstr("\nb==");
+    put_api(b);
+    putstr("\n");
+    cmp=api_cmp(r,b);
+    printf("cmp==%d\n\n",cmp);
+    if(cmp==-1)
+    {
+     printf("r is less than b: cannot subtract\n");
+     break;
+    }
+
+
     api_sub(r,b);
+    put_api(r);
+    putstr("\n");
+
     x++;
    }
    /*
@@ -452,7 +470,7 @@ void api_div(struct api_t *a,struct api_t *b)
  
   } /*division code end*/
 
- api_mov(a,r);
+ api_mov(a,q);
  api_delete(q);
  api_delete(r);
 }

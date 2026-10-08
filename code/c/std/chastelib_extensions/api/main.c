@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
  c=api_new();
 
  api_set_ui(a,256);
- api_set_ui(b,20);
+ api_set_ui(b,16);
  api_set_ui(c,1);
 
 
