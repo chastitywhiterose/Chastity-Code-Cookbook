@@ -5,30 +5,33 @@
 
 int main(int argc, char *argv[])
 {
- int x;
+ int x,y;
  api a,b,c;
 
  radix=10;
  int_width=1;
 
  putstr("chastelib Arbitrary Precision Integer demo:\n");
- putstr("factorial sequence\n");
+ putstr("comparing api integers\n");
 
  a=api_new();
  b=api_new();
  c=api_new();
 
- api_set_ui(a,1);
- api_set_ui(b,1);
+ api_set_ui(a,0);
+ api_set_ui(b,8);
  api_set_ui(c,1);
 
 
  x=0;
- while(x<6)
+ while(x<16)
  {
-  api_shl(a);
   put_api(a); 
+  putstr(" api_cmp=");
+  y=api_cmp(a,b);
+  putint(y);
   putstr("\n");
+  api_add(a,c);
   x++;
  }
 

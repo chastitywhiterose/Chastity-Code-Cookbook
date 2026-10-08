@@ -320,3 +320,60 @@ void api_shl(struct api_t *a)
  a->digits[x]=0;
  a->length++;
 }
+
+
+/*
+ compares api integers a and b
+ 
+ first it uses the length of the integers
+ to see which is more or less than the other
+ if both numbers are the same amount of digits
+ then it compares them all high to low
+
+ regardless of which branch executes:
+ it returns the following regular int
+ -1 if a is less than b
+  0 if a is same as b
+ +1 if a is more than b
+*/
+int api_cmp(struct api_t *a,struct api_t *b)
+{
+ int x=0,y;
+ /*
+  first use the length of used digits
+  as a quick hack for finding which is
+  more or less if they are different
+ */
+ if(a->length < b->length)
+ {
+  y=-1;
+ }
+ else if (a->length > b->length)
+ {
+  y=1;
+ }
+ /*
+  if a and b have the same length
+  check the high to low digits and then return
+  based on any differences found
+ */
+ else
+ {
+  y=0;
+  x=a->length;
+  while(x>0)
+  {
+   x--;
+   if(a->digits[x] < b->digits[x])
+   {
+    y=-1;
+   }
+   if(a->digits[x] > b->digits[x])
+   {
+    y=1;
+   }
+  }
+ }
+ return y;
+}
+
