@@ -1,6 +1,9 @@
 ;Linux 32-bit Assembly Source for chastehex
 ;a special tool originally written in C
 format ELF executable
+entry main
+
+include 'chastelib32.asm'
 
 main:
 
@@ -9,6 +12,7 @@ mov dword [radix],16 ; can choose radix for integer input/output!
 
 pop eax ;get the number of arguments
 dec eax ;subtract 1 because we will ignore the name of the program
+
 pop ebx ;pop program name into a register to delete it from stack
 mov [argc],eax ;save the argument count for later
 
@@ -67,7 +71,7 @@ mov [count],eax
 cmp eax,0
 jnz file_success ;if more than zero bytes read, proceed to display
 
-;otherwise, display EOF to indicate we have reached the end of file
+;display EOF to indicate we have reached the end of file
 mov eax,end_of_file_string
 call putstr_and_line
 
@@ -155,8 +159,6 @@ int 80h      ;call the kernel
 mov eax, 1   ;invoke SYS_EXIT (kernel opcode 1)
 mov ebx, 0   ;return 0 status on exit - 'No Errors'
 int 80h
-
-include 'chastelib32.asm'
 
 ;a function just for printing the address
 ;this saves space because all 3 modes use this

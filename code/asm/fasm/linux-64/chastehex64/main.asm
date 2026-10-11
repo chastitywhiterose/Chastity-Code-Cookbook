@@ -10,12 +10,11 @@ main:
 ;radix will be 16 because this whole program is about hexadecimal
 mov qword [radix],16 ; can choose radix for integer input/output!
 
-pop rax
-mov [argc],rax ;save the argument count for later
+pop rax ;get the number of arguments
+dec rax ;subtract 1 because we will ignore the name of the program
 
-;first arg is the name of the program. we skip past it
-pop rax
-dec qword [argc]
+pop rbx ;pop program name into a register to delete it from stack
+mov [argc],rax ;save the argument count for later
 
 ;before we try to get the first argument as a filename, we must check if it exists
 cmp qword [argc],0
@@ -34,7 +33,6 @@ mov [filename],rax ; save the name of the file we will open to read
 call putstr_and_line
 
 ;Linux system call to open a file
-
 mov rsi,2   ;open file in read and write mode 
 mov rdi,rax ;filename should be in rax before this function was called
 mov rax,2   ;invoke SYS_OPEN (kernel opcode 2 on 64 bit systems)
@@ -44,7 +42,6 @@ cmp rax,0
 jns file_open_no_errors ;if rax is not negative/signed there was no error
 
 ;Otherwise, if it was signed, then this code will display an error message.
-
 neg rax
 call putint_and_space
 mov rax,open_error_message
@@ -69,38 +66,30 @@ mov rdi,[filedesc]   ;move the opened file descriptor into rdi
 mov rax,0            ;invoke SYS_READ (kernel opcode 0 on 64 bit Intel)
 syscall              ;call the kernel
 
-mov [bytes_read],rax
+mov [count],rax
 
 cmp rax,0
 jnz file_success ;if more than zero bytes read, proceed to display
 
 ;display EOF to indicate we have reached the end of file
-
 mov rax,end_of_file_string
 call putstr_and_line
 
 jmp main_end
 
-; this point is reached if file was read from successfully
-
+;this point is reached if file was read from successfully
 file_success:
-
 call print_bytes_row
-
-cmp qword [bytes_read],1 
-jl main_end ;if less than one bytes read, there is an error
 jmp hexdump
 
 ;address argument section
 next_arg_address:
 
-;if there is at least one more arg
 pop rax ;pop the argument into rax and process it as a hex number
 dec qword [argc]
 call strint
 
 ;use the hex number as an address to seek to in the file
-
 mov rdx,0          ;whence argument (SEEK_SET)
 mov rsi,rax        ;move the file cursor to this address
 mov rdi,[filedesc] ;move the opened file descriptor into rdi
@@ -179,7 +168,7 @@ mov qword [int_width],8
 call putint_and_space
 
 mov rbx,byte_array
-mov rcx,[bytes_read]
+mov rcx,[count]
 add [file_offset],rcx
 next_byte:
 mov rax,0
@@ -192,7 +181,7 @@ dec rcx
 cmp rcx,0
 jnz next_byte
 
-mov rcx,[bytes_read]
+mov rcx,[count]
 pad_spaces:
 cmp rcx,0x10
 jz pad_spaces_end
@@ -212,7 +201,7 @@ space_three db '   ',0
 
 print_bytes_row_text:
 mov rbx,byte_array
-mov rcx,[bytes_read]
+mov rcx,[count]
 next_char:
 mov rax,0
 mov al,[rbx]
@@ -278,7 +267,7 @@ db 'The file must exist',0Ah,0
 argc dq 0
 filename dq 0 ; name of the file to be opened
 filedesc dq 0 ; file descriptor
-bytes_read dq 0
+count dq 0
 file_offset dq 0
 open_error_message db 'error while opening file',0
 
