@@ -68,6 +68,8 @@ syscall         ;call the kernel
 
 mov [count],rax
 
+;call putint_and_line
+
 cmp rax,0
 jnz file_success ;if more than zero bytes read, proceed to display
 
@@ -287,4 +289,4 @@ open_error_message db 'error opening file',0
 ;used for the text printing function
 buf db 17 dup '?',0
 
-db 40 dup 0 ;fill with extra space to match 1530 executable size
+db 36 dup 0 ;fill with extra space to match 1530 executable size

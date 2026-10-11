@@ -171,7 +171,7 @@ file_open db ' opened',0
 file_error db ' error',0
 end_of_file_string db ' EOF',0
 
-db 48 dup 0 ;fill with extra space to match 1280 executable size
+db 44 dup 0 ;fill with extra space to match 1280 executable size
 
 ;variables for managing arguments and files
 argc dq ?

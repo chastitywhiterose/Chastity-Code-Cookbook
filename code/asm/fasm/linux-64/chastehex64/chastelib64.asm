@@ -17,9 +17,11 @@
 putstring:
 
 push rax
+push rbx
+push rcx
+push rdx
 push rdi
 push rsi
-push rdx
 
 mov rdi,rax             ;copy eax to rdi to be used as index to the string
 
@@ -43,9 +45,11 @@ mov rdi,1        ;write to the STDOUT file
 mov rax,1        ;write (kernel opcode 1 on 64 bit systems)
 syscall          ;system call for 64-bit Linux kernel
 
-pop rdx
 pop rsi
 pop rdi
+pop rdx
+pop rcx
+pop rbx
 pop rax
 
 ret ;this is the end of the putstring function return to calling location
