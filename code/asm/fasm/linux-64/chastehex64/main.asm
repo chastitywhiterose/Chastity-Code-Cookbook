@@ -51,20 +51,20 @@ jmp main_end ;end the program because we failed at opening the file
 
 file_open_no_errors:
 
-mov [filedesc],rax ; save the file descriptor number for later use
+mov [fd],rax ; save the file descriptor number for later use
 mov qword [offset],0 ;assume the offset is 0,beginning of file
 
 ;check next arg
 cmp qword [argc],0 ;if there are no more args after filename, just hexdump it
-jnz next_arg_address ;but if there are more, jump to the next argument to process it as address
+jnz seek_offset ;but if there are more, jump to the next argument to process it as address
 
 hexdump:
 
-mov rdx,0x10         ;number of bytes to read
-mov rsi,byte_array   ;address to store the bytes
-mov rdi,[filedesc]   ;move the opened file descriptor into rdi
-mov rax,0            ;invoke SYS_READ (kernel opcode 0 on 64 bit Intel)
-syscall              ;call the kernel
+mov rdx,0x10    ;number of bytes to read
+mov rsi,buf     ;address to store the bytes
+mov rdi,[fd]    ;move the opened file descriptor into rdi
+mov rax,0       ;invoke SYS_READ (kernel opcode 0 on 64 bit Intel)
+syscall         ;call the kernel
 
 mov [count],rax
 
@@ -82,19 +82,19 @@ file_success:
 call print_bytes_row
 jmp hexdump
 
-;address argument section
-next_arg_address:
+;convert argument with strint and lseek to that offset
+seek_offset:
 
 pop rax ;pop the argument into rax and process it as a hex number
 dec qword [argc]
 call strint
 
 ;use the hex number as an address to seek to in the file
-mov rdx,0          ;whence argument (SEEK_SET)
-mov rsi,rax        ;move the file cursor to this address
-mov rdi,[filedesc] ;move the opened file descriptor into rdi
-mov rax,8          ;invoke SYS_LSEEK (kernel opcode 8 on 64 bit Intel)
-syscall            ;call the kernel
+mov rdx,0        ;whence argument (SEEK_SET)
+mov rsi,rax      ;move the file cursor to this address
+mov rdi,[fd]     ;move the opened file descriptor into rdi
+mov rax,8        ;invoke SYS_LSEEK (kernel opcode 8 on 64 bit Intel)
+syscall          ;call the kernel
 
 mov [offset],rax ;move the new offset
 
@@ -104,8 +104,8 @@ jnz next_arg_write ; if there are still arguments, skip this read section and en
 
 read_one_byte:
 mov rdx,1            ;number of bytes to read
-mov rsi,byte_array   ;address to store the bytes
-mov rdi,[filedesc]   ;move the opened file descriptor into rdi
+mov rsi,buf   ;address to store the bytes
+mov rdi,[fd]   ;move the opened file descriptor into rdi
 mov rax,0            ;invoke SYS_READ (kernel opcode 0 on 64 bit Intel)
 syscall              ;call the kernel
 
@@ -132,11 +132,11 @@ call strint ;try to convert string to a hex number
 
 ;write that number as a byte value to the file
 
-mov [byte_array],al
+mov [buf],al
 
 mov rdx,1          ;write 1 byte
-mov rsi,byte_array ;pointer/address of byte to write
-mov rdi,[filedesc] ;write to this file descriptor
+mov rsi,buf ;pointer/address of byte to write
+mov rdi,[fd] ;write to this file descriptor
 mov rax,1          ;invoke SYS_WRITE (kernel opcode 1 on 64 bit systems)
 syscall            ;system call to write the message
 
@@ -152,7 +152,7 @@ main_end:
 
 ;Linux system call to close a file
 
-mov rdi,[filedesc] ;file number to close
+mov rdi,[fd] ;file number to close
 mov rax,3          ;invoke SYS_CLOSE (kernel opcode 3 for 64 bit Intel)
 syscall            ;call the kernel
 
@@ -173,7 +173,7 @@ ret
 print_bytes_row:
 call print_offset
 
-mov rbx,byte_array
+mov rbx,buf
 mov rcx,[count]
 add [offset],rcx
 next_byte:
@@ -216,7 +216,7 @@ space_three db '   ',0
 ;It also replaces characters that can't be printed with periods -> .
 
 print_bytes_row_text:
-mov rbx,byte_array
+mov rbx,buf
 mov rcx,[count]
 next_char:
 mov rax,0
@@ -229,7 +229,7 @@ cmp al,0x7E
 ja not_printable
 
 printable:
-;if char is in printable range,copy as is and proceed to next index
+;if char is in printable range,keep as is and proceed to next index
 jmp next_index
 
 not_printable:
@@ -243,7 +243,7 @@ cmp rcx,0
 jnz next_char
 mov [rbx],byte 0 ;make sure string is zero terminated
 
-mov rax,byte_array
+mov rax,buf
 call putstring
 ret
 
@@ -260,7 +260,7 @@ ret
 print_byte_info:
 call print_offset
 mov rax,0
-mov al,[byte_array]
+mov al,[buf]
 mov qword [int_width],2
 call putint_and_line
 
@@ -274,17 +274,17 @@ db 'read a byte:',0Ah,9,'chastehex file offset',0Ah
 db 'write a byte:',0Ah,9,'chastehex file offset value',0Ah
 db 'The file must exist',0Ah,0
 
-;variables for managing arguments
+;variables for managing arguments and files
 argc dq 0
 filename dq 0 ; name of the file to be opened
-filedesc dq 0 ; file descriptor
+fd dq 0 ; file descriptor
 count dq 0
 offset dq 0
-open_error_message db 'error while opening file',0
-
-db 2 dup 0 ;fill with extra space to match 1530 executable size
+open_error_message db 'error opening file',0
 
 ;where we will store data from the file
-byte_array db 17 dup ?
+;17 bytes because 16 bytes read per row plus the terminating 0
+;used for the text printing function
+buf db 17 dup '?',0
 
-
+db 2 dup 0 ;fill with extra space to match 1530 executable size
