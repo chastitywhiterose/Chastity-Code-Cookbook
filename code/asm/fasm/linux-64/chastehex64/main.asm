@@ -52,7 +52,7 @@ jmp main_end ;end the program because we failed at opening the file
 file_open_no_errors:
 
 mov [filedesc],rax ; save the file descriptor number for later use
-mov qword [file_offset],0 ;assume the offset is 0,beginning of file
+mov qword [offset],0 ;assume the offset is 0,beginning of file
 
 ;check next arg
 cmp qword [argc],0 ;if there are no more args after filename, just hexdump it
@@ -96,7 +96,7 @@ mov rdi,[filedesc] ;move the opened file descriptor into rdi
 mov rax,8          ;invoke SYS_LSEEK (kernel opcode 8 on 64 bit Intel)
 syscall            ;call the kernel
 
-mov [file_offset],rax ;move the new offset
+mov [offset],rax ;move the new offset
 
 ;check the number of args still remaining
 cmp qword [argc],0
@@ -141,7 +141,7 @@ mov rax,1          ;invoke SYS_WRITE (kernel opcode 1 on 64 bit systems)
 syscall            ;system call to write the message
 
 call print_byte_info
-inc qword [file_offset]
+inc qword [offset]
 
 jmp next_arg_write
 
@@ -160,16 +160,22 @@ mov rax, 0x3C ; invoke SYS_EXIT (kernel opcode 0x3C (60 decimal) on 64 bit syste
 mov rdi,0   ; return 0 status on exit - 'No Errors'
 syscall
 
+;a function just for printing the address
+;this saves space because all 3 modes use this
+print_offset:
+mov rax,[offset]
+mov qword [int_width],8
+call putint_and_space
+ret
+
 ;this function prints a row of hex bytes
 ;each row is 16 bytes
 print_bytes_row:
-mov rax,[file_offset]
-mov qword [int_width],8
-call putint_and_space
+call print_offset
 
 mov rbx,byte_array
 mov rcx,[count]
-add [file_offset],rcx
+add [offset],rcx
 next_byte:
 mov rax,0
 mov al,[rbx]
@@ -197,7 +203,17 @@ call putline
 
 ret
 
+;I define a string of 3 spaces as filler when less than 16 bytes are read
+;This makes the text section on the right properly lined up.
 space_three db '   ',0
+
+;This function prints the text equivalent of the bytes on the last row printed.
+;It reads how many bytes were read in the last read operation.
+;If less than 16 bytes were read, it prints spaces as filler so that
+;text can still be printed lined up with all the other rows
+;even if less than 16 bytes exist in the current row.
+;This situation sometimes happens when we get near the end of the file.
+;It also replaces characters that can't be printed with periods -> .
 
 print_bytes_row_text:
 mov rbx,byte_array
@@ -229,15 +245,12 @@ mov [rbx],byte 0 ;make sure string is zero terminated
 
 mov rax,byte_array
 call putstring
-
 ret
 
 ;function to display EOF with address
 show_eof:
 
-mov rax,[file_offset]
-mov qword [int_width],8
-call putint_and_space
+call print_offset
 mov rax,end_of_file_string
 call putstr_and_line
 
@@ -245,9 +258,7 @@ ret
 
 ;print the address and the byte at that address
 print_byte_info:
-mov rax,[file_offset]
-mov qword [int_width],8
-call putint_and_space
+call print_offset
 mov rax,0
 mov al,[byte_array]
 mov qword [int_width],2
@@ -259,8 +270,8 @@ end_of_file_string db 'EOF',0
 
 help_message db 'chastehex by Chastity White Rose',0Ah
 db 'hexdump a file:',0Ah,9,'chastehex file',0Ah
-db 'read a byte:',0Ah,9,'chastehex file address',0Ah
-db 'write a byte:',0Ah,9,'chastehex file address value',0Ah
+db 'read a byte:',0Ah,9,'chastehex file offset',0Ah
+db 'write a byte:',0Ah,9,'chastehex file offset value',0Ah
 db 'The file must exist',0Ah,0
 
 ;variables for managing arguments
@@ -268,11 +279,12 @@ argc dq 0
 filename dq 0 ; name of the file to be opened
 filedesc dq 0 ; file descriptor
 count dq 0
-file_offset dq 0
+offset dq 0
 open_error_message db 'error while opening file',0
 
 db 2 dup 0 ;fill with extra space to match 1530 executable size
 
 ;where we will store data from the file
 byte_array db 17 dup ?
+
 
