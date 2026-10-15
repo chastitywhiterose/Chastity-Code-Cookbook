@@ -1,4 +1,4 @@
 fasm-disasm:
 	fasm main.asm
-	ndisasm -b 32 main.bin
+	ndisasm -b 16 main.bin
 	
