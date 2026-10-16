@@ -1,6 +1,6 @@
 format PE console
 include 'win32ax.inc'
-include 'chastelibw32.asm'
+include 'chastelib-w32.asm'
 
 main:
 
