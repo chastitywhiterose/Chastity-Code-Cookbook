@@ -1,7 +1,7 @@
 format PE console
 entry main
 
-include 'win32ax.inc'
+include 'win32a.inc'
 include 'chastelib-w32.asm'
 
 main:
