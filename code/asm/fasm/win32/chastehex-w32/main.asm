@@ -1,4 +1,6 @@
 format PE console
+entry main
+
 include 'win32ax.inc'
 include 'chastelib-w32.asm'
 
@@ -233,8 +235,6 @@ call [CloseHandle]
 push 0
 call [ExitProcess]
 
-.end main
-
 
 
 ;variables for displaying messages
@@ -363,3 +363,19 @@ bytes_read dd ? ;how many bytes are read with ReadFile operation
 byte_array db 16 dup ?,0
 file_handle dd ?
 file_offset dd ?
+
+;FASM builds the Import Address Table (IAT) directly in the source file
+section '.idata' import data readable writeable
+
+library kernel32, 'KERNEL32.DLL'
+
+import kernel32,\
+ GetStdHandle, 'GetStdHandle',\
+ WriteFile, 'WriteFile',\
+ ExitProcess, 'ExitProcess',\
+ GetCommandLineA, 'GetCommandLineA',\
+ CreateFileA, 'CreateFileA',\
+ GetLastError, 'GetLastError',\
+ SetFilePointer, 'SetFilePointer',\
+ ReadFile, 'ReadFile',\
+ CloseHandle, 'CloseHandle'

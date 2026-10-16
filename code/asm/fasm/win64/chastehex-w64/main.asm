@@ -103,14 +103,6 @@ write_bytes:
 call strint
 mov [byte_array],al
 
-;write only 1 byte using Win32 WriteFile system call.
-push 0              ;Optional Overlapped Structure 
-push 0              ;Optionally Store Number of Bytes Written
-push 1              ;Number of bytes to write
-push byte_array     ;address to store bytes
-push [file_handle]  ;handle of the open file
-call [WriteFile]
-
 sub rsp,40  ;align stack before Win API functions(required in windows 64-bit)
 
 mov rcx, [file_handle] ;handle of the open file

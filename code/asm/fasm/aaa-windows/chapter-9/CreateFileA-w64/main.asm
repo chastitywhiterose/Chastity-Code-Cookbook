@@ -9,15 +9,15 @@ main:
 ;Create a new file with the CreateFileA function
 ;https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilea
 
-;call CreateFileA with Windows x64 calling convention
-sub rsp, 56                 ; reserve 32-byte shadow + space for 3 extra args (3*8=24) = 56
-mov qword [rsp+48],0         ;hTemplateFile = NULL: We are not using a template file
-mov qword [rsp+40],0x80        ;dwFlagsAndAttributes = FILE_ATTRIBUTE_NORMAL
-mov qword [rsp+32],2           ;dwCreationDisposition = CREATE_ALWAYS
-mov r9,0           ;lpSecurityAttributes = NULL: No security attributes
-mov r8,1           ;dwShareMode = FILE_SHARE_READ (other programs can read this file)
-mov rdx,0x10000000  ;dwDesiredAccess = GENERIC_ALL access mode (Read+Write+Execute)
-mov rcx,filename    ;lpFileName
+;call CreateFileA with Windows 64-bit calling convention
+sub rsp, 56             ; reserve 32-byte shadow + space for 3 extra args (3*8=24) = 56
+mov qword [rsp+48],0    ;hTemplateFile = NULL: We are not using a template file
+mov qword [rsp+40],0x80 ;dwFlagsAndAttributes = FILE_ATTRIBUTE_NORMAL
+mov qword [rsp+32],2    ;dwCreationDisposition = CREATE_ALWAYS
+mov r9,0                ;lpSecurityAttributes = NULL: No security attributes
+mov r8,1                ;dwShareMode = FILE_SHARE_READ (other programs can read this file)
+mov rdx,0x10000000      ;dwDesiredAccess = GENERIC_ALL access mode (Read+Write+Execute)
+mov rcx,filename        ;lpFileName
 call [CreateFileA]
 add rsp, 56
 
@@ -52,9 +52,9 @@ push rax
 sub rsp,40           ;align stack for Win64 API calls
 mov qword [rsp+32],0 ;lpOverlapped = NULL
 mov r9,0             ;lpNumberOfBytesWritten = NULL
-mov r8,1             ;nNumberOfBytesToWrite = rbx
-mov rdx,buf          ;lpBuffer = address of string to write
-mov rcx,[fd]         ;hFile = rax (returned from GetStdHandle)
+mov r8,1             ;nNumberOfBytesToWrite = 1
+mov rdx,buf          ;lpBuffer = address of data to write
+mov rcx,[fd]         ;hFile = [fd] (copied there earlier)
 call [WriteFile]
 add rsp,40           ;restore stack now that WinAPI calls are done
 

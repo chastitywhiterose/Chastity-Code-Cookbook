@@ -9,14 +9,17 @@ main:
 ;Create a new file with the CreateFileA function
 ;https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilea
 
-push 0           ;hTemplateFile = NULL: We are not using a template file
-push 0x80        ;dwFlagsAndAttributes = FILE_ATTRIBUTE_NORMAL
-push 2           ;dwCreationDisposition = CREATE_ALWAYS
-push 0           ;lpSecurityAttributes = NULL: No security attributes
-push 1           ;dwShareMode = FILE_SHARE_READ (other programs can read this file)
-push 0x10000000  ;dwDesiredAccess = GENERIC_ALL access mode (Read+Write+Execute)
-push filename    ;lpFileName
+;call CreateFileA with Windows 32-bit calling convention
+
+push 0                  ;hTemplateFile = NULL: We are not using a template file
+push 0x80               ;dwFlagsAndAttributes = FILE_ATTRIBUTE_NORMAL
+push 2                  ;dwCreationDisposition = CREATE_ALWAYS
+push 0                  ;lpSecurityAttributes = NULL: No security attributes
+push 1                  ;dwShareMode = FILE_SHARE_READ (other programs can read this file)
+push 0x10000000         ;dwDesiredAccess = GENERIC_ALL access mode (Read+Write+Execute)
+push filename           ;lpFileName
 call [CreateFileA]
+
 
 ;check eax for file handle or error code
 cmp eax,-1
@@ -42,13 +45,19 @@ loop0:
 mov [buf],al
 
 push eax
-;write only 1 byte using Win32 WriteFile system call.
-push 0              ;Optional Overlapped Structure 
-push 0              ;Optionally Store Number of Bytes Written
-push 1              ;Number of bytes to write
-push buf            ;address to store bytes
-push [fd]  ;handle of the open file
+
+;Windows 32-bit WriteFile system call
+;https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-writefile
+
+
+push 0               ;lpOverlapped = NULL
+push 0               ;lpNumberOfBytesWritten = NULL
+push 1               ;nNumberOfBytesToWrite = 1
+push buf             ;lpBuffer = address of data to write
+push [fd]            ;hFile = [fd] (copied there earlier)
 call [WriteFile]
+
+
 pop eax
 
 inc eax
@@ -58,8 +67,10 @@ jnz loop0
 main_end:
 
 ;close the file
+
 push [fd]
 call [CloseHandle]
+
 
 ;Exit the process with code 0
 push 0
