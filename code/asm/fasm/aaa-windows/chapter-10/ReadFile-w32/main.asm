@@ -58,6 +58,7 @@ push buf             ;lpBuffer = address of data to write
 push [fd]            ;hFile = [fd] (copied there earlier)
 call [ReadFile]
 
+
 ;if zero bytes were read, skip to end
 cmp [count],0
 jz main_end
