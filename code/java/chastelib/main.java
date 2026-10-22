@@ -14,13 +14,13 @@ public class main
 
   putstr(s);
 
- b=strint("80$"); /*convert string to an integer*/
- if(strint_errors!=0) /*if there are errors, print some messages and exit the program*/
- {
-  putstr("Input string passed to strint function contains errors.\n");
-  putstr("Please fix the invalid characters/radix and try again.\n");
-  return;
- }
+  b=strint("100"); /*convert string to an integer*/
+  if(strint_errors!=0) /*if there are errors, print some messages and exit the program*/
+  {
+   putstr("Input string passed to strint function contains errors.\n");
+   putstr("Fix the invalid characters or radix and try again.\n");
+   return;
+  }
 
   while(a<b)
   {
@@ -111,11 +111,18 @@ static int strint(String s)
   {
    strint_errors++;
    putstr("Error: character is not alphanumeric -> ");
-   putchar(c);
+   putchar(s.charAt(x));
    putstr("\n");
    break;
   }
-  if(c>=radix){ strint_errors++; putstr("Error: character is not a valid for current radix\n");break;}
+  if(c>=radix)
+  {
+   strint_errors++;
+   putstr("Error: character is not a valid for current radix -> ");
+   putchar(s.charAt(x));
+   putstr("\n");
+   break;
+  }
   i*=radix;
   i+=c;
   x++;
