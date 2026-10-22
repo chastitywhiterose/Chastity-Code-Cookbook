@@ -43,46 +43,42 @@ public class main
   */
   try
   {
-   RandomAccessFile f=new RandomAccessFile(args[0], "r");
-
    putstr(args[x]);
    putstr("\n");
-
-  count=f.read(buf);
-  while(count>0)
-  {
-   int_width=8;
-   putint(offset);
-   putstr(" ");
-
-   int_width=2;
-   x=0;
-   while(x<count)
+   RandomAccessFile f=new RandomAccessFile(args[0], "r");
+   count=f.read(buf);
+   while(count>0)
    {
-    putint(buf[x]&0xFF);
+    int_width=8;
+    putint(offset);
     putstr(" ");
+
+    int_width=2;
+    x=0;
+    while(x<count)
+    {
+     putint(buf[x]&0xFF);
+     putstr(" ");
+     x++;
+    }
+
+   //start of text dump section
+   x=count;
+   while(x<0x10)
+   {
+    putstr("   ");
     x++;
    }
 
-   //start of text dump section
-
- x=count;
- while(x<0x10)
- {
-  putstr("   ");
-  x++;
- }
-
- x=0;
- while(x<count)
- {
-  a=buf[x];
-  if( a < 0x20 || a > 0x7E ){a='.';}
-  putchar(a);
-  x++;
- }
+   x=0;
+   while(x<count)
+   {
+    a=buf[x];
+    if( a < 0x20 || a > 0x7E ){a='.';}
+    putchar(a);
+    x++;
+   }
    //end of text dump section
-   
    putstr("\n");
 
    offset+=count;
