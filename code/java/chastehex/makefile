@@ -1,3 +1,3 @@
-main-java:
-	javac main.java && java main
+chastehex-java:
+	javac chastehex.java && java chastehex
 

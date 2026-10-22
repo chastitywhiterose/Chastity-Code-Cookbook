@@ -13,7 +13,7 @@
 
 */
 import java.io.*;
-public class main
+public class chastehex
 {
 
  public static void main(String[] args)
