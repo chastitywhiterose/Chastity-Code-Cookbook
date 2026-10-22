@@ -6,9 +6,21 @@ public class main
 
  public static void main(String[] args)
  {
-  int a=0,b=0x100;
-  putstr("Official test suite for the Java version of chastelib.\n");
+  String s="Official test suite for the Java version of chastelib.\n";
+  int a=0,b=0x10;
 
+  radix=16;
+  int_width=1;
+
+  putstr(s);
+
+ b=strint("80$"); /*convert string to an integer*/
+ if(strint_errors!=0) /*if there are errors, print some messages and exit the program*/
+ {
+  putstr("Input string passed to strint function contains errors.\n");
+  putstr("Please fix the invalid characters/radix and try again.\n");
+  return;
+ }
 
   while(a<b)
   {
@@ -35,6 +47,7 @@ public class main
    a++;
   }
 
+  putstr("\n");
  }
 
  static void putstr(String s)
@@ -50,15 +63,15 @@ static int int_width=1;
 static String intstr(int i)     /*Chastity's supreme integer to string conversion function*/
 {
  int width=0;                   /*the width or how many digits including prefixed zeros are printed*/
- int b=0;                       /*byte for the current character*/
+ int c=0;                       /*byte for the current character*/
  String s="";
  while(i!=0 || width<int_width) /*loop to fill the string with every required digit plus prefixed zeros*/
  {
-  b=i%radix;                    /*get the remainder of division by the radix or base*/
+  c=i%radix;                    /*get the remainder of division by the radix or base*/
   i/=radix;                     /*divide the input by radix*/
-  if(b<10){b+='0';}             /*convert digits 0 to 9 to the ASCII character for that digit*/
-  else{b=b+'A'-10;}             /*for digits higher than 9, convert to letters starting at A*/
-  s=(char)b+s;                  /*prefix return string with this digit's character*/
+  if(c<10){c+='0';}             /*convert digits 0 to 9 to the ASCII character for that digit*/
+  else{c=c+'A'-10;}             /*for digits higher than 9, convert to letters starting at A*/
+  s=(char)c+s;                  /*prefix return string with this digit's character*/
   width++;                      /*increment the width so we know when enough digits are saved*/
  }
  return s;                      /*return this string to be used by putstr,printf,std::cout or whatever*/
@@ -75,6 +88,39 @@ static void putchar(int i)
  String s=""; /*create empty string*/
  s=(char)i+s; /*add char of i to string*/
  putstr(s);   /*print the string*/
+}
+
+static int strint_errors = 0; 
+
+
+static int strint(String s)
+{
+ int i=0;
+ int c;
+ strint_errors = 0; /*set zero errors before we parse the string*/
+ if( radix<2 || radix>36 ){ strint_errors++; putstr("Error: radix is out of range!\n");}
+ int x=0;
+ while(x<s.length())
+ {
+  c=s.charAt(x);
+  if( c >= '0' && c <= '9' ){c-='0';}
+  else if( c >= 'A' && c <= 'Z' ){c-='A';c+=10;}
+  else if( c >= 'a' && c <= 'z' ){c-='a';c+=10;}
+  else if( c == ' ' || c == '\n' || c == '\t' ){break;}
+  else
+  {
+   strint_errors++;
+   putstr("Error: character is not alphanumeric -> ");
+   putchar(c);
+   putstr("\n");
+   break;
+  }
+  if(c>=radix){ strint_errors++; putstr("Error: character is not a valid for current radix\n");break;}
+  i*=radix;
+  i+=c;
+  x++;
+ }
+ return i;
 }
 
 
