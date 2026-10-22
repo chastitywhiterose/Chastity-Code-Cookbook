@@ -30,7 +30,10 @@ public class main
 
  if(args.length==0)
  {
-  putstr("To hexdump an entire file:\n\n\tjava main file\n\n");
+  putstr("Welcome to chastehex! The tool for reading and writing bytes of a file!\n\n");
+  putstr("To hexdump an entire file:\n\n\tchastehex file\n\n");
+  putstr("To read a single byte at an address:\n\n\tchastehex file address\n\n");
+  putstr("To write a single byte at an address:\n\n\tchastehex file address value\n\n");
   return;
  }
 
@@ -99,18 +102,20 @@ public class main
   arg[0] for filename
   arg[1] for offset to seek to
   read only one byte in this mode
+  display the offset and the byte
+  if f.read() returns -1, print EOF
+  because it is the End Of File
   */
   if(args.length==2)
   {
-
-  try
-  {
-   putstr(args[x]);
-   putstr("\n");
-   RandomAccessFile f=new RandomAccessFile(args[0], "r");
-   offset=strint(args[1]);
-   f.seek(offset);
-   a=f.read(); //read only 1 byte
+   try
+   {
+    putstr(args[x]);
+    putstr("\n");
+    RandomAccessFile f=new RandomAccessFile(args[0], "r");
+    offset=strint(args[1]);
+    f.seek(offset);
+    a=f.read(); //read only 1 byte
 
     int_width=8;
     putint(offset);
@@ -126,16 +131,59 @@ public class main
      putint(a);
     }
 
-   putstr("\n");
+    putstr("\n");
 
-   f.close();
-  }
-  catch(IOException e){System.out.println(e);}
-
-
-
+    f.close();
+   }
+   catch(IOException e){System.out.println(e);}
   } //end of if(args.length==2) block
  
+
+  /*
+  if more than two arguments are given:
+  arg[0] for filename
+  arg[1] for offset to seek to
+  args 2,3,4 etc
+  open the file in read and write mode
+  
+  The RandomAccessFile "rw" mode will open the file if it exists
+  or create a new one if it does not already.
+  For this reason it is general purpose and perfect for this mode.
+
+  write the converted hex form of args[2] and beyond
+  display the offset and the byte written there
+  */
+  if(args.length>2)
+  {
+   try
+   {
+    putstr(args[x]);
+    putstr("\n");
+    RandomAccessFile f=new RandomAccessFile(args[0], "rw");
+    offset=strint(args[1]);
+    f.seek(offset);
+
+    x=2;
+    while(x<args.length)
+    {
+     a=strint(args[x]); //convert arg[x] to integer
+     a&=0xFF;    //keep in range of byte with bitwise AND
+     f.write(a); //write only 1 byte
+
+     int_width=8;
+     putint(offset);
+     putstr(" ");
+
+     int_width=2;
+     putint(a);
+     putstr("\n");
+     x++;
+    }
+
+    f.close();
+   }
+   catch(IOException e){System.out.println(e);}
+  } //end of if(args.length>2) block
  }
 
  static void putstr(String s)
