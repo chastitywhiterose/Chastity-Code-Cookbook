@@ -30,10 +30,14 @@ public class chastehex
 
  if(args.length==0)
  {
-  putstr("Welcome to chastehex! The tool for reading and writing bytes of a file!\n\n");
-  putstr("To hexdump an entire file:\n\n\tchastehex file\n\n");
-  putstr("To read a single byte at an address:\n\n\tchastehex file address\n\n");
-  putstr("To write a single byte at an address:\n\n\tchastehex file address value\n\n");
+  putstr("Welcome to Java chastehex! The tool for reading and writing bytes of a file!\n\n");
+  putstr("To hexdump an entire file:\n\n\tjava chastehex file\n\n");
+  putstr("To read a single byte at an address:\n\n\tjava chastehex file address\n\n");
+  putstr("To write a single byte at an address:\n\n\tjava chastehex file address value\n\n");
+
+  putstr("Both this Java version and the original C version were written by Chastity White Rose\n");
+  putstr("See the official Github repository for more help:\n");
+  putstr("https://github.com/chastitywhiterose/chastehex\n");
   return;
  }
 
@@ -177,6 +181,7 @@ public class chastehex
      int_width=2;
      putint(a);
      putstr("\n");
+     offset++;
      x++;
     }
 
