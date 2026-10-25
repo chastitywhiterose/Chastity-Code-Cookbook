@@ -285,6 +285,6 @@ open_error_message db 'error opening file',0
 ;where we will store data from the file
 ;17 bytes because 16 bytes read per row plus the terminating 0
 ;used for the text printing function
-buf db 17 dup '?',0
+buf db 16 dup '?',0
 
-db 0x30 dup 0 ;fill with extra space to match 1280 executable size
+db 0x31 dup 0 ;fill with extra space to match 1280 executable size

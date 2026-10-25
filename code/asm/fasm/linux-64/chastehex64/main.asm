@@ -68,8 +68,6 @@ syscall         ;call the kernel
 
 mov [count],rax
 
-;call putint_and_line
-
 cmp rax,0
 jnz file_success ;if more than zero bytes read, proceed to display
 
@@ -105,11 +103,11 @@ cmp qword [argc],0
 jnz next_arg_write ; if there are still arguments, skip this read section and enter writing mode
 
 read_one_byte:
-mov rdx,1            ;number of bytes to read
-mov rsi,buf   ;address to store the bytes
-mov rdi,[fd]   ;move the opened file descriptor into rdi
-mov rax,0            ;invoke SYS_READ (kernel opcode 0 on 64 bit Intel)
-syscall              ;call the kernel
+mov rdx,1    ;number of bytes to read
+mov rsi,buf  ;address to store the bytes
+mov rdi,[fd] ;move the opened file descriptor into rdi
+mov rax,0    ;invoke SYS_READ (kernel opcode 0 on 64 bit Intel)
+syscall      ;call the kernel
 
 ;rax will have the number of bytes read after system call
 cmp rax,1
@@ -136,11 +134,11 @@ call strint ;try to convert string to a hex number
 
 mov [buf],al
 
-mov rdx,1          ;write 1 byte
-mov rsi,buf ;pointer/address of byte to write
+mov rdx,1    ;write 1 byte
+mov rsi,buf  ;pointer/address of byte to write
 mov rdi,[fd] ;write to this file descriptor
-mov rax,1          ;invoke SYS_WRITE (kernel opcode 1 on 64 bit systems)
-syscall            ;system call to write the message
+mov rax,1    ;invoke SYS_WRITE (kernel opcode 1 on 64 bit systems)
+syscall      ;system call to write the message
 
 call print_byte_info
 inc qword [offset]
@@ -155,11 +153,11 @@ main_end:
 ;Linux system call to close a file
 
 mov rdi,[fd] ;file number to close
-mov rax,3          ;invoke SYS_CLOSE (kernel opcode 3 for 64 bit Intel)
-syscall            ;call the kernel
+mov rax,3    ;invoke SYS_CLOSE (kernel opcode 3 for 64 bit Intel)
+syscall      ;call the kernel
 
-mov rax, 0x3C ; invoke SYS_EXIT (kernel opcode 0x3C (60 decimal) on 64 bit systems)
-mov rdi,0   ; return 0 status on exit - 'No Errors'
+mov rax,0x3C ;invoke SYS_EXIT (kernel opcode 0x3C (60 decimal) on 64 bit systems)
+mov rdi,0    ;return 0 status on exit - 'No Errors'
 syscall
 
 ;a function just for printing the address
@@ -287,6 +285,6 @@ open_error_message db 'error opening file',0
 ;where we will store data from the file
 ;17 bytes because 16 bytes read per row plus the terminating 0
 ;used for the text printing function
-buf db 17 dup '?',0
+buf db 16 dup '?',0
 
-db 36 dup 0 ;fill with extra space to match 1530 executable size
+db 0x25 dup 0 ;fill with extra space to match 1530 executable size
