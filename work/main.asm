@@ -76,7 +76,7 @@ mov [file_offset],ax
 mov ah,42h           ;lseek call number
 mov al,0             ;seek origin 00h start of file,01h current file position,02h end of file
 mov bx,[file_handle]
-mov cx,bp            ;upper word of offset
+mov cx,[extra_word]  ;upper word of offset
 mov dx,[file_offset] ;lower word of offset
 int 21h
 
@@ -101,12 +101,7 @@ int 21h
 
 mov cx,ax ;number of bytes read
 
-;set width to 4 and display extra:offset
-mov word[int_width],4
-mov ax,bp
-call putint
-mov ax,[file_offset]
-call putint_and_space
+call print_offset
 
 cmp cx,1
 jz not_eof ;skip past here as long as one byte was read otherwise show EOF
@@ -171,15 +166,10 @@ mov cx,1             ;write 1 byte to this file
 mov dx,byte_array    ;write from this address
 int 21h
 
-;set width to 4 and display extra:offset
-mov word[int_width],4
-mov ax,bp
-call putint
-mov ax,[file_offset]
-call putint_and_space
+call print_offset
 
 add word[file_offset],1
-adc bp,0
+adc [extra_word],0
 
 
 mov word[int_width],2
@@ -217,17 +207,21 @@ byte_array db 16 dup '?',0
 file_offset dw 0,0
 bytes_read dw 0
 
+print_offset:
+;set width to 4 and display extra:offset
+mov word[int_width],4
+mov ax,[extra_word]
+call putint
+mov ax,[file_offset]
+call putint_and_space
+ret
+
 ;this function prints a row of hex bytes
 ;each row is 16 bytes
 print_bytes_row:
 mov cx,[bytes_read] ;number of bytes read
 
-;set width to 4 and display extra:offset
-mov word[int_width],4
-mov ax,bp
-call putint
-mov ax,[file_offset]
-call putint_and_space
+call print_offset
 
 add [file_offset],cx
 adc bp,0
