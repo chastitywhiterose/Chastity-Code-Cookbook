@@ -2,48 +2,31 @@ org 100h     ;DOS programs start at this address
 
 mov word [radix],16 ; can choose radix for integer output!
 
-mov ch,0     ;zero ch (upper half of cx)
-mov cl,[80h] ;load length in bytes of the command string
-cmp cx,0
-jnz args_exist
+call getarg ;this first call will get the whole command string
+call getarg ;call again to get first arg if it exists
+cmp ax,0    ;did the getarg function return 0?
+jz help     ;if ax was zero, there are no args so we end the program safely after help message
 
-mov ax,help    ;if not arguments were given, show a help message
+;print the filename
+call putstring
+call putline
+
+mov [filename],ax ;save the filename to a permanent address
+
+jmp open_sesame
+
+help:
+mov ax,help_message    ;if not arguments were given, show a help message
 call putstring
 jmp ending     ;and end the program because there is nothing to do
 
-args_exist:
+open_sesame:
 
-mov dx,81h         ;Point dx to the beginning of string
-inc dx             ;go to next char
-dec cx             ;but subtract 1 from count
-mov [arg_index],dx ;save index to variable so dx is free to change as needed
-
-;find the end of the string based on length
-mov ax,dx
-add ax,cx
-;now we know where the string ends.
-mov [arg_string_end],ax ;this is the end of the arg string. important for later
-;call putint ; print address where entire arg string ends
-
-;this routine replaces all non printable characters with zero in the arg string
-mov bx,dx
-filter:
-cmp byte [bx],' '
-ja notspace ; if char is above space, leave it alone
-mov byte [bx],0 ;otherwise it counts as a space, change it to a zero
-notspace:
-inc bx
-cmp bx,[arg_string_end] ;are we at the end of the arg string?
-jnz filter ;if not at end, continue the filter
-
-filter_end:
-mov byte [bx],0 ;terminate the ending with a zero for safety
-
-;now that the argument string is prepared, we will try to use the first argument as a filename to open
+;we will try to use the first argument as a filename to open
 
 mov ah,3Dh         ;call number for DOS open existing file
 mov al,2           ;file access: 0=read,1=write,2=read+write
-mov dx,[arg_index] ;string address to interpret as filename
+mov dx,[filename]  ;string address to interpret as filename
 int 21h            ;DOS call to finalize open function
 
 mov [file_handle],ax ;save the file handle
@@ -52,9 +35,6 @@ jc file_error ;if carry flag is set, we have an error, otherwise, file is open
 
 file_opened:
 
-mov ax,dx
-call putstring
-call putline
 jmp use_file ;skip past error message and start using the file
 
 ;this section prints error message and then ends the program if file error found
@@ -75,9 +55,10 @@ jmp arg_loop_end
 use_file:
 
 mov bp,0 ;set bp to zero because it represents upper 16 bits of file address
-call get_next_arg ;get address of next arg and return into ax register
-cmp ax,[arg_string_end] ;this time, if ax equals end of string, we hex dump and then end the program later
-jz hexdump ;jump to hexdump section
+
+call getarg ;this first call will get the command string
+cmp ax,0   ;did the getarg function return 0?
+jz hexdump ;if no more args jump to hexdump section
 
 ;otherwise, if there are more args, ax contains next argument
 ;we will next extra the address from this argument for future operations
@@ -102,9 +83,9 @@ int 21h
 jc arg_loop_end ;end program if seek error (though I can't imagine how it would fail)
 
 ;check if there are any more args
-call get_next_arg
-cmp ax,[arg_string_end]
-jz dump_byte ;jump to dump_byte section and continue with read mode
+call getarg ;this first call will get the command string
+cmp ax,0    ;did the getarg function return 0?
+jz dump_byte ;if no more args, jump to dump_byte section and continue with read mode
 
 jmp arg_loop ;otherwise we jump to the arg loop and write the values as bytes starting at offset
 
@@ -120,12 +101,7 @@ int 21h
 
 mov cx,ax ;number of bytes read
 
-;set width to 4 and display extra:offset
-mov word[int_width],4
-mov ax,bp
-call putint
-mov ax,[file_offset]
-call putint_and_space
+call print_offset
 
 cmp cx,1
 jz not_eof ;skip past here as long as one byte was read otherwise show EOF
@@ -177,7 +153,7 @@ jmp hexdump ;jump back to hexdump and attempt another read of a row
 ;it interprets each one as a byte to write to the current offset
 ;this loop should only execute if a file name and address have already been given
 arg_loop:
-mov ax,[arg_index] ;get address of current arg
+;mov ax,[arg_index] ;get address of current arg
 ;call putstring
 
 call strint_32 ;turn string at address ax into a number returned in ax
@@ -190,16 +166,10 @@ mov cx,1             ;write 1 byte to this file
 mov dx,byte_array    ;write from this address
 int 21h
 
-;set width to 4 and display extra:offset
-mov word[int_width],4
-mov ax,bp
-call putint
-mov ax,[file_offset]
-call putint_and_space
+call print_offset
 
 add word[file_offset],1
 adc bp,0
-
 
 mov word[int_width],2
 mov ah,0
@@ -207,10 +177,9 @@ mov al,[byte_array]
 call putint
 call putline
 
-call get_next_arg ;get address of next arg and return into ax register
-
-cmp ax,[arg_string_end] ;if the ax register contains address of the end of args string, end program to avoid failure
-jz arg_loop_end
+call getarg ;get next arg
+cmp ax,0    ;did the getarg function return 0?
+jz arg_loop_end ;if no more args, end program
 jmp arg_loop
 
 arg_loop_end: ;this is the correct end of the program
@@ -224,41 +193,23 @@ ending:
 mov ax,4C00h ; Exit program
 int 21h
 
-arg_string_end dw 0
-arg_index dw 0
 file_error_message db 'Could not open the file! Error number: ',0
-file_handle dw 0
-read_error_message db 'Failure during reading of file. Error number: ',0
 end_of_file db 'EOF',0
+file_handle dw 0
+filename dw 0
 
 ;where we will store data from the file
 byte_array db 16 dup '?',0
 file_offset dw 0,0
 bytes_read dw 0
 
-;function to move ahead to the next arg
-;only works after the filter has been applied to turn all spaces into zeroes
-
-get_next_arg:
-mov bx,[arg_index] ;dx has address of current arg
-find_zero:
-cmp byte [bx],0
-jz found_zero
-inc bx
-jmp find_zero ; this char is not zero, go to the next char
-found_zero:
-
-find_non_zero:
-cmp bx,[arg_string_end]
-jz arg_finish ;if bx is already at end, nothing left to find
-cmp byte [bx],0
-jnz arg_finish ;if this char is not zero we have found the next string!
-inc bx
-jmp find_non_zero ;otherwise, keep looking
-
-arg_finish:
-mov [arg_index],bx ; save this index to variable
-mov ax,bx ;but also save it to ax register for use
+print_offset:
+;set width to 4 and display extra:offset
+mov word[int_width],4
+mov ax,bp
+call putint
+mov ax,[file_offset]
+call putint_and_space
 ret
 
 ;this function prints a row of hex bytes
@@ -266,12 +217,7 @@ ret
 print_bytes_row:
 mov cx,[bytes_read] ;number of bytes read
 
-;set width to 4 and display extra:offset
-mov word[int_width],4
-mov ax,bp
-call putint
-mov ax,[file_offset]
-call putint_and_space
+call print_offset
 
 add [file_offset],cx
 adc bp,0
@@ -351,11 +297,11 @@ call putstring
 
 ret
 
-help db 'chastehex:',0Dh,0Ah
+help_message db 'chastehex:',0Dh,0Ah
 db 'hexdump a file:',0Dh,0Ah,9,'chex file',0Dh,0Ah
 db 'read a byte:',0Dh,0Ah,9,'chex file address',0Dh,0Ah
 db 'write bytes:',0Dh,0Ah,9,'chex file address byte1 byte2 etc.',0Dh,0Ah
-db 4 dup 0
+db 19 dup 0
 
 ; About the chastelib variant
 
@@ -552,10 +498,10 @@ mov bx,ax ;copy string address from ax to bx because ax will be replaced soon!
 mov ax,0
 
 read_strint_32:
-mov cx,0 ; zero ecx so only lower 8 bits are used
+mov cx,0 ; zero cx so only lower 8 bits are used
 mov cl,[bx]
 inc bx
-cmp cl,0 ; compare byte at address edx with 0
+cmp cl,0 ; compare byte at address bx with 0
 jz strint_end_32 ; if comparison was zero, this is the end of string
 
 ;if char is below '0' or above '9', it is outside the range of these and is not a digit
@@ -614,7 +560,7 @@ shl word[extra_word],4 ;shift the [extra_word] 4 bits to make room for the hex d
 add [extra_word],ax
 pop ax
 
-mov dx,0 ;zero edx because it is used in mul sometimes
+mov dx,0 ;zero dx because it is used in mul sometimes
 mul word [radix]    ;mul ax with radix
 add ax,cx
 
@@ -623,3 +569,5 @@ jmp read_strint_32 ;jump back and continue the loop if nothing has exited it
 strint_end_32:
 
 ret
+
+include 'getarg.asm'

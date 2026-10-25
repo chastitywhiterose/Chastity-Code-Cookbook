@@ -193,12 +193,9 @@ ending:
 mov ax,4C00h ; Exit program
 int 21h
 
-arg_string_end dw 0
-arg_index dw 0
 file_error_message db 'Could not open the file! Error number: ',0
-file_handle dw 0
-read_error_message db 'Failure during reading of file. Error number: ',0
 end_of_file db 'EOF',0
+file_handle dw 0
 filename dw 0
 
 ;where we will store data from the file
@@ -304,7 +301,7 @@ help_message db 'chastehex:',0Dh,0Ah
 db 'hexdump a file:',0Dh,0Ah,9,'chex file',0Dh,0Ah
 db 'read a byte:',0Dh,0Ah,9,'chex file address',0Dh,0Ah
 db 'write bytes:',0Dh,0Ah,9,'chex file address byte1 byte2 etc.',0Dh,0Ah
-db 4 dup 0
+db 19 dup 0
 
 ; About the chastelib variant
 
