@@ -51,7 +51,7 @@ int 21h      ;DOS interrupt to exit the program with numbers on previous line
 
 include 'chastelib16.asm' ; use %include if assembling with NASM instead of FASM.
 
-string0 db 'chastelib test suite for Intel 16-bit Assembly on DOS',0Ah,0
+string0 db 'chastelib test suite for Intel 16-bit Assembly on DOS',0xD,0xA,0
 input_string_int db '100',0
 
 ; This 16 bit DOS Assembly source has been formatted for the FASM assembler.
