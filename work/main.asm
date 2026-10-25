@@ -76,7 +76,7 @@ mov [file_offset],ax
 mov ah,42h           ;lseek call number
 mov al,0             ;seek origin 00h start of file,01h current file position,02h end of file
 mov bx,[file_handle]
-mov cx,[extra_word]  ;upper word of offset
+mov cx,bp            ;upper word of offset
 mov dx,[file_offset] ;lower word of offset
 int 21h
 
@@ -153,7 +153,7 @@ jmp hexdump ;jump back to hexdump and attempt another read of a row
 ;it interprets each one as a byte to write to the current offset
 ;this loop should only execute if a file name and address have already been given
 arg_loop:
-mov ax,[arg_index] ;get address of current arg
+;mov ax,[arg_index] ;get address of current arg
 ;call putstring
 
 call strint_32 ;turn string at address ax into a number returned in ax
@@ -169,8 +169,7 @@ int 21h
 call print_offset
 
 add word[file_offset],1
-adc [extra_word],0
-
+adc bp,0
 
 mov word[int_width],2
 mov ah,0
@@ -210,7 +209,7 @@ bytes_read dw 0
 print_offset:
 ;set width to 4 and display extra:offset
 mov word[int_width],4
-mov ax,[extra_word]
+mov ax,bp
 call putint
 mov ax,[file_offset]
 call putint_and_space
