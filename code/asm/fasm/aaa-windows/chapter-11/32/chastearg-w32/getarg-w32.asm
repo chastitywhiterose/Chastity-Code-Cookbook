@@ -1,5 +1,7 @@
-;The getarg function was something I badly needed in order to make my assembly code for DOS easier to read.
-;It will automatically process the command line arguments if they are available.
+;This is the Windows 32-bit source of the getarg function 
+
+;The getarg function makes my assembly code for DOS and Windows easier to read
+;by writing one function to handle all possible cases I will need for my tools.
 ;
 ;The first time it is run, it returns the whole command string or zero if no args are given
 ;Each time after that, it will give you the next argument, which is a substring of the original.
@@ -9,12 +11,13 @@
 
 ;A word of warning, though, this function has multiple return statements and is long
 ;However, it is fully featured in that it can recognize quoted strings as being the same argument
-;This brings full compatibility between my DOS and Linux programs which expect consistent behavior
+;This brings full compatibility for my DOS and Windows programs that use command line arguments.
+
+;Because all of my programs are ported to DOS and Windows from Linux
+;I found there to be conflicts in the way these operating systems did not
+;handle the quoted strings.
 ;
-;I also wrote a Windows version of this same function in a separate file
-;Because DOS does not allow the program name to be part of the arguments,
-;I also wrote the Windows edition to exclude it from results.
-;However, the DOS getarg function is the most important because DOS systems are freely available.
+;This same function is available in a separate file for DOS Assembly.
 
 getarg:
 
@@ -35,7 +38,7 @@ mov ebx,[arguments_start] ;get address of current arg
 
 skip_spaces:
 
-cmp byte[ebx],' ' ;is this byte a space?
+cmp byte[ebx],' '   ;is this byte a space?
 jnz skip_spaces_end ;if it is not a space, we can end this loop
 inc ebx ;otherwise, go to next byte
 jmp skip_spaces ;and keep looping till we find non-space
@@ -109,8 +112,10 @@ get_arg_data:
 
 ;get command line argument string with this Windows API call
 ;it returns a pointer in the eax register
+
 call [GetCommandLineA]
 mov [arguments_start],eax ;but copy it to memory too
+
 
 ;the following loop is a modified strlen loop except that we don't
 ;care about how long the string is. We only need the pointer for where it ends

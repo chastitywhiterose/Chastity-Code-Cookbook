@@ -1,17 +1,23 @@
-;The getarg function was something I badly needed in order to make my assembly code for DOS easier to read.
-;It will automatically process the command line arguments if they are available.
+;This is the Windows 32-bit source of the getarg function 
+
+;The getarg function makes my assembly code for DOS and Windows easier to read
+;by writing one function to handle all possible cases I will need for my tools.
 ;
 ;The first time it is run, it returns the whole command string or zero if no args are given
-;DOS does not allow the program name to be part of the arguments
-;
-;Each time after that, it will give you the next argument which is a subtring of the original.
+;Each time after that, it will give you the next argument, which is a substring of the original.
 ;When no more arguments are available, it will always return zero
 ;The program calling this is expected to check for this error and then terminate
 ;or print a message depending on the goals of that program
 
-;A word of warning though, this function has multiple return statements and is long
+;A word of warning, though, this function has multiple return statements and is long
 ;However, it is fully featured in that it can recognize quoted strings as being the same argument
-;This brings full compatibility between my DOS and Linux programs which expect consistent behavior
+;This brings full compatibility for my DOS and Windows programs that use command line arguments.
+
+;Because all of my programs are ported to DOS and Windows from Linux
+;I found there to be conflicts in the way these operating systems did not
+;handle the quoted strings.
+;
+;This same function is available in a separate file for DOS Assembly.
 
 getarg:
 
@@ -32,7 +38,7 @@ mov ebx,[arguments_start] ;get address of current arg
 
 skip_spaces:
 
-cmp byte[ebx],' ' ;is this byte a space?
+cmp byte[ebx],' '   ;is this byte a space?
 jnz skip_spaces_end ;if it is not a space, we can end this loop
 inc ebx ;otherwise, go to next byte
 jmp skip_spaces ;and keep looping till we find non-space
@@ -106,14 +112,24 @@ get_arg_data:
 
 ;get command line argument string with this Windows API call
 ;it returns a pointer in the eax register
-call [GetCommandLineA]
 
-mov [arguments_start],eax ;copy it to memory address
-call strlen ;get the length of string with my strlen function
-mov ebx,[arguments_start] ;and copy address to the ebx register
-add ebx,eax ;add the length to ebx which has the address of the start
+call [GetCommandLineA]
+mov [arguments_start],eax ;but copy it to memory too
+
+
+;the following loop is a modified strlen loop except that we don't
+;care about how long the string is. We only need the pointer for where it ends
+
+mov ebx,eax  ;copy eax to ebx to be used in loop to find ending zero
+argend_find: ; this loop finds the zero at the end of the argument string
+cmp [ebx],byte 0 ; compare byte at address ebx with 0
+jz argend_found ; if comparison was zero, jump to loop end because we have found the length
+inc ebx
+jmp argend_find
+argend_found:
 mov [arguments_end],ebx ;save ebx address containing the zero byte
-mov ebx,[arguments_start] ;copy the address of the arguments start to ebx
+
+mov ebx,eax ;mov the start of the arg string again before the next loop
 
 skip_prog_name:
 cmp byte[ebx],0   ;check for zero first (very important)
@@ -137,23 +153,3 @@ ret
 ;start and end default to address of zero, which means we have not tested the arguments yet
 arguments_start dd 0
 arguments_end dd 0
-
-;a function to get the length of string in eax and return the integer in eax
-
-strlen:
-
-mov ebx,eax ; copy eax to ebx. ebx will be used as index to the string
-
-strlen_start: ; this loop finds the length of the string as part of the putstring function
-
-cmp [ebx],byte 0 ; compare byte at address ebx with 0
-jz strlen_end ; if comparison was zero, jump to loop end because we have found the length
-inc ebx
-jmp strlen_start
-
-strlen_end:
-sub ebx,eax ;subtract start pointer from current pointer to get length of string
-
-mov eax,ebx ;copy the string length back to eax
-
-ret
