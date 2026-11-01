@@ -115,15 +115,24 @@ void abi_set_ui(struct abi_t *a,unsigned int i)
 }
 
 
+
+
 /*
  a=b
  x is used as index variable
  every digit in a is copied from b
  length of a is set to the length of b
+ the signbit is also copied
 */
 void abi_mov(struct abi_t *a,struct abi_t *b)
 {
  int x=0;
+ while(x<a->length_max)
+ {
+  a->bits[x]=0;
+  x++;
+ }
+ x=0;
  while(x<b->length)
  {
   a->bits[x]=b->bits[x];
@@ -176,4 +185,47 @@ void abi_add(struct abi_t *a,struct abi_t *b)
  }
 }
 
+
+
+/*
+ a=a-b
+ x is used as index variable
+ y is used as borrow variable
+ this function fails miserably if you subtract
+ a larger number from a smaller number
+ negative numbers are not part of this library
+ but are simulated with a signbit field in the api struct
+*/
+void abi_sub(struct abi_t *a,struct abi_t *b)
+{
+ int x=0,y=0;
+
+ while(x<a->length_max)
+ {
+  y=a->bits[x]-y;
+  y-=b->bits[x];
+
+  if(y<0)
+  {
+   y+=radix;
+   a->bits[x]=y;
+   y=1;
+  }
+  else
+  {
+   a->bits[x]=y;
+   y=0;
+  }
+
+  x++;
+ }
+
+ /*reduce length by excluding leading zero digits*/
+ while(a->bits[x-1]==0 && x>1)
+ {
+  x--;
+ }
+ a->length=x;
+
+}
 
