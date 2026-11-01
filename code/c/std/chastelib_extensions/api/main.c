@@ -20,7 +20,8 @@ int main(int argc, char *argv[])
 
 
  api_set_ui(a,999999);
- api_set_ui(b,100);
+ api_set_ui(a,65536);
+ api_set_ui(b,1);
  api_set_ui(c,1);
 
  
@@ -31,10 +32,10 @@ int main(int argc, char *argv[])
  
  putstr("adding api integers\n");
  api_mov(c,a);
-/* api_add(c,b);*/
+ api_add(c,b);
  putstr("A+B="); put_api(c); putstr("\n");
  api_mov(c,b);
- /*api_add(c,a);*/
+ api_add(c,a);
  putstr("B+A="); put_api(c); putstr("\n");
 
  

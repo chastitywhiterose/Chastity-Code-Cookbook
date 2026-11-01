@@ -107,20 +107,29 @@ void put_api_reverse(struct api_t *a)
  }
 }
 
+/*
+api_set_ui function
+
+first set all allocated digits of A to zero
+then set the lowest digits by repeated divisions and remainders of a standard unsigned integer
+*/
 
 void api_set_ui(struct api_t *a,unsigned int i)
 {
  int x=0;
+ while(x<a->length_max)
+ {
+  a->digits[x]=0;
+  x++;
+ }
+ x=0;
  while(i!=0)
  {
   a->digits[x]=i%radix;
   i/=radix;
   x++;
  }
- if(x>a->length)
- {
   a->length=x;
- }
 }
 
 
@@ -136,6 +145,12 @@ void api_set_ui(struct api_t *a,unsigned int i)
 void api_mov(struct api_t *a,struct api_t *b)
 {
  int x=0;
+ while(x<a->length_max)
+ {
+  a->digits[x]=0;
+  x++;
+ }
+ x=0;
  while(x<b->length)
  {
   a->digits[x]=b->digits[x];
@@ -161,9 +176,13 @@ int max(int a,int b)
 
 
 /*
+ addition function
  a=a+b
  x is used as index variable
  y is used as carry variable
+ 
+ a->length is set to the highest length of the inputs
+ and plus 1 if a carry is involved
 */
 void api_add(struct api_t *a,struct api_t *b)
 {
@@ -180,7 +199,7 @@ void api_add(struct api_t *a,struct api_t *b)
  if(y)
  {
   a->digits[x]=y;
-  a->length++;
+  a->length=length+1;
  }
 }
 
