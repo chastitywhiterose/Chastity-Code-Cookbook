@@ -11,7 +11,6 @@ int main(int argc, char *argv[])
  int_width=1;
 
  putstr("chastelib Arbitrary Precision Integer demo:\n");
- putstr("dividing api integers\n");
 
  a=api_new();
  b=api_new();
@@ -19,20 +18,33 @@ int main(int argc, char *argv[])
  d=api_new();
 
 
- api_set_ui(a,65536);
+
+ api_set_ui(a,999999);
  api_set_ui(b,100);
  api_set_ui(c,1);
 
+ 
+ putstr("test case api integers\n");
+
+ putstr("A="); put_api(a); putstr("\n");
+ putstr("B="); put_api(b); putstr("\n");
+ 
+ putstr("adding api integers\n");
+ api_mov(c,a);
+/* api_add(c,b);*/
+ putstr("A+B="); put_api(c); putstr("\n");
+ api_mov(c,b);
+ /*api_add(c,a);*/
+ putstr("B+A="); put_api(c); putstr("\n");
+
+ 
+ putstr("dividing api integers\n");
  api_mov(c,a);
  api_mov(d,a);
-
  api_div(c,b);
  api_rem(d,b);
-
- put_api(a); putstr("\n");
- put_api(b); putstr("\n");
- put_api(c); putstr("\n");
- put_api(d); putstr("\n");
+ putstr("A/B="); put_api(c); putstr("\n");
+ putstr("A%B="); put_api(d); putstr("\n");
  
 
  api_delete(a);

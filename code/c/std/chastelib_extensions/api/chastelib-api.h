@@ -153,6 +153,12 @@ void api_mov(struct api_t *a,struct api_t *b)
  and should only be used once they are initialized
 */
 
+int max(int a,int b)
+{
+ if(a>b){return a;}
+ else{return b;}
+}
+
 
 /*
  a=a+b
@@ -161,8 +167,9 @@ void api_mov(struct api_t *a,struct api_t *b)
 */
 void api_add(struct api_t *a,struct api_t *b)
 {
- int x=0,y=0;
- while(x<a->length)
+ int x=0,y=0,length;
+ length=max(a->length,b->length);
+ while(x<length)
  {
   y+=a->digits[x];
   y+=b->digits[x];
