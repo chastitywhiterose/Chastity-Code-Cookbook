@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 
  api_set_ui(a,999999);
  api_set_ui(a,65536);
- api_set_ui(b,1);
+ api_set_ui(b,100);
  api_set_ui(c,1);
 
  
@@ -37,6 +37,22 @@ int main(int argc, char *argv[])
  api_mov(c,b);
  api_add(c,a);
  putstr("B+A="); put_api(c); putstr("\n");
+
+ putstr("subtracting api integers\n");
+ api_mov(c,a);
+ api_sub(c,b);
+ putstr("A-B="); put_api(c); putstr("\n");
+ api_mov(c,b);
+ api_sub(c,a);
+ putstr("B-A="); put_api(c); putstr("\n");
+ 
+ putstr("multiplying api integers\n");
+ api_mov(c,a);
+ api_mul(c,b);
+ putstr("A-B="); put_api(c); putstr("\n");
+ api_mov(c,b);
+ api_mul(c,a);
+ putstr("B-A="); put_api(c); putstr("\n");
 
  
  putstr("dividing api integers\n");

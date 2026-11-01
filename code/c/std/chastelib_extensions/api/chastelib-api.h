@@ -141,6 +141,7 @@ void api_set_ui(struct api_t *a,unsigned int i)
  x is used as index variable
  every digit in a is copied from b
  length of a is set to the length of b
+ the signbit is also copied
 */
 void api_mov(struct api_t *a,struct api_t *b)
 {
@@ -157,6 +158,7 @@ void api_mov(struct api_t *a,struct api_t *b)
   x++;
  }
  a->length=b->length;
+ a->signbit=b->signbit;
 }
 
 
@@ -196,6 +198,7 @@ void api_add(struct api_t *a,struct api_t *b)
   y/=radix;
   x++;
  }
+ a->length=length;
  if(y)
  {
   a->digits[x]=y;
@@ -260,9 +263,10 @@ int api_sub(struct api_t *a,struct api_t *b)
  if(y!=0)
  {
   putstr("Warning: signbit changed to 1 for negative number.\n");
-  a->signbit=1;
-  api_mov(a,b);
-  api_sub(a,t);
+  putstr("Warning: negative api numbers are only simulated.\n");
+  api_mov(a,b); 
+  api_sub(a,t); /*subtract higher number from lower number*/
+  a->signbit=1; /*set the signbit*/
  }
 
  api_delete(t);
