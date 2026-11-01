@@ -40,13 +40,21 @@ int main(int argc, char *argv[])
  abi_sub(c,a);
  putstr("B-A="); put_abi(c); putstr("\n");
  
- putstr("multiplying api integers\n");
+ putstr("multiplying abi integers\n");
  abi_mov(c,a);
  abi_mul(c,b);
  putstr("A-B="); put_abi(c); putstr("\n");
  abi_mov(c,b);
  abi_mul(c,a);
  putstr("B-A="); put_abi(c); putstr("\n");
+ 
+ putstr("dividing api integers\n");
+ abi_mov(c,a);
+ abi_div(c,b);
+ putstr("A/B="); put_abi(c); putstr("\n");
+ abi_mov(c,a);
+ abi_rem(c,b);
+ putstr("A%B="); put_abi(c); putstr("\n");
 
  abi_delete(a);
  abi_delete(b);

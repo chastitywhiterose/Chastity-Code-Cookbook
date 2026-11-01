@@ -270,8 +270,8 @@ void abi_mul(struct abi_t *a,struct abi_t *b)
     while(cx<c->length_max && i>0)
     {
      c->bits[cx]+=i;
-     i=c->bits[cx]/2;
-     c->bits[cx]%=2;
+     i=c->bits[cx]>>1;
+     c->bits[cx]&=1;
      cx++;
      if(cx>c->length){c->length=cx;}
     }
@@ -308,5 +308,207 @@ void abi_shl(struct abi_t *a)
  {
   a->length++;
  }
+}
+
+
+
+
+
+/*
+ compares api integers a and b
+ 
+ first it uses the length of the integers
+ to see which is more or less than the other
+ if both numbers are the same amount of digits
+ then it compares them all high to low
+
+ regardless of which branch executes:
+ it returns the following regular int
+ -1 if a is less than b
+  0 if a is same as b
+ +1 if a is more than b
+*/
+int abi_cmp(struct abi_t *a,struct abi_t *b)
+{
+ int x=0,y;
+ /*
+  first use the length of used digits
+  as a quick hack for finding which is
+  more or less if they are different
+ */
+ if(a->length < b->length)
+ {
+  y=-1;
+ }
+ else if(a->length > b->length)
+ {
+  y=1;
+ }
+ /*
+  if a and b have the same length
+  check the high to low digits and then return
+  based on any differences found
+ */
+ else
+ {
+  y=0;
+  x=a->length;
+  while(x>0)
+  {
+   x--;
+   if(a->bits[x] < b->bits[x])
+   {
+    y=-1;
+    break;
+   }
+   if(a->bits[x] > b->bits[x])
+   {
+    y=1;
+    break;
+   }
+  }
+ }
+ return y;
+}
+
+
+
+
+
+/*
+ divide a by b and store quotient in a
+*/
+void abi_div(struct abi_t *a,struct abi_t *b)
+{
+ int x,ax,cmp;
+
+ abi q; /*quotient*/
+ abi r; /*remainder*/
+ q=abi_new(); /*allocate quotient*/
+ r=abi_new(); /*allocate remainder*/
+
+ /*all digits of q and r must be initialized o 0*/
+ x=0;
+ while(x<q->length_max)
+ {
+  q->bits[x]=0;
+  r->bits[x]=0;
+  x++;
+ }
+
+  /*division code begin*/
+  ax=a->length;
+  while(ax>0)
+  {
+   ax--;
+ 
+   /*
+    left shift remainder by radix
+    and place next digit from a
+    as lowest digit of remainder
+   */
+   abi_shl(r);
+   r->bits[0]=a->bits[ax];
+
+   x=0; /*used to be next quotient digit*/
+   /*
+    while the remainder is greater or equal to b
+    subtract b from r
+    keep track of how many times with i
+   */
+   while(1)
+   {
+    cmp=abi_cmp(r,b);
+    if(cmp==-1)
+    {
+     break;
+    }
+    abi_sub(r,b);
+    x++;
+   }
+   /*
+    left shift quotient by radix
+    and place next digit from i
+    as lowest digit of quotient
+   */
+   abi_shl(q);
+   q->bits[0]=x;
+ 
+  }
+  /*division code end*/
+
+ abi_mov(a,q);
+ abi_delete(q);
+ abi_delete(r);
+}
+
+
+/*
+ divide a by b and store remainder in a
+ this function is identical to api_div
+ except that it copies remainder instead of quotient
+*/
+void abi_rem(struct abi_t *a,struct abi_t *b)
+{
+ int x,ax,cmp;
+
+ abi q; /*quotient*/
+ abi r; /*remainder*/
+ q=abi_new(); /*allocate quotient*/
+ r=abi_new(); /*allocate remainder*/
+
+ /*all digits of q and r must be initialized o 0*/
+ x=0;
+ while(x<q->length_max)
+ {
+  q->bits[x]=0;
+  r->bits[x]=0;
+  x++;
+ }
+
+  /*division code begin*/
+  ax=a->length;
+  while(ax>0)
+  {
+   ax--;
+ 
+   /*
+    left shift remainder by radix
+    and place next digit from a
+    as lowest digit of remainder
+   */
+   abi_shl(r);
+   r->bits[0]=a->bits[ax];
+
+   x=0; /*used to be next quotient digit*/
+   /*
+    while the remainder is greater or equal to b
+    subtract b from r
+    keep track of how many times with i
+   */
+   while(1)
+   {
+    cmp=abi_cmp(r,b);
+    if(cmp==-1)
+    {
+     break;
+    }
+    abi_sub(r,b);
+    x++;
+   }
+   /*
+    left shift quotient by radix
+    and place next digit from i
+    as lowest digit of quotient
+   */
+   abi_shl(q);
+   q->bits[0]=x;
+ 
+  }
+  /*division code end*/
+
+ abi_mov(a,r);
+ abi_delete(q);
+ abi_delete(r);
 }
 
