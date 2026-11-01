@@ -17,7 +17,7 @@
  the default length for new integers allocated
  can be increased by the main program to allocate more bits
 */
-int init_length=0x10;
+int init_length=0x100;
 
 /*
 Arbitrary Precision Integer structure
@@ -140,23 +140,39 @@ void abi_mov(struct abi_t *a,struct abi_t *b)
  and should only be used once they are initialized
 */
 
+int max(int a,int b)
+{
+ if(a>b){return a;}
+ else{return b;}
+}
+
 
 /*
-not fixed yet
+ addition function
  a=a+b
  x is used as index variable
  y is used as carry variable
+ 
+ a->length is set to the highest length of the inputs
+ and plus 1 if a carry is involved
 */
 void abi_add(struct abi_t *a,struct abi_t *b)
 {
- int x=0,y=0,y1;
- while(x<a->length_max)
+ int x=0,y=0,length;
+ length=max(a->length,b->length);
+ while(x<length)
  {
-  y1=a->bits[x];
-  a->bits[x]^=b->bits[x];
-  a->bits[x]^=y;
-  y=y1&=b->bits[x];
+  y+=a->bits[x];
+  y+=b->bits[x];
+  a->bits[x]=y&1;
+  y>>=1;
   x++;
+ }
+ a->length=length;
+ if(y)
+ {
+  a->bits[x]=y;
+  a->length=length+1;
  }
 }
 
