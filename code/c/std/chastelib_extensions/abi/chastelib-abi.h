@@ -207,7 +207,7 @@ void abi_sub(struct abi_t *a,struct abi_t *b)
 
   if(y<0)
   {
-   y+=radix;
+   y+=2;
    a->bits[x]=y;
    y=1;
   }
@@ -227,5 +227,86 @@ void abi_sub(struct abi_t *a,struct abi_t *b)
  }
  a->length=x;
 
+}
+
+
+
+
+
+/*
+ a=a*b
+ each api integer has its own index variable
+ i is used as product and carry variable
+ c integer destination is dynamically created and 
+ then copied to a and deleted
+*/
+void abi_mul(struct abi_t *a,struct abi_t *b)
+{
+ int i,ax,bx,cx;
+
+ abi c; /*temporary variable in case something goes horribly wrong!*/
+ c=abi_new(); /*allocate temp int*/
+
+ /*all digits of c must be initialized o 0*/
+ cx=0;
+ while(cx<c->length_max)
+ {
+  c->bits[cx]=0;
+  cx++;
+ }
+
+ /*
+  multiply the a and b arrays together and store the result
+  in the c array
+ */
+  bx=0;
+  while(bx<b->length)/*multiplication code begin*/
+  {
+   ax=0;
+   while(ax<a->length)
+   {
+    i=a->bits[ax]*b->bits[bx];
+    cx=ax+bx; 
+    while(cx<c->length_max && i>0)
+    {
+     c->bits[cx]+=i;
+     i=c->bits[cx]/2;
+     c->bits[cx]%=2;
+     cx++;
+     if(cx>c->length){c->length=cx;}
+    }
+    ax++;
+   }
+   bx++;
+
+  } /*multiplication code end*/
+
+ abi_mov(a,c);
+ abi_delete(c);
+}
+
+/*
+ a is left shifted once
+ this is the same as multiplying by the radix
+ this is designed as a convenience function for
+ the long division algorithm later
+*/
+void abi_shl(struct abi_t *a)
+{
+ int x=a->length;
+ while(x>0)
+ {
+  x--;
+  a->bits[x+1]=a->bits[x];
+ }
+ a->bits[x]=0;
+ /*
+  if the digit at length index is not zero
+  then we expand this integer by 1 digit
+ */
+ if(a->bits[a->length]!=0)
+ {
+  a->length++;
+ }
 }
 

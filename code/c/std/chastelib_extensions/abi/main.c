@@ -38,7 +38,15 @@ int main(int argc, char *argv[])
  putstr("A-B="); put_abi(c); putstr("\n");
  abi_mov(c,b);
  abi_sub(c,a);
- putstr("B-A="); put_abi_all(c); putstr("\n"); 
+ putstr("B-A="); put_abi(c); putstr("\n");
+ 
+ putstr("multiplying api integers\n");
+ abi_mov(c,a);
+ abi_mul(c,b);
+ putstr("A-B="); put_abi(c); putstr("\n");
+ abi_mov(c,b);
+ abi_mul(c,a);
+ putstr("B-A="); put_abi(c); putstr("\n");
 
  abi_delete(a);
  abi_delete(b);
