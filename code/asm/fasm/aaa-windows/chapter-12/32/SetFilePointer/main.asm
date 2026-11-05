@@ -118,8 +118,8 @@ push [offset]    ;lDistanceToMove = [offset]
 push [fd]        ;hFile = [fd] -> a file already opened
 call [SetFilePointer]
 
-ret
 
+ret
 
 section '.idata' import data readable writeable
 

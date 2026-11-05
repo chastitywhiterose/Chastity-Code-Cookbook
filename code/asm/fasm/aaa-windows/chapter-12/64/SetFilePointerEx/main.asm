@@ -1,8 +1,8 @@
 format PE64 console
 entry main
 
-include 'win64a.inc'
-include 'chastelib-w64.asm'
+include 'win64a.inc'        ;includes standard Windows 32-bit definitions and macros
+include 'chastelib-w64.asm' ;include standard library functions by Chastity
 
 main:
 
@@ -106,21 +106,18 @@ pop rax
 
 ret
 
-
-
-
 fseek:
 
 ;seek to 64-bit address of file with SetFilePointerEx function
 ;https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-setfilepointerex
 
-sub rsp,40  ;align stack before Win API functions(required in windows 64-bit)
+sub rsp,40       ;align stack before Win API functions(required in windows 64-bit)
 mov r9, 0        ;dwMoveMethod = FILE_BEGIN -> seek from beginning of file
 mov r8, 0        ;lpNewFilePointer = NULL: We are not storing the result anywhere
 mov rdx,[offset] ;liDistanceToMove = [offset]
 mov rcx,[fd]     ;hFile = [fd] -> a file already opened
 call [SetFilePointerEx]
-add rsp,40  ;restore stack now that WinAPI calls are done
+add rsp,40       ;restore stack now that WinAPI calls are done
 
 ret
 
@@ -138,4 +135,3 @@ import kernel32,\
  SetFilePointerEx, 'SetFilePointerEx',\
  ReadFile, 'ReadFile',\
  CloseHandle, 'CloseHandle'
-
