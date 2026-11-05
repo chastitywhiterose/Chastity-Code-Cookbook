@@ -1,2 +1,4 @@
-There are now Windows Assembly versions of chastehex for both 32 and 64 bit modes. All tests have shown that they work identically to the Linux and DOS versions.
+chastehex     
+test file     
+There are now Windows Assembly versions of chastehex for both 32 and 64 bit modes. All tests have shown that they work identically to the Linux and DOS versions. This file should be used for testing chastehex on Windows.
 
