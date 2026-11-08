@@ -7,7 +7,7 @@ call putstring
 
 jmp $
 
-%include 'putstring-bios.asm' ; use %include if assembling with NASM instead of FASM.
+include 'putstring-bios.asm' ; use %include if assembling with NASM instead of FASM.
 
 string0 db 'Hello World',0xD,0xA,0
 
@@ -15,7 +15,7 @@ string0 db 'Hello World',0xD,0xA,0
 times 510-($-$$) db 0
 dw 0xAA55
 
-;This 16 bit DOS Assembly source has been formatted for the FASM assembler.
+;This 16 bit BIOS Assembly source has been formatted for the FASM assembler.
 ;It is assembled for the boot sector of a hard disk
 
 ;First, assemble it into a binary file. FASM will automatically add
