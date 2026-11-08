@@ -9,3 +9,6 @@ main-fasm-linux:
 	./main
 ndisasm:
 	ndisasm -o 0x100 main.com
+hex:
+	chastehex main.com
+
