@@ -1,11 +1,10 @@
-main-fasm-dos:
+fasm:
 	fasm main.asm
-main-nasm-dos:
+nasm:
 	chastext main.asm 'include' '%include' > temp.asm
-	nasm temp.asm -o main.com
-main-fasm-linux:
-	fasm main.asm
-	chmod +x main
-	./main
+	nasm temp.asm -o main.bin
 ndisasm:
-	ndisasm -o 0x100 main.com
+	ndisasm -o 0x7C00 main.bin
+boot:
+	qemu-system-i386 -drive file=main.bin,format=raw
+
