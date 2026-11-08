@@ -12,7 +12,7 @@ string0 db 'Hello World',0xD,0xA,0
 include 'putstring-bios.asm' ; use %include if assembling with NASM instead of FASM.
 
 ;make this output into a valid boot 512 byte boot sector
-times 510-($-$$) db 0
+db 510-($-$$) dup 0          ;same as -> times 510-($-$$) db 0
 dw 0xAA55
 
 ;This 16 bit BIOS Assembly source has been formatted for the FASM assembler.

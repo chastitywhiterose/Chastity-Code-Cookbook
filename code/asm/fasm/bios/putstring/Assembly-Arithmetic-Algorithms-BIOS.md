@@ -4,15 +4,21 @@
 
 # Preface
 
-This book is meant to serve as an tutorial for those who have read my 16-bit DOS edition of Assembly Arithmetic Algorithms.
+This book is meant to serve as an tutorial for those who have read my 16-bit DOS edition of Assembly Arithmetic Algorithms. If you have not read it yet, you can find it in both ebook and paperback editions:
+
+<https://leanpub.com/assemblyarithmeticalgorithms-dos>
+
+<https://www.projectqpub.com/books/assembly-arithmetic-algorithms>
 
 It is recommended, but not required, to read the DOS book first because I already explained Assembly language for the 16 bit Intel CPU descendants of the 8086 processor. An understanding of this language is recommended to get the most benefit of this book.
 
-However, because I give full working code examples and the means to Assemble and run these programs, you can copy and paste (or retype if you wish) these examples just for a greater understanding of the boot process of a computer.
+However, because I give full working code examples and the means to Assemble and run these programs, you can copy and paste (or retype if you wish) these examples just for a greater understanding of the boot process of a computer. You won't need experience in programming but you will need to know how to install and use fasm or nasm for an assembler.
 
 All examples run under the BIOS and do not require an operating system such as DOS, Linux, or Windows to run. However, you will need an operating system to run the QEMU PC emulator to load the programs onto a virtual computer that behaves like a computer at the stage where the BIOS detects hardware and tries to load your boot sector program instead of an operating system.
 
 Because QEMU is Open Source and available for modern Linux or Windows, it will be as convenient to use as DOSBox was in the DOS version of Assembly Arithmetic Algorithms.
+
+Other PC emulators like Oracle VirtualBox should also work equally well if you configure them to boot the file we will be creating in chapter 1.
 
 
 # Chapter 1: Hello World
@@ -104,17 +110,57 @@ dw 0xAA55
 
 Those commands will fill the extra space with zeros and then finish with the correct bytes.
 
-The times macro, which has been used in the NASM Assembly seems to be supported in the latest version of FASM. I have successfully assembled it with both the FASM and NASM Assemblers.
+Instead of the "times" directive, it is also possible to use a "dup" statement as part of data declaration.
 
-**NASM Note**: When assembling with NASM, you will need to use a percent sign with the include directive like this:
+```
+db 510-($-$$) dup 0
+```
+
+Whichever you use, both **dup** and **times** are supported by the FASM and NASM assemblers. I know this because I have successfully assembled the same source code with both the FASM and NASM Assemblers.
+
+There is one key difference though. See the note below if you are using NASM instead of FASM.
+
+**NASM Note**: When assembling with NASM, you will need to use a percent sign with the include directive because NASM requires it. Do it like this:
 
 ```
 %include 'putstring-bios.asm'
 ```
 
-And the command to assemble will be this:
+Once you have your source ready, the command to assemble will be this:
 
 ```
 nasm main.asm -o main.bin
 ```
 
+And the final step is to run it with QEMU. You have two options. Either the 32-bit emulator:
+
+```
+qemu-system-i386 -drive file=main.bin,format=raw
+```
+
+Or the 64-bit emulator:
+
+```
+qemu-system-x86_64 -drive file=main.bin,format=raw
+```
+
+In the end it doesn't matter which you use because the Assembly code is for 16-bit real mode which is the same as was used in the DOS book and it is the default mode the CPU boots into when you turn on a computer.
+
+When you boot the main.bin file in QEMU, you will see something like:
+
+```
+Booting from Hard Disk...
+Hello World
+```
+
+If you see this, it means that the putstring function I wrote for the BIOS is working correctly. The putstring functions for the BIOS is essential for future chapters because once we can print text, we can also print numbers after they are converted from text.
+
+## Real versus Protected Mode
+
+There is a special process for switching to 32 or 64 bit protected modes. However these modes restrict you from accessing the hardware via the BIOS in the way I am teaching here.
+
+For a look at programming in 32 or 64 bit Assembly programming, you might be interested in my Linux and Windows editions of Assembly Arithmetic Algorithms.
+
+<https://leanpub.com/assemblyarithmeticalgorithms-Linux>
+
+<https://leanpub.com/assemblyarithmeticalgorithms-windows>
