@@ -99,9 +99,7 @@ include 'putstring-bios.asm'
 
 Every part of the program is written now, but there is one more step. We must tell the computer that the file is executable (can run as a program). Fortunately, this is easy to do.
 
-The following two lines serve a special purpose. They ensure that the binary output file is recognized by the BIOS as a valid bootable hard disk. Now all disks are marked as bootable.
-
-To mark a disk as bootable, the last two bytes of the first 512 byte sector must be "55 AA"
+The following two lines serve a special purpose. They ensure that the binary output file is recognized by the BIOS as a valid bootable hard disk. Not all disks are marked as bootable. To mark a disk as bootable, the last two bytes of the first 512 byte sector must be "55 AA"
 
 ```
 times 510-($-$$) db 0
