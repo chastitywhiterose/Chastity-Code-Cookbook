@@ -153,7 +153,7 @@ Booting from Hard Disk...
 Hello World
 ```
 
-If you see this, it means that the putstring function I wrote for the BIOS is working correctly. The putstring functions for the BIOS is essential for future chapters because once we can print text, we can also print numbers after they are converted from text.
+If you see this, it means that the putstring function I wrote for the BIOS is working correctly. The putstring functions for the BIOS is essential for future chapters because once we can print text, we can also print numbers after they are converted from text. This will be the subject of the next chapter.
 
 ## Real versus Protected Mode
 
