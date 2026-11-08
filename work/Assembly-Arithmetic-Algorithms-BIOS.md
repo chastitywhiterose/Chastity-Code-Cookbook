@@ -51,7 +51,47 @@ The main function will be in a file named "main.asm" as is my usual convention f
 ## main.asm
 
 ```
+org 0x7C00
+
+main:
+
+mov ax,string0
+call putstring
+
+jmp $
+
+string0 db 'Hello World',0xD,0xA,0
+
+include 'putstring-bios.asm'
+
+times 510-($-$$) db 0
+dw 0xAA55
 ```
+
+The "org 0x7C00" tells the assembler that the code begins running at 0x7C00 when the BIOS loads the hard disk. I did not choose this address but the assembler must be informed so references to memory are correct.
+
+The main function begins at the label "main:" and ends at the instruction "jmp $". This is an infinite loop that jumps to itself. Because this program is run at boot and there is no operating system to "return" or "exit" to, then the program must stay in this infinite loop or the emulator (or real PC if you tried to use one) won't know what to do.
+
+The only thing happening inside the main function are these two lines:
+
+```
+mov ax,string0
+call putstring
+```
+
+This loads the ax register with the memory location where string0 starts. The string is defined by the line:
+
+```
+string0 db 'Hello World',0xD,0xA,0
+```
+
+Finally, we must include the putstring function written earlier as part of this program. Assembly is much like the C Programming Language because you can include external files in your program just like this:
+
+```
+include 'putstring-bios.asm'
+```
+
+Every part of the program is written now, but there is one more step. We must tell the computer that the file is executable (can run as a program). Fortunately, this is easy to do.
 
 The following two lines serve a special purpose. They ensure that the binary output file is recognized by the BIOS as a valid bootable hard disk. Now all disks are marked as bootable.
 
@@ -62,9 +102,11 @@ times 510-($-$$) db 0
 dw 0xAA55
 ```
 
+Those commands will fill the extra space with zeros and then finish with the correct bytes.
+
 The times macro, which has been used in the NASM Assembly seems to be supported in the latest version of FASM. I have successfully assembled it with both the FASM and NASM Assemblers.
 
-Note that when assembling with NASM, you will need to use a percent sign with the include directive like this:
+**NASM Note**: When assembling with NASM, you will need to use a percent sign with the include directive like this:
 
 ```
 %include 'putstring-bios.asm'

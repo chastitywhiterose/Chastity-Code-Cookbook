@@ -7,9 +7,9 @@ call putstring
 
 jmp $
 
-include 'putstring-bios.asm' ; use %include if assembling with NASM instead of FASM.
-
 string0 db 'Hello World',0xD,0xA,0
+
+include 'putstring-bios.asm' ; use %include if assembling with NASM instead of FASM.
 
 ;make this output into a valid boot 512 byte boot sector
 times 510-($-$$) db 0
@@ -24,9 +24,10 @@ dw 0xAA55
 ;	fasm main.asm
 
 ;In order to run it, you will need the QEMU emulator or something similar.
-;This command works fine for QEMU:
+;Either of these commands works fine for QEMU:
 ;
 ;	qemu-system-i386 -drive file=main.bin,format=raw
+;	qemu-system-x86_64 -drive file=main.bin,format=raw
 ;
 ;If everything was done correctly, you will see something like:
 ;
