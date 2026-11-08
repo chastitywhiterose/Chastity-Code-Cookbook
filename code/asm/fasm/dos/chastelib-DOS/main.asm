@@ -2,7 +2,7 @@ org 100h
 
 main:
 
-mov eax,string0
+mov ax,string0
 call putstring
 
 mov word[radix],16           ; can choose radix for integer output!
@@ -43,7 +43,7 @@ inc ax
 cmp ax,bx;
 jnz loop1
 
-mov eax,string0
+mov ax,string0
 call putstring
 
 mov ax,4C00h ;DOS system call number ah=0x4C to exit program with ah=0x00 as return value
