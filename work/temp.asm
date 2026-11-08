@@ -9,7 +9,7 @@ jmp $
 
 %include 'putstring-bios.asm' ; use %%include if assembling with NASM instead of FASM.
 
-string0 db 'chastelib test suite for Intel 16-bit Assembly on DOS',0xD,0xA,0
+string0 db 'chastelib test suite for Intel 16-bit Assembly on BIOS',0xD,0xA,0
 
 ;make this output into a valid boot 512 byte boot sector
 times 510-($-$$) db 0

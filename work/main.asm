@@ -7,9 +7,9 @@ call putstring
 
 jmp $
 
-include 'putstring-bios.asm' ; use %include if assembling with NASM instead of FASM.
+%include 'putstring-bios.asm' ; use %include if assembling with NASM instead of FASM.
 
-string0 db 'chastelib test suite for Intel 16-bit Assembly on DOS',0xD,0xA,0
+string0 db 'Hello World',0xD,0xA,0
 
 ;make this output into a valid boot 512 byte boot sector
 times 510-($-$$) db 0
@@ -17,7 +17,6 @@ dw 0xAA55
 
 ;This 16 bit DOS Assembly source has been formatted for the FASM assembler.
 ;It is assembled for the boot sector of a hard disk
-
 
 ;First, assemble it into a binary file. FASM will automatically add
 ;the .bin extension as the default
@@ -29,12 +28,9 @@ dw 0xAA55
 ;
 ;	qemu-system-i386 -drive file=main.bin,format=raw
 ;
-; Then you will need to open DOSBOX and mount the folder that it is in.
-; For example:
+;If everything was done correctly, you will see something like:
 ;
-;	mount c ~/.dos
-;	c:
+;	Booting from Hard Disk...
+;	Hello World
 ;
-;	Then, you will be able to just run the main.com.
-;
-;	main
+;If you see this, it means that the putstring function I wrote for the BIOS is working correctly.
