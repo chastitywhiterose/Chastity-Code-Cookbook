@@ -162,3 +162,186 @@ For a look at programming in 32 or 64 bit Assembly programming, you might be int
 <https://leanpub.com/assemblyarithmeticalgorithms-Linux>
 
 <https://leanpub.com/assemblyarithmeticalgorithms-windows>
+
+# Chapter 2: Printing Integers
+
+In the last chapter, I provided a version of the putstring function that works for the BIOS. If you happened to read the DOS edition of Assembly Arithmetic Algorithms, you might notice that it works very similar to the original function written for DOS. However, it writes characters one at a time until a zero byte is found.
+
+But now that we have a way of printing strings, it is possible to print integers with a little bit of setup and writing some new functions.
+
+The first, and most important of these new functions is intstr. It is identical to the function of the same name that was included in the DOS book. It takes the value of the ax register and converts it to a string. Then ax is loaded with the address of the newly created string.
+
+It uses global variables to choose which radix will be used for displaying the number and also how many minimum digits (including leading zeros) are displayed. Each new function will go in its own file for organizational purposes.
+
+## intstr.asm
+
+```
+; This is the location in memory where digits are written to by the intstr function
+; The string of bytes and settings such as the radix and width are global variables defined below.
+
+int_string db 16 dup '?' ;reserve bytes for characters string for 16-bit binary integer
+
+int_string_end db 0 ;zero byte terminator for the integer string
+
+radix dw 2     ;radix or base for integer output. 2=binary, 8=octal, 10=decimal, 16=hexadecimal
+int_width dw 8 ;default width of integers. Extra zeros prefixed if more than 1
+
+;this function creates a string of the integer in ax
+;it uses the above radix variable to determine base from 2 to 36
+;it then loads ax with the address of the string
+;this means that it can be used with the putstring function
+
+intstr:
+
+mov bx,int_string_end-1 ;find address of lowest digit(just before the newline 0Ah)
+mov cx,1
+
+digits_start:
+
+mov dx,0;
+div word [radix]
+cmp dx,10
+jb decimal_digit
+jnb hexadecimal_digit
+
+decimal_digit: ;we go here if it is only a digit 0 to 9
+add dx,'0'
+jmp save_digit
+
+hexadecimal_digit:
+sub dx,10
+add dx,'A'
+
+save_digit:
+
+mov [bx],dl
+cmp ax,0
+jz intstr_end
+dec bx
+inc cx
+jmp digits_start
+
+intstr_end:
+
+prefix_zeros:
+cmp cx,[int_width]
+jnb end_zeros
+dec bx
+mov byte[bx], '0'
+inc cx
+jmp prefix_zeros
+end_zeros:
+
+mov ax,bx ; store string in ax for display later
+
+ret
+```
+
+The next function is called putint, and all it does is back up registers to the stack, then it calls intstr and putstring, then restores the registers to what they were before putint was called.
+
+This function was necessary because intstr destroys whatever the original value of ax was. Using the stack with the push and pop instructions is a common and convenient way of saving and loading variables
+
+## putint.asm
+
+```
+;function to print string form of whatever integer is in ax
+;The radix determines which number base the string form takes.
+;Anything from 2 to 36 is a valid radix
+;in practice though, only bases 2,8,10,and 16 will make sense to other programmers
+;this function does not process anything by itself but calls the combination of my other
+;functions in the order I intended them to be used.
+
+putint: 
+
+push ax
+push bx
+push cx
+push dx
+
+call intstr
+call putstring
+
+pop dx
+pop cx
+pop bx
+pop ax
+
+ret
+```
+
+## putline.asm
+
+```
+;the next function which pushes ax to the stack
+;moves the address of the line string and prints it with putstring
+;then it pops the original value of ax back from the stack before the function returns
+;this allows me to print a newline anywhere in the code without a single register changing
+
+line db 0Dh,0Ah,0 ;a string containing only a newline
+
+putline:
+push ax
+mov ax,line
+call putstring
+pop ax
+ret
+```
+
+## main.asm
+
+```
+org 0x7C00
+
+main:
+mov ax,string0
+call putstring
+mov word[radix],16    ;choose radix for integer output!
+mov word[int_width],4 ;minimum width of digits
+mov ax,0
+mov bx,0x18
+loop0:
+call putline
+call putint
+inc ax
+cmp ax,bx
+jnz loop0
+jmp $
+
+string0 db 'BIOS Assembly Counting Program',0
+include 'putstring-bios.asm'
+include 'intstr.asm'
+include 'putint.asm'
+include 'putline.asm'
+
+db 510-($-$$) dup 0 ;same as -> times 510-($-$$) db 0
+dw 0xAA55 ;mark disk as boot sector
+```
+
+The output will look like this:
+
+```
+BIOS Assembly Counting Program
+0000
+0001
+0002
+0003
+0004
+0005
+0006
+0007
+0008
+0009
+000A
+000B
+000C
+000D
+000F
+0010
+0011
+0012
+0013
+0014
+0015
+0016
+0017
+```
