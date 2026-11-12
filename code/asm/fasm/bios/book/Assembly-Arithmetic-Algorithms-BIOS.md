@@ -239,7 +239,7 @@ ret
 
 The next function is called putint, and all it does is back up registers to the stack, then it calls intstr and putstring, then restores the registers to what they were before putint was called.
 
-This function was necessary because intstr destroys whatever the original value of ax was. Using the stack with the push and pop instructions is a common and convenient way of saving and loading variables
+This function was necessary because intstr destroys whatever the original value of ax was. Using the stack with the push and pop instructions is a common and convenient way of saving and loading registers or memory variables in Assembly language.
 
 ## putint.asm
 
