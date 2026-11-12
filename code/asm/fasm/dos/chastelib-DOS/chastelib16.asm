@@ -1,4 +1,4 @@
-; chastelib assembly header file for 32 bit Linux
+; chastelib assembly header file for 16-bit DOS
 ; This file is where I keep the source of my most important Assembly functions
 ; These are my string and integer output and conversion routines.
 
@@ -60,9 +60,9 @@ int_string_end db 0 ;zero byte terminator for the integer string
 radix dw 2     ;radix or base for integer output. 2=binary, 8=octal, 10=decimal, 16=hexadecimal
 int_width dw 8 ;default width of integers. Extra zeros prefixed if more than 1
 
-;this function creates a string of the integer in eax
+;this function creates a string of the integer in ax
 ;it uses the above radix variable to determine base from 2 to 36
-;it then loads eax with the address of the string
+;it then loads ax with the address of the string
 ;this means that it can be used with the putstring function
 
 intstr:
@@ -134,7 +134,7 @@ pop ax
 
 ret
 
-;this function converts a string pointed to by ax into an integer returned in eax instead
+;this function converts a string pointed to by ax into an integer returned in ax instead
 ;it is a little complicated because it has to account for whether the character in
 ;a string is a decimal digit 0 to 9, or an alphabet character for bases higher than ten
 ;it also checks for both uppercase and lowercase letters for bases 11 to 36
@@ -236,9 +236,9 @@ ret
 
 line db 0Dh,0Ah,0 ;a string containing only a newline
 
-;the next function which pushes eax to the stack
+;the next function which pushes ax to the stack
 ;moves the address of the line string and prints it with putstring
-;then it pops the original value of eax back from the stack before the function returns
+;then it pops the original value of ax back from the stack before the function returns
 ;this allows me to print a newline anywhere in the code without a single register changing
 
 putline:

@@ -1,37 +1,72 @@
-org 0x7C00
+org 100h
 
 main:
 
 mov ax,string0
 call putstring
 
-jmp $
+mov word[radix],16           ; can choose radix for integer output!
+mov word[int_width],1
 
-string0 db 'Hello World',0xD,0xA,0
+mov ax,input_string_int  ;address of input string to convert to integer using current radix
+call strint              ;call strint to return the string in eax register
+mov bx,ax                ;bx=ax (copy the converted value returned in ax to bx)
 
-%include 'putstring-bios.asm' ; use %%include if assembling with NASM instead of FASM.
+mov ax,0
+loop1:
 
-;make this output into a valid boot 512 byte boot sector
-db 510-($-$$) dup 0          ;same as -> times 510-($-$$) db 0
-dw 0xAA55
+mov word[radix],2            ;set radix to binary
+mov word[int_width],8        ;width of 8 bits
+call putint
+call putspace
+mov word[radix],16           ;set radix to hexadecimal
+mov word[int_width],2        ;width of 2 hex digits
+call putint
+call putspace
+mov word[radix],10           ;set radix to decimal (what humans read)
+mov word[int_width],3        ;width of 3 decimal digits
+call putint
 
-;This 16 bit BIOS Assembly source has been formatted for the FASM assembler.
-;It is assembled for the boot sector of a hard disk
+cmp al,0x20 ;check if al is in printable range
+jb not_char ;if not then jump to not_char label
+cmp al,0x7E 
+ja not_char
 
-;First, assemble it into a binary file. FASM will automatically add
-;the .bin extension as the default
+call putspace
+call putchar ;print the character if it is in the range 0x20 to 0x7E
+
+not_char:    ;jump here if character is outside range to print
+
+call putline ;print newline before the next loop
+
+inc ax
+cmp ax,bx;
+jnz loop1
+
+mov ax,string0
+call putstring
+
+mov ax,4C00h ;DOS system call number ah=0x4C to exit program with ah=0x00 as return value
+int 21h      ;DOS interrupt to exit the program with numbers on previous line
+
+%include 'chastelib16.asm' ; use %%include if assembling with NASM instead of FASM.
+
+string0 db 'chastelib test suite for Intel 16-bit Assembly on DOS',0xD,0xA,0
+input_string_int db '100',0
+
+; This 16 bit DOS Assembly source has been formatted for the FASM assembler.
+; In order to run it, you will need the DOSBOX emulator or something similar.
+; First, assemble it into a binary file. FASM will automatically add
+; the .com extension because of the "org 100h" command.
 ;
 ;	fasm main.asm
-
-;In order to run it, you will need the QEMU emulator or something similar.
-;Either of these commands works fine for QEMU:
 ;
-;	qemu-system-i386 -drive file=main.bin,format=raw
-;	qemu-system-x86_64 -drive file=main.bin,format=raw
+; Then you will need to open DOSBOX and mount the folder that it is in.
+; For example:
 ;
-;If everything was done correctly, you will see something like:
+;	mount c ~/.dos
+;	c:
 ;
-;	Booting from Hard Disk...
-;	Hello World
+;	Then, you will be able to just run the main.com.
 ;
-;If you see this, it means that the putstring function I wrote for the BIOS is working correctly.
+;	main
