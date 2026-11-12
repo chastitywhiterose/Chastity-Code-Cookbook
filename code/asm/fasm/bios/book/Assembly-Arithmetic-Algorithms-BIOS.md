@@ -239,7 +239,7 @@ ret
 
 The next function is called putint, and all it does is back up registers to the stack, then it calls intstr and putstring, then restores the registers to what they were before putint was called.
 
-This function was necessary because intstr destroys whatever the original value of ax was. Using the stack with the push and pop instructions is a common and convenient way of saving and loading registers or memory variables in Assembly language.
+This function was necessary because intstr destroys whatever the original value of ax was. Using the stack with the push and pop instructions is a common and convenient way of saving and loading registers or memory variables in Assembly language. The stack was fully covered in the DOS book, but you will see the same technique a lot in this book.
 
 ## putint.asm
 
@@ -269,6 +269,15 @@ pop ax
 ret
 ```
 
+There is only one more small function we need to display things right. We need a way to go the next line after printing a number. The sequence 0D 0A in hexadecimal is the newline sequence defined like this:
+
+- 0D Carriage Return (move cursor to left of screen)
+- 0A Line Feed (move cursor down to next line)
+
+The BIOS uses this standard sequence for the interrupt used in the putstring function. Operating Systems like DOS and Windows also used these characters to define the end of a line.
+
+The putline function is not hard to understand but the way I wrote it is important. Like putint, it preserves the ax register so that we can temporarily load the string containing only the newline sequence and then call putstring on it. Then ax will be popped back to what it was. Writing a new line is a common enough operation that it deserves its own function. Here it is:
+
 ## putline.asm
 
 ```
@@ -286,6 +295,8 @@ call putstring
 pop ax
 ret
 ```
+
+Now that all the functions we need are written, they will all be included into our next full Assembly program for the BIOS. Here is the full program:
 
 ## main.asm
 
@@ -345,3 +356,15 @@ BIOS Assembly Counting Program
 0016
 0017
 ```
+
+You may notice that I made the creative choice of printing the numbers in hexadecimal. This is because using base ten (decimal) is not very helpful because computers use binary. Each 4 digits of binary equals 1 digit of hexadecimal.
+
+Hexadecimal is therefore just the most convenient base to print things in, but feel free to change this line:
+
+```
+mov word[radix],16
+```
+
+To a number other than 16. You can use any base from 2 to 36 because my intstr function is flexible enough to handle almost anything.
+
+Now that we can print arbitrary strings of text and numbers in all kinds of radixes, the standard library of text output is complete. The next step is getting input from the keyboard. The next chapter will cover this task.
