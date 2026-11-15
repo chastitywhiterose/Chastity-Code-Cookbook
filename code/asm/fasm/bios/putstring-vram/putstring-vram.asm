@@ -8,19 +8,20 @@ putstring_vram:
 push ax
 push bx
 mov bx,ax              ;bx will be used as index to the string
-mov ah,0xE             ;Select Function 0xE for interrupt 0x10
+
 putstring_vram_beg:    ;putstring loop beginning
 cmp byte[bx],0         ;compare this byte with 0
-jz putstring_vram_end  ;if comparison was zero, end the loop
+jz putstring_vram_end  ;if comparison was zero,end the loop
 mov al,[bx]            ;load al register with this character
-call putchar_vram      ;call my function to print this character
+call putchar_vram      ;call function to print this character
 inc bx
-jmp putstring_vram_beg ;jump to the start of the loop until we find a zero
+jmp putstring_vram_beg ;restart loop until we find a zero
 putstring_vram_end:    ;putstring loop end
 pop bx
 pop ax
 
 ret
+
 
 ;variables for managing text in Video RAM
 
