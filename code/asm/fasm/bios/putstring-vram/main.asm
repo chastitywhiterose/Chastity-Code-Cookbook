@@ -8,7 +8,9 @@ main:
 
 mov ax,string0
 call putstring
+call putstring
 
+call putstring_vram
 call putstring_vram
 
 jmp $
