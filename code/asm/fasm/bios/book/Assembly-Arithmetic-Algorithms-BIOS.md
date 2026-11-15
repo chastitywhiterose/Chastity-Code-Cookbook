@@ -368,3 +368,114 @@ mov word[radix],16
 To a number other than 16. You can use any base from 2 to 36 because my intstr function is flexible enough to handle almost anything.
 
 Now that we can print arbitrary strings of text and numbers in all kinds of radixes, the standard library of text output is complete. The next step is getting input from the keyboard. The next chapter will cover this task.
+
+
+# Chapter 3: Getting Keyboard Input
+
+Getting keyboard input from the BIOS is actually not very hard. However, to make sure the input you are getting is accurate, I have created some useful functions we will add to the next program.
+
+## putchar.asm
+
+```
+;a function for printing a single character that is the value of al
+
+char: db 0,0
+
+putchar:
+push ax
+mov [char],al
+mov ax,char
+call putstring
+pop ax
+ret
+```
+
+## putspace.asm
+
+```
+space db ' ',0 ;a string containing only a space
+
+putspace:
+push ax
+mov ax,space
+call putstring
+pop ax
+ret
+```
+
+
+Those functions may seem trivial, but they turn out to be quite useful for the next program. This program will use function 0 of interrupt 0x16 which returns the scan code in the upper half of ax (ah) and the ASCII code in the lower half of ax (al). It will then do some tests to check whether the ASCII code in al is in the printable range of 0x20 to 0x7E. If so, it will print a space after the hexadecimal numbers and then that character.
+
+## main.asm
+
+```
+org 0x7C00
+
+main:
+mov ax,string0
+call putstring
+mov word[radix],16    ;choose radix for integer output!
+mov word[int_width],4 ;minimum width of digits
+
+loop0:
+mov ah,0 ;function 0 of next interrupt
+int 0x16 ;interrupt for keyboard input
+call putint
+
+cmp al,0x20 ;check if al is in printable range
+jb not_char ;if not then jump to not_char label
+cmp al,0x7E 
+ja not_char
+
+call putspace
+call putchar ;print the character if it is in the range 0x20 to 0x7E
+
+not_char:    ;jump here if character is outside range to print
+
+call putline
+jmp loop0
+
+string0 db 'BIOS Keyboard Input Program',0xD,0xA,0
+
+include 'putstring-bios.asm'
+include 'intstr.asm'
+include 'putint.asm'
+include 'putline.asm'
+include 'putchar.asm'
+include 'putspace.asm'
+
+db 510-($-$$) dup 0 ;same as -> times 510-($-$$) db 0
+dw 0xAA55 ;mark disk as boot sector
+```
+
+Here is a sample output that results if I run the program and enter my name: "Chastity White Rose"
+
+## sample output
+
+```
+2E43 C
+2368 h
+1E61 a
+1F73 s
+1474 t
+1769 i
+1474 t
+1579 y
+3920
+1157 W
+2368 h
+1769 i
+1474 t
+1265 e
+3920
+1352 R
+186F o
+1F73 s
+1265 e
+```
+
+One of the unique things about using this interrupt to get input from the keyboard is that it does not wait until you hit the enter key before it gives to instant feedback.
+
+Unlike modern operating systems like Linux or Windows, input is not automatically line buffered. This makes it possible to design small text based games or applications where pressing a specific key results in a certain action happening in the program.
+
+The presence of keyboard input can be wonderful for designing more complex programs, but there is something special that must be done as soon as programs start requiring more space than the default 512 sector which is loaded into the BIOS at the boot of a computer or emulator. In the next chapter, I will explain what can be done to load more data from a disk.
