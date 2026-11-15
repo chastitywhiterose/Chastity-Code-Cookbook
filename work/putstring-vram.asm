@@ -7,17 +7,16 @@ putstring_vram:
 
 push ax
 push bx
-mov bx,ax              ;copy ax to bx to be used as index to the string
+mov bx,ax              ;bx will be used as index to the string
 mov ah,0xE             ;Select Function 0xE for interrupt 0x10
-putstring_vram_beg:    ;this loop finds the length of the string as part of the putstring function
+putstring_vram_beg:    ;putstring loop beginning
 cmp byte[bx],0         ;compare this byte with 0
-jz putstring_vram_end  ;if comparison was zero, jump to loop end because we have found the length
+jz putstring_vram_end  ;if comparison was zero, end the loop
 mov al,[bx]            ;load al register with this character
-;int 0x10              ;call the BIOS to print this character
 call putchar_vram      ;call my function to print this character
 inc bx
-jmp putstring_vram_beg ;jump to the start of the loop and keep trying until we find a zero
-putstring_vram_end:
+jmp putstring_vram_beg ;jump to the start of the loop until we find a zero
+putstring_vram_end:    ;putstring loop end
 pop bx
 pop ax
 
@@ -36,9 +35,22 @@ putchar_vram:
 mov [char],al ;copy character from al to temp place
 ;save all registers used
 push ax
-push bx
 push di
 
+;special case for newline sequence of hex 0D 0A
+;if these two bytes are at this location in the string
+;increment bx in this function because it will also
+;be incremented in the putstring_vram function
+;this ensures whatever is after the two bytes of
+;carriage return 0D and line feed 0A is printed next
+
+mov ax,[bx]          ;load the two bytes indexed by bx
+cmp ax,0x0A0D        ;is this a newline sequence?
+jnz putchar_vram_beg ;if not, proceed to print as normal
+inc bx               ;skip past this two byte sequence
+jmp next_line
+
+putchar_vram_beg:
 ;set the extra segment to video memory
 mov ax,0xB800
 mov es,ax
@@ -66,7 +78,6 @@ same_line:
 
 ;load all registers used
 pop di
-pop bx
 pop ax
 
 ret
