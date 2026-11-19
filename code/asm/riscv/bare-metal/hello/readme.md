@@ -83,4 +83,8 @@ Because -nographic routes standard Ctrl+C signals directly to the guest OS inste
 
 ## Other Links
 
+<https://twilco.github.io/riscv-from-scratch/2019/03/10/riscv-from-scratch-1.html>
+
 <https://www.vociferousvoid.org/index.php/2019/11/01/risc-v-bare-metal-programming-chapter-1-the-setup/>
+
+<https://popovicu.com/posts/bare-metal-programming-risc-v/>
