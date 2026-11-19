@@ -1,6 +1,7 @@
 .section .data
 
 string0: .asciz "chastelib putstr for bare metal RISC-V Assembly\n"
+string1: .asciz "chastelib putstr for bare metal RISC-V Assembly\n"
 
 .section .text
 .global _start
@@ -8,6 +9,8 @@ string0: .asciz "chastelib putstr for bare metal RISC-V Assembly\n"
 _start:
 
 la s0, string0
+jal putstr
+la s0, string1
 jal putstr
 
 halt:
