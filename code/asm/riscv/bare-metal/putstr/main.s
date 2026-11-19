@@ -1,7 +1,7 @@
-.section .data
+.section .rodata
 
-string0: .asciz "chastelib putstr for bare metal RISC-V Assembly\n"
-string1: .asciz "chastelib putstr for bare metal RISC-V Assembly\n"
+string0: .asciz "chastelib putstr for bare metal RISC-V Assembly.\n"
+string1: .asciz "The programs runs as bootloader for QEMU.\n"
 
 .section .text
 .global _start
@@ -14,8 +14,8 @@ la s0, string1
 jal putstr
 
 halt:
-    wfi                    # Wait for interrupt (low-power idle)
-    j halt                 # Infinite loop
+wfi     #Wait for interrupt (low-power idle)
+j halt  #Infinite loop
 
 ###############################################################################
 # This putstr function is for a RISC-V bootloader while running from QEMU     #

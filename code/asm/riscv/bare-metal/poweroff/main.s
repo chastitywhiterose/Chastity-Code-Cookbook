@@ -1,4 +1,4 @@
-.section .data
+.section .rodata
 
 string0: .asciz "chastelib putstr for bare metal RISC-V Assembly\n"
 string1: .asciz "This program turns off automatically\n"
@@ -10,7 +10,7 @@ _start:
 
 la s0, string0
 jal putstr
-#la s0, string1
+la s0, string1
 jal putstr
 
 #Trigger QEMU poweroff via SiFive Test Finisher
@@ -19,8 +19,8 @@ li t1, 0x5555          # FINISHER_PASS value (triggers poweroff with exit code 0
 sw t1, 0(t0)           # Write 0x5555 to 0x100000
 
 halt:
-    wfi                    # Wait for interrupt (low-power idle)
-    j halt                 # Infinite loop
+wfi                    # Wait for interrupt (low-power idle)
+j halt                 # Infinite loop
 
 ###############################################################################
 # This putstr function is for a RISC-V bootloader while running from QEMU     #
