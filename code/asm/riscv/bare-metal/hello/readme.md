@@ -48,6 +48,15 @@ riscv64-unknown-elf-ld -T linker.ld hello.o -o hello.elf
 qemu-system-riscv64 -machine virt -bios none -nographic -kernel hello.elf
 ```
 
+## Essential Keyboard Shortcuts
+
+Because -nographic routes standard Ctrl+C signals directly to the guest OS instead of closing QEMU, you must use QEMU's escape sequence (Ctrl+a, then release both keys and press the second key) to control the emulator:
+
+- Ctrl+a then x. Immediately terminates the QEMU process and returns you to your host shell.
+- Ctrl+a then c. Toggles input focus between the guest's serial console and the QEMU monitor prompt.
+- Ctrl+a then h. Prints the full list of available multiplexer escape commands in your terminal.
+
+
 ## Other Links
 
 <https://www.vociferousvoid.org/index.php/2019/11/01/risc-v-bare-metal-programming-chapter-1-the-setup/>
