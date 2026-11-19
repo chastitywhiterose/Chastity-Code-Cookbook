@@ -283,7 +283,7 @@ j strint_end_error
 
 process_char:
 
-blt t2, t0 strint_end_error #if this value is above or equal to radix, it is too high despite being a valid digit/alpha
+blt t2, t0, strint_end_error #if this value is above or equal to radix, it is too high despite being a valid digit/alpha
 
 mul s0, s0, t2 # multiply s0 by the radix
 add s0, s0, t0 # add the correct value of this digit
