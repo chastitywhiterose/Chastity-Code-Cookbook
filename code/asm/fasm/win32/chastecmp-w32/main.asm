@@ -52,7 +52,7 @@ push 3                  ;dwCreationDisposition = OPEN_EXISTING
 push 0                  ;lpSecurityAttributes = NULL: No security attributes
 push 1                  ;dwShareMode = FILE_SHARE_READ (other programs can read this file)
 push 0x80000000         ;dwDesiredAccess = GENERIC_READ access mode
-push [filename1]         ;lpFileName
+push [filename1]        ;lpFileName
 call [CreateFileA]
 
 ;check eax for file handle or error code
@@ -88,7 +88,7 @@ push 3                  ;dwCreationDisposition = OPEN_EXISTING
 push 0                  ;lpSecurityAttributes = NULL: No security attributes
 push 1                  ;dwShareMode = FILE_SHARE_READ (other programs can read this file)
 push 0x80000000         ;dwDesiredAccess = GENERIC_READ access mode
-push [filename2]         ;lpFileName
+push [filename2]        ;lpFileName
 call [CreateFileA]
 
 ;check eax for file handle or error code
@@ -108,68 +108,81 @@ file2_ok:
 mov [filedesc2],eax ;first file is opened, save its handle
 
 ;if this place of the code is reached, it means both files are open for reading
-;this means any program involving reading these files can take place in this section
-;for this reason, I also saved this as a template for future programs that need two files opened for reading
-;the original purpose of this was designed for chastecmp, my hexadecimal file comparison tool
+;we read 1 byte at a time from each file and compare them
+;if either of the bytes can't be read, we have reached end of file
 
 files_compare:
 
 file_1_read_one_byte:
 ;read only 1 byte using Win32 ReadFile system call.
 push 0           ;Optional Overlapped Structure 
-push bytes_read  ;Store Number of Bytes Read from this call
+push count1      ;Store Number of Bytes Read from this call
 push 1           ;Number of bytes to read
-push byte1       ;address to store bytes
+push buf1        ;address to store bytes
 push [filedesc1] ;handle of the open file
 call [ReadFile]
 
-cmp [bytes_read],0
+cmp [count1],0
 jnz file_2_read_one_byte ;unless zero bytes were read, proceed to read from next file
 
 mov eax,[filename1]
 call putstring
 mov eax,end_of_file_string
-call putstring
-
-jmp main_end ;we have reach end of one file and should end program
+call putstr_and_line
 
 file_2_read_one_byte:
 ;read only 1 byte using Win32 ReadFile system call.
 push 0           ;Optional Overlapped Structure 
-push bytes_read  ;Store Number of Bytes Read from this call
+push count2      ;Store Number of Bytes Read from this call
 push 1           ;Number of bytes to read
-push byte2       ;address to store bytes
+push buf2        ;address to store bytes
 push [filedesc2] ;handle of the open file
 call [ReadFile]
 
-cmp [bytes_read],0
-jnz compare_bytes ;unless zero bytes were read, proceed to compare bytes from both files
+cmp [count2],0
+jnz check_both_bytes ;unless zero bytes were read, proceed to compare bytes from both files
 
 mov eax,[filename2]
 call putstring
 mov eax,end_of_file_string
-call putstring
+call putstr_and_line
 
 jmp main_end ;we have reach end of one file and should end program
 
+check_both_bytes:
+
+;we add the number of bytes read from both files
+;if this number is not 2, end program
+mov eax,[count1]
+add eax,[count2]
+cmp eax,2
+jnz main_end
+
 compare_bytes:
 
-;store the two bytes into the 8 bit lower parts of eax and ebx for a byte comparison.
-mov al,[byte1]
-mov bl,[byte2]
+mov al,[buf1]
+mov bl,[buf2]
 
 ;compare the two bytes and skip printing them if they are the same
 cmp al,bl
-jz same
-call print_bytes_info
-same:
+jz bytes_are_same
 
-inc [file_offset]
+;print the address and the bytes at that address
+mov eax,[offset]
+mov dword[int_width],8
+call putint_and_space
+mov dword[int_width],2
+mov eax,0
+mov al,[buf1]
+call putint_and_space
+mov al,[buf2]
+call putint_and_line
+
+bytes_are_same:
+
+inc dword[offset]
 
 jmp files_compare
-
-
-
 
 main_end:
 
@@ -184,42 +197,27 @@ call [CloseHandle]
 push 0
 call [ExitProcess]
 
-end_of_file_string db ' has reached EOF',0xD,0xA,0
-
-help_message db 'chastecmp: compares two files in hexadecimal',0Ah
-db 9,'chastecmp file1 file2',0Ah,0
-
-;print the address and the bytes at that address
-print_bytes_info:
-mov eax,[file_offset]
-mov [int_width],8
-call putint
-call putspace
-mov [int_width],2
-mov eax,0
-mov al,[byte1]
-call putint
-call putspace
-mov al,[byte2]
-call putint
-call putspace
-call putline
-ret
-
 ;variables for displaying messages
+
+help_message db 'chastecmp by Chastity White Rose',0xD,0xA
+db 9,'chastecmp file1 file2',0xD,0xA
+db 'Differing bytes are shown in hexadecimal',0xD,0xA
+db 'until the EOF has been reached.',0xD,0xA,0
+
+end_of_file_string db ' EOF',0
 file_error_message db 'error: ',0
 
-;variables for managing arguments
-filename1 dd ? ; name of the file to be opened
-filename2 dd ? ; name of the file to be opened
-filedesc1 dd ? ; file descriptor
-filedesc2 dd ? ; file descriptor
-byte1 db ?
-byte2 db ?
-file_offset dd ?
-bytes_read dd ? ;how many bytes are read with ReadFile operation
+;variables for managing files and their bytes
+filename1 dd ? ;name of the file 1 to be opened
+filename2 dd ? ;name of the file 2 to be opened
+filedesc1 dd ? ;file descriptor 1
+filedesc2 dd ? ;file descriptor 2
+buf1 db ?      ;store byte from file 1
+buf2 db ?      ;store byte from file 2
+count1 dd ?    ;how many bytes read from file 1
+count2 dd ?    ;how many bytes read from file 1
+offset dd ?    ;offset or address being read
 
-;FASM builds the Import Address Table (IAT) directly in the source file
 section '.idata' import data readable writeable
 
 library kernel32, 'KERNEL32.DLL'
@@ -231,7 +229,5 @@ import kernel32,\
  GetCommandLineA, 'GetCommandLineA',\
  CreateFileA, 'CreateFileA',\
  GetLastError, 'GetLastError',\
- SetFilePointer, 'SetFilePointer',\
  ReadFile, 'ReadFile',\
  CloseHandle, 'CloseHandle'
-
