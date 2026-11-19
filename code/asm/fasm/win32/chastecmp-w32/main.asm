@@ -1,77 +1,32 @@
 format PE console
-include 'win32ax.inc'
-include 'chastelibw32.asm'
-include 'chasteiow32.asm'
+entry main
+
+include 'win32a.inc'        ;includes standard Windows 32-bit definitions and macros
+include 'chastelib-w32.asm' ;include standard library functions by Chastity
+include 'getarg-w32.asm'    ;include Chastity's getarg function for command line arguments
 
 main:
 
 mov [radix],16 ; Choose radix for integer output.
 mov [int_width],1
 
-;get command line argument string
-call [GetCommandLineA]
+call getarg ;this first call will get the command string
+cmp eax,0   ;did the getarg function return 0?
+jz help     ;if eax was zero, there are no args so we end the program safely after help message
 
-mov [arg_start],eax ;store start of arg string
-
-;short routine to find the length of the string
-;and whether arguments are present
-mov ebx,eax
-find_arg_length:
-cmp [ebx], byte 0
-jz found_arg_length
-inc ebx
-jmp find_arg_length
-found_arg_length:
-;at this point, ebx has the address of last byte in string which contains a zero
-;we will subtract to get and store the length of the string
-mov [arg_end],ebx
-sub ebx,eax
-mov eax,ebx
-mov [arg_length],eax
-
-;display the arg string to make sure it is working correctly
-;mov eax,[arg_start]
-;call putstring
-;call putline
-
-;print the length in bytes of the arg string
-;mov eax,[arg_length]
-;call putint
-
-;this loop will filter the string, replacing all spaces with zero
-mov ebx,[arg_start]
-arg_filter:
-cmp byte [ebx],' '
-ja notspace ; if char is above space, leave it alone
-mov byte [ebx],0 ;otherwise it counts as a space, change it to a zero
-notspace:
-inc ebx
-cmp ebx,[arg_end]
-jnz arg_filter
-
-arg_filter_end:
-
-;optionally print first arg (name of program)
-;mov eax,[arg_start]
-;call putstring
-;call putline
-
-;this section tries to obtain two arguments for filenames and same them for later
-
-;get next arg (first one after name of program)
-call get_next_arg
-cmp eax,[arg_end]
-jz help ;jump to help if we have no more args
+call getarg ;get next arg as file name
+cmp eax,0   ;did the getarg function return 0?
+jz help     ;if eax was zero, there are no args so we end the program safely after help message
 
 mov [filename1],eax ; save the name of the first file we will open to read
 
-call get_next_arg
-cmp eax,[arg_end]
-jz help ;jump to help if we have no more args
+call getarg ;get next arg as file name
+cmp eax,0   ;did the getarg function return 0?
+jz help     ;if eax was zero, there are no args so we end the program safely after help message
 
 mov [filename2],eax ; save the name of the second file we will open to read
 
-jmp arg_open_file_1 ;if no errors at this point, we will skip the help message because we have obtained both filenames
+jmp open_sesame1 ;if no errors at this point, we will skip the help message because we have obtained both filenames
 
 help:
 
@@ -80,54 +35,75 @@ call putstring
 
 jmp main_end ;end program after displaying help message explaining that two files must be given
 
-arg_open_file_1:
+open_sesame1:
 
 mov eax,[filename1]
 call putstring
 call putline
 
+;open a file with the CreateFileA function
 ;https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilea
-;https://learn.microsoft.com/en-us/windows/win32/secauthz/generic-access-rights
 
-;open first file with the CreateFileA function
+;call CreateFileA with Windows 32-bit calling convention
 
-push 0           ;NULL: We are not using a template file
-push 0x80        ;FILE_ATTRIBUTE_NORMAL
-push 3           ;OPEN_EXISTING
-push 0           ;NULL: No security attributes
-push 0           ;NULL: Share mode irrelevant. Only this program reads the file.
-push 0x80000000  ;GENERIC_READ access mode
-push [filename1] ;
+push 0                  ;hTemplateFile = NULL: We are not using a template file
+push 0x80               ;dwFlagsAndAttributes = FILE_ATTRIBUTE_NORMAL
+push 3                  ;dwCreationDisposition = OPEN_EXISTING
+push 0                  ;lpSecurityAttributes = NULL: No security attributes
+push 1                  ;dwShareMode = FILE_SHARE_READ (other programs can read this file)
+push 0x80000000         ;dwDesiredAccess = GENERIC_READ access mode
+push [filename1]         ;lpFileName
 call [CreateFileA]
 
 ;check eax for file handle or error code
-call open_check_error
+;call putint
 cmp eax,-1
-jz main_end
+jnz file1_ok
 
-mov [filedesc1],eax ;first file is opened, save its handle
+mov eax,file_error_message
+call putstring
+call [GetLastError]
+call putint
+jmp main_end ;end program if the file was not opened
 
-arg_open_file_2:
+;this label is jumped to when the file is opened correctly
+file1_ok:
+
+mov [filedesc1],eax
+
+open_sesame2:
 
 mov eax,[filename2]
 call putstring
 call putline
 
-;open second file with the CreateFileA function
+;open a file with the CreateFileA function
+;https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilea
 
-push 0           ;NULL: We are not using a template file
-push 0x80        ;FILE_ATTRIBUTE_NORMAL
-push 3           ;OPEN_EXISTING
-push 0           ;NULL: No security attributes
-push 0           ;NULL: Share mode irrelevant. Only this program reads the file.
-push 0x80000000  ;GENERIC_READ access mode
-push [filename2] ;
+;call CreateFileA with Windows 32-bit calling convention
+
+push 0                  ;hTemplateFile = NULL: We are not using a template file
+push 0x80               ;dwFlagsAndAttributes = FILE_ATTRIBUTE_NORMAL
+push 3                  ;dwCreationDisposition = OPEN_EXISTING
+push 0                  ;lpSecurityAttributes = NULL: No security attributes
+push 1                  ;dwShareMode = FILE_SHARE_READ (other programs can read this file)
+push 0x80000000         ;dwDesiredAccess = GENERIC_READ access mode
+push [filename2]         ;lpFileName
 call [CreateFileA]
 
 ;check eax for file handle or error code
-call open_check_error
+;call putint
 cmp eax,-1
-jz main_end
+jnz file2_ok
+
+mov eax,file_error_message
+call putstring
+call [GetLastError]
+call putint
+jmp main_end ;end program if the file was not opened
+
+;this label is jumped to when the file is opened correctly
+file2_ok:
 
 mov [filedesc2],eax ;first file is opened, save its handle
 
@@ -208,38 +184,10 @@ call [CloseHandle]
 push 0
 call [ExitProcess]
 
-.end main
-
-end_of_file_string db ' has reached EOF',0Ah,0
+end_of_file_string db ' has reached EOF',0xD,0xA,0
 
 help_message db 'chastecmp: compares two files in hexadecimal',0Ah
 db 9,'chastecmp file1 file2',0Ah,0
-
-;function to move ahead to the next art
-;only works after the filter has been applied to turn all spaces into zeroes
-get_next_arg:
-mov ebx,[arg_start]
-find_zero:
-cmp byte [ebx],0
-jz found_zero
-inc ebx
-jmp find_zero ; this char is not zero, go to the next char
-found_zero:
-
-find_non_zero:
-cmp ebx,[arg_end]
-jz arg_finish ;if ebx is already at end, nothing left to find
-cmp byte [ebx],0
-jnz arg_finish ;if this char is not zero we have found the next string!
-inc ebx
-jmp find_non_zero ;otherwise, keep looking
-
-arg_finish:
-mov [arg_start],ebx ; save this index to variable
-mov eax,ebx ;but also save it to ax register for use
-ret
-;we can know that there are no more arguments when
-;the either [arg_start] or eax are equal to [arg_end]
 
 ;print the address and the bytes at that address
 print_bytes_info:
@@ -258,14 +206,10 @@ call putspace
 call putline
 ret
 
-
-;these variables keep track of the argument string
-arg_start  dd ? ;start of arg string
-arg_end    dd ? ;address of the end of the arg string
-arg_length dd ? ;length of arg string
+;variables for displaying messages
+file_error_message db 'error: ',0
 
 ;variables for managing arguments
-argc dd ?
 filename1 dd ? ; name of the file to be opened
 filename2 dd ? ; name of the file to be opened
 filedesc1 dd ? ; file descriptor
@@ -274,3 +218,20 @@ byte1 db ?
 byte2 db ?
 file_offset dd ?
 bytes_read dd ? ;how many bytes are read with ReadFile operation
+
+;FASM builds the Import Address Table (IAT) directly in the source file
+section '.idata' import data readable writeable
+
+library kernel32, 'KERNEL32.DLL'
+
+import kernel32,\
+ GetStdHandle, 'GetStdHandle',\
+ WriteFile, 'WriteFile',\
+ ExitProcess, 'ExitProcess',\
+ GetCommandLineA, 'GetCommandLineA',\
+ CreateFileA, 'CreateFileA',\
+ GetLastError, 'GetLastError',\
+ SetFilePointer, 'SetFilePointer',\
+ ReadFile, 'ReadFile',\
+ CloseHandle, 'CloseHandle'
+

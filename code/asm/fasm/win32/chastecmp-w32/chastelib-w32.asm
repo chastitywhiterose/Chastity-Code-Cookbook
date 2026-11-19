@@ -14,7 +14,7 @@
    
 ; Now, the source of the functions begins, with comments included for parts that I felt needed explanation.
 
-putstring:
+putstring:         ;print string pointed to by eax register
 
 push eax
 push ebx
@@ -33,22 +33,24 @@ jmp putstring_strlen_start
 putstring_strlen_end:
 sub ebx,eax ;subtract start pointer from current pointer to get length of string
 
-;Write string using Win32 WriteFile system call.
-push 0              ;Optional Overlapped Structure 
-push 0              ;Optionally Store Number of Bytes Written
-push ebx            ;Number of bytes to write
-push eax            ;address of string to print
-push -11            ;STD_OUTPUT_HANDLE = Negative Eleven
-call [GetStdHandle] ;use the above handle
-push eax            ;eax is return value of previous function
-call [WriteFile]    ;all the data is in place, do the write thing!
+;Windows 32-bit WriteFile system call
+
+push 0               ;lpOverlapped = NULL
+push 0               ;lpNumberOfBytesWritten = NULL
+push ebx             ;nNumberOfBytesToWrite = ebx
+push eax             ;lpBuffer = address of string to write
+push -11             ;STD_OUTPUT_HANDLE = Negative Eleven
+call [GetStdHandle]  ;Get Standard Handle for -11
+push eax             ;hFile = eax (returned from GetStdHandle)
+call [WriteFile]
+
 
 pop edx
 pop ecx
 pop ebx
 pop eax
 
-ret ;this is the end of the putstring function return to calling location
+ret
 
 ; This is the location in memory where digits are written to by the intstr function
 ; The string of bytes and settings such as the radix and width are global variables defined below.
@@ -234,7 +236,7 @@ call putstring
 pop eax
 ret
 
-line db 0Dh,0Ah,0 ;a string containing only a newline
+line db 0x0D,0x0A,0 ;a string containing only a newline
 
 ;the next function which pushes eax to the stack
 ;moves the address of the line string and prints it with putstring
