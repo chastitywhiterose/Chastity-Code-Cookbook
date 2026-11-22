@@ -1,7 +1,7 @@
 .section .data #readable and writable data
 
 stack_space: .space 0x100
-stack_top:  .dword 0
+stack_top:   .dword 0
 
 #These variables are used by the intstr function to convert an integer to a string
 #and what radix should be used as well as the width (how many leading zeros)
@@ -132,6 +132,8 @@ addi s0, s0, 1
 blt s0, s1, loop
 
 la s0, string0
+jal putstr
+la s0, string1
 jal putstr
 
 #Trigger QEMU poweroff via SiFive Test Finisher
@@ -303,9 +305,6 @@ ret
 # it also uses the stack to save the value of s0 and ra (return address)
 # this way, s0 is restored to the value it had before this function
 # restoring ra is required because it is modified during calls to other functions
-
-#64-bit note: stack is saved to multiples of 8 bytes because register size is 64-bits
-#this is also true for other functions converted from the 32-bit RARS version
 
 putint:
 

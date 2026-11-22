@@ -1,7 +1,7 @@
 .section .data #readable and writable data
 
 stack_space: .space 0x100
-stack_top:  .word 0
+stack_top:   .word  0
 
 #These variables are used by the intstr function to convert an integer to a string
 #and what radix should be used as well as the width (how many leading zeros)
