@@ -30,8 +30,8 @@ char:  .byte 0, 0
 
 _start:
 
-li sp, 0x1000
-li gp, 0x80000000
+li sp, 0x80000000
+li gp, 0x80001b29
 
 la s0, string0
 jal putstr
@@ -57,16 +57,12 @@ sb t0, 0(t1) #save t0 register (byte) to address t1
 # this is how we would load the loop controller variables directly
 # these are commented out for this example
  li s0, 0
- li s1, 0x100
-
-
-#mv s0, s2
-#mv s1, s3
+ li s1, 0x10
 
 loop:
 
 # change radix to binary
-li t0, 2         #load t0 register with the new radix
+li t0, 16         #load t0 register with the new radix
 la t1, radix     #load t1 register with the address the radix will go to
 sb t0, 0(t1)     #save t0 register (byte) to address t1
 
@@ -75,14 +71,8 @@ li t0, 8         #load t0 register with the new width
 la t1, int_width #load t1 register with the address the width will go to
 sb t0, 0(t1)     #save t0 register (byte) to address t1
 
-la s0, string0
-jal putstr
-
 jal putint
 jal putspace
-
-la s0, string1
-jal putstr
 
 # change radix to hexadecimal
 li t0, 16        #load t0 register with the new radix
@@ -171,18 +161,18 @@ ret
 putchar:
 
 addi sp, sp, -24
-sw ra, 0(sp)
-sw s0, 8(sp)
-sw t1, 16(sp)
+sd ra, 0(sp)
+sd s0, 8(sp)
+sd t1, 16(sp)
 
 la t1, char
 sb s0, 0(t1)
 la s0, char
 jal putstr
 
-lw ra, 0(sp)
-lw s0, 8(sp)
-lw t1, 16(sp)
+ld ra, 0(sp)
+ld s0, 8(sp)
+ld t1, 16(sp)
 addi sp, sp, 24
 
 ret
@@ -192,14 +182,14 @@ ret
 putspace:
 
 addi sp, sp, -16
-sw ra, 0(sp)
-sw s0, 8(sp)
+sd ra, 0(sp)
+sd s0, 8(sp)
 
 la s0, space
 jal putstr
 
-lw ra, 0(sp)
-lw s0, 8(sp)
+ld ra, 0(sp)
+ld s0, 8(sp)
 addi sp, sp, 16
 
 ret
@@ -209,14 +199,14 @@ ret
 putline:
 
 addi sp, sp, -16
-sw ra, 0(sp)
-sw s0, 8(sp)
+sd ra, 0(sp)
+sd s0, 8(sp)
 
 la s0, line
 jal putstr
 
-lw ra, 0(sp)
-lw s0, 8(sp)
+ld ra, 0(sp)
+ld s0, 8(sp)
 addi sp, sp, 16
 
 ret
@@ -303,14 +293,14 @@ ret
 putint:
 
 addi sp, sp, -16
-sw ra, 0(sp)
-sw s0, 8(sp)
+sd ra, 0(sp)
+sd s0, 8(sp)
 
 jal intstr
 jal putstr
 
-lw ra, 0(sp)
-lw s0, 8(sp)
+ld ra, 0(sp)
+ld s0, 8(sp)
 addi sp, sp, 16
 
 ret

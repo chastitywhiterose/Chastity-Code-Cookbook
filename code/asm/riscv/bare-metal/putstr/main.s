@@ -1,12 +1,26 @@
-.section .rodata
+.section .data #readable and writable data
+
+stack_space: .space 0x100
+stack_top:  .quad 0
+
+.section .rodata #read only data
 
 string0: .asciz "chastelib putstr for bare metal RISC-V Assembly.\n"
-string1: .asciz "The programs runs as bootloader for QEMU.\n"
+string1: .asciz "The program runs as bootloader for QEMU.\n"
 
 .section .text
 .global _start
 
 _start:
+
+#set the global pointer
+.option push
+.option norelax
+la gp, __global_pointer$
+.option pop
+
+#Initialize stack pointer next
+la sp, stack_top
 
 la s0, string0
 jal putstr
