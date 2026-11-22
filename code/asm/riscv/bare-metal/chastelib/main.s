@@ -1,72 +1,89 @@
-.section .data
+.section .data #readable and writable data
 
-# These variables are used by the intstr function to convert an integer to a string
-# and what radix should be used as well as the width (how many leading zeros)
+stack_space: .space 0x100
+stack_top:  .dword 0
 
-#.align 4  # Aligns the next item to a 4-byte (2^2) word boundary
+#These variables are used by the intstr function to convert an integer to a string
+#and what radix should be used as well as the width (how many leading zeros)
+
 int_string: .space 64 #reserve space for up to 64 bits if printed in binary
 int_end: .byte 0 #the terminating zero of the integer string
 radix: .byte 2   #the radix the number will be shown in
-int_width: .byte 1 #by default
+int_width: .byte 1 #one digit by default
 
+char:  .byte 0, 0 #temporary storage for putchar function
 
 .section .rodata #read only data
 
+#strings for program information
 string0: .asciz "chastelib test suite for RISC-V Assembly\n"
-string1: .asciz "The programs runs as bootloader for QEMU.\n"
+string1: .asciz "The program runs as bootloader for QEMU.\n"
 
+#strings for integer input via the strint function
 input_int_0: .asciz "0"
 input_int_1: .asciz "100"
 
-# These variables are for outputting special strings
-# such as a newline, space, or a single character based on s0
+#These variables are for outputting special strings
+#such as a newline, space, or a single character based on s0
 
 space: .byte 0x20, 0
 line:  .byte 0x0A, 0
-char:  .byte 0, 0
 
-.section .text
+.section .text #code begins in this section
 .global _start
 
-_start:
+_start:        #startup code before main
 
-li sp, 0x80000000
-li gp, 0x80001b29
+#set the global pointer
+.option push
+.option norelax
+la gp, __global_pointer$ #address defined by the linker
+.option pop
 
+#Initialize stack pointer next
+la sp, stack_top         #address defined in the data section
+
+main:          #now the fun part begins  
+
+#print some strings to test output
 la s0, string0
 jal putstr
 la s0, string1
 jal putstr
 
-
-# change radix to hexadecimal
+#change number radix to hexadecimal
+#because strint will be tested next
 li t0, 16    #load t0 register with the new radix
 la t1, radix #load t1 register with the address the radix will go to
 sb t0, 0(t1) #save t0 register (byte) to address t1
 
-# load s0 with address of first integer string, convert it with strint, and save in another register
-#la s0, input_int_0
-#jal strint
-#mv s2, s0
+#load s0 with address of first integer string, convert it with strint, and save in another register
+la s0, input_int_0
+jal strint
+mv s2, s0
 
-# load s0 with address of second integer string, convert it with strint, and save in another register
-#la s0, input_int_1
-#jal strint
-#mv s3, s0
+#load s0 with address of second integer string, convert it with strint, and save in another register
+la s0, input_int_1
+jal strint
+mv s3, s0
 
 # this is how we would load the loop controller variables directly
 # these are commented out for this example
  li s0, 0
  li s1, 0x10
 
+#copy s2 and s3 back to s0 and s1
+mv s0, s2
+mv s1, s3
+
 loop:
 
-# change radix to binary
-li t0, 16         #load t0 register with the new radix
+#change radix to binary
+li t0, 2         #load t0 register with the new radix
 la t1, radix     #load t1 register with the address the radix will go to
 sb t0, 0(t1)     #save t0 register (byte) to address t1
 
-# change width to 8 to represent an 8 bit binary value
+#change width to 8 to represent a byte as 8 bit binary value
 li t0, 8         #load t0 register with the new width
 la t1, int_width #load t1 register with the address the width will go to
 sb t0, 0(t1)     #save t0 register (byte) to address t1
@@ -74,12 +91,12 @@ sb t0, 0(t1)     #save t0 register (byte) to address t1
 jal putint
 jal putspace
 
-# change radix to hexadecimal
+#change radix to hexadecimal
 li t0, 16        #load t0 register with the new radix
 la t1, radix     #load t1 register with the address the radix will go to
 sb t0, 0(t1)     #save t0 register (byte) to address t1
 
-# change width to 2 to represent an 8 bit binary value as a two digit hex value
+#change width to 2 to represent a byte as a 2 digit hex value
 li t0, 2         #load t0 register with the new width
 la t1, int_width #load t1 register with the address the width will go to
 sb t0, 0(t1)     #save t0 register (byte) to address t1
@@ -87,12 +104,12 @@ sb t0, 0(t1)     #save t0 register (byte) to address t1
 jal putint
 jal putspace
 
-# change radix to decimal
+#change radix to decimal
 li t0, 10        #load t0 register with the new radix
 la t1, radix     #load t1 register with the address the radix will go to
 sb t0, 0(t1)     #save t0 register (byte) to address t1
 
-# change width to 3 to represent an 8 bit binary value decimal value of up to 3 digits
+#change width to 3 to represent a byte as 3 digit decimal value
 li t0, 3         #load t0 register with the new width
 la t1, int_width #load t1 register with the address the width will go to
 sb t0, 0(t1)     #save t0 register (byte) to address t1
@@ -177,7 +194,7 @@ addi sp, sp, 24
 
 ret
 
-# the putspace function prints a space to standard output
+#the putspace function prints a space to standard output
 
 putspace:
 
@@ -387,5 +404,3 @@ addi a0, a0, 1 #add 1 to the a0 register indicating an error occurred
 
 strint_end: #we jump here when no errors happened
 ret
-
-
