@@ -168,3 +168,102 @@ The make utility is really easy to use. Just typing "make" at the command line w
 If you have followed the directions for installing a C compiler and running the first program, you are on your way to becoming a great programmer. I will be explaining each line of the program and providing alternative ways you might like to print text.
 
 It might seem basic right now, but there is a specific reason I used fwrite to display the output instead of cheating with printf or fputs. I believe that to use the C language effectively, someone must get comfortable with data types, arrays, and pointers as soon as possible rather than learning to do things the wrong way and then quitting when they get frustrated. I promise you, it does get easier rather than harder.
+
+# Chapter 1: Commentary on The First Program
+
+In the introduction, I showed you the full source of a program that displays "Hello World" to the terminal. This chapter will analyze it in more detail because it is a good example of a well written program.
+
+A C program can include comments right inside the source. The following is the same program except with the comments included. I will explain more what each of these lines are actually doing.
+
+```
+/*include the standard input output library*/
+#include <stdio.h>
+/*the main function where all C programs begin*/
+int main(int argc, char *argv[])
+{
+ /*an array of characters*/
+ char s[]="Hello World\n";
+ /*used to count how many bytes will be written*/
+ int count=0;
+ /*pointer used to find terminating zero of string*/
+ const char *p=s;
+ /*loop until zero found and immediately exit*/
+ while(*p){p++;}
+ /*count is the difference of pointers p and s*/
+ count=p-s;
+ /*https://cppreference.com/w/c/io/fwrite.html*/
+ fwrite(s,1,count,stdout);
+ /*return to operating system with exit code 0*/
+ return 0;
+}
+```
+
+## Each Line Explained
+
+```
+#include <stdio.h>
+```
+
+The #include directive literally copies and pastes the full contents of the file given inside the lesser and greater signs. In this case, these symbols mean that it is a standard library header file which is provided along with the installed compiler. The file "stdio.h" is always provide because the standard mandates it. Inside it are many functions, although the one we are interested in is fwrite, which is on a later line.
+
+```
+int main(int argc, char *argv[])
+```
+
+All programs begin at a function named main. The main function contains variables named argc and argv. They are not used in this program but I will teach you the proper usage of these in a future chapter. For now, remember the types "int" and "char".
+
+An int is a short name for integer, which can be any whole number such as 0, 1, 2, 3, etc. but can not be fractional such as 2.5 or 3.14. Fractional numbers are referred to as floating point variables but we are not using them right now.
+
+A char is a short name for an character. Technically it is also an integer because C uses 8-bit bytes as characters. Therefore a character can be anything from 0 to 255 if the number is unsigned(a type of integer that is always positive), or it can be from -128 to +127 if the number is signed(a type that can contain positive and negative numbers.).
+
+Finally, take note that int is defined as type int. This means that the function will return a number as an exit code when it returns to the operating system.
+
+```
+{
+```
+
+The opening curly brace always follows a function name and its arguments. It can occur on the same line or it can follow on the line after. I prefer it on the line afterwards because I find it more readable to my eyes.
+
+```
+ char s[]="Hello World\n";
+```
+
+This is a character array named s. The `[]` means that it is a constant array. You can initialize an array constant only once, but it can be read or written to an infinite number of times. The purpose of the s array is to be used as a message sent to the screen.
+
+```
+ int count=0;
+```
+
+The count variable is created and initialized to 0. It will later be updated with some arithmetic later.
+
+```
+ const char *p=s;
+```
+
+The p variable is named p because it is my short name for a pointer. In this case, it points to a constant array of characters. By this I mean that the location of those characters is constant, but that does not mean that p will always point to the same location. Here, p is initialized to s, meaning that it points to the first character of the s array.
+
+```
+ while(*p){p++;}
+```
+
+This one line magic trick is a loop. We know that p points to the address of the first character in s. However, an asterist prefixing it refers to the actual character pointed to.
+
+The "while" keyword has a conditional statement in the parenthesis next to it. This means that *p will begin at the letter 'H' in the s string. However, inside the curly brackets next to it, we see the statement "p++;". This means that we are adding 1 to the address pointed to by p. Therefore, it starts as the 'H' but then will go to 'e','l','l','o',' ','W','o','r','l','d','\n', and finally the hidden zero byte.
+
+The zero byte is something that a C compiler always adds whenever we define a string constant in double quotation marks. 
+
+```
+ count=p-s;
+```
+
+```
+ fwrite(s,1,count,stdout);
+```
+
+```
+ return 0;
+```
+
+```
+}
+```
