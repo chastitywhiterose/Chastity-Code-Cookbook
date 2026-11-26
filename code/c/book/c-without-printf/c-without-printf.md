@@ -1,4 +1,4 @@
-C Without Printf
+# C Without Printf
 
 Build a Low-Level I/O Library From Ground Zero
 
@@ -26,3 +26,77 @@ Such programmers may get started programming and may even write useful and fun p
 To sum this book up in a sentence: You must learn to walk before you can drive a car. By this, I mean that you will move slower at first, but when the road is covered in ice and it is unsafe to drive, you can remember how to walk the difficult path through the grass, dirt, and snow.
 
 ***Where we're going, we don't need roads" - Christopher Lloyd in Back to the Future(1985)***
+
+# Introduction
+
+Before we can begin programming in C, we must decide on which tools we will need. In this book, I only promote Free and Open Source tools. What this means to the layperson is that they will be available in some form regardless of which Operating System you are using. I personally use Debian Linux for writing all of my books and programming. I recommend Debian or something similar to it for your introduction to Linux as an operating system.
+
+## Installing GCC on Linux
+
+If you are using Debian or Ubuntu Linux, installing the GCC compiler is as simple as:
+
+```
+sudo apt install gcc
+```
+
+If you are using a different Linux distribution, see the official documentation for it to see what is required to install it, or perhaps check if it is already installed. This is more common than you might think.
+
+## Installing GCC on Windows
+
+However, I expect that most of my readers have a computer with the Windows operating system installed since the computer was purchased. Don't worry, you can still follow along!
+
+### Method 1: scoop
+
+When I bought my Windows 11 laptop, I set up [scoop](https://scoop.sh/) to be my command-line installer. Then I installed GCC so that I can always have it available from the command line on Windows, just like I could in Linux.
+
+Scoop is pretty easy to use as a command line package manager for not only GCC but also other applications and games that you might not have heard of. I highly recommend it as something to try for people getting started programming on Windows. If you follow the directions, it is not hard.
+
+<https://scoop.sh/>
+
+After you have installed scoop, use this command:
+
+```
+scoop install gcc
+```
+
+### Method 2: w64devkit
+
+Besides scoop, another method that I tend to use myself is w64devkit: a software kit developed by [skeeto](https://github.com/skeeto) on github which is a convenient way to get a working copy of GCC and other useful tools that may assist you in programming on Windows.
+
+By downloading [w64devkit](https://github.com/skeeto/w64devkit), you get [Mingw-w64 GCC](https://www.mingw-w64.org/), [GNU Make](https://www.gnu.org/software/make/), and [busybox](https://frippery.org/busybox/). These tools will allow you to compile and run C programs, run advanced tasks with makefiles for GNU Make, and run most Linux commands (ls, cat, etc).
+
+The reason I recommend it is because it allows you to develop any program exactly the way you would on Linux without having to install Linux. Most people don't use Linux unless they are already into programming. If you are getting your start with C programming and your computer has Windows, then you will benefit from this section.
+
+Go to the repository here and go to the releases page. You will find several releases. You will be fine going with the latest version, whichever it is.
+
+<https://github.com/skeeto/w64devkit/releases>
+
+The files with "x64" in their name refer to the modern Windows version that run on 64 bit processors (usually this means Windows 7, 8 , 10,or 11). Most of the time, this is what you want.
+
+At the time of this writing, the latest version of w64devkit is [2.4.0](https://github.com/skeeto/w64devkit/releases/tag/v2.4.0). This means that the file to download is:
+
+`w64devkit-x64-2.4.0.7z.exe`
+
+Run the executable and it will allow you to extract the files into their full folder. Inside will be a file named:
+
+`w64devkit.exe`
+
+If you run it, you will be inside a little environment which operates a lot like Linux. You can run gcc and compile the same way you would in Linux.
+
+There are other ways to install GCC on Windows. However, all of them will give the result of having the ability to type gcc into the terminal or console to compile and run your C code.
+
+Once it is installed correctly, you can enter `gcc` and get the message:
+
+```
+gcc: fatal error: no input files
+compilation terminated.
+```
+
+You can also check which version of GCC is installed with "gcc --version". For example, on my machine it reveals:
+
+```
+gcc (Debian 12.2.0-14+deb12u1) 12.2.0
+Copyright (C) 2022 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+```
