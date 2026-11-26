@@ -107,8 +107,64 @@ After you have installed GCC, or perhaps another C compiler (Clang also works we
 
 <https://notepad-plus-plus.org/>
 
+## The First Program
+
 Once you have installed GCC and your favorite text editor, create the following file:
 
 ```
+#include <stdio.h>
+
+int main(int argc, char *argv[])
+{
+ char s[]="Hello World\n";
+ int count=0;
+ const char *p=s;
+ while(*p){p++;}
+ count=p-s;
+ fwrite(s,1,count,stdout);
+ return 0;
+}
+```
+
+The command to compile and run this program, assuming its name was main.c, would be:
 
 ```
+gcc -Wall -ansi -pedantic main.c -o main && ./main
+```
+
+You should see this message in your terminal:
+
+```
+Hello World
+```
+
+The flags "-Wall -ansi -pedantic" as part of that command compile with very strict conformance to standards. Fun fact: I use those flags specifically because they were recommended in the FreeBSD Developers' Handbook.
+
+<https://docs.freebsd.org/en/books/developers-handbook/tools/#tools-compiling>
+
+FreeBSD is an operating system based on Unix. It works very similar to Linux, but the main reason I refer to it is because of all the open source tools it recommends.
+
+One thing that I do in my own development is create a makefile with different rules for compiling my source code. You can see it below for reference.
+
+## makefile
+
+```
+strict:
+	gcc -Wall -ansi -pedantic main.c -o main && ./main
+strip:
+	gcc -Wall -ansi -pedantic main.c -o main -s
+simple:
+	gcc main.c -o main && ./main
+clang:
+	clang -Wall -ansi -pedantic main.c -o main && ./main
+tcc:
+	tcc main.c -o main && ./main
+zig:
+	zig cc -Wall -ansi -pedantic main.c -o main && ./main
+```
+
+The make utility is really easy to use. Just typing "make" at the command line will use the first rule in the makefile which compiles and runs it with the strict flags. The other rules are for testing other compilers mostly. For example, "make tcc" compiles with the [Tiny C Compiler](https://bellard.org/tcc/) by Fabrice Bellard. For context, Fabrice is also the genius guy who made QEMU, the PC emulator and FFmpeg, the video/audio media converter.
+
+If you have followed the directions for installing a C compiler and running the first program, you are on your way to becoming a great programmer. I will be explaining each line of the program and providing alternative ways you might like to print text.
+
+It might seem basic right now, but there is a specific reason I used fwrite to display the output instead of cheating with printf or fputs. I believe that to use the C language effectively, someone must get comfortable with data types, arrays, and pointers as soon as possible rather than learning to do things the wrong way and then quitting when they get frustrated. I promise you, it does get easier rather than harder.

@@ -5,7 +5,7 @@ strip:
 simple:
 	gcc main.c -o main && ./main
 clang:
-	gcc -Wall -ansi -pedantic main.c -o main && ./main
+	clang -Wall -ansi -pedantic main.c -o main && ./main
 tcc:
 	tcc main.c -o main && ./main
 zig:
