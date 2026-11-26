@@ -250,11 +250,15 @@ This one line magic trick is a loop. We know that p points to the address of the
 
 The "while" keyword has a conditional statement in the parenthesis next to it. This means that *p will begin at the letter 'H' in the s string. However, inside the curly brackets next to it, we see the statement "p++;". This means that we are adding 1 to the address pointed to by p. Therefore, it starts as the 'H' but then will go to 'e','l','l','o',' ','W','o','r','l','d','\n', and finally the hidden zero byte.
 
-The zero byte is something that a C compiler always adds whenever we define a string constant in double quotation marks. 
+The zero byte is something that a C compiler always adds whenever we define a string constant in double quotation marks. As soon as p points to the zero byte, the while loop will end. This happens because 0 means false but any other number means true. The statement will be true while p passes through all the other characters, but is immediately false when the zero byte is encountered.
+
+Also, in case you are wondering, the character '\n' means a newline character. This is what usually happens when you press the enter key, but here we have included it manually.
 
 ```
  count=p-s;
 ```
+
+Here the count variable is updated to have the exact number of characters in the string. Remember, after the loop, p points to the address of character zero but s still starts at the 'H' in "Hello World\n". So what we have done is say that count is equal to address p minus address s. This will always be a positive number that represents how many characters are in the string. Therefore, now you can see that the only reason we did the while loop was to seek ahead and find the zero so we could do this essential subtraction operation.
 
 ```
  fwrite(s,1,count,stdout);
