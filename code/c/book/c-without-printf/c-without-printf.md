@@ -288,3 +288,46 @@ Now that the job of writing the text to the terminal is done, there is nothing l
 ```
 
 The last line is just the closing curly brace of the main function. You must be sure to include it because it is essential for the compiler to keep the boundaries or where a function, loop, or other block of code begins and ends.
+
+## Bonus Exercise
+
+The following program is the same as before, except that a new loop was added to print he string in reverse after it was printed forwards.
+
+```
+/*include the standard input output library*/
+#include <stdio.h>
+/*the main function where all C programs begin*/
+int main(int argc, char *argv[])
+{
+ /*an array of characters*/
+ char s[]="Hello World\n";
+ /*used to count how many bytes will be written*/
+ int count=0;
+ /*pointer used to find terminating zero of string*/
+ const char *p=s;
+ /*loop until zero found and immediately exit*/
+ while(*p){p++;}
+ /*count is the difference of pointers p and s*/
+ count=p-s;
+ /*https://cppreference.com/w/c/io/fwrite.html*/
+ fwrite(s,1,count,stdout);
+ /*a second loop to print the string backwards*/
+ while(p!=s)
+ {
+  p--;
+  fwrite(p,1,1,stdout);
+ }
+ /*return to operating system with exit code 0*/
+ return 0;
+}
+```
+
+When you run it, you should see the following output.
+
+```
+Hello World
+
+dlroW olleH
+```
+
+I want you to think about why the new loop prints the character array backwards. It is okay if you don't understand it completely right now, but it will become more clear later when I teach you about conditional statements and comparisons.
