@@ -29,7 +29,7 @@ To sum this book up in a sentence: You must learn to walk before you can drive a
 
 # Introduction
 
-Before we can begin programming in C, we must decide on which tools we will need. In this book, I only promote Free and Open Source tools. What this means to the layperson is that they will be available in some form regardless of which Operating System you are using. I personally use Debian Linux for writing all of my books and programming. I recommend Debian or something similar to it for your introduction to Linux as an operating system.
+Before we can begin programming in C, we must decide on which tools we will need. In this book, I only promote Free and open-source tools. What this means to the layperson is that they will be available in some form regardless of which Operating System you are using. I personally use Debian Linux for writing all of my books and programming. I recommend Debian or something similar to it for your introduction to Linux as an operating system.
 
 ## Installing GCC on Linux
 
@@ -45,15 +45,15 @@ If you are using a different Linux distribution, see the official documentation 
 
 However, I expect that most of my readers have a computer with the Windows operating system installed since the computer was purchased. Don't worry, you can still follow along!
 
-### Method 1: scoop
+### Method 1: Scoop
 
-When I bought my Windows 11 laptop, I set up [scoop](https://scoop.sh/) to be my command-line installer. Then I installed GCC so that I can always have it available from the command line on Windows, just like I could in Linux.
+When I bought my Windows 11 laptop, I set up [Scoop](https://scoop.sh/) to be my command-line installer. Then I installed GCC so that I could always have it available from the command line on Windows, just like I could in Linux.
 
-Scoop is pretty easy to use as a command line package manager for not only GCC but also other applications and games that you might not have heard of. I highly recommend it as something to try for people getting started programming on Windows. If you follow the directions, it is not hard.
+Scoop is pretty easy to use as a command-line package manager for not only GCC but also other applications and games that you might not have heard of. I highly recommend it as something to try for people getting started programming on Windows. If you follow the directions, it is not hard.
 
 <https://scoop.sh/>
 
-After you have installed scoop, use this command:
+After you have installed Scoop, use this command:
 
 ```
 scoop install gcc
@@ -61,9 +61,9 @@ scoop install gcc
 
 ### Method 2: w64devkit
 
-Besides scoop, another method that I tend to use myself is w64devkit: a software kit developed by [skeeto](https://github.com/skeeto) on github which is a convenient way to get a working copy of GCC and other useful tools that may assist you in programming on Windows.
+Besides Scoop, another method that I tend to use myself is w64devkit: a software kit developed by [skeeto](https://github.com/skeeto) on GitHub, which is a convenient way to get a working copy of GCC and other useful tools that may assist you in programming on Windows.
 
-By downloading [w64devkit](https://github.com/skeeto/w64devkit), you get [Mingw-w64 GCC](https://www.mingw-w64.org/), [GNU Make](https://www.gnu.org/software/make/), and [busybox](https://frippery.org/busybox/). These tools will allow you to compile and run C programs, run advanced tasks with makefiles for GNU Make, and run most Linux commands (ls, cat, etc).
+By downloading [w64devkit](https://github.com/skeeto/w64devkit), you get [Mingw-w64 GCC](https://www.mingw-w64.org/), [GNU Make](https://www.gnu.org/software/make/), and [busybox](https://frippery.org/busybox/). These tools will allow you to compile and run C programs, run advanced tasks with makefiles for GNU Make, and run most Linux commands (ls, cat, etc.).
 
 The reason I recommend it is because it allows you to develop any program exactly the way you would on Linux without having to install Linux. Most people don't use Linux unless they are already into programming. If you are getting your start with C programming and your computer has Windows, then you will benefit from this section.
 
@@ -71,19 +71,19 @@ Go to the repository here and go to the releases page. You will find several rel
 
 <https://github.com/skeeto/w64devkit/releases>
 
-The files with "x64" in their name refer to the modern Windows version that run on 64 bit processors (usually this means Windows 7, 8 , 10,or 11). Most of the time, this is what you want.
+The files with "x64" in their name refer to the modern Windows version that runs on 64-bit processors (usually this means Windows 7, 8, 10, or 11). Most of the time, this is what you want.
 
 At the time of this writing, the latest version of w64devkit is [2.4.0](https://github.com/skeeto/w64devkit/releases/tag/v2.4.0). This means that the file to download is:
 
 `w64devkit-x64-2.4.0.7z.exe`
 
-Run the executable and it will allow you to extract the files into their full folder. Inside will be a file named:
+Run the executable, and it will allow you to extract the files into their full folder. Inside will be a file named:
 
 `w64devkit.exe`
 
-If you run it, you will be inside a little environment which operates a lot like Linux. You can run gcc and compile the same way you would in Linux.
+If you run it, you will be inside a little environment that operates a lot like Linux. You can run gcc and compile the same way you would in Linux.
 
-There are other ways to install GCC on Windows. However, all of them will give the result of having the ability to type gcc into the terminal or console to compile and run your C code.
+There are other ways to install GCC on Windows. However, all of them will give you the ability to type gcc into the terminal or console to compile and run your C code.
 
 Once it is installed correctly, you can enter `gcc` and get the message:
 
@@ -97,7 +97,7 @@ You can also check which version of GCC is installed with "gcc --version". For e
 ```
 gcc (Debian 12.2.0-14+deb12u1) 12.2.0
 Copyright (C) 2022 Free Software Foundation, Inc.
-This is free software; see the source for copying conditions.  There is NO
+This is free software; see the source for copying conditions. There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 ```
 
@@ -142,7 +142,7 @@ The flags "-Wall -ansi -pedantic" as part of that command compile with very stri
 
 <https://docs.freebsd.org/en/books/developers-handbook/tools/#tools-compiling>
 
-FreeBSD is an operating system based on Unix. It works very similar to Linux, but the main reason I refer to it is because of all the open source tools it recommends.
+FreeBSD is an operating system based on Unix. It works very similarly to Linux, but the main reason I refer to it is because of all the open-source tools it recommends.
 
 One thing that I do in my own development is create a makefile with different rules for compiling my source code. You can see it below for reference.
 
@@ -163,7 +163,7 @@ zig:
 	zig cc -Wall -ansi -pedantic main.c -o main && ./main
 ```
 
-The make utility is really easy to use. Just typing "make" at the command line will use the first rule in the makefile which compiles and runs it with the strict flags. The other rules are for testing other compilers mostly. For example, "make tcc" compiles with the [Tiny C Compiler](https://bellard.org/tcc/) by Fabrice Bellard. For context, Fabrice is also the genius guy who made QEMU, the PC emulator and FFmpeg, the video/audio media converter.
+The make utility is really easy to use. Just typing "make" at the command line will use the first rule in the makefile which compiles and runs it with the strict flags. The other rules are mostly for testing other compilers. For example, "make tcc" compiles with the [Tiny C Compiler](https://bellard.org/tcc/) by Fabrice Bellard. For context, Fabrice is also the genius guy who made QEMU, the PC emulator, and FFmpeg, the video/audio media converter.
 
 If you have followed the directions for installing a C compiler and running the first program, you are on your way to becoming a great programmer. I will be explaining each line of the program and providing alternative ways you might like to print text.
 
