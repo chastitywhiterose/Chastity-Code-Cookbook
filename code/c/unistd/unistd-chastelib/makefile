@@ -1,8 +1,12 @@
-main-strict:
+strict:
 	gcc -Wall -ansi -pedantic main.c -o main && ./main
-main-strip:
+strip:
 	gcc -Wall -ansi -pedantic main.c -o main -s
-main-simple:
+simple:
 	gcc main.c -o main && ./main
-main-tcc:
+clang:
+	gcc -Wall -ansi -pedantic main.c -o main && ./main
+tcc:
 	tcc main.c -o main && ./main
+zig:
+	zig cc -Wall -ansi -pedantic main.c -o main && ./main
