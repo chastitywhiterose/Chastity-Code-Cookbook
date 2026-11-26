@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include "chastelib.h"
 
 int main(int argc, char *argv[])
@@ -36,12 +35,14 @@ int main(int argc, char *argv[])
   if(a>=0x20 && a<=0x7E)
   {
    putstr(" ");
-   putchar(a);
+   fwrite(&a,1,1,stdout);
   }
 
   putstr("\n");
   a+=1;
  }
+
+ putstr("Output written with libc fwrite function\n");
     
  return 0;
 }

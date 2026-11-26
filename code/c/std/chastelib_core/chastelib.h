@@ -50,7 +50,10 @@ char *intstr(unsigned int i)    /*Chastity's supreme integer to string conversio
 }
 
 /*
- This function prints a string using fwrite.
+ putstring: fwrite edition
+ This function prints a string using the fwrite function.
+ fwrite is available as part of the C Standard Library.
+
  This algorithm is the best C representation of how my Assembly programs also work.
  Its true purpose is to be used in the putint function for conveniently printing integers, 
  but it can print any valid string.
@@ -113,7 +116,11 @@ int strint(const char *s)
  int i=0;
  char c;
  strint_errors = 0; /*set zero errors before we parse the string*/
- if( radix<2 || radix>36 ){ strint_errors++; printf("Error: radix %i is out of range!\n",radix);}
+ if( radix<2 || radix>36 )
+ {
+  strint_errors++;
+  putstr("Error: radix is out of range!\n");
+ }
  while( *s == ' ' || *s == '\n' || *s == '\t' ){s++;} /*skip whitespace at beginning*/
  while(*s!=0)
  {
@@ -122,8 +129,23 @@ int strint(const char *s)
   else if( c >= 'A' && c <= 'Z' ){c-='A';c+=10;}
   else if( c >= 'a' && c <= 'z' ){c-='a';c+=10;}
   else if( c == ' ' || c == '\n' || c == '\t' ){break;}
-  else{ strint_errors++; printf("Error: %c is not an alphanumeric character!\n",*s);break;}
-  if(c>=radix){ strint_errors++; printf("Error: %c is not a valid character for radix %i\n",*s,radix);break;}
+  else
+  {
+   strint_errors++;
+   putstr("Error: ");
+   fwrite(s,1,1,stdout);
+   putstr(" is not an alphanumeric character!\n");
+   break;
+  }
+  if(c>=radix)
+  {
+   strint_errors++;
+   putstr("Error: ");
+   fwrite(s,1,1,stdout);
+   putstr(" is not a valid character for radix.\n");
+   break;
+  }
+ 
   i*=radix;
   i+=c;
   s++;
