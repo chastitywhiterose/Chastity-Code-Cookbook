@@ -264,6 +264,8 @@ Here the count variable is updated to have the exact number of characters in the
  fwrite(s,1,count,stdout);
 ```
 
+Now we get to use the fwrite function. This function takes 4 arguments.
+
 ```
  return 0;
 ```
