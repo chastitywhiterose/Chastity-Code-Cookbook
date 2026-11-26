@@ -240,19 +240,21 @@ The count variable is created and initialized to 0. It will later be updated wit
  const char *p=s;
 ```
 
-The p variable is named p because it is my short name for a pointer. In this case, it points to a constant array of characters. By this I mean that the location of those characters is constant, but that does not mean that p will always point to the same location. Here, p is initialized to s, meaning that it points to the first character of the s array.
+The p variable is named p because it is my short name for a pointer. The asterisk prefixing the name of it means that we want it to be a pointer instead of a regular character. In this case, it points to a constant array of characters. By this I mean that the location of those characters is constant, but that does not mean that p will always point to the same location. Here, p is initialized to s, meaning that it points to the first character of the s array.
 
 ```
  while(*p){p++;}
 ```
 
-This one line magic trick is a loop. We know that p points to the address of the first character in s. However, an asterist prefixing it refers to the actual character pointed to.
+This one line magic trick is a loop. We know that p points to the address of the first character in s. However, an asterisk prefixing it refers to the actual character pointed to.
 
 The "while" keyword has a conditional statement in the parenthesis next to it. This means that *p will begin at the letter 'H' in the s string. However, inside the curly brackets next to it, we see the statement "p++;". This means that we are adding 1 to the address pointed to by p. Therefore, it starts as the 'H' but then will go to 'e','l','l','o',' ','W','o','r','l','d','\n', and finally the hidden zero byte.
 
 The zero byte is something that a C compiler always adds whenever we define a string constant in double quotation marks. As soon as p points to the zero byte, the while loop will end. This happens because 0 means false but any other number means true. The statement will be true while p passes through all the other characters, but is immediately false when the zero byte is encountered.
 
 Also, in case you are wondering, the character '\n' means a newline character. This is what usually happens when you press the enter key, but here we have included it manually.
+
+You may also notice that we used curly braces to define the beginning and end of the while loop. It seems silly because this loop only has one statement, but in larger loops, you will require this for readability.
 
 ```
  count=p-s;
@@ -264,12 +266,25 @@ Here the count variable is updated to have the exact number of characters in the
  fwrite(s,1,count,stdout);
 ```
 
-Now we get to use the fwrite function. This function takes 4 arguments.
+Now we get to use the fwrite function. This function takes 4 arguments. The best documentation page for it is here:
+
+<https://cppreference.com/w/c/io/fwrite.html>
+
+I will attempt to summarize these four arguments in my own way.
+
+1. pointer to an array, buffer, string, struct, etc. The actual data pointed to can be of any type. For this program we have used s as the address because it is where our array is.
+2. size of the data type being written. This is 1 for this example because a char is always 1 byte in size.
+3. count of how many items are being written. We have already obtained the number of characters in the string with the previous lines, so we use it for the third argument to fwrite.
+4. The fourth and final argument is the file stream to send the data to. The name stdout refers to standard output. This is an output stream that is always available in a C program right from the start. Anything sent to it shows up on the screen. Remember that the terminal is considered a special case of a file but is different than the kind of file you open in a text editor.
 
 ```
  return 0;
 ```
 
+Now that the job of writing the text to the terminal is done, there is nothing left to do except return to the operating system. The "return 0;" statement returns the number zero back to the OS, which usually means that no errors happened.
+
 ```
 }
 ```
+
+The last line is just the closing curly brace of the main function. You must be sure to include it because it is essential for the compiler to keep the boundaries or where a function, loop, or other block of code begins and ends.
