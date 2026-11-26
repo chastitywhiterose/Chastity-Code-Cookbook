@@ -1,0 +1,1 @@
+C Without Printf teaches how to build an input/output library from basic low-level functions. It avoids printf in favor of learning C the hard way.

@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="1200"
+   height="1200"
+   viewBox="0 0 317.5 317.5"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   sodipodi:docname="c-without-printf-1200-social.svg"
+   inkscape:export-filename="c-without-printf-1200-social.png"
+   inkscape:export-xdpi="300"
+   inkscape:export-ydpi="300"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#000000"
+     bordercolor="#111111"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="1"
+     inkscape:pagecheckerboard="false"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="px"
+     showgrid="false"
+     showborder="true"
+     inkscape:zoom="0.85416667"
+     inkscape:cx="336"
+     inkscape:cy="595.90244"
+     inkscape:window-width="1920"
+     inkscape:window-height="1029"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       id="g284"
+       transform="matrix(1.2113017,0,0,1.2113017,51.065278,25.430955)">
+      <text
+         xml:space="preserve"
+         style="font-size:4.9389px;font-family:Hack;-inkscape-font-specification:Hack;direction:ltr;text-orientation:upright;fill:#ffffff;stroke-width:0.264583"
+         x="113.2962"
+         y="111.37844"
+         id="text113"><tspan
+           sodipodi:role="line"
+           style="direction:ltr;stroke-width:0.264583"
+           x="113.2962"
+           y="111.37844"
+           id="tspan392" /></text>
+      <text
+         xml:space="preserve"
+         style="font-size:8.46667px;font-family:Hack;-inkscape-font-specification:Hack;text-align:start;direction:ltr;text-orientation:upright;text-anchor:start;fill:#ffffff;stroke-width:0.264583"
+         x="10.502687"
+         y="76.758087"
+         id="text473"><tspan
+           sodipodi:role="line"
+           style="font-size:8.46667px;text-align:start;direction:ltr;text-anchor:start;stroke-width:0.264583"
+           x="10.502687"
+           y="76.758087"
+           id="tspan497">#include &lt;stdio.h&gt;</tspan><tspan
+           sodipodi:role="line"
+           style="font-size:8.46667px;text-align:start;direction:ltr;text-anchor:start;stroke-width:0.264583"
+           x="10.502687"
+           y="87.341423"
+           id="tspan402">int main(int argc,char *argv[])</tspan><tspan
+           sodipodi:role="line"
+           style="font-size:8.46667px;text-align:start;direction:ltr;text-anchor:start;stroke-width:0.264583"
+           x="10.502687"
+           y="97.924759"
+           id="tspan404">{</tspan><tspan
+           sodipodi:role="line"
+           style="font-size:8.46667px;text-align:start;direction:ltr;text-anchor:start;stroke-width:0.264583"
+           x="10.502687"
+           y="108.5081"
+           id="tspan406"> char s[]=&quot;Hello World\n&quot;;</tspan><tspan
+           sodipodi:role="line"
+           style="font-size:8.46667px;text-align:start;direction:ltr;text-anchor:start;stroke-width:0.264583"
+           x="10.502687"
+           y="119.09144"
+           id="tspan408"> int count=0;</tspan><tspan
+           sodipodi:role="line"
+           style="font-size:8.46667px;text-align:start;direction:ltr;text-anchor:start;stroke-width:0.264583"
+           x="10.502687"
+           y="129.67477"
+           id="tspan410"> const char *p=s;</tspan><tspan
+           sodipodi:role="line"
+           style="font-size:8.46667px;text-align:start;direction:ltr;text-anchor:start;stroke-width:0.264583"
+           x="10.502687"
+           y="140.25812"
+           id="tspan412"> while(*p){p++;}</tspan><tspan
+           sodipodi:role="line"
+           style="font-size:8.46667px;text-align:start;direction:ltr;text-anchor:start;stroke-width:0.264583"
+           x="10.502687"
+           y="150.84145"
+           id="tspan414"> count=p-s;</tspan><tspan
+           sodipodi:role="line"
+           style="font-size:8.46667px;text-align:start;direction:ltr;text-anchor:start;stroke-width:0.264583"
+           x="10.502687"
+           y="161.42479"
+           id="tspan416"> fwrite(s,1,count,stdout);</tspan><tspan
+           sodipodi:role="line"
+           style="font-size:8.46667px;text-align:start;direction:ltr;text-anchor:start;stroke-width:0.264583"
+           x="10.502687"
+           y="172.00812"
+           id="tspan418"> return 0;</tspan><tspan
+           sodipodi:role="line"
+           style="font-size:8.46667px;text-align:start;direction:ltr;text-anchor:start;stroke-width:0.264583"
+           x="10.502687"
+           y="182.59146"
+           id="tspan420">}</tspan></text>
+      <g
+         id="g434"
+         transform="translate(-0.48263108)">
+        <text
+           xml:space="preserve"
+           style="font-size:25.4px;font-family:Hack;-inkscape-font-specification:Hack;text-align:end;direction:ltr;text-orientation:upright;text-anchor:end;fill:#ffffff;stroke-width:0.264583"
+           x="43.734619"
+           y="29.540361"
+           id="text605"><tspan
+             sodipodi:role="line"
+             id="tspan603"
+             style="font-size:25.4px;direction:ltr;stroke-width:0.264583"
+             x="43.734619"
+             y="29.540361">C</tspan></text>
+        <text
+           xml:space="preserve"
+           style="font-size:11.2889px;font-family:Hack;-inkscape-font-specification:Hack;text-align:end;direction:ltr;text-orientation:upright;text-anchor:end;fill:#ffffff;stroke-width:0.264583"
+           x="102.11478"
+           y="24.502947"
+           id="text613"><tspan
+             sodipodi:role="line"
+             id="tspan611"
+             style="font-size:11.2889px;text-align:center;direction:ltr;text-anchor:middle;stroke-width:0.264583"
+             x="102.11478"
+             y="24.502947">Without Printf</tspan></text>
+      </g>
+      <text
+         xml:space="preserve"
+         style="font-size:8.46667px;font-family:Hack;-inkscape-font-specification:Hack;text-align:center;text-orientation:upright;text-anchor:middle;fill:#ffffff;stroke-width:0.264583"
+         x="88.722237"
+         y="44.785423"
+         id="text426"><tspan
+           sodipodi:role="line"
+           id="tspan424"
+           style="font-size:8.46667px;stroke-width:0.264583"
+           x="88.722237"
+           y="44.785423">Build a Low-Level I/O Library</tspan><tspan
+           sodipodi:role="line"
+           style="font-size:8.46667px;stroke-width:0.264583"
+           x="88.722237"
+           y="55.368759"
+           id="tspan428"> From Ground Zero</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-size:11.2889px;font-family:Hack;-inkscape-font-specification:Hack;text-align:center;text-orientation:upright;text-anchor:middle;fill:#ffffff;stroke-width:0.264583"
+         x="88.847641"
+         y="207.08827"
+         id="text438"><tspan
+           sodipodi:role="line"
+           id="tspan436"
+           style="font-size:11.2889px;stroke-width:0.264583"
+           x="88.847641"
+           y="207.08827">Chastity White Rose</tspan></text>
+    </g>
+  </g>
+</svg>

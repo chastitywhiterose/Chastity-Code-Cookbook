@@ -1,0 +1,1 @@
+C is not a big language when compared to C++ or Java, nor are you required to memorize every function in the standard library. Almost any text-based program can be constructed using 5 functions: fwrite, fread, fopen, fclose, fseek. The rest is learning the concepts of variables and types that are fundamental to all computer programming languages.
