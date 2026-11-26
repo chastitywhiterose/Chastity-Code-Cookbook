@@ -2,7 +2,7 @@
 
 Build a Low-Level I/O Library From Ground Zero
 
-Preface
+# Preface
 
 In this book, I intend to give new programmers a quick introduction to the C Programming Language, its history, and how to use it for the problems it was designed to be used for. The C language refuses to die, despite bogus claims from online trolls who are probably not very good programmers.
 
