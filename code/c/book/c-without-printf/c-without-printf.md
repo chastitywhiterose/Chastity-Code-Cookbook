@@ -100,3 +100,15 @@ Copyright (C) 2022 Free Software Foundation, Inc.
 This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 ```
+
+After you have installed GCC, or perhaps another C compiler (Clang also works well), you will need to create a text file in a text editor. There are many good text editors, and you can use whatever is already installed on your operating system. However, if you are looking for an editor with syntax highlighting for C programming, I highly recommend either Geany for any OS or Notepad++ for Windows.
+
+<https://www.geany.org/>
+
+<https://notepad-plus-plus.org/>
+
+Once you have installed GCC and your favorite text editor, create the following file:
+
+```
+
+```
